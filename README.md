@@ -44,7 +44,7 @@ data_source_investigator/ ────> data_source_matches.json
 The published files have distinct owners:
 
 - `pool.json`: ~420 projection-backed QB/RB/WR/TE players, keyed to Sleeper
-- `draft.json`: all 120 made and pending picks from Sleeper
+- `draft.json`: all 120 made and pending picks from the ESPN league API
 - `data_source_matches.json`: the provider board closest to each opponent's picks
 - `rankings.json`: undrafted-player rankings, recommendations, simulations, and validation
 
@@ -54,7 +54,7 @@ opponent source matches to the live board.
 ## Components
 
 - [Pool pipeline](pool_pipeline/README.md): provider HTML to the league-specific pool
-- [Draft pipeline](draft_pipeline/README.md): Sleeper API to the complete live board
+- [Draft pipeline](draft_pipeline/README.md): ESPN league API to the complete live board
 - [Data-source investigator](data_source_investigator/README.md): normalize provider
   boards and infer opponent strategies
 - [Ranker](ranker/README.md): wire-level solver, opponent simulation, planning,
@@ -113,9 +113,10 @@ Before and after changing an opponent model or pick policy, run
 ## Dashboard and automation
 
 Run `uv run serve.py` and open the local URL; direct `file://` access cannot fetch the
-JSON files. The main dashboard also polls Sleeper for a compact live-status strip, shows
-when its `draft.json` snapshot is stale, and pins the status of any active refresh or
-deploy workflow run in that strip.
+JSON files. The main dashboard's live-status strip still tries to poll Sleeper as a
+cross-check; against the ESPN league that poll fails harmlessly (ESPN's API needs auth
+cookies and blocks browser CORS), so the strip runs on the `draft.json` snapshot, shows
+when it is stale, and pins the status of any active refresh or deploy workflow run.
 
 `.github/workflows/refresh.yml` runs the live refresh on manual dispatch and commits the
 generated board, rankings, and source matches. `.github/workflows/deploy-pages.yml`

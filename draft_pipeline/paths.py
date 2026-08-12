@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 """Where the draft pipeline's files live. There are very few of them.
 
-This pipeline has no inputs on disk and caches nothing: it asks Sleeper for the state
-of the live draft and writes one artifact, ``draft.json`` at the repo root. So there is
-no ``data/`` folder here — nothing is working material, because nothing is reused
-between runs.
+This pipeline caches nothing: it asks ESPN for the state of the live draft and writes
+one artifact, ``draft.json`` at the repo root. Its only on-disk input is the other
+pipeline's Sleeper player dump, read to translate ESPN player ids into ``sleeper_id``.
+So there is no ``data/`` folder here — nothing is working material, because nothing is
+reused between runs.
 
 ``pool_pipeline/`` is the other pipeline in this repo and keeps its own copy of this
-file. The two share no code and no working files; they meet only at ``sleeper_id``,
-which every pick here carries and which ``pool_pipeline/match_sleeper.py`` writes into
-every pool player. Duplicating a dozen lines is the price of that independence, and it
-is cheaper than a shared module that couples a network fetch to an html parse.
+file. The two share no code; they meet at ``sleeper_id``, which every pick here carries
+and which ``pool_pipeline/match_sleeper.py`` writes into every pool player, and at the
+Sleeper player dump below that makes that id assignable from an ESPN pick. Duplicating
+a dozen lines is the price of that independence, and it is cheaper than a shared module
+that couples a network fetch to an html parse.
 
 Paths are anchored to this file, not to the current directory, so it runs from anywhere:
 
@@ -36,6 +38,10 @@ DRAFT = REPO_ROOT / "draft.json"
 #: checks that the drafted players actually join onto it by ``sleeper_id``. Nothing in
 #: the output depends on this file existing.
 POOL = REPO_ROOT / "pool.json"
+
+#: The pool pipeline's cached Sleeper player dump, keyed by sleeper id and carrying
+#: ``espn_id``. Read-only; how an ESPN pick becomes a ``sleeper_id``.
+SLEEPER_PLAYERS = REPO_ROOT / "pool_pipeline" / "data" / "sleeper_players.json"
 
 
 def display(path: Path) -> str:

@@ -356,7 +356,9 @@ def main(argv: list[str] | None = None) -> int:
         if len(rankings["sources"]) < 2:
             raise ValueError("need at least two ranking sources")
         if not any(pick["status"] == "made" for pick in draft["picks"]):
-            raise ValueError("draft has no made picks to investigate")
+            # Pre-draft: still write a valid zero-owner document so the ranker can
+            # run — every opponent falls back to its cold-start source.
+            print("no picks made yet — every drafter keeps the cold-start fallback", file=sys.stderr)
         result = investigate(rankings, draft)
     except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
         print(f"cannot investigate sources: {exc}", file=sys.stderr)

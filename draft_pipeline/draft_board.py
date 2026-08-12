@@ -22,16 +22,19 @@ FIELD_DEFINITIONS = {
     ),
     "draft_slot": "The board column this pick belongs to, 1..teams.",
     "roster_id": (
-        "The Sleeper roster that receives the player — the current owner, which is not "
-        "the slot's original owner if the pick was traded."
+        "The team that receives the player (the ESPN team id) — the current owner, "
+        "which is not the slot's original owner if the pick was traded."
     ),
-    "user_id": "The Sleeper user that owns the pick. Null if the draft order is unpublished.",
-    "username": "That user's Sleeper display name. Null if the league user list was unreadable.",
+    "user_id": (
+        "The member that owns the pick (the ESPN SWID). Null if the draft order is "
+        "unpublished or the team has no member."
+    ),
+    "username": "That member's display name. Null if the member list was unreadable.",
     "is_mine": "True for the configured owner's picks (see `me` in the header).",
-    "status": "'made' — Sleeper has recorded a selection — or 'pending'.",
+    "status": "'made' — ESPN has recorded a selection — or 'pending'.",
     "sleeper_id": (
-        "Sleeper player id of the selection, as a string; null while pending. This is "
-        "the join key back to pool.json's sleeper_id."
+        "Sleeper player id of the selection, translated from the ESPN pick; null while "
+        "pending or unmatched. This is the join key back to pool.json's sleeper_id."
     ),
     "name": (
         "Sleeper's name for the selection, for reading the file by eye. Informational: "
@@ -39,7 +42,7 @@ FIELD_DEFINITIONS = {
     ),
     "position": "Sleeper's position for the selection. Informational, as above.",
     "team": "Sleeper's NFL team for the selection. Informational, as above.",
-    "is_keeper": "True when Sleeper flagged the pick as a keeper. False for a normal pick.",
+    "is_keeper": "True when ESPN flagged the pick as a keeper. False for a normal pick.",
 }
 
 
