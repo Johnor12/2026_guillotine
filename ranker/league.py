@@ -71,9 +71,10 @@ OPPONENT_BALANCE_STRENGTH = 2.0
 OPPONENT_DEPTH_TARGETS = {"QB": 2, "RB": 6, "WR": 6, "TE": 2}
 OPPONENT_DEPTH_PENALTY = 2.0
 # Flat source-rank multiplier per position; < 1 pulls the position up an opponent's
-# board. Empty until this league's own draft supplies replay evidence
-# (evaluate_opponents.py) — the previous league's RB tilt was fitted to its draft.
-OPPONENT_POSITION_TILT: dict[str, float] = {}
+# board. The RB tilt carries over from the previous league (fitted there at 0.67):
+# largely the same drafters, and they've expressed a strong preference for RBs.
+# Set at 0.75 pending this league's own replay evidence (evaluate_opponents.py).
+OPPONENT_POSITION_TILT: dict[str, float] = {"RB": 0.75}
 # Multiplier around each opponent's fitted source adherence: 1 reproduces the observed
 # mean log-rank loss before roster-balance adjustments, while 0 removes random variation.
 NOISE = 1.0
