@@ -12,6 +12,7 @@ uv run draft_pipeline/fetch_draft.py --selftest
 ## Internal boundaries
 
 - `fetch_draft.py`: the ESPN request, ESPN-to-board adaptation, and CLI orchestration
+- `draft_history.py`: parse a hand-pasted draft-room pick history and match it to Sleeper
 - `draft_board.py`: draft geometry, ownership, pick rows, and JSON document construction
 - `report.py`: integrity diagnostics and the optional `pool.json` join report
 - `selftest.py`: offline formats, reversal, trade, autopick, and malformed-board checks
@@ -29,6 +30,31 @@ The only on-disk input is the pool pipeline's cached Sleeper player dump, which 
 `espn_id` and translates ESPN player ids into `sleeper_id` (D/ST uses ESPN's fixed
 `-16000 - proTeamId` form and Sleeper's team-abbreviation DEF ids). Picks with no
 Sleeper match keep a null `sleeper_id` with a warning and join nothing in the pool.
+
+## Live-draft lag and the pick-history overlay
+
+ESPN's read API does not keep up with a running draft: in a live test, a pick made in
+the draft room stayed `playerId` -1 on `mDraftDetail` for many minutes (the origin
+itself, not an edge cache — the picks may only sync once the draft completes). The
+board layout, settings, and members are all still served correctly mid-draft; only the
+selections lag.
+
+So on draft day the room's pick history is copied by hand into `draft_history.txt` at
+the repo root and every fetch overlays it: `draft_history.py` parses the paste
+(records anchor on the position line, so the trailing fantasy-team/points/rank columns
+are ignored and cannot break it, and the `Pick` column is read as round-relative),
+matches players to the Sleeper dump by normalized name with position required and team
+as tiebreaker (D/ST by team abbreviation), and `fetch_draft.py` merges the result into
+the fetched board — any pick ESPN does report wins over the paste, and ownership comes
+from ESPN's laid-out board rather than the paste's team-name column. Delete or empty
+the file when it is stale; a malformed paste fails the fetch loudly.
+
+Check a paste by eye before a refresh consumes it:
+
+```bash
+uv run draft_pipeline/draft_history.py --teams 10
+uv run draft_pipeline/draft_history.py --selftest
+```
 
 `draft.json.picks` always contains every pick, indexed by gap-free `pick_no`. Made rows
 carry the matched Sleeper player fields. Pending rows carry null player fields but

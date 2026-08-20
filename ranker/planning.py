@@ -80,7 +80,9 @@ def _init_worker(
 
 def _worker_pool_size() -> int:
     # Four busy workers leave enough host headroom for sustained reranks.
-    return max(1, min(8, len(os.sched_getaffinity(0))))
+    # sched_getaffinity is Linux-only; on Windows fall back to the raw CPU count.
+    cpus = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else os.cpu_count()
+    return max(1, min(8, cpus or 1))
 
 
 def _target_map(plan: Sequence[int]) -> dict[int, Player]:

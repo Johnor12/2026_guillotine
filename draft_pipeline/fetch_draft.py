@@ -13,6 +13,11 @@ ESPN identifies players by its own ids; picks are joined back to `pool.json`'s
 carries `espn_id` for every fantasy-relevant player. D/ST picks use ESPN's fixed
 `-16000 - proTeamId` id form and Sleeper's team-abbreviation DEF ids.
 
+The read API lags the live draft (a made pick stays `playerId` -1 for minutes, maybe
+until the draft completes), so during a draft the room's pick history is hand-pasted
+into `draft_history.txt` at the repo root; when that file exists, its picks are parsed
+by `draft_history.py` and overlaid on the fetched board, ESPN-reported picks winning.
+
 Assumptions, stated instead of defended: the league drafts a plain snake (ESPN has no
 third-round reversal), picks are never traded (ESPN live drafts do not support it, so
 `traded_picks` is always empty), and the auth cookies below are current — ESPN answers
@@ -34,6 +39,7 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
+import draft_history
 import paths
 import report as draft_report
 from draft_board import Board, build_document, index_users, pick_number_problems, pick_rows
@@ -223,6 +229,40 @@ def adapt(league: dict, by_espn: dict, players: dict) -> dict:
     return {"draft": draft, "picks": picks, "traded": [], "users": users, "warning": warning}
 
 
+def overlay_history(text: str, fetched: dict, league: dict, board: Board, players: dict) -> str:
+    """Merge hand-pasted history picks into ``fetched['picks']``; ESPN picks win.
+
+    ESPN's read API lags the live draft, so the draft room's pick history is pasted
+    into ``draft_history.txt`` and carried in from there. Ownership still comes from
+    ESPN's laid-out board (unmade picks carry ``teamId`` too), so the derivation
+    check keeps running against what ESPN reports; the derived owner covers any pick
+    the layout misses. Raises ValueError on a malformed paste.
+    """
+    records = draft_history.parse(text, board.teams)
+    txt_picks, warnings = draft_history.as_picks(records, players)
+    for warning in warnings:
+        print(f"warning: {warning}", file=sys.stderr)
+
+    layout = {
+        int(pick["overallPickNumber"]): int(pick["teamId"])
+        for pick in (league.get("draftDetail") or {}).get("picks") or []
+    }
+    reported = {pick["pick_no"] for pick in fetched["picks"]}
+    added = 0
+    for pick in txt_picks:
+        if pick["pick_no"] in reported:
+            continue
+        if pick["pick_no"] in layout:
+            pick["roster_id"] = layout[pick["pick_no"]]
+        fetched["picks"].append(pick)
+        added += 1
+    fetched["picks"].sort(key=lambda pick: pick["pick_no"])
+    return (
+        f"history: {len(txt_picks)} picks in {paths.display(paths.DRAFT_HISTORY)}, "
+        f"{added} overlaid, {len(reported)} already reported by ESPN"
+    )
+
+
 def resolve_me(board: Board, by_user: dict[str, dict]) -> dict:
     """My slot and roster, straight from the SWID — no name matching needed."""
     slot = next((s for s, uid in board.slot_to_user.items() if uid == MY_SWID), None)
@@ -274,11 +314,23 @@ def main(argv: list[str] | None = None) -> int:
     try:
         fetched = adapt(league, by_espn, players)
         board = Board(fetched["draft"], fetched["traded"])
-        fatal, notable = pick_number_problems(fetched["picks"], board)
-        fatal = board.problems() + fatal
     except (KeyError, TypeError, ValueError) as exc:
         print(f"error: league {LEAGUE_ID} is not shaped as expected: {exc!r}", file=sys.stderr)
         return 1
+    fatal = board.problems()
+
+    if not fatal and paths.DRAFT_HISTORY.is_file():
+        try:
+            note = overlay_history(
+                paths.DRAFT_HISTORY.read_text(encoding="utf-8"), fetched, league, board, players
+            )
+        except ValueError as exc:
+            print(f"error: {paths.display(paths.DRAFT_HISTORY)}: {exc}", file=sys.stderr)
+            return 1
+        print(note, file=sys.stderr)
+
+    problems, notable = pick_number_problems(fetched["picks"], board)
+    fatal += problems
     if fatal:
         for problem in fatal:
             print(f"error: {problem}", file=sys.stderr)

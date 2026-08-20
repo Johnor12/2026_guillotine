@@ -44,7 +44,9 @@ data_source_investigator/ ────> data_source_matches.json
 The published files have distinct owners:
 
 - `pool.json`: ~420 projection-backed QB/RB/WR/TE players, keyed to Sleeper
-- `draft.json`: all 120 made and pending picks from the ESPN league API
+- `draft.json`: all 120 made and pending picks from the ESPN league API, with made
+  picks overlaid from a hand-pasted `draft_history.txt` during the live draft
+  (ESPN's read API lags the draft room by minutes or more)
 - `data_source_matches.json`: the provider board closest to each opponent's picks
 - `rankings.json`: undrafted-player rankings, recommendations, simulations, and validation
 
@@ -88,7 +90,9 @@ Refresh ranking snapshots and opponent associations:
 uv run data_source_investigator/pipeline.py --report
 ```
 
-Refresh the live board and recommendations between picks:
+Refresh the live board and recommendations between picks — first copy the draft
+room's pick history into `draft_history.txt` (ESPN's API alone won't have the new
+picks yet), then:
 
 ```bash
 uv run refresh.py --report
