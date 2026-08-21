@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-20T00:59:50+00:00",
+  "generated_at": "2026-08-21T00:25:04+00:00",
   "draft": {
     "draft_id": "1900421374",
     "draft_fetched_at": "2026-08-20T00:59:50+00:00",
@@ -7,8 +7,8 @@
     "picks_analyzed": 2
   },
   "ranking_snapshot": {
-    "generated_at": "2026-08-12T00:38:57+00:00",
-    "source_count": 5,
+    "generated_at": "2026-08-21T00:24:54+00:00",
+    "source_count": 7,
     "sources": [
       {
         "id": "fantasycalc",
@@ -43,7 +43,21 @@
         "name": "DraftSharks ADP",
         "format": "1QB half-PPR ADP from pool.json",
         "fetched_at": null,
-        "player_count": 417
+        "player_count": 217
+      },
+      {
+        "id": "sleeper_adp",
+        "name": "Sleeper ADP",
+        "format": "half-PPR redraft ADP from the pool pipeline's Sleeper projections",
+        "fetched_at": "2026-08-20T23:42:25+00:00",
+        "player_count": 218
+      },
+      {
+        "id": "consensus",
+        "name": "Consensus Average",
+        "format": "mean provider rank across the other 6 sources",
+        "fetched_at": null,
+        "player_count": 217
       }
     ]
   },
@@ -144,6 +158,64 @@
               "availability_rank": 1,
               "skipped_count": 0,
               "higher_ranked_available": []
+            }
+          ]
+        },
+        {
+          "source_id": "sleeper_adp",
+          "source_name": "Sleeper ADP",
+          "fit_score": 100.0,
+          "picks": 1,
+          "matched_picks": 1,
+          "coverage": 1.0,
+          "mean_availability_rank": 1.0,
+          "median_availability_rank": 1,
+          "top_available_rate": 1.0,
+          "top_3_available_rate": 1.0,
+          "mean_log2_loss": 0.0,
+          "evidence": [
+            {
+              "pick_no": 1,
+              "round": 1,
+              "player": "Jahmyr Gibbs",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 1,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            }
+          ]
+        },
+        {
+          "source_id": "consensus",
+          "source_name": "Consensus Average",
+          "fit_score": 79.4,
+          "picks": 1,
+          "matched_picks": 1,
+          "coverage": 1.0,
+          "mean_availability_rank": 2.0,
+          "median_availability_rank": 2,
+          "top_available_rate": 0.0,
+          "top_3_available_rate": 1.0,
+          "mean_log2_loss": 1.0,
+          "evidence": [
+            {
+              "pick_no": 1,
+              "round": 1,
+              "player": "Jahmyr Gibbs",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 2,
+              "availability_rank": 2,
+              "skipped_count": 1,
+              "higher_ranked_available": [
+                {
+                  "name": "Bijan Robinson",
+                  "position": "RB",
+                  "overall_rank": 1
+                }
+              ]
             }
           ]
         },
@@ -263,8 +335,8 @@
         }
       ],
       "inferred_source": {
-        "source_id": "draftsharks_adp",
-        "source_name": "DraftSharks ADP",
+        "source_id": "consensus",
+        "source_name": "Consensus Average",
         "fit_score": 100.0,
         "picks": 1,
         "matched_picks": 1,
@@ -276,8 +348,8 @@
         "mean_log2_loss": 0.0
       },
       "runner_up": {
-        "source_id": "fantasycalc",
-        "source_name": "FantasyCalc",
+        "source_id": "draftsharks_adp",
+        "source_name": "DraftSharks ADP",
         "fit_score": 100.0,
         "picks": 1,
         "matched_picks": 1,
@@ -291,6 +363,32 @@
       "confidence": "insufficient",
       "score_gap": 0.0,
       "provider_scores": [
+        {
+          "source_id": "consensus",
+          "source_name": "Consensus Average",
+          "fit_score": 100.0,
+          "picks": 1,
+          "matched_picks": 1,
+          "coverage": 1.0,
+          "mean_availability_rank": 1.0,
+          "median_availability_rank": 1,
+          "top_available_rate": 1.0,
+          "top_3_available_rate": 1.0,
+          "mean_log2_loss": 0.0,
+          "evidence": [
+            {
+              "pick_no": 2,
+              "round": 1,
+              "player": "Bijan Robinson",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 1,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            }
+          ]
+        },
         {
           "source_id": "draftsharks_adp",
           "source_name": "DraftSharks ADP",
@@ -415,6 +513,32 @@
               "position": "RB",
               "matched": true,
               "overall_rank": 1,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            }
+          ]
+        },
+        {
+          "source_id": "sleeper_adp",
+          "source_name": "Sleeper ADP",
+          "fit_score": 100.0,
+          "picks": 1,
+          "matched_picks": 1,
+          "coverage": 1.0,
+          "mean_availability_rank": 1.0,
+          "median_availability_rank": 1,
+          "top_available_rate": 1.0,
+          "top_3_available_rate": 1.0,
+          "mean_log2_loss": 0.0,
+          "evidence": [
+            {
+              "pick_no": 2,
+              "round": 1,
+              "player": "Bijan Robinson",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 2,
               "availability_rank": 1,
               "skipped_count": 0,
               "higher_ranked_available": []

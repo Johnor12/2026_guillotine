@@ -70,7 +70,9 @@ or two on-board picks otherwise fit a near-deterministic policy.
 `OPPONENT_POSITION_TILT` is empty until this league's own draft supplies replay
 evidence (`evaluate_opponents.py`); the previous league's RB tilt was fitted to its
 draft, not this one. Missing provider
-players are appended in DraftSharks ADP order; opponents never fall back to my board.
+players are appended in consensus-average order (the investigator's `consensus`
+source, which also models opponents with no observed picks); opponents never fall
+back to my board.
 
 My simulated pick policy does not use those targets or any other positional roster-size
 heuristic beyond the caps. Positional depth is priced only by projected expected-lineup

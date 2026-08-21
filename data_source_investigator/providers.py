@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import json
+import statistics
 from pathlib import Path
 from typing import Callable
 
@@ -167,6 +168,53 @@ def draftsharks_adp(pool: dict) -> list[dict]:
             raw.get("sleeper_id"),
         )
         for rank, raw in enumerate(available, start=1)
+    ]
+
+
+def sleeper_adp(projections: dict) -> list[dict]:
+    """Sleeper's half-PPR redraft ADP from the pool pipeline's projections snapshot."""
+    rows = [
+        raw
+        for raw in projections["players"]
+        if raw["position"] in POSITIONS
+        and raw.get("adp") is not None
+        and raw["adp"] < 999.0  # Sleeper's "undrafted" sentinel
+    ]
+    rows.sort(key=lambda raw: (raw["adp"], raw["name"]))
+    return [
+        player(rank, raw["name"], raw["position"], raw.get("team"), raw["adp"], raw["sleeper_id"])
+        for rank, raw in enumerate(rows, start=1)
+    ]
+
+
+def consensus(sources: list[dict], pool: dict) -> list[dict]:
+    """Average provider rank per pool player, over the sources that rank him.
+
+    Rows join by resolved sleeper_id, so only pool players participate. Every pool
+    player carries a DraftSharks ADP, so draftsharks_adp alone already guarantees
+    full pool coverage; a player absent from a shallower source simply averages
+    over the sources that do rank him.
+    """
+    ranks: dict[str, list[int]] = {}
+    for source in sources:
+        for row in source["players"]:
+            if row["sleeper_id"] is not None:
+                ranks.setdefault(row["sleeper_id"], []).append(row["rank"])
+    by_id = {str(row["sleeper_id"]): row for row in pool["players"]}
+    averaged = sorted(
+        ((statistics.fmean(found), sleeper_id) for sleeper_id, found in ranks.items()),
+        key=lambda item: (item[0], by_id[item[1]]["name"]),
+    )
+    return [
+        player(
+            rank,
+            by_id[sleeper_id]["name"],
+            by_id[sleeper_id]["position"],
+            by_id[sleeper_id].get("team"),
+            round(mean, 2),
+            sleeper_id,
+        )
+        for rank, (mean, sleeper_id) in enumerate(averaged, start=1)
     ]
 
 

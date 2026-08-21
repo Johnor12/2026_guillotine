@@ -3,7 +3,10 @@
 
 Built-in inputs come from ``fetch_rankings.py``. Any ``data/manual/*.csv`` file
 is treated as another provider; its required columns are ``rank,name,position``
-and its optional columns are ``team,sleeper_id,value``.
+and its optional columns are ``team,sleeper_id,value``. Three sources are derived
+rather than fetched: DraftSharks ADP from ``pool.json``, Sleeper ADP from the pool
+pipeline's projections snapshot, and a consensus board averaging every other
+source's rank per pool player.
 
 Usage:
     uv run data_source_investigator/build_rankings.py
@@ -22,11 +25,17 @@ import paths
 from identity import PlayerResolver
 from providers import (
     PARSERS,
+    consensus,
     draftsharks_adp,
     drop_ambiguous_identities,
     parse_manual,
+    sleeper_adp,
     validate,
 )
+
+#: Source ids assembled here rather than parsed from data/raw; manual CSVs may not
+#: reuse them.
+DERIVED_SOURCE_IDS = ("draftsharks_adp", "sleeper_adp", "consensus")
 
 def write_json(path: Path, payload: dict, indent: int) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -42,6 +51,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--raw", type=Path, default=paths.RAW)
     ap.add_argument("--manual", type=Path, default=paths.MANUAL)
     ap.add_argument("--pool", type=Path, default=paths.POOL)
+    ap.add_argument("--sleeper", type=Path, default=paths.SLEEPER_PROJECTIONS)
     ap.add_argument("-o", "--output", type=Path, default=paths.RANKINGS)
     ap.add_argument("--report", action="store_true")
     ap.add_argument("--indent", type=int, default=2)
@@ -105,7 +115,7 @@ def main(argv: list[str] | None = None) -> int:
     manual_paths = sorted(args.manual.glob("*.csv")) if args.manual.exists() else []
     for source_path in manual_paths:
         source_id = source_path.stem
-        if source_id in PARSERS or source_id == "draftsharks_adp":
+        if source_id in PARSERS or source_id in DERIVED_SOURCE_IDS:
             failures.append(f"manual source id {source_id!r} conflicts with a built-in source")
             continue
         try:
@@ -154,6 +164,28 @@ def main(argv: list[str] | None = None) -> int:
         }
     )
 
+    try:
+        projections = json.loads(args.sleeper.read_text())
+        sleeper_rows = sleeper_adp(projections)
+        for row in sleeper_rows:
+            row["sleeper_id"] = resolver.resolve(row)
+        sources.append(
+            {
+                "id": "sleeper_adp",
+                "name": "Sleeper ADP",
+                "url": None,
+                "format": "half-PPR redraft ADP from the pool pipeline's Sleeper projections",
+                "fetched_at": projections.get("fetched_at"),
+                "player_count": len(sleeper_rows),
+                "matched_to_sleeper": sum(
+                    row["sleeper_id"] is not None for row in sleeper_rows
+                ),
+                "players": sleeper_rows,
+            }
+        )
+    except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
+        failures.append(f"sleeper_adp: {exc}")
+
     if failures:
         print("ranking normalization failed:", file=sys.stderr)
         for failure in failures:
@@ -162,6 +194,21 @@ def main(argv: list[str] | None = None) -> int:
     if len(sources) < 2:
         print("need at least two ranking sources to compare", file=sys.stderr)
         return 1
+
+    # Built last so the average spans every other source, manual boards included.
+    consensus_rows = consensus(sources, pool)
+    sources.append(
+        {
+            "id": "consensus",
+            "name": "Consensus Average",
+            "url": None,
+            "format": f"mean provider rank across the other {len(sources)} sources",
+            "fetched_at": None,
+            "player_count": len(consensus_rows),
+            "matched_to_sleeper": len(consensus_rows),
+            "players": consensus_rows,
+        }
+    )
 
     payload = {
         "generated_at": dt.datetime.now(dt.UTC).isoformat(timespec="seconds"),

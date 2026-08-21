@@ -3,8 +3,10 @@
 Each opponent uses the provider board that best fits their picks in
 ``data_source_matches.json``. Provider ranks are joined to the pool by Sleeper id, then
 by conservative name variants when a normalized source row lacks that id. A provider's
-uncovered tail follows DraftSharks ADP so every mandatory pick remains possible without
-ever falling back to this ranker's projections or board.
+uncovered tail follows the consensus board (the mean rank across every other source),
+which also serves as the cold-start source before an opponent has picked, so every
+mandatory pick remains possible without ever falling back to this ranker's projections
+or board.
 """
 
 from __future__ import annotations
@@ -162,13 +164,13 @@ def build_opponent_strategies(
         raise ValueError("every pool player needs a unique sleeper_id for opponent boards")
 
     sources = {source["id"]: source for source in rankings["sources"]}
-    fallback = sources.get("draftsharks_adp")
+    fallback = sources.get("consensus")
     if fallback is None:
-        raise ValueError("rankings have no draftsharks_adp tail fallback")
+        raise ValueError("rankings have no consensus tail fallback")
     fallback_order = _source_order(fallback, by_sleeper)
     if len(fallback_order) != len(players):
         raise ValueError(
-            f"draftsharks_adp covers {len(fallback_order)}/{len(players)} pool players"
+            f"consensus covers {len(fallback_order)}/{len(players)} pool players"
         )
 
     owner_matches = {owner["roster_id"]: owner for owner in matches["owners"]}

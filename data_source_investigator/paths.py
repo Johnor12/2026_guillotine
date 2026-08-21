@@ -18,6 +18,10 @@ REPORT = REPO_ROOT / "data_source_matches.json"
 DRAFT = REPO_ROOT / "draft.json"
 POOL = REPO_ROOT / "pool.json"
 
+#: The pool pipeline's committed Sleeper projections snapshot; its ``adp`` field
+#: feeds the sleeper_adp ranking source.
+SLEEPER_PROJECTIONS = REPO_ROOT / "pool_pipeline" / "data" / "sleeper_projections.json"
+
 
 def display(path: Path) -> str:
     try:

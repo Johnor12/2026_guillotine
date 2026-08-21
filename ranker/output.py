@@ -288,8 +288,9 @@ def build_payload(
             ),
             "coverage": (
                 "A provider's normalized players come first. Any pool player it does not "
-                "rank is appended in DraftSharks ADP order so all 120 picks remain possible; "
-                "the fallback is still an external opponent board, never my personal board."
+                "rank is appended in consensus-average order so all 120 picks remain "
+                "possible; the fallback is still an external opponent board, never my "
+                "personal board."
             ),
             "delta": (
                 "opponent_consensus_rank averages the nine managers' complete source "
