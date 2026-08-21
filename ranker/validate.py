@@ -134,9 +134,10 @@ def validate(
     # coincides with any single draft's level, which a long cycle can genuinely straddle.
     pos = pos_sorted(players)
     for k in POSITIONS:
+        # The stored range is rounded to 0.1, so allow half a rounding step.
         lo, hi = history["cycle_wire_range"][k]
         check(
-            lo - 1e-6 <= stream[k] <= hi + 1e-6,
+            lo - 0.05 - 1e-6 <= stream[k] <= hi + 0.05 + 1e-6,
             f"{k} wire {stream[k]:.1f} outside its cycle range [{lo}, {hi}]",
         )
         check(

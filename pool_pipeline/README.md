@@ -8,9 +8,10 @@ refresh.
 
 ```text
 data/projections.html
-  -> parse_projections.py -> data/projections.json
-  -> build_pool.py        -> ../pool.json
-  -> match_sleeper.py     -> ../pool.json with sleeper_id
+  -> parse_projections.py     -> data/projections.json
+  -> build_pool.py            -> ../pool.json
+  -> match_sleeper.py         -> ../pool.json with sleeper_id
+  -> apply_sleeper_points.py  -> ../pool.json re-priced from data/sleeper_projections.json
 ```
 
 `pipeline.py` runs those stages in order and stops on the first failure. Every stage is
@@ -22,6 +23,7 @@ uv run pool_pipeline/pipeline.py --only pool
 uv run pool_pipeline/parse_projections.py in.html -o out.json
 uv run pool_pipeline/build_pool.py --limit 450 -o big.json
 uv run pool_pipeline/match_sleeper.py --report
+uv run pool_pipeline/apply_sleeper_points.py --report
 uv run pool_pipeline/fetch_sleeper.py
 uv run pool_pipeline/fetch_sleeper_projections.py
 ```
@@ -33,6 +35,8 @@ the small metadata file records when it was fetched.
 `fetch_sleeper_projections.py` is also manual: it writes `data/sleeper_projections.json`,
 the top 250 players by Sleeper/Rotowire season projection (no kickers) with half-PPR ADP,
 scored with the league's own settings so the numbers match the league players page.
+`apply_sleeper_points.py` (stage 4) then reads that committed file — refetch it when the
+projections should move.
 
 ## File contracts
 
@@ -42,15 +46,18 @@ ranks in the saved HTML are stale; consumers use the gap-free ranks derived from
 The saved page is the provider's dynasty export; this league consumes only its one-season
 projection, which is an ordinary season projection.
 
-`pool.json` is the narrow draft input: every usable QB/RB/WR/TE player, with 11
-fields per player. The ranker uses projected points, not DraftSharks' provider-scaled 3D
-value.
+`pool.json` is the narrow draft input: every QB/RB/WR/TE player both sources know
+(~217 — DraftSharks' pool intersected with Sleeper's top-250 projection list), with 11
+fields per player. DraftSharks supplies identity and ADP; Sleeper supplies the value
+column. The ranker uses projected points, not DraftSharks' provider-scaled 3D value.
 
-- `points`: one-season points in this league's scoring (0.5/rec, no TE premium),
-  copied from the provider's `half_ppr` column for every position
+- `points`: one-season points in this league's own Sleeper scoring settings, joined
+  from `data/sleeper_projections.json` on `sleeper_id` by stage 4. Stage 2 first fills
+  the column from the provider's `half_ppr`, but stage 4 replaces it — the two point
+  scales never mix, so players without a Sleeper projection are dropped there
 - `adp`: overall 1QB ADP decoded from the provider's 12-team round.pick notation
-- `sleeper_id`: the join key used by the live draft and investigator
-- `rank`: descending `points`, with the provider's overall rank breaking ties
+- `sleeper_id`: the join key used by stage 4, the live draft, and the investigator
+- `rank`: descending `points`; ties keep the previous pool order
 
 ## Sleeper matching
 

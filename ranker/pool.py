@@ -77,6 +77,7 @@ def load_pool(path: Path) -> tuple[list[Player], dict]:
         "source_file": str(path),
         "source_player_count": raw.get("player_count", len(raw["players"])),
         "source_of_pool": raw.get("source_file"),
+        "points_source": (raw.get("points_source") or {}).get("file"),
         "pool_size": len(players),
         "by_position": counts,
         # The join key to draft.json. A pool player without one can never be recognised

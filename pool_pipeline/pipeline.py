@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Run the data build: projections.html -> projections.json -> pool.json (+ sleeper ids).
+"""Run the data build: projections.html -> projections.json -> pool.json (+ sleeper ids + points).
 
-Three stages, in order:
+Four stages, in order:
 
-    1. parse_projections.py   html  -> json   full provider export, 900 players, 8 schemes
-    2. build_pool.py          json  -> json   this league's 350-player pool, one value column
-    3. match_sleeper.py       pool.json       adds each player's Sleeper id, in place
+    1. parse_projections.py     html  -> json   full provider export, 900 players, 8 schemes
+    2. build_pool.py            json  -> json   this league's pool, one value column
+    3. match_sleeper.py         pool.json       adds each player's Sleeper id, in place
+    4. apply_sleeper_points.py  pool.json       re-prices points from sleeper_projections.json
 
 Everything the build reads and every intermediate it writes lives in this folder;
 the one file it publishes is ``pool.json`` at the repo root, which is what
@@ -14,17 +15,21 @@ the one file it publishes is ``pool.json`` at the repo root, which is what
 Stage 1 is the faithful record of what the provider published and is never narrowed;
 stage 2 is the narrow, draft-ready view. Keeping them separate is what makes stage 2
 re-runnable (different rank limit, different scoring) without re-parsing 8 MB of html,
-and what leaves the dropped columns recoverable. Stage 3 has to come last because
-stage 2 rewrites pool.json from scratch, dropping the ids stage 3 adds.
+and what leaves the dropped columns recoverable. Stage 3 has to follow stage 2 because
+stage 2 rewrites pool.json from scratch, dropping the ids stage 3 adds; stage 4 joins
+on those ids, so it comes last.
 
-**Stage 3 never downloads.** It joins against a cached copy of Sleeper's ~14 MB player
-dump, pulled by hand with ``fetch_sleeper.py`` — Sleeper asks for at most one call a
-day, and a roster of NFL players is not something a rebuild of local projections needs
-to re-ask for. With no dump present the stage warns and is skipped, and pool.json is
-still complete except for ``sleeper_id``. Running ``--only sleeper`` makes it an error
-instead, since there the dump is the whole point of the run.
+**Stages 3 and 4 never download.** Stage 3 joins against a cached copy of Sleeper's
+~14 MB player dump, pulled by hand with ``fetch_sleeper.py`` — Sleeper asks for at most
+one call a day, and a roster of NFL players is not something a rebuild of local
+projections needs to re-ask for. With no dump present the stage warns and is skipped,
+which then fails stage 4 loudly: without ids there is nothing to join the projections
+on. Running ``--only sleeper`` makes the missing dump an error instead, since there the
+dump is the whole point of the run. Stage 4 reads the committed
+``data/sleeper_projections.json``, refreshed by hand with
+``fetch_sleeper_projections.py``.
 
-All four scripts remain usable as standalone CLIs — this only fixes the order and stops
+All scripts remain usable as standalone CLIs — this only fixes the order and stops
 on the first failure.
 
 Ranking (`rank.py`) is deliberately not a stage here: it consumes pool.json, takes a
@@ -35,7 +40,9 @@ Usage:
     uv run pool_pipeline/pipeline.py --report             # + every stage's validation summary
     uv run pool_pipeline/pipeline.py --only pool          # single stage
     uv run pool_pipeline/pipeline.py --only sleeper       # re-join ids onto an existing pool.json
+    uv run pool_pipeline/pipeline.py --only points        # re-price an existing pool.json
     uv run pool_pipeline/fetch_sleeper.py                 # refresh the Sleeper dump (manual)
+    uv run pool_pipeline/fetch_sleeper_projections.py     # refresh Sleeper projections (manual)
 """
 
 from __future__ import annotations
@@ -45,12 +52,13 @@ import sys
 import time
 from pathlib import Path
 
+import apply_sleeper_points
 import build_pool
 import match_sleeper
 import parse_projections as parse
 import paths
 
-STAGES = ("parse", "pool", "sleeper")
+STAGES = ("parse", "pool", "sleeper", "points")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -90,6 +98,7 @@ def main(argv: list[str] | None = None) -> int:
         "parse": (parse.main, [str(args.input), "-o", str(args.projections), *shared]),
         "pool": (build_pool.main, [str(args.projections), "-o", str(args.output), *shared]),
         "sleeper": (match_sleeper.main, sleeper_argv),
+        "points": (apply_sleeper_points.main, [str(args.output), *shared]),
     }
     selected = [args.only] if args.only else list(STAGES)
 

@@ -43,7 +43,8 @@ data_source_investigator/ ────> data_source_matches.json
 
 The published files have distinct owners:
 
-- `pool.json`: ~420 projection-backed QB/RB/WR/TE players, keyed to Sleeper
+- `pool.json`: ~220 QB/RB/WR/TE players keyed to Sleeper, priced by Sleeper's
+  league-scored season projections (identity and ADP from DraftSharks)
 - `draft.json`: all 120 made and pending picks from the ESPN league API, with made
   picks overlaid from a hand-pasted `draft_history.txt` during the live draft
   (ESPN's read API lags the draft room by minutes or more)
@@ -81,6 +82,13 @@ adjustments and fitted choice noise. Opponent picks never use my projections or 
 Rebuild the projection pool after saving updated provider HTML:
 
 ```bash
+uv run pool_pipeline/pipeline.py --report
+```
+
+Re-price the pool after refetching Sleeper projections:
+
+```bash
+uv run pool_pipeline/fetch_sleeper_projections.py
 uv run pool_pipeline/pipeline.py --report
 ```
 
