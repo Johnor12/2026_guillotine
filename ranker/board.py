@@ -16,12 +16,13 @@ exactly that.
 
 Two facts about a live board this cannot value:
 
-  * A pick can land on a player the pool does not carry — a kicker, an IDP, anyone past
-    the pool's 350-player cut. There is no projection to price him with, so he is held
-    as an `off_pool` roster entry: he fills a spot (so the team owes one fewer pick) and
-    satisfies a mandatory position (a rostered QB means the team no longer needs one),
-    but he never starts and is never worth anything. That is the right treatment for a
-    kicker and a slight understatement for a real player just past the cut.
+  * A pick can land on a player the pool does not carry — the D/ST every team drafts,
+    a kicker, an IDP, anyone past the pool's 350-player cut. There is no projection to
+    price him with, so he is held as an `off_pool` roster entry: he fills a spot (so the
+    team owes one fewer pick) and satisfies a mandatory position (a rostered QB means
+    the team no longer needs one), but he never starts and is never worth anything. That
+    is the right treatment for a D/ST and a slight understatement for a real player just
+    past the cut.
   * Made picks are facts, not decisions, so they are never re-valued. If a team reached,
     the board takes that as given and prices what is left.
 """
@@ -99,8 +100,8 @@ def load_board(
 
     The join is on `sleeper_id`, the one key the two pipelines share — `match_sleeper.py`
     writes it into every pool player and every made pick in `draft.json` carries it. A
-    made pick with no match in the pool is not an error: kickers, IDP and anyone past the
-    pool's rank cut are draftable and unrankable at the same time, so they become
+    made pick with no match in the pool is not an error: D/STs, kickers, IDP and anyone
+    past the pool's rank cut are draftable and unrankable at the same time, so they become
     `off_pool` entries (see the module docstring).
 
     Geometry disagreements with the configured league are reported rather than raised.

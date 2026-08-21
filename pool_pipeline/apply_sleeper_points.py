@@ -14,7 +14,8 @@ DraftSharks says 379, and a mixed column would corrupt every replacement-level
 comparison), so a pool player with no Sleeper projection is dropped, not left at his
 DraftSharks number. ``sleeper_projections.json`` carries Sleeper's top 250 by points,
 so the pool narrows to the players both sources know — ~217 of 417, still ~100 past
-the 120-pick draft. Raise ``TOP_N`` in ``fetch_sleeper_projections.py`` if a deeper
+the draft's 120 offensive picks. Raise ``TOP_N`` in ``fetch_sleeper_projections.py``
+if a deeper
 tail is ever needed.
 
 Sleeper players the pool cannot represent (no DraftSharks row, or an id the matcher

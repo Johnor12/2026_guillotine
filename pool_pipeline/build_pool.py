@@ -6,7 +6,8 @@ Stage 2 of the build. ``parse_projections.py`` produces the full provider export
 10-team 0.5 PPR redraft. This narrows it to what a draft board actually
 consumes and drops everything else:
 
-    900 players  ->  QB/RB/WR/TE only         (K and IDP have no roster slot)
+    900 players  ->  QB/RB/WR/TE only         (K and IDP have no roster slot; the
+                                               drafted D/ST has no source rows at all)
                  ->  a usable one-season point total (~417 players; all of them kept)
 
     8 schemes x 4 horizons  ->  one column: one-season points in this league's scoring
@@ -68,7 +69,7 @@ POINTS_FIELD = "points"
 POSITIONS = ("QB", "RB", "WR", "TE")
 
 #: Effectively no cut: only ~417 of the 900 source rows are offensive players with a
-#: usable projection, and a 12-round draft takes 120 of them.
+#: usable projection, and the draft takes 120 of them (the D/ST round takes none).
 RANK_LIMIT = 1000
 
 #: The published 1QB column that prices this league's 0.5/rec for every position.

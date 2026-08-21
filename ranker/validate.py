@@ -42,8 +42,8 @@ def validate(
     # only apply to the README's own geometry; a reconfigured test draft has no external
     # pin to check the snake against.
     full = picks_for_slot(board.my_slot, draft_order())
-    if (league.TEAMS, league.ROUNDS, board.my_slot) == (10, 12, 2):
-        readme = ["1.02", "2.09", "3.02", "4.09", "5.02", "6.09", "11.02", "12.09"]
+    if (league.TEAMS, league.ROUNDS, board.my_slot) == (10, 13, 2):
+        readme = ["1.02", "2.09", "3.02", "4.09", "5.02", "6.09", "12.09", "13.02"]
         labels = [pick_label(p) for p in full]
         check(labels[:6] == readme[:6], f"draft order head {labels[:6]} != README {readme[:6]}")
         check(

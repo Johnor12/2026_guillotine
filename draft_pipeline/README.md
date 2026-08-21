@@ -74,7 +74,8 @@ it was for Sleeper:
 - traded ownership is applied by round and the pick's original roster.
 
 This league is a plain snake with no reversal round: odd rounds run forward, even
-rounds reverse. Slot 2 therefore owns 1.02, 2.09, 3.02, 4.09, …, 12.09 before trades.
+rounds reverse. Slot 2 therefore owns 1.02, 2.09, 3.02, 4.09, …, 12.09, 13.02 before
+trades.
 ESPN live drafts cannot trade picks, so `traded_picks` is always empty. (The reversal
 and trade logic stay in the code and self-test because `draft_board.py` still supports
 them.)

@@ -6,6 +6,7 @@ from . import league
 from .board import Board
 from .league import (
     CANDIDATE_SURVIVAL_FLOOR,
+    DST_SLOTS,
     FIRST_PICK_PER_POS,
     IR_SLOTS,
     LOOKAHEAD_PICKS,
@@ -175,6 +176,7 @@ def build_payload(
         "league": {
             "teams": league.TEAMS,
             "starting_slots": STARTING_SLOTS,
+            "dst_slots": DST_SLOTS,
             "bench_slots": league.BENCH_SLOTS,
             "ir_slots": IR_SLOTS,
             "max_positions": MAX_POSITIONS,
@@ -274,8 +276,9 @@ def build_payload(
                 "targets": OPPONENT_DEPTH_TARGETS,
                 "penalty_per_extra_player": OPPONENT_DEPTH_PENALTY,
                 "note": (
-                    "The penalty starts past what a 12-spot redraft roster ordinarily "
-                    "carries at each position. This adjusts opponent source rank only; "
+                    "The penalty starts past what a roster with 12 offensive spots "
+                    "ordinarily carries at each position. This adjusts opponent source "
+                    "rank only; "
                     "the hard limits are max_positions, which every roster obeys."
                 ),
             },

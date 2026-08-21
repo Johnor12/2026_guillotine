@@ -1,8 +1,9 @@
 """This league's shape (from README.md) and the strategy constants.
 
 10 teams, 0.5 PPR redraft, 1 QB. Starters are 1 QB / 2 RB / 2 WR / 1 TE /
-2 W-R-T = 8. Then 4 bench = 12 draftable roster spots = 12 rounds = 120 picks.
-The 1 IR spot is not drafted into. Plain snake, no reversal.
+2 W-R-T = 8, plus 1 D/ST the offense-only model does not price. Then 4 bench
+= 13 draftable roster spots = 13 rounds = 130 picks. The 1 IR spot is not
+drafted into. Plain snake, no reversal.
 
 The geometry (teams, rounds, my slot, and everything derived from them) is a default:
 draft.json is authoritative, and `configure_from_draft()` rebinds it before any board
@@ -24,11 +25,15 @@ STARTING_SLOTS = {"QB": 1, "RB": 2, "WR": 2, "TE": 1, "FLEX": 2}
 DEDICATED_SLOTS = {"QB": 1, "RB": 2, "WR": 2, "TE": 1}
 # Sleeper's per-position roster caps: the draft room refuses a pick past these.
 MAX_POSITIONS = {"QB": 4, "RB": 8, "WR": 8, "TE": 3}
+# The D/ST starter is drafted but outside the offense-only model: the pool carries no
+# D/ST, so a made D/ST pick lands off_pool, while a pending one is simulated as an
+# ordinary offensive pick — one extra bench body per team, accepted as noise.
+DST_SLOTS = 1
 BENCH_SLOTS = 4
 IR_SLOTS = 1  # not drafted into
-ROSTER_SLOTS = sum(STARTING_SLOTS.values()) + BENCH_SLOTS  # 12
+ROSTER_SLOTS = sum(STARTING_SLOTS.values()) + DST_SLOTS + BENCH_SLOTS  # 13
 ROUNDS = ROSTER_SLOTS
-TOTAL_PICKS = TEAMS * ROUNDS  # 120
+TOTAL_PICKS = TEAMS * ROUNDS  # 130
 
 # Most restrictive slot first: a dedicated slot is always the cheapest place to put a
 # player, which is what lets the greedy lineup solver be exact; --selftest checks that
@@ -56,7 +61,7 @@ SLOT_ELIGIBLE = {
 def configure(teams: int, rounds: int, my_slot: int) -> None:
     """Rebind the geometry to a draft's actual shape. Strategy knobs are untouched."""
     global TEAMS, MY_SLOT, ROUNDS, ROSTER_SLOTS, BENCH_SLOTS, TOTAL_PICKS
-    starters = sum(STARTING_SLOTS.values())
+    starters = sum(STARTING_SLOTS.values()) + DST_SLOTS
     if rounds < starters:
         raise ValueError(f"{rounds} rounds cannot fill the {starters} starting slots")
     if rounds > sum(MAX_POSITIONS.values()):
@@ -102,8 +107,8 @@ LOOKAHEAD_PICKS = 4
 # the boost fades linearly as that position's dedicated starters are filled.
 OPPONENT_BALANCE_STRENGTH = 2.0
 # Opponents become increasingly reluctant to add players beyond these comfortable depths.
-# The penalty starts at the 3rd QB/TE and the 7th RB/WR — past what a 12-spot redraft
-# roster ordinarily carries — so it only prices the extremes, and the position caps in
+# The penalty starts at the 3rd QB/TE and the 7th RB/WR — past what a roster with 12
+# offensive spots ordinarily carries — so it only prices the extremes, and the caps in
 # MAX_POSITIONS remain the hard limits. My slot never uses this heuristic.
 OPPONENT_DEPTH_TARGETS = {"QB": 2, "RB": 6, "WR": 6, "TE": 2}
 OPPONENT_DEPTH_PENALTY = 2.0
@@ -129,7 +134,7 @@ def draft_order(teams: int | None = None, rounds: int | None = None) -> list[int
     """Slot (1-based) picking at each overall pick. Plain snake, no reversal.
 
     Odd rounds forward, even rounds reverse. Pinned to the README's stated picks for
-    slot 2 (1.02, 2.09, 3.02, 4.09, ..., 11.02, 12.09) in validate(). Defaults resolve
+    slot 2 (1.02, 2.09, 3.02, 4.09, ..., 12.09, 13.02) in validate(). Defaults resolve
     at call time so a configure() rebind is honored.
     """
     teams = TEAMS if teams is None else teams

@@ -501,7 +501,7 @@ function renderMyRoster(d) {
   document.getElementById("rosterTitle").textContent = `Your projected final team · ${mine.team}`;
   document.getElementById("myOutlook").replaceChildren(
     metric("Projected starters", fmt(outlook.lineup.points), "8-player optimal lineup"),
-    metric("Roster", `${mine.players} players`, "12 drafted spots"));
+    metric("Roster", `${mine.players} players`, "13 drafted spots"));
   const starts = Object.entries(d.league.starting_slots).map(([slot, count]) => `${count}${slot}`).join(" · ");
   document.getElementById("rosterMeta").textContent =
     `${mine.players} players · starts ${starts}`;

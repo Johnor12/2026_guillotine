@@ -58,3 +58,56 @@ John's Stout Team4
 359.9
 326.7
 5
+6
+
+Jonathan Taylor
+IND
+RB
+John's Scary Team
+362.3
+316.5
+7
+7
+
+Christian McCaffrey
+Q
+SF
+RB
+John's Finest Team2
+416.6
+343.2
+6
+8
+
+Amon-Ra St. Brown
+DET
+WR
+John's Supreme Team3
+324
+324
+8
+Round 3
+Pick
+Player
+Team
+2025 PTS
+PROJ PTS
+RK
+9
+
+CeeDee Lamb
+DAL
+WR
+John's Supreme Team3
+200.9
+293.5
+9
+10
+
+De'Von Achane
+MIA
+RB
+John's Finest Team2
+322.8
+293.5
+10

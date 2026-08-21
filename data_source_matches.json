@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-08-21T01:08:28+00:00",
+  "generated_at": "2026-08-21T01:16:40+00:00",
   "draft": {
     "draft_id": "1900421374",
-    "draft_fetched_at": "2026-08-21T01:08:28+00:00",
+    "draft_fetched_at": "2026-08-21T01:16:40+00:00",
     "draft_started_at": "2026-08-21T00:45:00+00:00",
-    "picks_analyzed": 5
+    "picks_analyzed": 10
   },
   "ranking_snapshot": {
     "generated_at": "2026-08-21T00:24:54+00:00",
@@ -71,21 +71,33 @@
     {
       "roster_id": 2,
       "username": null,
-      "pick_count": 1,
+      "pick_count": 3,
       "picks": [
         {
           "pick_no": 1,
           "round": 1,
           "name": "Jahmyr Gibbs",
           "position": "RB"
+        },
+        {
+          "pick_no": 8,
+          "round": 2,
+          "name": "Amon-Ra St. Brown",
+          "position": "WR"
+        },
+        {
+          "pick_no": 9,
+          "round": 3,
+          "name": "CeeDee Lamb",
+          "position": "WR"
         }
       ],
       "inferred_source": {
         "source_id": "fantasypros",
         "source_name": "FantasyPros ECR",
         "fit_score": 100.0,
-        "picks": 1,
-        "matched_picks": 1,
+        "picks": 3,
+        "matched_picks": 3,
         "coverage": 1.0,
         "mean_availability_rank": 1.0,
         "median_availability_rank": 1,
@@ -94,27 +106,27 @@
         "mean_log2_loss": 0.0
       },
       "runner_up": {
-        "source_id": "ffcalculator",
-        "source_name": "FF Calculator ADP",
-        "fit_score": 100.0,
-        "picks": 1,
-        "matched_picks": 1,
+        "source_id": "sleeper_adp",
+        "source_name": "Sleeper ADP",
+        "fit_score": 92.6,
+        "picks": 3,
+        "matched_picks": 3,
         "coverage": 1.0,
-        "mean_availability_rank": 1.0,
+        "mean_availability_rank": 1.33,
         "median_availability_rank": 1,
-        "top_available_rate": 1.0,
+        "top_available_rate": 0.667,
         "top_3_available_rate": 1.0,
-        "mean_log2_loss": 0.0
+        "mean_log2_loss": 0.333
       },
-      "confidence": "insufficient",
-      "score_gap": 0.0,
+      "confidence": "moderate",
+      "score_gap": 7.4,
       "provider_scores": [
         {
           "source_id": "fantasypros",
           "source_name": "FantasyPros ECR",
           "fit_score": 100.0,
-          "picks": 1,
-          "matched_picks": 1,
+          "picks": 3,
+          "matched_picks": 3,
           "coverage": 1.0,
           "mean_availability_rank": 1.0,
           "median_availability_rank": 1,
@@ -132,29 +144,25 @@
               "availability_rank": 1,
               "skipped_count": 0,
               "higher_ranked_available": []
-            }
-          ]
-        },
-        {
-          "source_id": "ffcalculator",
-          "source_name": "FF Calculator ADP",
-          "fit_score": 100.0,
-          "picks": 1,
-          "matched_picks": 1,
-          "coverage": 1.0,
-          "mean_availability_rank": 1.0,
-          "median_availability_rank": 1,
-          "top_available_rate": 1.0,
-          "top_3_available_rate": 1.0,
-          "mean_log2_loss": 0.0,
-          "evidence": [
+            },
             {
-              "pick_no": 1,
-              "round": 1,
-              "player": "Jahmyr Gibbs",
-              "position": "RB",
+              "pick_no": 8,
+              "round": 2,
+              "player": "Amon-Ra St. Brown",
+              "position": "WR",
               "matched": true,
-              "overall_rank": 1,
+              "overall_rank": 6,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            },
+            {
+              "pick_no": 9,
+              "round": 3,
+              "player": "CeeDee Lamb",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 9,
               "availability_rank": 1,
               "skipped_count": 0,
               "higher_ranked_available": []
@@ -164,15 +172,15 @@
         {
           "source_id": "sleeper_adp",
           "source_name": "Sleeper ADP",
-          "fit_score": 100.0,
-          "picks": 1,
-          "matched_picks": 1,
+          "fit_score": 92.6,
+          "picks": 3,
+          "matched_picks": 3,
           "coverage": 1.0,
-          "mean_availability_rank": 1.0,
+          "mean_availability_rank": 1.33,
           "median_availability_rank": 1,
-          "top_available_rate": 1.0,
+          "top_available_rate": 0.667,
           "top_3_available_rate": 1.0,
-          "mean_log2_loss": 0.0,
+          "mean_log2_loss": 0.333,
           "evidence": [
             {
               "pick_no": 1,
@@ -184,21 +192,49 @@
               "availability_rank": 1,
               "skipped_count": 0,
               "higher_ranked_available": []
+            },
+            {
+              "pick_no": 8,
+              "round": 2,
+              "player": "Amon-Ra St. Brown",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 8,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            },
+            {
+              "pick_no": 9,
+              "round": 3,
+              "player": "CeeDee Lamb",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 10,
+              "availability_rank": 2,
+              "skipped_count": 1,
+              "higher_ranked_available": [
+                {
+                  "name": "James Cook",
+                  "position": "RB",
+                  "overall_rank": 9
+                }
+              ]
             }
           ]
         },
         {
           "source_id": "consensus",
           "source_name": "Consensus Average",
-          "fit_score": 79.4,
-          "picks": 1,
-          "matched_picks": 1,
+          "fit_score": 81.9,
+          "picks": 3,
+          "matched_picks": 3,
           "coverage": 1.0,
           "mean_availability_rank": 2.0,
           "median_availability_rank": 2,
-          "top_available_rate": 0.0,
+          "top_available_rate": 0.333,
           "top_3_available_rate": 1.0,
-          "mean_log2_loss": 1.0,
+          "mean_log2_loss": 0.862,
           "evidence": [
             {
               "pick_no": 1,
@@ -214,6 +250,113 @@
                   "name": "Bijan Robinson",
                   "position": "RB",
                   "overall_rank": 1
+                }
+              ]
+            },
+            {
+              "pick_no": 8,
+              "round": 2,
+              "player": "Amon-Ra St. Brown",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 6,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            },
+            {
+              "pick_no": 9,
+              "round": 3,
+              "player": "CeeDee Lamb",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 10,
+              "availability_rank": 3,
+              "skipped_count": 2,
+              "higher_ranked_available": [
+                {
+                  "name": "Ashton Jeanty",
+                  "position": "RB",
+                  "overall_rank": 8
+                },
+                {
+                  "name": "Justin Jefferson",
+                  "position": "WR",
+                  "overall_rank": 9
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "source_id": "ffcalculator",
+          "source_name": "FF Calculator ADP",
+          "fit_score": 81.9,
+          "picks": 3,
+          "matched_picks": 3,
+          "coverage": 1.0,
+          "mean_availability_rank": 2.67,
+          "median_availability_rank": 1,
+          "top_available_rate": 0.667,
+          "top_3_available_rate": 0.667,
+          "mean_log2_loss": 0.862,
+          "evidence": [
+            {
+              "pick_no": 1,
+              "round": 1,
+              "player": "Jahmyr Gibbs",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 1,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            },
+            {
+              "pick_no": 8,
+              "round": 2,
+              "player": "Amon-Ra St. Brown",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 8,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            },
+            {
+              "pick_no": 9,
+              "round": 3,
+              "player": "CeeDee Lamb",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 14,
+              "availability_rank": 6,
+              "skipped_count": 5,
+              "higher_ranked_available": [
+                {
+                  "name": "Drake London",
+                  "position": "WR",
+                  "overall_rank": 9
+                },
+                {
+                  "name": "Derrick Henry",
+                  "position": "RB",
+                  "overall_rank": 10
+                },
+                {
+                  "name": "De'Von Achane",
+                  "position": "RB",
+                  "overall_rank": 11
+                },
+                {
+                  "name": "James Cook III",
+                  "position": "RB",
+                  "overall_rank": 12
+                },
+                {
+                  "name": "Rashee Rice",
+                  "position": "WR",
+                  "overall_rank": 13
                 }
               ]
             }
@@ -222,15 +365,15 @@
         {
           "source_id": "fantasycalc",
           "source_name": "FantasyCalc",
-          "fit_score": 79.4,
-          "picks": 1,
-          "matched_picks": 1,
+          "fit_score": 77.4,
+          "picks": 3,
+          "matched_picks": 3,
           "coverage": 1.0,
-          "mean_availability_rank": 2.0,
+          "mean_availability_rank": 2.67,
           "median_availability_rank": 2,
-          "top_available_rate": 0.0,
-          "top_3_available_rate": 1.0,
-          "mean_log2_loss": 1.0,
+          "top_available_rate": 0.333,
+          "top_3_available_rate": 0.667,
+          "mean_log2_loss": 1.107,
           "evidence": [
             {
               "pick_no": 1,
@@ -246,6 +389,49 @@
                   "name": "Bijan Robinson",
                   "position": "RB",
                   "overall_rank": 1
+                }
+              ]
+            },
+            {
+              "pick_no": 8,
+              "round": 2,
+              "player": "Amon-Ra St. Brown",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 6,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            },
+            {
+              "pick_no": 9,
+              "round": 3,
+              "player": "CeeDee Lamb",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 13,
+              "availability_rank": 5,
+              "skipped_count": 4,
+              "higher_ranked_available": [
+                {
+                  "name": "Justin Jefferson",
+                  "position": "WR",
+                  "overall_rank": 9
+                },
+                {
+                  "name": "Ashton Jeanty",
+                  "position": "RB",
+                  "overall_rank": 10
+                },
+                {
+                  "name": "James Cook",
+                  "position": "RB",
+                  "overall_rank": 11
+                },
+                {
+                  "name": "De'Von Achane",
+                  "position": "RB",
+                  "overall_rank": 12
                 }
               ]
             }
@@ -254,15 +440,15 @@
         {
           "source_id": "keeptradecut",
           "source_name": "KeepTradeCut",
-          "fit_score": 79.4,
-          "picks": 1,
-          "matched_picks": 1,
+          "fit_score": 63.9,
+          "picks": 3,
+          "matched_picks": 3,
           "coverage": 1.0,
-          "mean_availability_rank": 2.0,
-          "median_availability_rank": 2,
+          "mean_availability_rank": 4.33,
+          "median_availability_rank": 4,
           "top_available_rate": 0.0,
-          "top_3_available_rate": 1.0,
-          "mean_log2_loss": 1.0,
+          "top_3_available_rate": 0.333,
+          "mean_log2_loss": 1.936,
           "evidence": [
             {
               "pick_no": 1,
@@ -280,21 +466,85 @@
                   "overall_rank": 1
                 }
               ]
+            },
+            {
+              "pick_no": 8,
+              "round": 2,
+              "player": "Amon-Ra St. Brown",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 9,
+              "availability_rank": 4,
+              "skipped_count": 3,
+              "higher_ranked_available": [
+                {
+                  "name": "Josh Allen",
+                  "position": "QB",
+                  "overall_rank": 6
+                },
+                {
+                  "name": "Ashton Jeanty",
+                  "position": "RB",
+                  "overall_rank": 7
+                },
+                {
+                  "name": "Brock Bowers",
+                  "position": "TE",
+                  "overall_rank": 8
+                }
+              ]
+            },
+            {
+              "pick_no": 9,
+              "round": 3,
+              "player": "CeeDee Lamb",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 13,
+              "availability_rank": 7,
+              "skipped_count": 6,
+              "higher_ranked_available": [
+                {
+                  "name": "Josh Allen",
+                  "position": "QB",
+                  "overall_rank": 6
+                },
+                {
+                  "name": "Ashton Jeanty",
+                  "position": "RB",
+                  "overall_rank": 7
+                },
+                {
+                  "name": "Brock Bowers",
+                  "position": "TE",
+                  "overall_rank": 8
+                },
+                {
+                  "name": "Omarion Hampton",
+                  "position": "RB",
+                  "overall_rank": 10
+                },
+                {
+                  "name": "Trey McBride",
+                  "position": "TE",
+                  "overall_rank": 11
+                }
+              ]
             }
           ]
         },
         {
           "source_id": "draftsharks_adp",
           "source_name": "DraftSharks ADP",
-          "fit_score": 69.3,
-          "picks": 1,
-          "matched_picks": 1,
+          "fit_score": 62.2,
+          "picks": 3,
+          "matched_picks": 3,
           "coverage": 1.0,
-          "mean_availability_rank": 3.0,
+          "mean_availability_rank": 5.67,
           "median_availability_rank": 3,
           "top_available_rate": 0.0,
-          "top_3_available_rate": 1.0,
-          "mean_log2_loss": 1.585,
+          "top_3_available_rate": 0.667,
+          "mean_log2_loss": 2.057,
           "evidence": [
             {
               "pick_no": 1,
@@ -317,6 +567,60 @@
                   "overall_rank": 2
                 }
               ]
+            },
+            {
+              "pick_no": 8,
+              "round": 2,
+              "player": "Amon-Ra St. Brown",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 7,
+              "availability_rank": 2,
+              "skipped_count": 1,
+              "higher_ranked_available": [
+                {
+                  "name": "Josh Allen",
+                  "position": "QB",
+                  "overall_rank": 6
+                }
+              ]
+            },
+            {
+              "pick_no": 9,
+              "round": 3,
+              "player": "CeeDee Lamb",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 18,
+              "availability_rank": 12,
+              "skipped_count": 11,
+              "higher_ranked_available": [
+                {
+                  "name": "Josh Allen",
+                  "position": "QB",
+                  "overall_rank": 6
+                },
+                {
+                  "name": "Malik Nabers",
+                  "position": "WR",
+                  "overall_rank": 8
+                },
+                {
+                  "name": "Drake Maye",
+                  "position": "QB",
+                  "overall_rank": 9
+                },
+                {
+                  "name": "Brock Bowers",
+                  "position": "TE",
+                  "overall_rank": 10
+                },
+                {
+                  "name": "Joe Burrow",
+                  "position": "QB",
+                  "overall_rank": 11
+                }
+              ]
             }
           ]
         }
@@ -325,56 +629,68 @@
     {
       "roster_id": 3,
       "username": null,
-      "pick_count": 1,
+      "pick_count": 3,
       "picks": [
         {
           "pick_no": 2,
           "round": 1,
           "name": "Bijan Robinson",
           "position": "RB"
+        },
+        {
+          "pick_no": 7,
+          "round": 2,
+          "name": "Christian McCaffrey",
+          "position": "RB"
+        },
+        {
+          "pick_no": 10,
+          "round": 3,
+          "name": "De'Von Achane",
+          "position": "RB"
         }
       ],
       "inferred_source": {
-        "source_id": "consensus",
-        "source_name": "Consensus Average",
-        "fit_score": 100.0,
-        "picks": 1,
-        "matched_picks": 1,
+        "source_id": "ffcalculator",
+        "source_name": "FF Calculator ADP",
+        "fit_score": 88.5,
+        "picks": 3,
+        "matched_picks": 3,
         "coverage": 1.0,
-        "mean_availability_rank": 1.0,
+        "mean_availability_rank": 1.67,
         "median_availability_rank": 1,
-        "top_available_rate": 1.0,
+        "top_available_rate": 0.667,
         "top_3_available_rate": 1.0,
-        "mean_log2_loss": 0.0
+        "mean_log2_loss": 0.528
       },
       "runner_up": {
-        "source_id": "draftsharks_adp",
-        "source_name": "DraftSharks ADP",
-        "fit_score": 100.0,
-        "picks": 1,
-        "matched_picks": 1,
+        "source_id": "fantasycalc",
+        "source_name": "FantasyCalc",
+        "fit_score": 85.7,
+        "picks": 3,
+        "matched_picks": 3,
         "coverage": 1.0,
-        "mean_availability_rank": 1.0,
+        "mean_availability_rank": 2.0,
         "median_availability_rank": 1,
-        "top_available_rate": 1.0,
-        "top_3_available_rate": 1.0,
-        "mean_log2_loss": 0.0
+        "top_available_rate": 0.667,
+        "top_3_available_rate": 0.667,
+        "mean_log2_loss": 0.667
       },
-      "confidence": "insufficient",
-      "score_gap": 0.0,
+      "confidence": "weak",
+      "score_gap": 2.8,
       "provider_scores": [
         {
-          "source_id": "consensus",
-          "source_name": "Consensus Average",
-          "fit_score": 100.0,
-          "picks": 1,
-          "matched_picks": 1,
+          "source_id": "ffcalculator",
+          "source_name": "FF Calculator ADP",
+          "fit_score": 88.5,
+          "picks": 3,
+          "matched_picks": 3,
           "coverage": 1.0,
-          "mean_availability_rank": 1.0,
+          "mean_availability_rank": 1.67,
           "median_availability_rank": 1,
-          "top_available_rate": 1.0,
+          "top_available_rate": 0.667,
           "top_3_available_rate": 1.0,
-          "mean_log2_loss": 0.0,
+          "mean_log2_loss": 0.528,
           "evidence": [
             {
               "pick_no": 2,
@@ -382,51 +698,58 @@
               "player": "Bijan Robinson",
               "position": "RB",
               "matched": true,
-              "overall_rank": 1,
+              "overall_rank": 2,
               "availability_rank": 1,
               "skipped_count": 0,
               "higher_ranked_available": []
-            }
-          ]
-        },
-        {
-          "source_id": "draftsharks_adp",
-          "source_name": "DraftSharks ADP",
-          "fit_score": 100.0,
-          "picks": 1,
-          "matched_picks": 1,
-          "coverage": 1.0,
-          "mean_availability_rank": 1.0,
-          "median_availability_rank": 1,
-          "top_available_rate": 1.0,
-          "top_3_available_rate": 1.0,
-          "mean_log2_loss": 0.0,
-          "evidence": [
+            },
             {
-              "pick_no": 2,
-              "round": 1,
-              "player": "Bijan Robinson",
+              "pick_no": 7,
+              "round": 2,
+              "player": "Christian McCaffrey",
               "position": "RB",
               "matched": true,
-              "overall_rank": 1,
+              "overall_rank": 7,
               "availability_rank": 1,
               "skipped_count": 0,
               "higher_ranked_available": []
+            },
+            {
+              "pick_no": 10,
+              "round": 3,
+              "player": "De'Von Achane",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 11,
+              "availability_rank": 3,
+              "skipped_count": 2,
+              "higher_ranked_available": [
+                {
+                  "name": "Drake London",
+                  "position": "WR",
+                  "overall_rank": 9
+                },
+                {
+                  "name": "Derrick Henry",
+                  "position": "RB",
+                  "overall_rank": 10
+                }
+              ]
             }
           ]
         },
         {
           "source_id": "fantasycalc",
           "source_name": "FantasyCalc",
-          "fit_score": 100.0,
-          "picks": 1,
-          "matched_picks": 1,
+          "fit_score": 85.7,
+          "picks": 3,
+          "matched_picks": 3,
           "coverage": 1.0,
-          "mean_availability_rank": 1.0,
+          "mean_availability_rank": 2.0,
           "median_availability_rank": 1,
-          "top_available_rate": 1.0,
-          "top_3_available_rate": 1.0,
-          "mean_log2_loss": 0.0,
+          "top_available_rate": 0.667,
+          "top_3_available_rate": 0.667,
+          "mean_log2_loss": 0.667,
           "evidence": [
             {
               "pick_no": 2,
@@ -438,99 +761,59 @@
               "availability_rank": 1,
               "skipped_count": 0,
               "higher_ranked_available": []
-            }
-          ]
-        },
-        {
-          "source_id": "fantasypros",
-          "source_name": "FantasyPros ECR",
-          "fit_score": 100.0,
-          "picks": 1,
-          "matched_picks": 1,
-          "coverage": 1.0,
-          "mean_availability_rank": 1.0,
-          "median_availability_rank": 1,
-          "top_available_rate": 1.0,
-          "top_3_available_rate": 1.0,
-          "mean_log2_loss": 0.0,
-          "evidence": [
+            },
             {
-              "pick_no": 2,
-              "round": 1,
-              "player": "Bijan Robinson",
+              "pick_no": 7,
+              "round": 2,
+              "player": "Christian McCaffrey",
               "position": "RB",
               "matched": true,
-              "overall_rank": 2,
+              "overall_rank": 4,
               "availability_rank": 1,
               "skipped_count": 0,
               "higher_ranked_available": []
-            }
-          ]
-        },
-        {
-          "source_id": "ffcalculator",
-          "source_name": "FF Calculator ADP",
-          "fit_score": 100.0,
-          "picks": 1,
-          "matched_picks": 1,
-          "coverage": 1.0,
-          "mean_availability_rank": 1.0,
-          "median_availability_rank": 1,
-          "top_available_rate": 1.0,
-          "top_3_available_rate": 1.0,
-          "mean_log2_loss": 0.0,
-          "evidence": [
+            },
             {
-              "pick_no": 2,
-              "round": 1,
-              "player": "Bijan Robinson",
+              "pick_no": 10,
+              "round": 3,
+              "player": "De'Von Achane",
               "position": "RB",
               "matched": true,
-              "overall_rank": 2,
-              "availability_rank": 1,
-              "skipped_count": 0,
-              "higher_ranked_available": []
-            }
-          ]
-        },
-        {
-          "source_id": "keeptradecut",
-          "source_name": "KeepTradeCut",
-          "fit_score": 100.0,
-          "picks": 1,
-          "matched_picks": 1,
-          "coverage": 1.0,
-          "mean_availability_rank": 1.0,
-          "median_availability_rank": 1,
-          "top_available_rate": 1.0,
-          "top_3_available_rate": 1.0,
-          "mean_log2_loss": 0.0,
-          "evidence": [
-            {
-              "pick_no": 2,
-              "round": 1,
-              "player": "Bijan Robinson",
-              "position": "RB",
-              "matched": true,
-              "overall_rank": 1,
-              "availability_rank": 1,
-              "skipped_count": 0,
-              "higher_ranked_available": []
+              "overall_rank": 12,
+              "availability_rank": 4,
+              "skipped_count": 3,
+              "higher_ranked_available": [
+                {
+                  "name": "Justin Jefferson",
+                  "position": "WR",
+                  "overall_rank": 9
+                },
+                {
+                  "name": "Ashton Jeanty",
+                  "position": "RB",
+                  "overall_rank": 10
+                },
+                {
+                  "name": "James Cook",
+                  "position": "RB",
+                  "overall_rank": 11
+                }
+              ]
             }
           ]
         },
         {
           "source_id": "sleeper_adp",
           "source_name": "Sleeper ADP",
-          "fit_score": 100.0,
-          "picks": 1,
-          "matched_picks": 1,
+          "fit_score": 83.6,
+          "picks": 3,
+          "matched_picks": 3,
           "coverage": 1.0,
-          "mean_availability_rank": 1.0,
+          "mean_availability_rank": 2.33,
           "median_availability_rank": 1,
-          "top_available_rate": 1.0,
-          "top_3_available_rate": 1.0,
-          "mean_log2_loss": 0.0,
+          "top_available_rate": 0.667,
+          "top_3_available_rate": 0.667,
+          "mean_log2_loss": 0.774,
           "evidence": [
             {
               "pick_no": 2,
@@ -542,6 +825,414 @@
               "availability_rank": 1,
               "skipped_count": 0,
               "higher_ranked_available": []
+            },
+            {
+              "pick_no": 7,
+              "round": 2,
+              "player": "Christian McCaffrey",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 6,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            },
+            {
+              "pick_no": 10,
+              "round": 3,
+              "player": "De'Von Achane",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 14,
+              "availability_rank": 5,
+              "skipped_count": 4,
+              "higher_ranked_available": [
+                {
+                  "name": "James Cook",
+                  "position": "RB",
+                  "overall_rank": 9
+                },
+                {
+                  "name": "Ashton Jeanty",
+                  "position": "RB",
+                  "overall_rank": 11
+                },
+                {
+                  "name": "Saquon Barkley",
+                  "position": "RB",
+                  "overall_rank": 12
+                },
+                {
+                  "name": "Justin Jefferson",
+                  "position": "WR",
+                  "overall_rank": 13
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "source_id": "fantasypros",
+          "source_name": "FantasyPros ECR",
+          "fit_score": 73.5,
+          "picks": 3,
+          "matched_picks": 3,
+          "coverage": 1.0,
+          "mean_availability_rank": 3.67,
+          "median_availability_rank": 2,
+          "top_available_rate": 0.333,
+          "top_3_available_rate": 0.667,
+          "mean_log2_loss": 1.333,
+          "evidence": [
+            {
+              "pick_no": 2,
+              "round": 1,
+              "player": "Bijan Robinson",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 2,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            },
+            {
+              "pick_no": 7,
+              "round": 2,
+              "player": "Christian McCaffrey",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 7,
+              "availability_rank": 2,
+              "skipped_count": 1,
+              "higher_ranked_available": [
+                {
+                  "name": "Amon-Ra St. Brown",
+                  "position": "WR",
+                  "overall_rank": 6
+                }
+              ]
+            },
+            {
+              "pick_no": 10,
+              "round": 3,
+              "player": "De'Von Achane",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 17,
+              "availability_rank": 8,
+              "skipped_count": 7,
+              "higher_ranked_available": [
+                {
+                  "name": "James Cook III",
+                  "position": "RB",
+                  "overall_rank": 10
+                },
+                {
+                  "name": "Justin Jefferson",
+                  "position": "WR",
+                  "overall_rank": 11
+                },
+                {
+                  "name": "Ashton Jeanty",
+                  "position": "RB",
+                  "overall_rank": 12
+                },
+                {
+                  "name": "Drake London",
+                  "position": "WR",
+                  "overall_rank": 13
+                },
+                {
+                  "name": "Chase Brown",
+                  "position": "RB",
+                  "overall_rank": 14
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "source_id": "consensus",
+          "source_name": "Consensus Average",
+          "fit_score": 71.7,
+          "picks": 3,
+          "matched_picks": 3,
+          "coverage": 1.0,
+          "mean_availability_rank": 3.33,
+          "median_availability_rank": 4,
+          "top_available_rate": 0.333,
+          "top_3_available_rate": 0.333,
+          "mean_log2_loss": 1.441,
+          "evidence": [
+            {
+              "pick_no": 2,
+              "round": 1,
+              "player": "Bijan Robinson",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 1,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            },
+            {
+              "pick_no": 7,
+              "round": 2,
+              "player": "Christian McCaffrey",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 11,
+              "availability_rank": 5,
+              "skipped_count": 4,
+              "higher_ranked_available": [
+                {
+                  "name": "Amon-Ra St. Brown",
+                  "position": "WR",
+                  "overall_rank": 6
+                },
+                {
+                  "name": "Ashton Jeanty",
+                  "position": "RB",
+                  "overall_rank": 8
+                },
+                {
+                  "name": "Justin Jefferson",
+                  "position": "WR",
+                  "overall_rank": 9
+                },
+                {
+                  "name": "CeeDee Lamb",
+                  "position": "WR",
+                  "overall_rank": 10
+                }
+              ]
+            },
+            {
+              "pick_no": 10,
+              "round": 3,
+              "player": "De'Von Achane",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 13,
+              "availability_rank": 4,
+              "skipped_count": 3,
+              "higher_ranked_available": [
+                {
+                  "name": "Ashton Jeanty",
+                  "position": "RB",
+                  "overall_rank": 8
+                },
+                {
+                  "name": "Justin Jefferson",
+                  "position": "WR",
+                  "overall_rank": 9
+                },
+                {
+                  "name": "James Cook",
+                  "position": "RB",
+                  "overall_rank": 12
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "source_id": "keeptradecut",
+          "source_name": "KeepTradeCut",
+          "fit_score": 60.6,
+          "picks": 3,
+          "matched_picks": 3,
+          "coverage": 1.0,
+          "mean_availability_rank": 7.0,
+          "median_availability_rank": 7,
+          "top_available_rate": 0.333,
+          "top_3_available_rate": 0.333,
+          "mean_log2_loss": 2.169,
+          "evidence": [
+            {
+              "pick_no": 2,
+              "round": 1,
+              "player": "Bijan Robinson",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 1,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            },
+            {
+              "pick_no": 7,
+              "round": 2,
+              "player": "Christian McCaffrey",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 19,
+              "availability_rank": 13,
+              "skipped_count": 12,
+              "higher_ranked_available": [
+                {
+                  "name": "Josh Allen",
+                  "position": "QB",
+                  "overall_rank": 6
+                },
+                {
+                  "name": "Ashton Jeanty",
+                  "position": "RB",
+                  "overall_rank": 7
+                },
+                {
+                  "name": "Brock Bowers",
+                  "position": "TE",
+                  "overall_rank": 8
+                },
+                {
+                  "name": "Amon-Ra St. Brown",
+                  "position": "WR",
+                  "overall_rank": 9
+                },
+                {
+                  "name": "Omarion Hampton",
+                  "position": "RB",
+                  "overall_rank": 10
+                }
+              ]
+            },
+            {
+              "pick_no": 10,
+              "round": 3,
+              "player": "De'Von Achane",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 15,
+              "availability_rank": 7,
+              "skipped_count": 6,
+              "higher_ranked_available": [
+                {
+                  "name": "Josh Allen",
+                  "position": "QB",
+                  "overall_rank": 6
+                },
+                {
+                  "name": "Ashton Jeanty",
+                  "position": "RB",
+                  "overall_rank": 7
+                },
+                {
+                  "name": "Brock Bowers",
+                  "position": "TE",
+                  "overall_rank": 8
+                },
+                {
+                  "name": "Omarion Hampton",
+                  "position": "RB",
+                  "overall_rank": 10
+                },
+                {
+                  "name": "Trey McBride",
+                  "position": "TE",
+                  "overall_rank": 11
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "source_id": "draftsharks_adp",
+          "source_name": "DraftSharks ADP",
+          "fit_score": 52.2,
+          "picks": 3,
+          "matched_picks": 3,
+          "coverage": 1.0,
+          "mean_availability_rank": 14.0,
+          "median_availability_rank": 12,
+          "top_available_rate": 0.333,
+          "top_3_available_rate": 0.333,
+          "mean_log2_loss": 2.814,
+          "evidence": [
+            {
+              "pick_no": 2,
+              "round": 1,
+              "player": "Bijan Robinson",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 1,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            },
+            {
+              "pick_no": 7,
+              "round": 2,
+              "player": "Christian McCaffrey",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 35,
+              "availability_rank": 29,
+              "skipped_count": 28,
+              "higher_ranked_available": [
+                {
+                  "name": "Josh Allen",
+                  "position": "QB",
+                  "overall_rank": 6
+                },
+                {
+                  "name": "Amon-Ra St. Brown",
+                  "position": "WR",
+                  "overall_rank": 7
+                },
+                {
+                  "name": "Malik Nabers",
+                  "position": "WR",
+                  "overall_rank": 8
+                },
+                {
+                  "name": "Drake Maye",
+                  "position": "QB",
+                  "overall_rank": 9
+                },
+                {
+                  "name": "Brock Bowers",
+                  "position": "TE",
+                  "overall_rank": 10
+                }
+              ]
+            },
+            {
+              "pick_no": 10,
+              "round": 3,
+              "player": "De'Von Achane",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 19,
+              "availability_rank": 12,
+              "skipped_count": 11,
+              "higher_ranked_available": [
+                {
+                  "name": "Josh Allen",
+                  "position": "QB",
+                  "overall_rank": 6
+                },
+                {
+                  "name": "Malik Nabers",
+                  "position": "WR",
+                  "overall_rank": 8
+                },
+                {
+                  "name": "Drake Maye",
+                  "position": "QB",
+                  "overall_rank": 9
+                },
+                {
+                  "name": "Brock Bowers",
+                  "position": "TE",
+                  "overall_rank": 10
+                },
+                {
+                  "name": "Joe Burrow",
+                  "position": "QB",
+                  "overall_rank": 11
+                }
+              ]
             }
           ]
         }
@@ -886,53 +1577,59 @@
     {
       "roster_id": 1,
       "username": "John C McGue",
-      "pick_count": 1,
+      "pick_count": 2,
       "picks": [
         {
           "pick_no": 3,
           "round": 1,
           "name": "Puka Nacua",
           "position": "WR"
+        },
+        {
+          "pick_no": 6,
+          "round": 2,
+          "name": "Jonathan Taylor",
+          "position": "RB"
         }
       ],
       "inferred_source": {
         "source_id": "ffcalculator",
         "source_name": "FF Calculator ADP",
         "fit_score": 100.0,
-        "picks": 1,
-        "matched_picks": 1,
+        "picks": 2,
+        "matched_picks": 2,
         "coverage": 1.0,
         "mean_availability_rank": 1.0,
-        "median_availability_rank": 1,
+        "median_availability_rank": 1.0,
         "top_available_rate": 1.0,
         "top_3_available_rate": 1.0,
         "mean_log2_loss": 0.0
       },
       "runner_up": {
-        "source_id": "consensus",
-        "source_name": "Consensus Average",
-        "fit_score": 79.4,
-        "picks": 1,
-        "matched_picks": 1,
+        "source_id": "sleeper_adp",
+        "source_name": "Sleeper ADP",
+        "fit_score": 89.1,
+        "picks": 2,
+        "matched_picks": 2,
         "coverage": 1.0,
-        "mean_availability_rank": 2.0,
-        "median_availability_rank": 2,
-        "top_available_rate": 0.0,
+        "mean_availability_rank": 1.5,
+        "median_availability_rank": 1.5,
+        "top_available_rate": 0.5,
         "top_3_available_rate": 1.0,
-        "mean_log2_loss": 1.0
+        "mean_log2_loss": 0.5
       },
       "confidence": "insufficient",
-      "score_gap": 20.6,
+      "score_gap": 10.9,
       "provider_scores": [
         {
           "source_id": "ffcalculator",
           "source_name": "FF Calculator ADP",
           "fit_score": 100.0,
-          "picks": 1,
-          "matched_picks": 1,
+          "picks": 2,
+          "matched_picks": 2,
           "coverage": 1.0,
           "mean_availability_rank": 1.0,
-          "median_availability_rank": 1,
+          "median_availability_rank": 1.0,
           "top_available_rate": 1.0,
           "top_3_available_rate": 1.0,
           "mean_log2_loss": 0.0,
@@ -947,6 +1644,60 @@
               "availability_rank": 1,
               "skipped_count": 0,
               "higher_ranked_available": []
+            },
+            {
+              "pick_no": 6,
+              "round": 2,
+              "player": "Jonathan Taylor",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 6,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            }
+          ]
+        },
+        {
+          "source_id": "sleeper_adp",
+          "source_name": "Sleeper ADP",
+          "fit_score": 89.1,
+          "picks": 2,
+          "matched_picks": 2,
+          "coverage": 1.0,
+          "mean_availability_rank": 1.5,
+          "median_availability_rank": 1.5,
+          "top_available_rate": 0.5,
+          "top_3_available_rate": 1.0,
+          "mean_log2_loss": 0.5,
+          "evidence": [
+            {
+              "pick_no": 3,
+              "round": 1,
+              "player": "Puka Nacua",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 4,
+              "availability_rank": 2,
+              "skipped_count": 1,
+              "higher_ranked_available": [
+                {
+                  "name": "Ja'Marr Chase",
+                  "position": "WR",
+                  "overall_rank": 3
+                }
+              ]
+            },
+            {
+              "pick_no": 6,
+              "round": 2,
+              "player": "Jonathan Taylor",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 5,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
             }
           ]
         },
@@ -954,11 +1705,11 @@
           "source_id": "consensus",
           "source_name": "Consensus Average",
           "fit_score": 79.4,
-          "picks": 1,
-          "matched_picks": 1,
+          "picks": 2,
+          "matched_picks": 2,
           "coverage": 1.0,
           "mean_availability_rank": 2.0,
-          "median_availability_rank": 2,
+          "median_availability_rank": 2.0,
           "top_available_rate": 0.0,
           "top_3_available_rate": 1.0,
           "mean_log2_loss": 1.0,
@@ -979,36 +1730,21 @@
                   "overall_rank": 3
                 }
               ]
-            }
-          ]
-        },
-        {
-          "source_id": "draftsharks_adp",
-          "source_name": "DraftSharks ADP",
-          "fit_score": 79.4,
-          "picks": 1,
-          "matched_picks": 1,
-          "coverage": 1.0,
-          "mean_availability_rank": 2.0,
-          "median_availability_rank": 2,
-          "top_available_rate": 0.0,
-          "top_3_available_rate": 1.0,
-          "mean_log2_loss": 1.0,
-          "evidence": [
+            },
             {
-              "pick_no": 3,
-              "round": 1,
-              "player": "Puka Nacua",
-              "position": "WR",
+              "pick_no": 6,
+              "round": 2,
+              "player": "Jonathan Taylor",
+              "position": "RB",
               "matched": true,
-              "overall_rank": 4,
+              "overall_rank": 7,
               "availability_rank": 2,
               "skipped_count": 1,
               "higher_ranked_available": [
                 {
-                  "name": "Ja'Marr Chase",
+                  "name": "Amon-Ra St. Brown",
                   "position": "WR",
-                  "overall_rank": 2
+                  "overall_rank": 6
                 }
               ]
             }
@@ -1017,15 +1753,15 @@
         {
           "source_id": "fantasypros",
           "source_name": "FantasyPros ECR",
-          "fit_score": 79.4,
-          "picks": 1,
-          "matched_picks": 1,
+          "fit_score": 74.2,
+          "picks": 2,
+          "matched_picks": 2,
           "coverage": 1.0,
-          "mean_availability_rank": 2.0,
-          "median_availability_rank": 2,
+          "mean_availability_rank": 2.5,
+          "median_availability_rank": 2.5,
           "top_available_rate": 0.0,
           "top_3_available_rate": 1.0,
-          "mean_log2_loss": 1.0,
+          "mean_log2_loss": 1.292,
           "evidence": [
             {
               "pick_no": 3,
@@ -1043,36 +1779,26 @@
                   "overall_rank": 3
                 }
               ]
-            }
-          ]
-        },
-        {
-          "source_id": "sleeper_adp",
-          "source_name": "Sleeper ADP",
-          "fit_score": 79.4,
-          "picks": 1,
-          "matched_picks": 1,
-          "coverage": 1.0,
-          "mean_availability_rank": 2.0,
-          "median_availability_rank": 2,
-          "top_available_rate": 0.0,
-          "top_3_available_rate": 1.0,
-          "mean_log2_loss": 1.0,
-          "evidence": [
+            },
             {
-              "pick_no": 3,
-              "round": 1,
-              "player": "Puka Nacua",
-              "position": "WR",
+              "pick_no": 6,
+              "round": 2,
+              "player": "Jonathan Taylor",
+              "position": "RB",
               "matched": true,
-              "overall_rank": 4,
-              "availability_rank": 2,
-              "skipped_count": 1,
+              "overall_rank": 8,
+              "availability_rank": 3,
+              "skipped_count": 2,
               "higher_ranked_available": [
                 {
-                  "name": "Ja'Marr Chase",
+                  "name": "Amon-Ra St. Brown",
                   "position": "WR",
-                  "overall_rank": 3
+                  "overall_rank": 6
+                },
+                {
+                  "name": "Christian McCaffrey",
+                  "position": "RB",
+                  "overall_rank": 7
                 }
               ]
             }
@@ -1082,11 +1808,11 @@
           "source_id": "fantasycalc",
           "source_name": "FantasyCalc",
           "fit_score": 69.3,
-          "picks": 1,
-          "matched_picks": 1,
+          "picks": 2,
+          "matched_picks": 2,
           "coverage": 1.0,
           "mean_availability_rank": 3.0,
-          "median_availability_rank": 3,
+          "median_availability_rank": 3.0,
           "top_available_rate": 0.0,
           "top_3_available_rate": 1.0,
           "mean_log2_loss": 1.585,
@@ -1112,21 +1838,43 @@
                   "overall_rank": 4
                 }
               ]
+            },
+            {
+              "pick_no": 6,
+              "round": 2,
+              "player": "Jonathan Taylor",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 8,
+              "availability_rank": 3,
+              "skipped_count": 2,
+              "higher_ranked_available": [
+                {
+                  "name": "Christian McCaffrey",
+                  "position": "RB",
+                  "overall_rank": 4
+                },
+                {
+                  "name": "Amon-Ra St. Brown",
+                  "position": "WR",
+                  "overall_rank": 6
+                }
+              ]
             }
           ]
         },
         {
           "source_id": "keeptradecut",
           "source_name": "KeepTradeCut",
-          "fit_score": 69.3,
-          "picks": 1,
-          "matched_picks": 1,
+          "fit_score": 57.7,
+          "picks": 2,
+          "matched_picks": 2,
           "coverage": 1.0,
-          "mean_availability_rank": 3.0,
-          "median_availability_rank": 3,
+          "mean_availability_rank": 6.0,
+          "median_availability_rank": 6.0,
           "top_available_rate": 0.0,
-          "top_3_available_rate": 1.0,
-          "mean_log2_loss": 1.585,
+          "top_3_available_rate": 0.5,
+          "mean_log2_loss": 2.377,
           "evidence": [
             {
               "pick_no": 3,
@@ -1147,6 +1895,112 @@
                   "name": "Ja'Marr Chase",
                   "position": "WR",
                   "overall_rank": 4
+                }
+              ]
+            },
+            {
+              "pick_no": 6,
+              "round": 2,
+              "player": "Jonathan Taylor",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 14,
+              "availability_rank": 9,
+              "skipped_count": 8,
+              "higher_ranked_available": [
+                {
+                  "name": "Josh Allen",
+                  "position": "QB",
+                  "overall_rank": 6
+                },
+                {
+                  "name": "Ashton Jeanty",
+                  "position": "RB",
+                  "overall_rank": 7
+                },
+                {
+                  "name": "Brock Bowers",
+                  "position": "TE",
+                  "overall_rank": 8
+                },
+                {
+                  "name": "Amon-Ra St. Brown",
+                  "position": "WR",
+                  "overall_rank": 9
+                },
+                {
+                  "name": "Omarion Hampton",
+                  "position": "RB",
+                  "overall_rank": 10
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "source_id": "draftsharks_adp",
+          "source_name": "DraftSharks ADP",
+          "fit_score": 55.6,
+          "picks": 2,
+          "matched_picks": 2,
+          "coverage": 1.0,
+          "mean_availability_rank": 9.5,
+          "median_availability_rank": 9.5,
+          "top_available_rate": 0.0,
+          "top_3_available_rate": 0.5,
+          "mean_log2_loss": 2.544,
+          "evidence": [
+            {
+              "pick_no": 3,
+              "round": 1,
+              "player": "Puka Nacua",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 4,
+              "availability_rank": 2,
+              "skipped_count": 1,
+              "higher_ranked_available": [
+                {
+                  "name": "Ja'Marr Chase",
+                  "position": "WR",
+                  "overall_rank": 2
+                }
+              ]
+            },
+            {
+              "pick_no": 6,
+              "round": 2,
+              "player": "Jonathan Taylor",
+              "position": "RB",
+              "matched": true,
+              "overall_rank": 22,
+              "availability_rank": 17,
+              "skipped_count": 16,
+              "higher_ranked_available": [
+                {
+                  "name": "Josh Allen",
+                  "position": "QB",
+                  "overall_rank": 6
+                },
+                {
+                  "name": "Amon-Ra St. Brown",
+                  "position": "WR",
+                  "overall_rank": 7
+                },
+                {
+                  "name": "Malik Nabers",
+                  "position": "WR",
+                  "overall_rank": 8
+                },
+                {
+                  "name": "Drake Maye",
+                  "position": "QB",
+                  "overall_rank": 9
+                },
+                {
+                  "name": "Brock Bowers",
+                  "position": "TE",
+                  "overall_rank": 10
                 }
               ]
             }

@@ -164,8 +164,8 @@ def opponent_selftest(players: list[Player]) -> list[str]:
 
     # The Sleeper position caps are hard: an opponent at the WR cap cannot take a WR
     # however high its source board puts one, and my candidate set drops WR too.
-    # picks_left=None isolates the cap from the mandatory-position narrowing, which on a
-    # 12-round board always coincides with a maxed-out position.
+    # picks_left=None isolates the cap from the mandatory-position narrowing, so the
+    # check exercises the cap alone whatever the board's geometry.
     board = fresh_board()
     board.rosters[0] = wrs[: MAX_POSITIONS["WR"]]
     board.picks_left[0] -= len(board.rosters[0])

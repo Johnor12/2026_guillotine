@@ -7,13 +7,15 @@ those artifacts and the static dashboard renders the result.
 ## League assumptions
 
 - 0.5 PPR, no tight end premium
-- Starters: 1 QB, 2 RB, 2 WR, 1 TE, 2 W/R/T flex
+- Starters: 1 QB, 2 RB, 2 WR, 1 TE, 2 W/R/T flex, 1 D/ST
 - 4 bench and 1 IR (the IR spot is not drafted into)
 - Position caps: 4 QB, 8 RB, 8 WR, 3 TE
-- 10 teams and 12 drafted players per team (120 picks)
+- 10 teams and 13 drafted players per team (130 picks)
 - Plain snake draft, no third-round reversal
-- My slot is assumed to be 2 (1.02, 2.09, 3.02, 4.09, …, 11.02, 12.09) until the
+- My slot is assumed to be 2 (1.02, 2.09, 3.02, 4.09, …, 12.09, 13.02) until the
   real draft order is published; `draft.json` overrides it with a complaint
+- The D/ST slot is drafted but not modeled: the pool and rankings are offense-only,
+  so a made D/ST pick is carried as an off-pool roster spot
 
 These are project assumptions, not runtime configuration. Ranker constants live in
 `ranker/league.py`.
@@ -45,7 +47,7 @@ The published files have distinct owners:
 
 - `pool.json`: ~220 QB/RB/WR/TE players keyed to Sleeper, priced by Sleeper's
   league-scored season projections (identity and ADP from DraftSharks)
-- `draft.json`: all 120 made and pending picks from the ESPN league API, with made
+- `draft.json`: all 130 made and pending picks from the ESPN league API, with made
   picks overlaid from a hand-pasted `draft_history.txt` during the live draft
   (ESPN's read API lags the draft room by minutes or more)
 - `data_source_matches.json`: the provider board closest to each opponent's picks

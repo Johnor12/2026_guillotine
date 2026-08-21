@@ -1,6 +1,6 @@
 {
   "source": "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2026/segments/0/leagues/1900421374?view=mDraftDetail&view=mSettings&view=mTeam",
-  "fetched_at": "2026-08-21T01:08:28+00:00",
+  "fetched_at": "2026-08-21T01:16:40+00:00",
   "draft_id": "1900421374",
   "league_id": "1900421374",
   "league_name": "test",
@@ -16,16 +16,16 @@
     "scoring_type": "H2H_POINTS"
   },
   "pick_count": 64,
-  "picks_made": 5,
-  "picks_pending": 59,
+  "picks_made": 10,
+  "picks_pending": 54,
   "on_the_clock": {
-    "pick_no": 6,
-    "round": 2,
-    "pick_in_round": 2,
+    "pick_no": 11,
+    "round": 3,
+    "pick_in_round": 3,
     "draft_slot": 3,
     "user_id": "{98AC871B-86C0-43C5-B552-2A87B01A415C}",
     "username": "John C McGue",
-    "slot": "2.02"
+    "slot": "3.03"
   },
   "me": {
     "username": "John C McGue",
@@ -34,22 +34,23 @@
     "roster_id": 1
   },
   "my_next_pick": {
-    "pick_no": 6,
-    "round": 2,
-    "pick_in_round": 2,
+    "pick_no": 11,
+    "round": 3,
+    "pick_in_round": 3,
     "draft_slot": 3,
     "user_id": "{98AC871B-86C0-43C5-B552-2A87B01A415C}",
     "username": "John C McGue",
-    "slot": "2.02",
+    "slot": "3.03",
     "picks_away": 0
   },
   "board_derivation": {
     "method": "snake; traded picks applied",
-    "checked_against_made_picks": 5,
-    "slot_and_roster_agree": 5,
+    "checked_against_made_picks": 10,
+    "slot_and_roster_agree": 10,
     "rounds_exercised": [
       1,
-      2
+      2,
+      3
     ],
     "mismatches": []
   },
@@ -194,12 +195,12 @@
       "user_id": "{98AC871B-86C0-43C5-B552-2A87B01A415C}",
       "username": "John C McGue",
       "is_mine": true,
-      "status": "pending",
-      "sleeper_id": null,
-      "name": null,
-      "position": null,
-      "team": null,
-      "is_keeper": null
+      "status": "made",
+      "sleeper_id": "6813",
+      "name": "Jonathan Taylor",
+      "position": "RB",
+      "team": "IND",
+      "is_keeper": false
     },
     {
       "pick_no": 7,
@@ -210,12 +211,12 @@
       "user_id": null,
       "username": null,
       "is_mine": false,
-      "status": "pending",
-      "sleeper_id": null,
-      "name": null,
-      "position": null,
-      "team": null,
-      "is_keeper": null
+      "status": "made",
+      "sleeper_id": "4034",
+      "name": "Christian McCaffrey",
+      "position": "RB",
+      "team": "SF",
+      "is_keeper": false
     },
     {
       "pick_no": 8,
@@ -226,12 +227,12 @@
       "user_id": null,
       "username": null,
       "is_mine": false,
-      "status": "pending",
-      "sleeper_id": null,
-      "name": null,
-      "position": null,
-      "team": null,
-      "is_keeper": null
+      "status": "made",
+      "sleeper_id": "7547",
+      "name": "Amon-Ra St. Brown",
+      "position": "WR",
+      "team": "DET",
+      "is_keeper": false
     },
     {
       "pick_no": 9,
@@ -242,12 +243,12 @@
       "user_id": null,
       "username": null,
       "is_mine": false,
-      "status": "pending",
-      "sleeper_id": null,
-      "name": null,
-      "position": null,
-      "team": null,
-      "is_keeper": null
+      "status": "made",
+      "sleeper_id": "6786",
+      "name": "CeeDee Lamb",
+      "position": "WR",
+      "team": "DAL",
+      "is_keeper": false
     },
     {
       "pick_no": 10,
@@ -258,12 +259,12 @@
       "user_id": null,
       "username": null,
       "is_mine": false,
-      "status": "pending",
-      "sleeper_id": null,
-      "name": null,
-      "position": null,
-      "team": null,
-      "is_keeper": null
+      "status": "made",
+      "sleeper_id": "9226",
+      "name": "De'Von Achane",
+      "position": "RB",
+      "team": "MIA",
+      "is_keeper": false
     },
     {
       "pick_no": 11,
