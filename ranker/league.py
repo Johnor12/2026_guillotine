@@ -111,7 +111,7 @@ OPPONENT_DEPTH_PENALTY = 2.0
 # board. The RB tilt carries over from the previous league (fitted there at 0.67):
 # largely the same drafters, and they've expressed a strong preference for RBs.
 # Set at 0.75 pending this league's own replay evidence (evaluate_opponents.py).
-OPPONENT_POSITION_TILT: dict[str, float] = {"RB": 0.75}
+OPPONENT_POSITION_TILT: dict[str, float] = {"RB": 0.67}
 # Multiplier around each opponent's fitted source adherence: 1 reproduces the observed
 # mean log-rank loss before roster-balance adjustments, while 0 removes random variation.
 NOISE = 1.0

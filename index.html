@@ -59,19 +59,6 @@
   .brand { min-width: 0; }
   .top h1 { font-size: 22px; line-height: 1.2; font-weight: 700; margin: 0; }
   .sub { color: var(--ink-2); font-size: 12.5px; margin: 4px 0 0; }
-  #refreshBtn {
-    margin-left: auto; flex: none; border: 1px solid var(--border); background: var(--surface);
-    color: var(--ink-2); border-radius: 8px; padding: 7px 11px; font: inherit;
-    font-size: 12.5px; cursor: pointer;
-  }
-  #refreshBtn:disabled { cursor: default; opacity: .7; }
-  #refreshBtn.stale {
-    border-color: var(--accent); color: var(--accent); font-weight: 650;
-    animation: stale-pulse 1.6s ease-in-out infinite;
-  }
-  @keyframes stale-pulse {
-    50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent); }
-  }
 
   .card, .table-wrap, .draft-strip {
     background: var(--surface); border: 1px solid var(--border); border-radius: 11px;
@@ -81,19 +68,6 @@
     padding: 10px 13px; color: var(--ink-2); font-size: 12.5px;
   }
   .draft-strip strong { color: var(--ink); font-size: 13.5px; }
-  .draft-strip .primary { display: inline-flex; align-items: center; gap: 7px; }
-  .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--good); flex: none; }
-  .live-dot.off { background: var(--muted); }
-  .sync { margin-left: auto; color: var(--good); }
-  .sync.stale { color: var(--accent); font-weight: 650; }
-  .actions-pin {
-    flex: none; display: inline-flex; align-items: center; gap: 6px;
-    border: 1px solid var(--border); border-radius: 999px; background: var(--surface-2);
-    padding: 2px 10px; font-size: 12px; color: var(--ink-2); text-decoration: none;
-  }
-  .actions-pin.active { border-color: var(--accent); color: var(--accent); animation: stale-pulse 1.6s ease-in-out infinite; }
-  .actions-pin.ok { border-color: var(--good); color: var(--good); }
-  .actions-pin.fail { border-color: var(--bad); color: var(--bad); }
 
   section { margin-top: 30px; }
   section > h2 { font-size: 17px; line-height: 1.25; font-weight: 700; margin: 0 0 4px; }
@@ -224,8 +198,6 @@
     .top { align-items: center; }
     .sub { max-width: 30ch; }
     .draft-strip { align-items: flex-start; gap: 5px 14px; }
-    .draft-strip .primary { width: 100%; }
-    .sync { width: 100%; margin-left: 0; }
     section { margin-top: 25px; }
     .recommendation { width: 100%; margin-left: 0; }
     .outlook-summary { grid-template-columns: repeat(2, 1fr); }
@@ -242,16 +214,12 @@
       <h1>Redraft board</h1>
       <p class="sub" id="subline">Loading rankings.json…</p>
     </div>
-    <button id="refreshBtn" title="Run the refresh-rankings GitHub Action">↻ Refresh board</button>
   </header>
 
-  <div class="draft-strip" id="draftStrip" aria-live="polite">
-    <span class="primary"><span class="live-dot off" id="liveDot"></span><strong id="liveClock">Loading draft…</strong></span>
-    <span id="liveProgress"></span>
-    <span id="liveMine"></span>
-    <span id="liveLast"></span>
-    <span class="sync" id="liveSync"></span>
-    <a class="actions-pin" id="actionsPin" rel="noopener" hidden></a>
+  <div class="draft-strip" id="draftStrip">
+    <strong id="draftClock">Loading draft…</strong>
+    <span id="draftProgress"></span>
+    <span id="draftMine"></span>
   </div>
 
   <div class="card" id="error">
@@ -345,15 +313,6 @@ const signed = value => value == null ? "—" : `${value > 0 ? "+" : ""}${fmt(va
 const pct = value => value == null ? "—" : `${Math.round(value * 100)}%`;
 const trendClass = value => value > 0 ? "positive" : value < 0 ? "negative" : "dim";
 
-const labelToOverall = (label, teams) => {
-  const [round, inRound] = label.split(".").map(Number);
-  return (round - 1) * teams + inRound;
-};
-const overallToLabel = (pickNo, teams) => {
-  const round = Math.floor((pickNo - 1) / teams) + 1;
-  return `${round}.${String((pickNo - 1) % teams + 1).padStart(2, "0")}`;
-};
-
 /* The live board may include traded picks; the league's original slot sequence does not. */
 const remainingPickOrder = d => d.draft?.my_remaining_picks || d.league.my_picks;
 
@@ -433,174 +392,16 @@ function rosterCards(roster, outlook) {
   });
 }
 
-/* Pinned Actions status: watch refresh/deploy runs and report the active one's progress. */
-const REPO = "Johnor12/2026_redraft";
-const WORKFLOW_LABELS = { "refresh.yml": "Refresh", "deploy-pages.yml": "Deploy" };
-const actionsPin = document.getElementById("actionsPin");
-let actionsTimer = null;
-let watchedRunId = null;
-let fastUntil = 0;
-
-actionsPin.addEventListener("click", event => {
-  if (actionsPin.dataset.reload) { event.preventDefault(); location.reload(); }
-});
-
-function setPin(text, cls, href, reload) {
-  actionsPin.hidden = false;
-  if (actionsPin.textContent !== text) actionsPin.textContent = text;
-  actionsPin.className = `actions-pin ${cls}`;
-  actionsPin.href = href || "#";
-  if (reload) { actionsPin.dataset.reload = "1"; actionsPin.removeAttribute("target"); }
-  else { delete actionsPin.dataset.reload; actionsPin.target = "_blank"; }
-}
-
-async function pollActions() {
-  clearTimeout(actionsTimer);
-  /* Unauthenticated GitHub allows 60 requests/hour, so only poll fast around activity. */
-  let delay = 90000;
-  try {
-    const token = localStorage.getItem("gh_token");
-    const response = await fetch(`https://api.github.com/repos/${REPO}/actions/runs?per_page=10`, {
-      cache: "no-store",
-      headers: { Accept: "application/vnd.github+json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-    });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const runs = (await response.json()).workflow_runs
-      .map(run => ({ ...run, label: WORKFLOW_LABELS[run.path.split("/").pop()] }))
-      .filter(run => run.label);
-    const active = runs.find(run => run.status === "in_progress")
-      || runs.find(run => run.status !== "completed");
-    if (active) {
-      watchedRunId = active.id;
-      fastUntil = Date.now() + 60000;
-      setPin(`${active.label} ${active.status === "in_progress" ? "running" : "queued"}…`,
-        "active", active.html_url);
-    } else if (watchedRunId != null) {
-      const done = runs.find(run => run.id === watchedRunId);
-      watchedRunId = null;
-      if (done && done.conclusion !== "success") {
-        setPin(`✗ ${done.label} ${done.conclusion.replace(/_/g, " ")}`, "fail", done.html_url);
-      } else if (done && done.label === "Deploy") {
-        setPin("✓ Deployed — reload board", "ok", null, true);
-      } else if (done) {
-        /* A successful refresh dispatches the Pages deploy a few seconds later;
-           fastUntil is still open, so the next quick poll picks that run up. */
-        setPin("✓ Refresh finished", "ok", done.html_url);
-      }
-    }
-  } catch {
-    delay = 300000;
-  }
-  if (Date.now() < fastUntil) delay = Math.min(delay, 12000);
-  actionsTimer = setTimeout(pollActions, delay);
-}
-pollActions();
-
-document.getElementById("refreshBtn").addEventListener("click", async event => {
-  const button = event.currentTarget;
-  let token = localStorage.getItem("gh_token");
-  if (!token) {
-    token = prompt(`GitHub token with Actions write access to ${REPO}:`);
-    if (!token) return;
-    token = token.trim();
-    localStorage.setItem("gh_token", token);
-  }
-  button.disabled = true;
-  button.textContent = "↻ Starting…";
-  const reset = (label, delay) => setTimeout(() => {
-    button.disabled = false;
-    button.textContent = label;
-  }, delay);
-  try {
-    const response = await fetch(
-      `https://api.github.com/repos/${REPO}/actions/workflows/refresh.yml/dispatches`,
-      { method: "POST", headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json" },
-        body: JSON.stringify({ ref: "main" }) });
-    if (response.status === 401 || response.status === 403) {
-      localStorage.removeItem("gh_token");
-      throw new Error(`token rejected (${response.status})`);
-    }
-    if (response.status !== 204) throw new Error(`HTTP ${response.status}`);
-    button.textContent = "✓ Refresh queued";
-    fastUntil = Date.now() + 90000;
-    clearTimeout(actionsTimer);
-    actionsTimer = setTimeout(pollActions, 3000);
-    reset("↻ Refresh board", 10000);
-  } catch (error) {
-    button.textContent = `✗ ${error.message}`;
-    reset("↻ Refresh board", 5000);
-  }
-});
-
 function renderDraftSnapshot(d) {
   const clock = d.draft.on_the_clock;
   const mine = d.draft.next_pick_of_mine;
-  document.getElementById("liveClock").textContent = clock
-    ? `Sleeper snapshot · on the clock ${clock.slot}${clock.username ? ` · ${clock.username}` : ""}`
-    : "Sleeper snapshot · draft complete";
-  document.getElementById("liveProgress").textContent = `${d.draft.picks_made} of ${d.league.total_picks} picks made`;
-  document.getElementById("liveMine").textContent = mine
+  document.getElementById("draftClock").textContent = clock
+    ? `On the clock ${clock.slot}${clock.username ? ` · ${clock.username}` : ""}`
+    : "Draft complete";
+  document.getElementById("draftProgress").textContent = `${d.draft.picks_made} of ${d.league.total_picks} picks made`;
+  document.getElementById("draftMine").textContent = mine
     ? `Your next pick ${mine.slot} · ${mine.picks_away} pick${mine.picks_away === 1 ? "" : "s"} between`
     : "Your draft is complete";
-  document.getElementById("liveSync").textContent = "Checking live draft…";
-}
-
-async function pollLive(d) {
-  const api = `https://api.sleeper.app/v1/draft/${d.draft.draft_id}`;
-  const button = document.getElementById("refreshBtn");
-  const dot = document.getElementById("liveDot");
-  const clock = document.getElementById("liveClock");
-  const progress = document.getElementById("liveProgress");
-  const mine = document.getElementById("liveMine");
-  const lastLabel = document.getElementById("liveLast");
-  const sync = document.getElementById("liveSync");
-  const get = url => fetch(url, { cache: "no-store" }).then(response => {
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return response.json();
-  });
-
-  try {
-    const [draft, picks] = await Promise.all([get(api), get(`${api}/picks`)]);
-    const made = picks.length;
-    const total = d.league.total_picks;
-    dot.classList.remove("off");
-    clock.textContent = draft.status === "complete" || made >= total
-      ? "Sleeper live · draft complete"
-      : `Sleeper live · on the clock ${overallToLabel(made + 1, d.league.teams)}`;
-    progress.textContent = `${made} of ${total} picks made`;
-
-    const nextMine = remainingPickOrder(d).find(label => labelToOverall(label, d.league.teams) > made);
-    if (nextMine) {
-      const between = labelToOverall(nextMine, d.league.teams) - made - 1;
-      mine.textContent = `Your next pick ${nextMine} · ${between} pick${between === 1 ? "" : "s"} between`;
-    } else {
-      mine.textContent = "Your draft is complete";
-    }
-
-    const last = picks[made - 1];
-    const lastName = last && [last.metadata?.first_name, last.metadata?.last_name].filter(Boolean).join(" ");
-    lastLabel.textContent = lastName ? `Last: ${lastName} (${last.metadata?.position ?? "?"})` : "";
-
-    const behind = made - d.draft.picks_made;
-    const stale = behind !== 0 || draft.status !== d.draft.status;
-    button.classList.toggle("stale", stale);
-    sync.classList.toggle("stale", stale);
-    if (stale) {
-      sync.textContent = behind > 0
-        ? `Board is ${behind} pick${behind === 1 ? "" : "s"} behind`
-        : "Board and live draft disagree";
-      button.title = `Board built at ${d.draft.fetched_at} is stale — run the refresh workflow`;
-    } else {
-      sync.textContent = "Board in sync";
-      button.title = "Run the refresh-rankings GitHub Action";
-    }
-  } catch (error) {
-    dot.classList.add("off");
-    renderDraftSnapshot(d);
-    document.getElementById("liveSync").textContent = `Live check unavailable (${error.message}); showing snapshot`;
-    document.getElementById("liveSync").classList.remove("stale");
-    button.classList.remove("stale");
-  }
 }
 
 function chanceCell(candidate, stats, pick, d) {
@@ -814,8 +615,6 @@ function renderLeagueOutlook(d) {
   const rerenderBoard = () => { renderFilters(state, rerenderBoard); renderBoard(d, state); };
 
   renderDraftSnapshot(d);
-  pollLive(d);
-  setInterval(() => pollLive(d), 30000);
   renderNextPicks(d, byId);
   renderMyRoster(d);
   rerenderBoard();
