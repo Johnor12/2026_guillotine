@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-08-21T00:25:04+00:00",
+  "generated_at": "2026-08-21T01:05:58+00:00",
   "draft": {
     "draft_id": "1900421374",
-    "draft_fetched_at": "2026-08-20T00:59:50+00:00",
-    "draft_started_at": "2026-08-20T00:15:00+00:00",
-    "picks_analyzed": 2
+    "draft_fetched_at": "2026-08-21T01:05:58+00:00",
+    "draft_started_at": "2026-08-21T00:45:00+00:00",
+    "picks_analyzed": 5
   },
   "ranking_snapshot": {
     "generated_at": "2026-08-21T00:24:54+00:00",
@@ -66,7 +66,7 @@
     "fit_score": "100 * 2 ** (-mean(log2(availability_rank)) / 3); higher is closer. A missing player receives the same loss as availability rank 32.",
     "interpretation": "The inferred source is the closest supplied board, not proof the drafter used it. Confidence measures only separation from the runner-up."
   },
-  "owner_count": 2,
+  "owner_count": 4,
   "owners": [
     {
       "roster_id": 2,
@@ -323,7 +323,7 @@
       ]
     },
     {
-      "roster_id": 4,
+      "roster_id": 3,
       "username": null,
       "pick_count": 1,
       "picks": [
@@ -542,6 +542,613 @@
               "availability_rank": 1,
               "skipped_count": 0,
               "higher_ranked_available": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "roster_id": 4,
+      "username": "ESPNFAN3911144409",
+      "pick_count": 2,
+      "picks": [
+        {
+          "pick_no": 4,
+          "round": 1,
+          "name": "Ja'Marr Chase",
+          "position": "WR"
+        },
+        {
+          "pick_no": 5,
+          "round": 2,
+          "name": "Jaxon Smith-Njigba",
+          "position": "WR"
+        }
+      ],
+      "inferred_source": {
+        "source_id": "consensus",
+        "source_name": "Consensus Average",
+        "fit_score": 100.0,
+        "picks": 2,
+        "matched_picks": 2,
+        "coverage": 1.0,
+        "mean_availability_rank": 1.0,
+        "median_availability_rank": 1.0,
+        "top_available_rate": 1.0,
+        "top_3_available_rate": 1.0,
+        "mean_log2_loss": 0.0
+      },
+      "runner_up": {
+        "source_id": "draftsharks_adp",
+        "source_name": "DraftSharks ADP",
+        "fit_score": 100.0,
+        "picks": 2,
+        "matched_picks": 2,
+        "coverage": 1.0,
+        "mean_availability_rank": 1.0,
+        "median_availability_rank": 1.0,
+        "top_available_rate": 1.0,
+        "top_3_available_rate": 1.0,
+        "mean_log2_loss": 0.0
+      },
+      "confidence": "insufficient",
+      "score_gap": 0.0,
+      "provider_scores": [
+        {
+          "source_id": "consensus",
+          "source_name": "Consensus Average",
+          "fit_score": 100.0,
+          "picks": 2,
+          "matched_picks": 2,
+          "coverage": 1.0,
+          "mean_availability_rank": 1.0,
+          "median_availability_rank": 1.0,
+          "top_available_rate": 1.0,
+          "top_3_available_rate": 1.0,
+          "mean_log2_loss": 0.0,
+          "evidence": [
+            {
+              "pick_no": 4,
+              "round": 1,
+              "player": "Ja'Marr Chase",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 3,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            },
+            {
+              "pick_no": 5,
+              "round": 2,
+              "player": "Jaxon Smith-Njigba",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 5,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            }
+          ]
+        },
+        {
+          "source_id": "draftsharks_adp",
+          "source_name": "DraftSharks ADP",
+          "fit_score": 100.0,
+          "picks": 2,
+          "matched_picks": 2,
+          "coverage": 1.0,
+          "mean_availability_rank": 1.0,
+          "median_availability_rank": 1.0,
+          "top_available_rate": 1.0,
+          "top_3_available_rate": 1.0,
+          "mean_log2_loss": 0.0,
+          "evidence": [
+            {
+              "pick_no": 4,
+              "round": 1,
+              "player": "Ja'Marr Chase",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 2,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            },
+            {
+              "pick_no": 5,
+              "round": 2,
+              "player": "Jaxon Smith-Njigba",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 5,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            }
+          ]
+        },
+        {
+          "source_id": "fantasypros",
+          "source_name": "FantasyPros ECR",
+          "fit_score": 100.0,
+          "picks": 2,
+          "matched_picks": 2,
+          "coverage": 1.0,
+          "mean_availability_rank": 1.0,
+          "median_availability_rank": 1.0,
+          "top_available_rate": 1.0,
+          "top_3_available_rate": 1.0,
+          "mean_log2_loss": 0.0,
+          "evidence": [
+            {
+              "pick_no": 4,
+              "round": 1,
+              "player": "Ja'Marr Chase",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 3,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            },
+            {
+              "pick_no": 5,
+              "round": 2,
+              "player": "Jaxon Smith-Njigba",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 5,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            }
+          ]
+        },
+        {
+          "source_id": "ffcalculator",
+          "source_name": "FF Calculator ADP",
+          "fit_score": 100.0,
+          "picks": 2,
+          "matched_picks": 2,
+          "coverage": 1.0,
+          "mean_availability_rank": 1.0,
+          "median_availability_rank": 1.0,
+          "top_available_rate": 1.0,
+          "top_3_available_rate": 1.0,
+          "mean_log2_loss": 0.0,
+          "evidence": [
+            {
+              "pick_no": 4,
+              "round": 1,
+              "player": "Ja'Marr Chase",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 4,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            },
+            {
+              "pick_no": 5,
+              "round": 2,
+              "player": "Jaxon Smith-Njigba",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 5,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            }
+          ]
+        },
+        {
+          "source_id": "keeptradecut",
+          "source_name": "KeepTradeCut",
+          "fit_score": 89.1,
+          "picks": 2,
+          "matched_picks": 2,
+          "coverage": 1.0,
+          "mean_availability_rank": 1.5,
+          "median_availability_rank": 1.5,
+          "top_available_rate": 0.5,
+          "top_3_available_rate": 1.0,
+          "mean_log2_loss": 0.5,
+          "evidence": [
+            {
+              "pick_no": 4,
+              "round": 1,
+              "player": "Ja'Marr Chase",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 4,
+              "availability_rank": 2,
+              "skipped_count": 1,
+              "higher_ranked_available": [
+                {
+                  "name": "Jaxon Smith-Njigba",
+                  "position": "WR",
+                  "overall_rank": 3
+                }
+              ]
+            },
+            {
+              "pick_no": 5,
+              "round": 2,
+              "player": "Jaxon Smith-Njigba",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 3,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            }
+          ]
+        },
+        {
+          "source_id": "fantasycalc",
+          "source_name": "FantasyCalc",
+          "fit_score": 83.3,
+          "picks": 2,
+          "matched_picks": 2,
+          "coverage": 1.0,
+          "mean_availability_rank": 2.0,
+          "median_availability_rank": 2.0,
+          "top_available_rate": 0.5,
+          "top_3_available_rate": 1.0,
+          "mean_log2_loss": 0.792,
+          "evidence": [
+            {
+              "pick_no": 4,
+              "round": 1,
+              "player": "Ja'Marr Chase",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 3,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            },
+            {
+              "pick_no": 5,
+              "round": 2,
+              "player": "Jaxon Smith-Njigba",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 7,
+              "availability_rank": 3,
+              "skipped_count": 2,
+              "higher_ranked_available": [
+                {
+                  "name": "Christian McCaffrey",
+                  "position": "RB",
+                  "overall_rank": 4
+                },
+                {
+                  "name": "Amon-Ra St. Brown",
+                  "position": "WR",
+                  "overall_rank": 6
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "source_id": "sleeper_adp",
+          "source_name": "Sleeper ADP",
+          "fit_score": 83.3,
+          "picks": 2,
+          "matched_picks": 2,
+          "coverage": 1.0,
+          "mean_availability_rank": 2.0,
+          "median_availability_rank": 2.0,
+          "top_available_rate": 0.5,
+          "top_3_available_rate": 1.0,
+          "mean_log2_loss": 0.792,
+          "evidence": [
+            {
+              "pick_no": 4,
+              "round": 1,
+              "player": "Ja'Marr Chase",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 3,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            },
+            {
+              "pick_no": 5,
+              "round": 2,
+              "player": "Jaxon Smith-Njigba",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 7,
+              "availability_rank": 3,
+              "skipped_count": 2,
+              "higher_ranked_available": [
+                {
+                  "name": "Jonathan Taylor",
+                  "position": "RB",
+                  "overall_rank": 5
+                },
+                {
+                  "name": "Christian McCaffrey",
+                  "position": "RB",
+                  "overall_rank": 6
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "roster_id": 1,
+      "username": "John C McGue",
+      "pick_count": 1,
+      "picks": [
+        {
+          "pick_no": 3,
+          "round": 1,
+          "name": "Puka Nacua",
+          "position": "WR"
+        }
+      ],
+      "inferred_source": {
+        "source_id": "ffcalculator",
+        "source_name": "FF Calculator ADP",
+        "fit_score": 100.0,
+        "picks": 1,
+        "matched_picks": 1,
+        "coverage": 1.0,
+        "mean_availability_rank": 1.0,
+        "median_availability_rank": 1,
+        "top_available_rate": 1.0,
+        "top_3_available_rate": 1.0,
+        "mean_log2_loss": 0.0
+      },
+      "runner_up": {
+        "source_id": "consensus",
+        "source_name": "Consensus Average",
+        "fit_score": 79.4,
+        "picks": 1,
+        "matched_picks": 1,
+        "coverage": 1.0,
+        "mean_availability_rank": 2.0,
+        "median_availability_rank": 2,
+        "top_available_rate": 0.0,
+        "top_3_available_rate": 1.0,
+        "mean_log2_loss": 1.0
+      },
+      "confidence": "insufficient",
+      "score_gap": 20.6,
+      "provider_scores": [
+        {
+          "source_id": "ffcalculator",
+          "source_name": "FF Calculator ADP",
+          "fit_score": 100.0,
+          "picks": 1,
+          "matched_picks": 1,
+          "coverage": 1.0,
+          "mean_availability_rank": 1.0,
+          "median_availability_rank": 1,
+          "top_available_rate": 1.0,
+          "top_3_available_rate": 1.0,
+          "mean_log2_loss": 0.0,
+          "evidence": [
+            {
+              "pick_no": 3,
+              "round": 1,
+              "player": "Puka Nacua",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 3,
+              "availability_rank": 1,
+              "skipped_count": 0,
+              "higher_ranked_available": []
+            }
+          ]
+        },
+        {
+          "source_id": "consensus",
+          "source_name": "Consensus Average",
+          "fit_score": 79.4,
+          "picks": 1,
+          "matched_picks": 1,
+          "coverage": 1.0,
+          "mean_availability_rank": 2.0,
+          "median_availability_rank": 2,
+          "top_available_rate": 0.0,
+          "top_3_available_rate": 1.0,
+          "mean_log2_loss": 1.0,
+          "evidence": [
+            {
+              "pick_no": 3,
+              "round": 1,
+              "player": "Puka Nacua",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 4,
+              "availability_rank": 2,
+              "skipped_count": 1,
+              "higher_ranked_available": [
+                {
+                  "name": "Ja'Marr Chase",
+                  "position": "WR",
+                  "overall_rank": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "source_id": "draftsharks_adp",
+          "source_name": "DraftSharks ADP",
+          "fit_score": 79.4,
+          "picks": 1,
+          "matched_picks": 1,
+          "coverage": 1.0,
+          "mean_availability_rank": 2.0,
+          "median_availability_rank": 2,
+          "top_available_rate": 0.0,
+          "top_3_available_rate": 1.0,
+          "mean_log2_loss": 1.0,
+          "evidence": [
+            {
+              "pick_no": 3,
+              "round": 1,
+              "player": "Puka Nacua",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 4,
+              "availability_rank": 2,
+              "skipped_count": 1,
+              "higher_ranked_available": [
+                {
+                  "name": "Ja'Marr Chase",
+                  "position": "WR",
+                  "overall_rank": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "source_id": "fantasypros",
+          "source_name": "FantasyPros ECR",
+          "fit_score": 79.4,
+          "picks": 1,
+          "matched_picks": 1,
+          "coverage": 1.0,
+          "mean_availability_rank": 2.0,
+          "median_availability_rank": 2,
+          "top_available_rate": 0.0,
+          "top_3_available_rate": 1.0,
+          "mean_log2_loss": 1.0,
+          "evidence": [
+            {
+              "pick_no": 3,
+              "round": 1,
+              "player": "Puka Nacua",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 4,
+              "availability_rank": 2,
+              "skipped_count": 1,
+              "higher_ranked_available": [
+                {
+                  "name": "Ja'Marr Chase",
+                  "position": "WR",
+                  "overall_rank": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "source_id": "sleeper_adp",
+          "source_name": "Sleeper ADP",
+          "fit_score": 79.4,
+          "picks": 1,
+          "matched_picks": 1,
+          "coverage": 1.0,
+          "mean_availability_rank": 2.0,
+          "median_availability_rank": 2,
+          "top_available_rate": 0.0,
+          "top_3_available_rate": 1.0,
+          "mean_log2_loss": 1.0,
+          "evidence": [
+            {
+              "pick_no": 3,
+              "round": 1,
+              "player": "Puka Nacua",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 4,
+              "availability_rank": 2,
+              "skipped_count": 1,
+              "higher_ranked_available": [
+                {
+                  "name": "Ja'Marr Chase",
+                  "position": "WR",
+                  "overall_rank": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "source_id": "fantasycalc",
+          "source_name": "FantasyCalc",
+          "fit_score": 69.3,
+          "picks": 1,
+          "matched_picks": 1,
+          "coverage": 1.0,
+          "mean_availability_rank": 3.0,
+          "median_availability_rank": 3,
+          "top_available_rate": 0.0,
+          "top_3_available_rate": 1.0,
+          "mean_log2_loss": 1.585,
+          "evidence": [
+            {
+              "pick_no": 3,
+              "round": 1,
+              "player": "Puka Nacua",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 5,
+              "availability_rank": 3,
+              "skipped_count": 2,
+              "higher_ranked_available": [
+                {
+                  "name": "Ja'Marr Chase",
+                  "position": "WR",
+                  "overall_rank": 3
+                },
+                {
+                  "name": "Christian McCaffrey",
+                  "position": "RB",
+                  "overall_rank": 4
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "source_id": "keeptradecut",
+          "source_name": "KeepTradeCut",
+          "fit_score": 69.3,
+          "picks": 1,
+          "matched_picks": 1,
+          "coverage": 1.0,
+          "mean_availability_rank": 3.0,
+          "median_availability_rank": 3,
+          "top_available_rate": 0.0,
+          "top_3_available_rate": 1.0,
+          "mean_log2_loss": 1.585,
+          "evidence": [
+            {
+              "pick_no": 3,
+              "round": 1,
+              "player": "Puka Nacua",
+              "position": "WR",
+              "matched": true,
+              "overall_rank": 5,
+              "availability_rank": 3,
+              "skipped_count": 2,
+              "higher_ranked_available": [
+                {
+                  "name": "Jaxon Smith-Njigba",
+                  "position": "WR",
+                  "overall_rank": 3
+                },
+                {
+                  "name": "Ja'Marr Chase",
+                  "position": "WR",
+                  "overall_rank": 4
+                }
+              ]
             }
           ]
         }

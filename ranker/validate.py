@@ -124,7 +124,9 @@ def validate(
     gains = [r["lineup_gain"] for r in rows]
     check(gains == sorted(gains, reverse=True), "rows are not sorted by lineup gain descending")
     source_ids = {strategy.source_id for strategy in draft.opponents.values()}
-    check(len(source_ids) >= 2, f"opponents use only {len(source_ids)} distinct source board(s)")
+    # Before any opponent has picked, all of them share the consensus cold-start board.
+    if any(board.rosters[slot - 1] for slot in draft.opponents):
+        check(len(source_ids) >= 2, f"opponents use only {len(source_ids)} distinct source board(s)")
     check(
         any(row["opponent_rank_delta"] != 0 for row in rows),
         "opponent consensus order does not diverge from my board order",

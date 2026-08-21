@@ -10,12 +10,15 @@ that paste into the made-pick shapes ``fetch_draft.py`` builds from the API, and
 win wherever both exist.
 
 The paste is the draft room's pick history copied as text. Each round starts with a
-``Round N`` line, and each pick contributes, in order: its pick number within the
-round (the displayed Pick column is assumed round-relative), the player's name, NFL
-team, and position, then a tail of columns (fantasy team, points, rank) this parser
-never reads. Records are anchored on the position line — the three lines above it are
-(pick number, name, NFL team) — so junk in the tail cannot break the parse, and a
-malformed record raises instead of being skipped: it is a mis-paste to fix.
+``Round N`` line, and each pick contributes, in order: its overall pick number (the
+displayed Pick column counts across rounds; the ``Round N`` header and league size
+only cross-check it), the player's name, an
+injury designation (``Q``, ``O``, ...) if the player carries one, NFL team, and
+position, then a tail of columns (fantasy team, points, rank) this parser never
+reads. Records are anchored on the position line — the NFL team sits directly above
+it, then an optional status token, then name and pick number — so junk in the tail
+cannot break the parse, and a malformed record raises instead of being skipped: it
+is a mis-paste to fix.
 
 Players are matched to the pool pipeline's cached Sleeper dump by normalized name,
 position always required to agree and team used as a tiebreaker — a trimmed copy of
@@ -46,6 +49,9 @@ POSITIONS = {"QB", "RB", "WR", "TE", "K", "D/ST"}
 #: ESPN NFL abbreviation -> Sleeper's, where they differ.
 TEAM_ALIASES = {"WSH": "WAS", "JAC": "JAX", "LVR": "LV"}
 
+#: ESPN injury designations, pasted as their own line between name and NFL team.
+STATUSES = {"Q", "D", "O", "IR", "PUP", "SSPD", "NA"}
+
 SUFFIXES = ("jr", "sr", "ii", "iii", "iv", "v")
 
 ROUND_RE = re.compile(r"^Round (\d+)$")
@@ -70,24 +76,25 @@ def parse(text: str, teams: int) -> list[dict]:
             continue
         if line not in POSITIONS:
             continue
-        context = " / ".join(lines[max(0, i - 3) : i + 1])
+        context = " / ".join(lines[max(0, i - 4) : i + 1])
         if round_no is None:
             raise ValueError(f"pick before any 'Round N' line: {context}")
-        if i < 3:
+        j = i - 2  # line above the team: an injury status, or already the name
+        if j >= 0 and lines[j] in STATUSES:
+            j -= 1
+        if j < 1:
             raise ValueError(f"position line with no pick above it: {context}")
-        number, name, team = lines[i - 3], lines[i - 2], lines[i - 1]
-        if not number.isdigit() or not 1 <= int(number) <= teams:
-            raise ValueError(f"expected a pick number 1..{teams}, got {number!r}: {context}")
+        number, name, team = lines[j - 1], lines[j], lines[i - 1]
+        if not number.isdigit() or int(number) < 1:
+            raise ValueError(f"expected an overall pick number, got {number!r}: {context}")
+        pick_no = int(number)
+        if (pick_no - 1) // teams + 1 != round_no:
+            raise ValueError(
+                f"pick {pick_no} is not in round {round_no} of a {teams}-team league: {context}"
+            )
         if not TEAM_RE.match(team):
             raise ValueError(f"expected an NFL team abbreviation, got {team!r}: {context}")
-        records.append(
-            {
-                "pick_no": (round_no - 1) * teams + int(number),
-                "name": name,
-                "team": team,
-                "position": line,
-            }
-        )
+        records.append({"pick_no": pick_no, "name": name, "team": team, "position": line})
 
     if not records:
         raise ValueError("no picks found — is this the draft room's pick history?")
@@ -228,6 +235,32 @@ John's Stout Team4
 370.8
 352.8
 2
+3
+
+Puka Nacua
+Q
+LAR
+WR
+John's Scary Team
+375
+356.3
+4
+Round 2
+Pick
+Player
+Team
+2025 PTS
+PROJ PTS
+RK
+5
+
+Jaxon Smith-Njigba
+SEA
+WR
+John's Stout Team4
+359.9
+326.7
+5
 """
 
 
@@ -236,9 +269,10 @@ def selftest() -> int:
     expected = [
         {"pick_no": 1, "name": "Jahmyr Gibbs", "team": "DET", "position": "RB"},
         {"pick_no": 2, "name": "Bijan Robinson", "team": "ATL", "position": "RB"},
+        {"pick_no": 3, "name": "Puka Nacua", "team": "LAR", "position": "WR"},
+        {"pick_no": 5, "name": "Jaxon Smith-Njigba", "team": "SEA", "position": "WR"},
     ]
     assert records == expected, records
-    assert [r["pick_no"] for r in parse(SAMPLE.replace("Round 1", "Round 3"), teams=4)] == [9, 10]
 
     dump = {
         "1": {
@@ -250,13 +284,18 @@ def selftest() -> int:
             "position": "DEF", "team": "DEN",
         },
     }
-    dst = {"pick_no": 3, "name": "Broncos D/ST", "team": "DEN", "position": "D/ST"}
+    dst = {"pick_no": 4, "name": "Broncos D/ST", "team": "DEN", "position": "D/ST"}
     picks, warnings = as_picks(records + [dst], dump)
-    assert [p["player_id"] for p in picks] == ["1", None, "DEN"], picks
-    assert picks[2]["metadata"]["position"] == "DEF", picks[2]
-    assert len(warnings) == 1 and "Bijan Robinson" in warnings[0], warnings
+    assert [p["player_id"] for p in picks] == ["1", None, None, None, "DEN"], picks
+    assert picks[4]["metadata"]["position"] == "DEF", picks[4]
+    assert len(warnings) == 3 and "Bijan Robinson" in warnings[0], warnings
 
-    for bad in ("", "Round 1\n1\nJahmyr Gibbs", SAMPLE.replace("Round 1", "")):
+    for bad in (
+        "",
+        "Round 1\n1\nJahmyr Gibbs",
+        SAMPLE.replace("Round 1", ""),
+        SAMPLE.replace("Round 2", "Round 3"),  # pick 5 can't be in round 3
+    ):
         try:
             parse(bad, teams=4)
         except ValueError:
@@ -277,14 +316,16 @@ def main(argv: list[str] | None = None) -> int:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     ap.add_argument("input", nargs="?", default=paths.DRAFT_HISTORY, type=Path)
-    ap.add_argument("--teams", type=int, help="league size, to number picks across rounds")
+    ap.add_argument(
+        "--teams", type=int, help="league size, to cross-check pick numbers against round headers"
+    )
     ap.add_argument("--selftest", action="store_true", help="check the parser offline, then exit")
     args = ap.parse_args(argv)
 
     if args.selftest:
         return selftest()
     if not args.teams:
-        ap.error("--teams is required (the paste's Pick column is round-relative)")
+        ap.error("--teams is required (to check pick numbers against their Round headers)")
     if not args.input.is_file():
         print(f"error: {paths.display(args.input)} not found", file=sys.stderr)
         return 1

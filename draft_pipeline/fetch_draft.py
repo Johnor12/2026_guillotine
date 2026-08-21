@@ -15,8 +15,9 @@ carries `espn_id` for every fantasy-relevant player. D/ST picks use ESPN's fixed
 
 The read API lags the live draft (a made pick stays `playerId` -1 for minutes, maybe
 until the draft completes), so during a draft the room's pick history is hand-pasted
-into `draft_history.txt` at the repo root; when that file exists, its picks are parsed
-by `draft_history.py` and overlaid on the fetched board, ESPN-reported picks winning.
+into `draft_history.txt` at the repo root; when that file has content, its picks are
+parsed by `draft_history.py` and overlaid on the fetched board, ESPN-reported picks
+winning.
 
 Assumptions, stated instead of defended: the league drafts a plain snake (ESPN has no
 third-round reversal), picks are never traded (ESPN live drafts do not support it, so
@@ -320,14 +321,15 @@ def main(argv: list[str] | None = None) -> int:
     fatal = board.problems()
 
     if not fatal and paths.DRAFT_HISTORY.is_file():
-        try:
-            note = overlay_history(
-                paths.DRAFT_HISTORY.read_text(encoding="utf-8"), fetched, league, board, players
-            )
-        except ValueError as exc:
-            print(f"error: {paths.display(paths.DRAFT_HISTORY)}: {exc}", file=sys.stderr)
-            return 1
-        print(note, file=sys.stderr)
+        history_text = paths.DRAFT_HISTORY.read_text(encoding="utf-8")
+        # A blank file is the pre-draft state, not a mis-paste — nothing to overlay.
+        if history_text.strip():
+            try:
+                note = overlay_history(history_text, fetched, league, board, players)
+            except ValueError as exc:
+                print(f"error: {paths.display(paths.DRAFT_HISTORY)}: {exc}", file=sys.stderr)
+                return 1
+            print(note, file=sys.stderr)
 
     problems, notable = pick_number_problems(fetched["picks"], board)
     fatal += problems
