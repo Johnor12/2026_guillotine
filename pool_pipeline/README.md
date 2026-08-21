@@ -23,11 +23,16 @@ uv run pool_pipeline/parse_projections.py in.html -o out.json
 uv run pool_pipeline/build_pool.py --limit 450 -o big.json
 uv run pool_pipeline/match_sleeper.py --report
 uv run pool_pipeline/fetch_sleeper.py
+uv run pool_pipeline/fetch_sleeper_projections.py
 ```
 
 `fetch_sleeper.py` is manual and is not a pipeline stage. Sleeper's player dump is about
 14 MB and should not be downloaded more than once per day. It is cached under `data/`;
 the small metadata file records when it was fetched.
+
+`fetch_sleeper_projections.py` is also manual: it writes `data/sleeper_projections.json`,
+the top 250 players by Sleeper/Rotowire season projection (no kickers) with half-PPR ADP,
+scored with the league's own settings so the numbers match the league players page.
 
 ## File contracts
 

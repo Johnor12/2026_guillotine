@@ -41,6 +41,10 @@ SLEEPER_PLAYERS = DATA_DIR / "sleeper_players.json"
 #: Small committed sidecar recording when the dump above was pulled.
 SLEEPER_META = DATA_DIR / "sleeper_players.meta.json"
 
+#: Sleeper/Rotowire season projections and ADP, scored with the league's own
+#: settings. Fetched by hand (``fetch_sleeper_projections.py``).
+SLEEPER_PROJECTIONS = DATA_DIR / "sleeper_projections.json"
+
 #: The one published artifact.
 POOL = REPO_ROOT / "pool.json"
 
