@@ -27,6 +27,7 @@ sys.path.insert(0, str(INVESTIGATOR_DIR))
 
 import investigate as source_investigator  # noqa: E402
 
+from ranker import league  # noqa: E402
 from ranker.board import load_board  # noqa: E402
 from ranker.league import NOISE, SEED  # noqa: E402
 from ranker.opponents import build_opponent_strategies  # noqa: E402
@@ -201,6 +202,7 @@ def main() -> int:
     try:
         players, _ = load_pool(POOL)
         draft = json.loads(DRAFT.read_text())
+        league.configure_from_draft(draft)
         rankings = json.loads(SOURCE_RANKINGS.read_text())
         results = evaluate(players, draft, rankings)
     except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:

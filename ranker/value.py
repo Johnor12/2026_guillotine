@@ -27,12 +27,12 @@ from __future__ import annotations
 
 from functools import lru_cache
 
+from . import league
 from .league import (
     DEDICATED_SLOTS,
     POSITIONS,
     SLOT_CHAIN,
     STARTING_SLOTS,
-    TEAMS,
     UNAVAILABLE_RATE,
 )
 from .pool import Player, by_position
@@ -333,14 +333,14 @@ def _rep_at_rank(pos_players: list[Player], rank: int) -> float:
 def seed_wire(players: list[Player]) -> dict[str, float]:
     """Iteration-0 wire levels from pure slot counting, no draft behaviour assumed.
 
-    Assign the top of the pool to the league's 80 starting slots the way a perfectly
-    efficient market would — dedicated slots by positional rank, then the 20 flex slots
+    Assign the top of the pool to the league's starting slots the way a perfectly
+    efficient market would — dedicated slots by positional rank, then the flex slots
     to the best players still eligible — and take the best player at each position who
     did not earn a slot. Convergence replaces this with the best player actually left
     undrafted (`wire_replacement`).
     """
     pos = pos_sorted(players)
-    caps = {slot: n * TEAMS for slot, n in STARTING_SLOTS.items()}
+    caps = {slot: n * league.TEAMS for slot, n in STARTING_SLOTS.items()}
     used = {p: 0 for p in POSITIONS}
     for p in sorted(players, key=_KEY):
         for slot in SLOT_CHAIN[p.position]:

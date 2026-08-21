@@ -41,6 +41,7 @@ import json
 import sys
 from pathlib import Path
 
+from ranker import league
 from ranker.board import fresh_board, load_board
 from ranker.convergence import converge
 from ranker.league import NOISE, ROLLOUT_SIMS, SEED, SIMS
@@ -119,6 +120,13 @@ def main(argv: list[str] | None = None) -> int:
             draft_raw = json.loads(draft_path.read_text())
         except (OSError, json.JSONDecodeError) as exc:
             print(f"cannot read {draft_path}: {exc}", file=sys.stderr)
+            return 1
+        # The draft's geometry wins over league.py's defaults, --no-draft included:
+        # even an empty board should be shaped like the draft being tested.
+        try:
+            league.configure_from_draft(draft_raw)
+        except ValueError as exc:
+            print(f"cannot adopt {draft_path}'s geometry: {exc}", file=sys.stderr)
             return 1
     if args.no_draft:
         board = fresh_board()

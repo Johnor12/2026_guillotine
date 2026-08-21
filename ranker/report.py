@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import sys
 
+from . import league
 from .board import Board
-from .league import TEAMS, TOTAL_PICKS, pick_label
+from .league import pick_label
 from .output import team_names
 from .rankings import my_next_picks
 from .simulation import Draft
@@ -22,7 +23,7 @@ def report_board(board: Board) -> None:
         return
     live = board.live
     print(
-        f"board: {live['picks_made']}/{TOTAL_PICKS} picks made, {live['picks_pending']} "
+        f"board: {live['picks_made']}/{league.TOTAL_PICKS} picks made, {live['picks_pending']} "
         f"pending ({live['matched_to_pool']} made picks joined to the pool, "
         f"{len(live['off_pool_picks'])} outside it); {live['status']}, "
         f"fetched {live['fetched_at']}",
@@ -40,7 +41,7 @@ def report_board(board: Board) -> None:
             file=sys.stderr,
         )
     names = team_names(board)
-    for slot in range(1, TEAMS + 1):
+    for slot in range(1, league.TEAMS + 1):
         made, off = board.rosters[slot - 1], board.off_pool[slot - 1]
         if not made and not off:
             continue

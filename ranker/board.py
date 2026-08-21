@@ -30,7 +30,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from .league import MY_SLOT, ROUNDS, TEAMS, TOTAL_PICKS, draft_order, pick_label, picks_for_slot
+from . import league
+from .league import draft_order, pick_label, picks_for_slot
 from .pool import Player
 
 
@@ -40,11 +41,11 @@ class Board:
 
     One type covers both cases so there is a single simulation path. `fresh_board()` is a
     board with nothing drafted and the static snake order; `load_board()` builds one from
-    `draft.json`. The simulation only ever plays `order`, so an untouched board plays all
-    120 picks and a live one plays the pending tail.
+    `draft.json`. The simulation only ever plays `order`, so an untouched board plays
+    every pick and a live one plays the pending tail.
 
-    Teams are indexed by draft slot (1..10, minus one), because that is what `MY_SLOT` and
-    the snake are expressed in. `order` holds the slot of the team that *receives*
+    Teams are indexed by draft slot (1..TEAMS, minus one), because that is what `MY_SLOT`
+    and the snake are expressed in. `order` holds the slot of the team that *receives*
     each remaining pick, which is the acquirer for a traded pick, so a trade shows up as a
     slot appearing at a board position that is not its own column.
     """
@@ -76,15 +77,16 @@ class Board:
         return len(self.rosters[i]) + len(self.off_pool[i]) + self.picks_left[i]
 
 
-def fresh_board(my_slot: int = MY_SLOT) -> Board:
-    """An untouched board: the static snake, empty rosters, all 120 picks pending."""
+def fresh_board(my_slot: int | None = None) -> Board:
+    """An untouched board: the static snake, empty rosters, every pick pending."""
+    my_slot = league.MY_SLOT if my_slot is None else my_slot
     order = draft_order()
     return Board(
         order=order,
         pick_nos=list(range(1, len(order) + 1)),
-        rosters=[[] for _ in range(TEAMS)],
-        off_pool=[[] for _ in range(TEAMS)],
-        picks_left=[ROUNDS] * TEAMS,
+        rosters=[[] for _ in range(league.TEAMS)],
+        off_pool=[[] for _ in range(league.TEAMS)],
+        picks_left=[league.ROUNDS] * league.TEAMS,
         my_slot=my_slot,
         my_picks=picks_for_slot(my_slot, order),
     )
@@ -101,36 +103,40 @@ def load_board(
     pool's rank cut are draftable and unrankable at the same time, so they become
     `off_pool` entries (see the module docstring).
 
-    Geometry disagreements with the league constants are reported rather than raised. This
-    file is written from Sleeper's own answer about the draft, so if it says 12 teams then
-    either the wrong draft was fetched or the constants in league.py are stale; both are
-    worth seeing in `validation.problems` next to the numbers they broke.
+    Geometry disagreements with the configured league are reported rather than raised.
+    rank.py configures the geometry from this same file first, so these fire only when a
+    draft's header contradicts itself (pick_count != teams * rounds) or when a caller
+    skipped `league.configure_from_draft`; both are worth seeing in `validation.problems`
+    next to the numbers they broke.
     """
     problems: list[str] = []
     fmt = raw.get("format") or {}
     for label, got, want in (
-        ("teams", fmt.get("teams"), TEAMS),
-        ("rounds", fmt.get("rounds"), ROUNDS),
-        ("pick_count", raw.get("pick_count"), TOTAL_PICKS),
+        ("teams", fmt.get("teams"), league.TEAMS),
+        ("rounds", fmt.get("rounds"), league.ROUNDS),
+        ("pick_count", raw.get("pick_count"), league.TOTAL_PICKS),
     ):
         if got is not None and got != want:
-            problems.append(f"{source} says {label}={got}, this script assumes {want}")
+            problems.append(f"{source} says {label}={got}, this run is configured for {want}")
 
     slot_of_roster = {
         s["roster_id"]: s["draft_slot"] for s in raw.get("slots", []) if s.get("roster_id")
     }
-    my_slot = (raw.get("me") or {}).get("draft_slot") or MY_SLOT
-    if my_slot != MY_SLOT:
-        problems.append(f"{source} says my draft slot is {my_slot}, README says {MY_SLOT}")
+    my_slot = (raw.get("me") or {}).get("draft_slot") or league.MY_SLOT
+    if my_slot != league.MY_SLOT:
+        problems.append(
+            f"{source} says my draft slot is {my_slot}, this run is configured "
+            f"for {league.MY_SLOT}"
+        )
 
     by_sleeper: dict[str, Player] = {}
     for p in players:
         if p.sleeper_id:
             by_sleeper.setdefault(p.sleeper_id, p)
 
-    rosters: list[list[Player]] = [[] for _ in range(TEAMS)]
-    off_pool: list[list[dict]] = [[] for _ in range(TEAMS)]
-    picks_left = [0] * TEAMS
+    rosters: list[list[Player]] = [[] for _ in range(league.TEAMS)]
+    off_pool: list[list[dict]] = [[] for _ in range(league.TEAMS)]
+    picks_left = [0] * league.TEAMS
     order: list[int] = []
     pick_nos: list[int] = []
     seen: set[int] = set()
@@ -139,7 +145,7 @@ def load_board(
     for pick in sorted(raw.get("picks", []), key=lambda p: p["pick_no"]):
         # The acquirer picks, not the column. With no trades these are the same team.
         slot = slot_of_roster.get(pick.get("roster_id")) or pick.get("draft_slot")
-        if not slot or not 1 <= slot <= TEAMS:
+        if not slot or not 1 <= slot <= league.TEAMS:
             problems.append(f"pick {pick.get('pick_no')} has no usable owner in {source}")
             continue
         i = slot - 1

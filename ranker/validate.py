@@ -7,16 +7,14 @@ currently reach.
 
 from __future__ import annotations
 
+from . import league
 from .board import Board
 from .league import (
     DEDICATED_SLOTS,
     MAX_ITERS,
     MAX_POSITIONS,
     POSITIONS,
-    ROUNDS,
     STARTING_SLOTS,
-    TEAMS,
-    TOTAL_PICKS,
     draft_order,
     pick_label,
     picks_for_slot,
@@ -40,29 +38,39 @@ def validate(
         if not ok:
             problems.append(msg)
 
-    # The static snake is the yardstick even on a live board: check it against the README
-    # first, then check that what the board says is still coming agrees with it.
-    readme = ["1.02", "2.09", "3.02", "4.09", "5.02", "6.09", "11.02", "12.09"]
+    # The static snake is the yardstick even on a live board. The pinned README labels
+    # only apply to the README's own geometry; a reconfigured test draft has no external
+    # pin to check the snake against.
     full = picks_for_slot(board.my_slot, draft_order())
-    labels = [pick_label(p) for p in full]
-    check(labels[:6] == readme[:6], f"draft order head {labels[:6]} != README {readme[:6]}")
-    check(labels[-2:] == readme[-2:], f"draft order tail {labels[-2:]} != README {readme[-2:]}")
-    check(len(full) == ROUNDS, f"{len(full)} picks for slot {board.my_slot}, want {ROUNDS}")
+    if (league.TEAMS, league.ROUNDS, board.my_slot) == (10, 12, 2):
+        readme = ["1.02", "2.09", "3.02", "4.09", "5.02", "6.09", "11.02", "12.09"]
+        labels = [pick_label(p) for p in full]
+        check(labels[:6] == readme[:6], f"draft order head {labels[:6]} != README {readme[:6]}")
+        check(
+            labels[-2:] == readme[-2:], f"draft order tail {labels[-2:]} != README {readme[-2:]}"
+        )
+    check(
+        len(full) == league.ROUNDS,
+        f"{len(full)} picks for slot {board.my_slot}, want {league.ROUNDS}",
+    )
     check(
         len(board.order) == len(board.pick_nos),
         f"board has {len(board.order)} owners for {len(board.pick_nos)} pending picks",
     )
     accounted = board.picks_made + len(board.order)
-    check(accounted == TOTAL_PICKS, f"board accounts for {accounted} picks, want {TOTAL_PICKS}")
     check(
-        sum(board.owed_size(s) for s in range(1, TEAMS + 1)) == TOTAL_PICKS,
+        accounted == league.TOTAL_PICKS,
+        f"board accounts for {accounted} picks, want {league.TOTAL_PICKS}",
+    )
+    check(
+        sum(board.owed_size(s) for s in range(1, league.TEAMS + 1)) == league.TOTAL_PICKS,
         "the picks each team owns do not sum to the board",
     )
 
     if board.live:
-        first = board.pick_nos[0] if board.pick_nos else TOTAL_PICKS + 1
+        first = board.pick_nos[0] if board.pick_nos else league.TOTAL_PICKS + 1
         check(
-            board.pick_nos == list(range(first, TOTAL_PICKS + 1)),
+            board.pick_nos == list(range(first, league.TOTAL_PICKS + 1)),
             "pending picks are not the contiguous tail of the board",
         )
         clock = (board.live.get("on_the_clock") or {}).get("pick_no")
@@ -101,7 +109,8 @@ def validate(
         starters = starting_positions(roster)
         check(
             len(starters) == sum(STARTING_SLOTS.values()),
-            f"slot {i} cannot field a full lineup ({len(starters)}/8)",
+            f"slot {i} cannot field a full lineup "
+            f"({len(starters)}/{sum(STARTING_SLOTS.values())})",
         )
         for pos, need in DEDICATED_SLOTS.items():
             have = sum(1 for p in roster if p.position == pos)

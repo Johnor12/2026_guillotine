@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from . import league
 from .board import Board
 from .league import (
-    BENCH_SLOTS,
     CANDIDATE_SURVIVAL_FLOOR,
     FIRST_PICK_PER_POS,
     IR_SLOTS,
@@ -14,12 +14,9 @@ from .league import (
     OPPONENT_DEPTH_TARGETS,
     POINTS_FIELD,
     POSITIONS,
-    ROUNDS,
     SCHEME,
     STARTING_SLOTS,
     SURVIVAL_SIGMA,
-    TEAMS,
-    TOTAL_PICKS,
     UNAVAILABLE_RATE,
     draft_order,
     pick_label,
@@ -58,7 +55,7 @@ def draft_block(board: Board) -> dict | None:
         "there is no projection to value them with."
     )
     block["rosters"] = []
-    for slot in range(1, TEAMS + 1):
+    for slot in range(1, league.TEAMS + 1):
         made, off = board.rosters[slot - 1], board.off_pool[slot - 1]
         counts = {pos: 0 for pos in POSITIONS}
         for p in made:
@@ -91,7 +88,7 @@ def example_rosters(draft: Draft, board: Board) -> list[dict]:
     """
     names = team_names(board)
     out: list[dict] = []
-    for slot in range(1, TEAMS + 1):
+    for slot in range(1, league.TEAMS + 1):
         roster, off = draft.rosters[slot - 1], draft.off_pool[slot - 1]
         counts = {pos: 0 for pos in POSITIONS}
         for p in roster:
@@ -176,13 +173,13 @@ def build_payload(
             "cannot enter a points-denominated lineup objective."
         ),
         "league": {
-            "teams": TEAMS,
+            "teams": league.TEAMS,
             "starting_slots": STARTING_SLOTS,
-            "bench_slots": BENCH_SLOTS,
+            "bench_slots": league.BENCH_SLOTS,
             "ir_slots": IR_SLOTS,
             "max_positions": MAX_POSITIONS,
-            "rounds": ROUNDS,
-            "total_picks": TOTAL_PICKS,
+            "rounds": league.ROUNDS,
+            "total_picks": league.TOTAL_PICKS,
             "draft_type": "snake",
             "my_slot": board.my_slot,
             "my_picks": [pick_label(p) for p in picks_for_slot(board.my_slot, draft_order())],
@@ -260,7 +257,10 @@ def build_payload(
             else "The whole pool, from an empty board: no live draft was read."
         ),
         "opponent_model": {
-            "who": "the other nine teams; my slot alone uses projections and roster value",
+            "who": (
+                f"the other {league.TEAMS - 1} teams; my slot alone uses projections "
+                "and roster value"
+            ),
             "how": (
                 "Each opponent orders legal available players by the provider board most "
                 "associated with its completed picks in data_source_matches.json. Opponent "
@@ -288,12 +288,13 @@ def build_payload(
             ),
             "coverage": (
                 "A provider's normalized players come first. Any pool player it does not "
-                "rank is appended in consensus-average order so all 120 picks remain "
-                "possible; the fallback is still an external opponent board, never my "
-                "personal board."
+                f"rank is appended in consensus-average order so all {league.TOTAL_PICKS} "
+                "picks remain possible; the fallback is still an external opponent board, "
+                "never my personal board."
             ),
             "delta": (
-                "opponent_consensus_rank averages the nine managers' complete source "
+                f"opponent_consensus_rank averages the {league.TEAMS - 1} managers' "
+                "complete source "
                 "orders, counting a source once per associated manager, then re-ranks the "
                 "available pool. opponent_rank_delta is opponent_consensus_rank - rank; "
                 "positive identifies players my board values earlier than the modeled "
@@ -351,13 +352,14 @@ def build_payload(
             "noise": noise,
             "seed": seed,
             "note": (
-                "Balance-adjusted source-rank Gumbel draws on the other 9 teams only, to "
+                f"Balance-adjusted source-rank Gumbel draws on the other {league.TEAMS - 1} "
+                "teams only, to "
                 "turn 0/1 availability under the deterministic preference into a usable "
                 "probability band. At noise=1 the source-rank component is calibrated to "
                 "each manager's observed mean log-rank loss before the balance adjustment; "
                 "noise=0 removes random variation but retains that adjustment. sim_pick is "
                 "from the noiseless draft; sim_adp, p_drafted and "
-                "p_available_at_my_picks are from these redraws and measure the other nine "
+                "p_available_at_my_picks are from these redraws and measure the other "
                 "teams' demand only — my own "
                 "simulated picks are the policy under evaluation, not opponent demand. "
                 "p_available_at_my_picks is a Kaplan-Meier estimate (an opponent take is "

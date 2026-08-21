@@ -2,8 +2,13 @@
 
 10 teams, 0.5 PPR redraft, 1 QB. Starters are 1 QB / 2 RB / 2 WR / 1 TE /
 2 W-R-T = 8. Then 4 bench = 12 draftable roster spots = 12 rounds = 120 picks.
-The 1 IR spot is not drafted into. Plain snake, no reversal. My slot is 2 until the
-real draft order is published (draft.json overrides it with a complaint).
+The 1 IR spot is not drafted into. Plain snake, no reversal.
+
+The geometry (teams, rounds, my slot, and everything derived from them) is a default:
+draft.json is authoritative, and `configure_from_draft()` rebinds it before any board
+is built, so test drafts with other league and roster sizes work unchanged. The
+starting-lineup shape and the strategy knobs are this league's and stay fixed —
+draft.json carries no lineup information.
 """
 
 from __future__ import annotations
@@ -41,6 +46,38 @@ SLOT_ELIGIBLE = {
     "TE": ("TE",),
     "FLEX": ("RB", "WR", "TE"),
 }
+
+
+# --- dynamic geometry -------------------------------------------------------------
+# Modules that consume the geometry above read it as `league.X` attributes, never
+# `from .league import X`, so a rebind here reaches everyone.
+
+
+def configure(teams: int, rounds: int, my_slot: int) -> None:
+    """Rebind the geometry to a draft's actual shape. Strategy knobs are untouched."""
+    global TEAMS, MY_SLOT, ROUNDS, ROSTER_SLOTS, BENCH_SLOTS, TOTAL_PICKS
+    starters = sum(STARTING_SLOTS.values())
+    if rounds < starters:
+        raise ValueError(f"{rounds} rounds cannot fill the {starters} starting slots")
+    if rounds > sum(MAX_POSITIONS.values()):
+        raise ValueError(f"{rounds} rounds cannot be drafted under the caps {MAX_POSITIONS}")
+    if not 1 <= my_slot <= teams:
+        raise ValueError(f"my slot {my_slot} is not a slot in a {teams}-team draft")
+    TEAMS, ROUNDS, MY_SLOT = teams, rounds, my_slot
+    ROSTER_SLOTS = rounds
+    BENCH_SLOTS = rounds - starters
+    TOTAL_PICKS = teams * rounds
+
+
+def configure_from_draft(raw: dict) -> None:
+    """Adopt draft.json's geometry: format.teams, format.rounds, and my draft slot."""
+    fmt = raw.get("format") or {}
+    if not fmt.get("teams") or not fmt.get("rounds"):
+        raise ValueError("no format.teams/format.rounds to configure the league from")
+    # An unpublished draft order leaves me.draft_slot null; the README default stands.
+    my_slot = (raw.get("me") or {}).get("draft_slot") or MY_SLOT
+    configure(int(fmt["teams"]), int(fmt["rounds"]), int(my_slot))
+
 
 # --- strategy knobs ---------------------------------------------------------------
 
@@ -88,12 +125,15 @@ SEED = 20260804
 # --- draft order ------------------------------------------------------------------
 
 
-def draft_order(teams: int = TEAMS, rounds: int = ROUNDS) -> list[int]:
+def draft_order(teams: int | None = None, rounds: int | None = None) -> list[int]:
     """Slot (1-based) picking at each overall pick. Plain snake, no reversal.
 
     Odd rounds forward, even rounds reverse. Pinned to the README's stated picks for
-    slot 2 (1.02, 2.09, 3.02, 4.09, ..., 11.02, 12.09) in validate().
+    slot 2 (1.02, 2.09, 3.02, 4.09, ..., 11.02, 12.09) in validate(). Defaults resolve
+    at call time so a configure() rebind is honored.
     """
+    teams = TEAMS if teams is None else teams
+    rounds = ROUNDS if rounds is None else rounds
     order: list[int] = []
     for rnd in range(1, rounds + 1):
         forward = rnd % 2 == 1
@@ -101,9 +141,9 @@ def draft_order(teams: int = TEAMS, rounds: int = ROUNDS) -> list[int]:
     return order
 
 
-def pick_label(pick_no: int, teams: int = TEAMS) -> str:
+def pick_label(pick_no: int, teams: int | None = None) -> str:
     """1-based overall pick number -> 'round.slot-in-round' as the draft room shows it."""
-    rnd, idx = divmod(pick_no - 1, teams)
+    rnd, idx = divmod(pick_no - 1, TEAMS if teams is None else teams)
     return f"{rnd + 1}.{idx + 1:02d}"
 
 
