@@ -12,7 +12,7 @@ uv run draft_pipeline/fetch_draft.py --selftest
 ## Internal boundaries
 
 - `fetch_draft.py`: the ESPN request, ESPN-to-board adaptation, and CLI orchestration
-- `draft_history.py`: parse a hand-pasted draft-room pick history and match it to Sleeper
+- `draft_history.py`: parse a hand-pasted draft-room page and match its picks to Sleeper
 - `draft_board.py`: draft geometry, ownership, pick rows, and JSON document construction
 - `report.py`: integrity diagnostics and the optional `pool.json` join report
 - `selftest.py`: offline formats, reversal, trade, autopick, and malformed-board checks
@@ -39,10 +39,12 @@ itself, not an edge cache — the picks may only sync once the draft completes).
 board layout, settings, and members are all still served correctly mid-draft; only the
 selections lag.
 
-So on draft day the room's pick history is copied by hand into `draft_history.txt` at
-the repo root and every fetch overlays it: `draft_history.py` parses the paste
-(records anchor on the position line, so the trailing fantasy-team/points/rank columns
-are ignored and cannot break it, and the `Pick` column is read as round-relative),
+So on draft day the whole draft room is copied with Ctrl+A, Ctrl+C and pasted into
+`draft_history.txt` at the repo root, and every fetch overlays it. A pick-history-only
+copy remains valid. `draft_history.py` finds the table between the `Pick History` /
+`All Rounds` and `Activity` markers, then parses it (records anchor on the position
+line, so the trailing fantasy-team/points/rank columns are ignored and cannot break
+it, and the `Pick` column is read as the overall pick number),
 matches players to the Sleeper dump by normalized name with position required and team
 as tiebreaker (D/ST by team abbreviation), and `fetch_draft.py` merges the result into
 the fetched board — any pick ESPN does report wins over the paste, and ownership comes

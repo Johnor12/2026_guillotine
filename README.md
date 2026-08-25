@@ -100,9 +100,9 @@ Refresh ranking snapshots and opponent associations:
 uv run data_source_investigator/pipeline.py --report
 ```
 
-Refresh the live board and recommendations between picks — first copy the draft
-room's pick history into `draft_history.txt` (ESPN's API alone won't have the new
-picks yet), then:
+Refresh the live board and recommendations between picks — first use Ctrl+A, Ctrl+C
+in the draft room and paste the full page into `draft_history.txt` (a pick-history-only
+copy also works; ESPN's API alone won't have the new picks yet), then:
 
 ```bash
 uv run refresh.py --report

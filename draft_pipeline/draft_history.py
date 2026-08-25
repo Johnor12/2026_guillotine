@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
-"""Parse a hand-pasted ESPN draft-room pick history into made picks.
+"""Parse a hand-pasted ESPN draft-room page into made picks.
 
 ESPN's league read API does not surface live-draft picks while the draft runs (a pick
 made in the room stayed invisible to `mDraftDetail` for minutes in testing, and may
-only sync when the draft completes), so on draft day the pick history is copied out of
-the draft room by hand into ``draft_history.txt`` at the repo root. This module turns
-that paste into the made-pick shapes ``fetch_draft.py`` builds from the API, and
+only sync when the draft completes), so on draft day the draft room is copied into
+``draft_history.txt`` at the repo root. This module turns that paste into the made-pick
+shapes ``fetch_draft.py`` builds from the API, and
 ``fetch_draft.py`` overlays them on the board it already fetched — ESPN-reported picks
 win wherever both exist.
 
-The paste is the draft room's pick history copied as text. Each round starts with a
-``Round N`` line, and each pick contributes, in order: its overall pick number (the
-displayed Pick column counts across rounds; the ``Round N`` header and league size
-only cross-check it), the player's name, an
+The paste may be the whole draft room (Ctrl+A, Ctrl+C) or just its pick-history table.
+In a full-page paste the table is bounded by ``Pick History`` / ``All Rounds`` and
+``Activity``. Each round starts with a ``Round N`` line, and each pick contributes, in
+order: its overall pick number (the displayed Pick column counts across rounds; the
+``Round N`` header and league size only cross-check it), the player's name, an
 injury designation (``Q``, ``O``, ...) if the player carries one, NFL team, and
 position, then a tail of columns (fantasy team, points, rank) this parser never
 reads. Records are anchored on the position line — the NFL team sits directly above
@@ -63,9 +64,28 @@ TEAM_RE = re.compile(r"^[A-Z]{2,3}$")
 # ---------------------------------------------------------------------------
 
 
+def history_lines(text: str) -> list[str]:
+    """Nonempty pick-history lines from either a table-only or full-page paste."""
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    if "Pick History" not in lines:
+        return lines
+
+    tab = lines.index("Pick History")
+    try:
+        start = lines.index("All Rounds", tab + 1) + 1
+        end = lines.index("Activity", start)
+    except ValueError as exc:
+        raise ValueError(
+            "full-page paste does not contain the expected 'All Rounds' ... 'Activity' section"
+        ) from exc
+    if start == end or not ROUND_RE.match(lines[start]):
+        raise ValueError("expected a 'Round N' line immediately after 'All Rounds'")
+    return lines[start:end]
+
+
 def parse(text: str, teams: int) -> list[dict]:
     """Pick records from the pasted history: {pick_no, name, team, position}."""
-    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    lines = history_lines(text)
     records: list[dict] = []
     round_no = None
 
@@ -274,6 +294,32 @@ def selftest() -> int:
     ]
     assert records == expected, records
 
+    full_page = f"""\
+ESPN Fantasy Football Draft - test
+Roster
+QB
+J. Allen
+D/ST
+Empty
+Draft
+Players
+Pick History
+Board
+Rules
+League Manager
+All Rounds
+{SAMPLE}Activity
+All
+Messages
+Picks
+Round 99
+999
+Not A Pick
+FA
+RB
+"""
+    assert parse(full_page, teams=4) == expected
+
     dump = {
         "1": {
             "player_id": "1", "first_name": "Jahmyr", "last_name": "Gibbs",
@@ -295,6 +341,7 @@ def selftest() -> int:
         "Round 1\n1\nJahmyr Gibbs",
         SAMPLE.replace("Round 1", ""),
         SAMPLE.replace("Round 2", "Round 3"),  # pick 5 can't be in round 3
+        full_page.replace("Activity", "Chat"),
     ):
         try:
             parse(bad, teams=4)

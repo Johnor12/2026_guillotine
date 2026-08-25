@@ -43,9 +43,10 @@ POOL = REPO_ROOT / "pool.json"
 #: ``espn_id``. Read-only; how an ESPN pick becomes a ``sleeper_id``.
 SLEEPER_PLAYERS = REPO_ROOT / "pool_pipeline" / "data" / "sleeper_players.json"
 
-#: Optional, hand-maintained: the draft room's pick history pasted as text, because
-#: ESPN's read API lags the live draft. When present, ``fetch_draft.py`` overlays its
-#: picks on the fetched board (ESPN-reported picks win). Parsed by ``draft_history.py``.
+#: Optional, hand-maintained: the draft room page (or just its pick history) pasted as
+#: text, because ESPN's read API lags the live draft. When present, ``fetch_draft.py``
+#: overlays its picks on the fetched board (ESPN-reported picks win). Parsed by
+#: ``draft_history.py``.
 DRAFT_HISTORY = REPO_ROOT / "draft_history.txt"
 
 
