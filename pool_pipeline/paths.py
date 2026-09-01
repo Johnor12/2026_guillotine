@@ -45,6 +45,11 @@ SLEEPER_META = DATA_DIR / "sleeper_players.meta.json"
 #: settings. Fetched by hand (``fetch_sleeper_projections.py``).
 SLEEPER_PROJECTIONS = DATA_DIR / "sleeper_projections.json"
 
+#: DraftSharks per-week stat projections, scored with the league's own
+#: settings. Fetched by hand (``fetch_weekly_projections.py``). Not consumed
+#: by any pipeline stage yet.
+WEEKLY_PROJECTIONS = DATA_DIR / "weekly_projections.json"
+
 #: The one published artifact.
 POOL = REPO_ROOT / "pool.json"
 

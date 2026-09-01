@@ -26,6 +26,7 @@ uv run pool_pipeline/match_sleeper.py --report
 uv run pool_pipeline/apply_sleeper_points.py --report
 uv run pool_pipeline/fetch_sleeper.py
 uv run pool_pipeline/fetch_sleeper_projections.py
+uv run pool_pipeline/fetch_weekly_projections.py
 ```
 
 `fetch_sleeper.py` is manual and is not a pipeline stage. Sleeper's player dump is about
@@ -38,6 +39,17 @@ scored with the league's own settings (TE premium included) so the numbers match
 league players page.
 `apply_sleeper_points.py` (stage 4) then reads that committed file — refetch it when the
 projections should move.
+
+`fetch_weekly_projections.py` is also manual and feeds nothing yet: it captures
+DraftSharks' per-week stat projections (weeks 1-18, from the weekly-rankings page's
+public `load-rows` endpoint) and writes `data/weekly_projections.json`. Each QB/RB/WR/TE
+gets a per-week map of the raw stat line, DraftSharks' own half-PPR total (`ds_points`,
+for sanity checks only), and `points` — the stat line scored with the league's live
+Sleeper scoring settings, so the -2 pass INT, the +1.0 TE reception premium, and 6-point
+return TDs are all applied. A player with no entry for a week has no game that week
+(bye). DraftSharks publishes no weekly fumble or 2-pt projections, so those terms are
+absent from `points` — a small optimistic bias, largest for QBs. `player_id` is the
+DraftSharks id `pool.json` carries, so joining weekly points onto the pool is direct.
 
 ## File contracts
 
