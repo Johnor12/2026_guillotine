@@ -33,8 +33,9 @@ uv run pool_pipeline/fetch_sleeper_projections.py
 the small metadata file records when it was fetched.
 
 `fetch_sleeper_projections.py` is also manual: it writes `data/sleeper_projections.json`,
-the top 250 players by Sleeper/Rotowire season projection (no kickers) with half-PPR ADP,
-scored with the league's own settings so the numbers match the league players page.
+the top 500 QB/RB/WR/TE players by Sleeper/Rotowire season projection with half-PPR ADP,
+scored with the league's own settings (TE premium included) so the numbers match the
+league players page.
 `apply_sleeper_points.py` (stage 4) then reads that committed file — refetch it when the
 projections should move.
 
@@ -47,7 +48,7 @@ The saved page is the provider's dynasty export; this league consumes only its o
 projection, which is an ordinary season projection.
 
 `pool.json` is the narrow draft input: every QB/RB/WR/TE player both sources know
-(~217 — DraftSharks' pool intersected with Sleeper's top-250 projection list), with 11
+(~370 — DraftSharks' pool intersected with Sleeper's top-500 projection list), with 11
 fields per player. DraftSharks supplies identity and ADP; Sleeper supplies the value
 column. The ranker uses projected points, not DraftSharks' provider-scaled 3D value.
 

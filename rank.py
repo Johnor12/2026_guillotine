@@ -8,8 +8,8 @@
 
 Scope is this league and nothing else; the league constants and strategy knobs live in
 ranker/league.py. The value input is `points` from `pool.json` — one-season projected
-points in this league's 0.5 PPR scoring (see ranker/pool.py for why the provider's 3D
-value is deliberately unused). The method, in one breath: what the waiver wire holds
+points in this league's 0.5 PPR + TE premium scoring (see ranker/pool.py for why the
+provider's 3D value is deliberately unused). The method, in one breath: what the waiver wire holds
 after the draft is an *outcome* of how the league drafts, so wire levels are measured
 from the converged draft and feed valuation, while my roster is valued as expected
 optimal lineup points under position-wide availability with one unique waiver fallback
@@ -19,8 +19,8 @@ projection-based roster objective. Every opponent uses the external provider boa
 associated with its prior picks, loaded from the data-source investigator; unfilled
 dedicated starters softly adjust that order, and its observed adherence controls Monte
 Carlo choice noise. A compounding soft-depth preference keeps opponents' late roster
-shapes plausible, and Sleeper's per-position roster caps bind every team. My slot's
-choices contain no other positional roster-size heuristic.
+shapes plausible — this league sets no hard per-position caps. My slot's choices
+contain no other positional roster-size heuristic.
 
 The board's headline `lineup_gain` is the decision metric itself: the player's marginal
 expected-lineup value on my current roster at the converged wire levels, so it shrinks

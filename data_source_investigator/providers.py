@@ -68,7 +68,8 @@ def parse_keeptradecut(path: Path) -> list[dict]:
         if raw["position"] not in POSITIONS:
             continue
         # KTC's fantasy (redraft) page carries 1QB and superflex value sets; this
-        # league is 1 QB with no TE premium, which is the plain oneQBValues board.
+        # league is 1 QB, so the plain oneQBValues board is the closest prior it
+        # publishes (KTC has no TE-premium redraft variant).
         values = raw["oneQBValues"]
         ranked.append(
             player(

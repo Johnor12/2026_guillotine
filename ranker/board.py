@@ -16,13 +16,13 @@ exactly that.
 
 Two facts about a live board this cannot value:
 
-  * A pick can land on a player the pool does not carry — the D/ST every team drafts,
-    a kicker, an IDP, anyone past the pool's 350-player cut. There is no projection to
-    price him with, so he is held as an `off_pool` roster entry: he fills a spot (so the
-    team owes one fewer pick) and satisfies a mandatory position (a rostered QB means
-    the team no longer needs one), but he never starts and is never worth anything. That
-    is the right treatment for a D/ST and a slight understatement for a real player just
-    past the cut.
+  * A pick can land on a player the pool does not carry — anyone Sleeper does not
+    project or past the pool's cut. There is no projection to price him with, so he is
+    held as an `off_pool` roster entry: he fills a spot (so the team owes one fewer
+    pick) and satisfies a mandatory position (a rostered QB means the team no longer
+    needs one), but he never starts and is never worth anything. That is right for a
+    player with no season ahead of him and a slight understatement for one just past
+    the cut.
   * Made picks are facts, not decisions, so they are never re-valued. If a team reached,
     the board takes that as given and prices what is left.
 """

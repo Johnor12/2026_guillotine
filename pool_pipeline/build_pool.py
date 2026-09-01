@@ -3,20 +3,22 @@
 
 Stage 2 of the build. ``parse_projections.py`` produces the full provider export —
 900 players x 8 scoring schemes x 4 horizons, ~2.9 MB, most of it irrelevant to a
-10-team 0.5 PPR redraft. This narrows it to what a draft board actually
+32-team 0.5 PPR (TE premium) redraft. This narrows it to what a draft board actually
 consumes and drops everything else:
 
-    900 players  ->  QB/RB/WR/TE only         (K and IDP have no roster slot; the
-                                               drafted D/ST has no source rows at all)
+    900 players  ->  QB/RB/WR/TE only         (K, D/ST and IDP have no roster slot)
                  ->  a usable one-season point total (~417 players; all of them kept)
 
-    8 schemes x 4 horizons  ->  one column: one-season points in this league's scoring
+    8 schemes x 4 horizons  ->  one column: one-season points (placeholder — stage 4
+                                re-prices it with the league's own Sleeper scoring)
     8 ADP columns           ->  one column: 1QB ADP, as an overall pick number
 
-**Scoring.** The league is 0.5/rec with no tight end premium, one QB. The provider's
-``half_ppr`` column prices exactly that for every position, so cells are copied from
-it, never computed. The 1QB family is used because this league has no superflex; the
-provider's ADP responds only to 1QB vs superflex, so ``half_ppr`` ADP is the 1QB ADP.
+**Scoring.** The league is 0.5/rec with a +1.0/rec tight end premium, one QB. No
+provider column prices exactly that, so the ``half_ppr`` cells copied here are only a
+placeholder ordering; ``apply_sleeper_points.py`` (stage 4) replaces every point total
+with Sleeper's league-scored projection. The 1QB family is used because this league
+has no superflex; the provider's ADP responds only to 1QB vs superflex, so
+``half_ppr`` ADP is the 1QB ADP.
 
 The one-season point total is the only value column kept. The saved page is the
 provider's dynasty export, but its 1-year projection is an ordinary season projection;
@@ -69,7 +71,7 @@ POINTS_FIELD = "points"
 POSITIONS = ("QB", "RB", "WR", "TE")
 
 #: Effectively no cut: only ~417 of the 900 source rows are offensive players with a
-#: usable projection, and the draft takes 120 of them (the D/ST round takes none).
+#: usable projection, and the 256-pick draft is all offense — the pool needs every one.
 RANK_LIMIT = 1000
 
 #: The published 1QB column that prices this league's 0.5/rec for every position.
@@ -103,8 +105,9 @@ FIELD_DEFINITIONS = {
     "bye_week": "Team bye week; null for unsigned players.",
     "is_rookie": "True for 2026 rookies.",
     POINTS_FIELD: (
-        "One-season projected fantasy points under this league's scoring: 0.5/rec, "
-        "no TE premium, copied from the provider's half_ppr column."
+        "One-season projected fantasy points, initially the provider's half_ppr "
+        "column; apply_sleeper_points.py re-prices it with this league's own "
+        "scoring (0.5/rec, +1.0/rec TE premium)."
     ),
     "adp": (
         "1QB ADP as an overall pick number in the source's 12-team draft "
@@ -221,10 +224,11 @@ def build_document(
         "scoring_scheme": {
             "name": SCHEME,
             "description": (
-                "0.5 points per reception for every position, no tight end premium, "
-                "one-QB roster format."
+                "0.5 points per reception, +1.0/rec tight end premium, one-QB "
+                "roster format; final points come from Sleeper's league-scored "
+                "projections (stage 4), not this provider column."
             ),
-            "reception_points": {"all_positions": 0.5},
+            "reception_points": {"all_positions": 0.5, "te_bonus": 1.0},
             "points_copied_from": POINTS_COLUMN,
             "adp_copied_from": ADP_COLUMN,
         },

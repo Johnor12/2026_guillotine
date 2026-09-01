@@ -193,8 +193,9 @@ class Draft:
         a team punting a position — an earlier attempt distorted the value of an empty slot
         instead, which broke the board.
 
-        Sleeper also caps each position (`MAX_POSITIONS`); a position at its cap is
-        removed from the candidate set the same way the draft room would refuse it.
+        `MAX_POSITIONS` also caps each position; a position at its cap is removed from
+        the candidate set. (This league sets no per-position caps, so the caps there
+        equal the roster size and never bind — the mechanism stays for leagues that do.)
 
         `off` is the team's already-drafted players the pool cannot value. They count here
         and only here: they occupy a roster spot and they answer a mandatory position, so a

@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 import paths
-from draft_board import Board, DOCUMENTED_SLOT_2_PICK_IN_ROUND, round_pick
+from draft_board import Board, DOCUMENTED_MY_SLOT_PICK_IN_ROUND, round_pick
 
 
 def documented_slot_check(rows: list[dict], draft_slot: int | None) -> tuple[list[str], list[str]]:
@@ -19,7 +19,7 @@ def documented_slot_check(rows: list[dict], draft_slot: int | None) -> tuple[lis
         if row["draft_slot"] == draft_slot
     }
     agree, disagree = [], []
-    for round_no, expected in sorted(DOCUMENTED_SLOT_2_PICK_IN_ROUND.items()):
+    for round_no, expected in sorted(DOCUMENTED_MY_SLOT_PICK_IN_ROUND.items()):
         got = slot_picks.get(round_no)
         line = f"{round_pick(round_no, expected)} expected, got " + (
             round_pick(round_no, got) if got else "no pick"

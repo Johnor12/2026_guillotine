@@ -11,6 +11,7 @@ from __future__ import annotations
 import dataclasses
 import sys
 
+from . import league
 from .board import fresh_board, load_board
 from .league import (
     DEDICATED_SLOTS,
@@ -553,7 +554,12 @@ def synthetic_draft(
         "draft_id": "synthetic",
         "league_name": "selftest",
         "status": "drafting",
-        "format": {"type": "snake", "teams": TEAMS, "rounds": ROUNDS, "reversal_round": None},
+        "format": {
+            "type": "snake",
+            "teams": TEAMS,
+            "rounds": ROUNDS,
+            "reversal_round": league.REVERSAL_ROUND or None,
+        },
         "pick_count": TOTAL_PICKS,
         "picks_made": made,
         "picks_pending": TOTAL_PICKS - made,
@@ -580,25 +586,25 @@ def board_selftest(players: list[Player]) -> list[str]:
     fresh = fresh_board()
     check(not problems, f"empty synthetic board complained: {problems}")
     check(board.order == fresh.order, "empty live board's order != the static snake")
-    check(board.pick_nos == fresh.pick_nos, "empty live board's pick numbers != 1..120")
+    check(board.pick_nos == fresh.pick_nos, "empty live board's pick numbers != 1..256")
     check(board.my_picks == fresh.my_picks, "empty live board's picks for me != the snake's")
     check(board.picks_left == fresh.picks_left, f"picks left {board.picks_left} != all {ROUNDS}")
     check(not board.taken and board.picks_made == 0, "empty live board has players drafted")
 
     # Made picks leave the pool and land on the team that made them.
-    board, problems = load_board(synthetic_draft(players, made=13), players, "synthetic")
-    check(not problems, f"13-pick board complained: {problems}")
-    check(board.picks_made == 13 and len(board.taken) == 13, "13 made picks did not come through")
-    check(board.pick_nos[:1] == [14], f"simulation resumes at {board.pick_nos[:1]}, want 14")
-    check(board.my_picks[:1] == [19], f"my next pick is {board.my_picks[:1]}, want 19 (2.09)")
+    board, problems = load_board(synthetic_draft(players, made=33), players, "synthetic")
+    check(not problems, f"33-pick board complained: {problems}")
+    check(board.picks_made == 33 and len(board.taken) == 33, "33 made picks did not come through")
+    check(board.pick_nos[:1] == [34], f"simulation resumes at {board.pick_nos[:1]}, want 34")
+    check(board.my_picks[:1] == [45], f"my next pick is {board.my_picks[:1]}, want 45 (2.13)")
     check(
-        [p.name for p in board.rosters[MY_SLOT - 1]] == [players[1].name],
-        "pick 1.02 did not land on my roster",
+        [p.name for p in board.rosters[MY_SLOT - 1]] == [players[19].name],
+        "pick 1.20 did not land on my roster",
     )
     check(board.picks_left[MY_SLOT - 1] == ROUNDS - 1, "my remaining picks did not drop by one")
-    check(sum(board.picks_left) == TOTAL_PICKS - 13, "remaining picks do not sum to the board")
-    # Picks 10 and 11 are both slot 10 — the turn at the end of round 1 into round 2.
-    check(len(board.rosters[9]) == 2, "slot 10 did not get both sides of its turn")
+    check(sum(board.picks_left) == TOTAL_PICKS - 33, "remaining picks do not sum to the board")
+    # Picks 32 and 33 are both slot 32 — the turn at the end of round 1 into round 2.
+    check(len(board.rosters[31]) == 2, "slot 32 did not get both sides of its turn")
 
     # A traded pick is exercised by the roster that acquired it, not by its column.
     board, problems = load_board(
@@ -606,8 +612,8 @@ def board_selftest(players: list[Player]) -> list[str]:
     )
     check(board.order[4] == MY_SLOT, f"traded pick 5 is exercised by slot {board.order[4]}")
     check(
-        board.my_picks[:3] == [2, 5, 19],
-        f"my picks start {board.my_picks[:3]}, want my own 1.02, the traded 5, then 2.09",
+        board.my_picks[:3] == [5, 20, 45],
+        f"my picks start {board.my_picks[:3]}, want the traded 5, my own 1.20, then 2.13",
     )
     check(
         board.picks_left[MY_SLOT - 1] == ROUNDS + 1 and board.picks_left[4] == ROUNDS - 1,
@@ -624,7 +630,7 @@ def board_selftest(players: list[Player]) -> list[str]:
     check(board.picks_left[0] == ROUNDS - 1, "an unrankable pick did not cost its team a pick")
     wire = seed_wire(players)
     draft = Draft(players, wire, board, opponents=synthetic_opponents(players, board))
-    owed = sum(DEDICATED_SLOTS.values()) - 1  # the QB is answered, five mandatory spots left
+    owed = sum(DEDICATED_SLOTS.values()) - 1  # the QB is answered, the rest still owed
     with_qb = draft.candidates([], picks_left=owed, off=board.off_pool[0])
     without = draft.candidates([], picks_left=owed, off=[])
     check(

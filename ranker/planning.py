@@ -58,6 +58,7 @@ def apply_survival_floor(
     draft.my_decisions[pick_no] = detail
     return draft
 
+
 # The noisy redraws and the rollout playouts are hundreds of independent, seeded draft
 # simulations, so they fan out over a process pool (stdlib multiprocessing). Workers get
 # the shared inputs once via the initializer; each task is identified by its seed index,
@@ -72,8 +73,14 @@ def _init_worker(
     players, board, stream, noise, seed, opponents, i_my, plans=None
 ) -> None:
     _WORKER.update(
-        players=players, board=board, stream=stream, noise=noise, seed=seed,
-        opponents=opponents, i_my=i_my, plans=plans or {},
+        players=players,
+        board=board,
+        stream=stream,
+        noise=noise,
+        seed=seed,
+        opponents=opponents,
+        i_my=i_my,
+        plans=plans or {},
         by_id={p.player_id: p for p in players},
     )
 
@@ -81,14 +88,20 @@ def _init_worker(
 def _worker_pool_size() -> int:
     # Four busy workers leave enough host headroom for sustained reranks.
     # sched_getaffinity is Linux-only; on Windows fall back to the raw CPU count.
-    cpus = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else os.cpu_count()
-    return max(1, min(8, cpus or 1))
+    cpus = (
+        len(os.sched_getaffinity(0))
+        if hasattr(os, "sched_getaffinity")
+        else os.cpu_count()
+    )
+    return max(1, min(12, cpus or 1))
 
 
 def _target_map(plan: Sequence[int]) -> dict[int, Player]:
     """A player-id plan mapped onto the worker board's next held picks."""
     w = _WORKER
-    indices = [i for i, slot in enumerate(w["board"].order) if slot == w["board"].my_slot]
+    indices = [
+        i for i, slot in enumerate(w["board"].order) if slot == w["board"].my_slot
+    ]
     return {i: w["by_id"][player_id] for i, player_id in zip(indices, plan)}
 
 
@@ -98,8 +111,12 @@ def _conditioned_seed(kind: str, cand_id: int, sample: int) -> str:
     for attempt in range(10_000):
         draw_seed = f"{kind}-{w['seed']}-{sample}-{attempt}"
         probe = Draft(
-            w["players"], w["stream"], w["board"],
-            noise=w["noise"], rng=random.Random(draw_seed), opponents=w["opponents"],
+            w["players"],
+            w["stream"],
+            w["board"],
+            noise=w["noise"],
+            rng=random.Random(draw_seed),
+            opponents=w["opponents"],
         )
         probe.run(stop_before=w["i_my"])
         if cand_id not in probe.taken:
@@ -118,8 +135,12 @@ def _plan_playout(plan: tuple[int, ...]) -> float:
     w = _WORKER
     draw_seed = _conditioned_seed("screen", plan[0], 0)
     d = Draft(
-        w["players"], w["stream"], w["board"],
-        noise=w["noise"], rng=random.Random(draw_seed), opponents=w["opponents"],
+        w["players"],
+        w["stream"],
+        w["board"],
+        noise=w["noise"],
+        rng=random.Random(draw_seed),
+        opponents=w["opponents"],
         targets=_target_map(plan),
     )
     d.run()
@@ -138,7 +159,10 @@ def _mc_draft(s: int) -> dict[int, tuple[int, bool]]:
     """
     w = _WORKER
     d = Draft(
-        w["players"], w["stream"], w["board"], noise=w["noise"],
+        w["players"],
+        w["stream"],
+        w["board"],
+        noise=w["noise"],
         rng=random.Random(w["seed"] + s),
         opponents=w["opponents"],
     )
@@ -152,16 +176,24 @@ def _rollout_playout(task: tuple[int, int]) -> tuple[list[float], float]:
     w = _WORKER
     draw_seed = _conditioned_seed("rollout", cand_id, s)
     baseline = Draft(
-        w["players"], w["stream"], w["board"], noise=w["noise"],
-        rng=random.Random(draw_seed), opponents=w["opponents"],
+        w["players"],
+        w["stream"],
+        w["board"],
+        noise=w["noise"],
+        rng=random.Random(draw_seed),
+        opponents=w["opponents"],
     )
     baseline.run()
     baseline_value = _final_roster_value(baseline)
     values = []
     for plan in w["plans"].get(cand_id, ((cand_id,),)):
         d = Draft(
-            w["players"], w["stream"], w["board"],
-            noise=w["noise"], rng=random.Random(draw_seed), opponents=w["opponents"],
+            w["players"],
+            w["stream"],
+            w["board"],
+            noise=w["noise"],
+            rng=random.Random(draw_seed),
+            opponents=w["opponents"],
             targets=_target_map(plan),
         )
         d.run()
@@ -197,7 +229,10 @@ def _option_playout(task: tuple[int, int]) -> float:
     assert i_my is not None
     draw_seed = _conditioned_seed("option", cand_id, s)
     d = Draft(
-        w["players"], w["stream"], w["board"], noise=w["noise"],
+        w["players"],
+        w["stream"],
+        w["board"],
+        noise=w["noise"],
         rng=random.Random(draw_seed),
         opponents=w["opponents"],
         forced={i_my: w["by_id"][cand_id]},
@@ -240,9 +275,13 @@ def _survival_draft(task: tuple[int, int]) -> int | None:
     cand_id, s = task
     w = _WORKER
     d = Draft(
-        w["players"], w["stream"], w["board"], noise=w["noise"],
+        w["players"],
+        w["stream"],
+        w["board"],
+        noise=w["noise"],
         rng=random.Random(w["seed"] + s),
-        opponents=w["opponents"], my_ban=cand_id,
+        opponents=w["opponents"],
+        my_ban=cand_id,
     )
     return d.run(until_taken=cand_id)
 
@@ -378,7 +417,9 @@ def four_pick_lookahead(
                 for player_id in legal_after(plan, depth):
                     next_plan = plan + (player_id,)
                     marginal = roster_value(next_plan) - before
-                    next_score = score + available_probability(player_id, pick_no) * marginal
+                    next_score = (
+                        score + available_probability(player_id, pick_no) * marginal
+                    )
                     expanded.append((next_score, next_plan))
             if not expanded:
                 break
@@ -452,7 +493,11 @@ def option_redraw(
     pick_no = board.my_picks[0]
     i_my = board.pick_nos.index(pick_no)
     i_next = next(
-        (i for i in range(i_my + 1, len(board.order)) if board.order[i] == board.my_slot),
+        (
+            i
+            for i in range(i_my + 1, len(board.order))
+            if board.order[i] == board.my_slot
+        ),
         None,
     )
     if i_next is None:
@@ -498,7 +543,9 @@ def _replay_pick(
         draft.my_decisions[pick_no] = detail
         return draft
     forced = Draft(
-        players, stream, board,
+        players,
+        stream,
+        board,
         opponents=opponents,
         forced=None if targets else {board.pick_nos.index(pick_no): take},
         targets=targets,
@@ -508,7 +555,9 @@ def _replay_pick(
     return forced
 
 
-def _available_in_deterministic_draft(draft: Draft, pick_no: int, player: Player) -> bool:
+def _available_in_deterministic_draft(
+    draft: Draft, pick_no: int, player: Player
+) -> bool:
     """Whether the noiseless path still has the player on the board at my pick."""
     taken_at = draft.pick_of.get(player.player_id)
     return taken_at is None or taken_at >= pick_no
@@ -541,8 +590,14 @@ def apply_option_redraw(
         if _available_in_deterministic_draft(draft, pick_no, cand)
     )
     return _replay_pick(
-        draft, pick_no, take, detail,
-        players, board, stream, opponents,
+        draft,
+        pick_no,
+        take,
+        detail,
+        players,
+        board,
+        stream,
+        opponents,
     )
 
 
@@ -619,9 +674,11 @@ def rollout(
     plans = {
         cand.player_id: tuple(
             tuple(finalist["target_ids"])
-            for finalist in (lookahead or {}).get("plans", {}).get(
-                cand.player_id, {"finalists": [{"target_ids": [cand.player_id]}]}
-            )["finalists"]
+            for finalist in (lookahead or {})
+            .get("plans", {})
+            .get(cand.player_id, {"finalists": [{"target_ids": [cand.player_id]}]})[
+                "finalists"
+            ]
         )
         for cand in candidates
     }
@@ -637,13 +694,18 @@ def rollout(
     selected_plans: dict[int, dict] = {}
     for i, cand in enumerate(candidates):
         runs = flat[i * sims : (i + 1) * sims]
-        finalists = (lookahead or {}).get("plans", {}).get(cand.player_id, {}).get(
-            "finalists", [{"target_ids": [cand.player_id]}]
+        finalists = (
+            (lookahead or {})
+            .get("plans", {})
+            .get(cand.player_id, {})
+            .get("finalists", [{"target_ids": [cand.player_id]}])
         )
         choices = []
         for plan_index, finalist in enumerate(finalists):
             samples = [plan_values[plan_index] for plan_values, _ in runs]
-            choices.append((sum(samples) / sims, tuple(finalist["target_ids"]), samples, finalist))
+            choices.append(
+                (sum(samples) / sims, tuple(finalist["target_ids"]), samples, finalist)
+            )
         choices.sort(key=lambda row: (-row[0], len(row[1]), row[1]))
         _, _, values[cand.player_id], selected_plans[cand.player_id] = choices[0]
         baselines[cand.player_id] = [baseline for _, baseline in runs]
@@ -683,15 +745,24 @@ def apply_rollout(
     take = next(c for _, _, c in detail if c.player_id == rolled["take_id"])
     if not _available_in_deterministic_draft(draft, pick_no, take):
         return draft
-    plan_ids = rolled.get("plans", {}).get(take.player_id, {}).get(
-        "target_ids", [take.player_id]
+    plan_ids = (
+        rolled.get("plans", {})
+        .get(take.player_id, {})
+        .get("target_ids", [take.player_id])
     )
-    target_indices = [
-        i for i, slot in enumerate(board.order) if slot == board.my_slot
-    ][: len(plan_ids)]
+    target_indices = [i for i, slot in enumerate(board.order) if slot == board.my_slot][
+        : len(plan_ids)
+    ]
     by_id = {p.player_id: p for p in players}
     targets = {i: by_id[player_id] for i, player_id in zip(target_indices, plan_ids)}
     return _replay_pick(
-        draft, pick_no, take, detail,
-        players, board, stream, opponents, targets,
+        draft,
+        pick_no,
+        take,
+        detail,
+        players,
+        board,
+        stream,
+        opponents,
+        targets,
     )

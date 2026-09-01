@@ -9,32 +9,30 @@ import datetime as dt
 #: Formats a board can be laid out for. An auction has no pick order to derive.
 SUPPORTED_TYPES = ("snake", "linear")
 
-#: Expected position-in-round for draft slot 2 before trades. The report checks the
-#: documented geometry, while the live derivation check above validates made picks.
-DOCUMENTED_SLOT_2_PICK_IN_ROUND = {1: 2, 2: 9, 3: 2, 4: 9, 5: 2, 6: 9, 11: 2, 12: 9}
+#: Expected position-in-round for my draft slot (20 of 32, reversal at round 3) before
+#: trades. The report checks the documented geometry, while the live derivation check
+#: validates made picks.
+DOCUMENTED_MY_SLOT_PICK_IN_ROUND = {1: 20, 2: 13, 3: 13, 4: 20, 5: 13, 6: 20, 7: 13, 8: 20}
 
 FIELD_DEFINITIONS = {
     "pick_no": "Overall pick number, 1..pick_count. Unique, gap-free, and the array order.",
     "round": "Round number, 1..rounds.",
     "pick_in_round": (
         "Position within the round, 1..teams. Differs from draft_slot in a reversed "
-        "round — in round 2 of a 10-team snake, pick_in_round 1 is draft_slot 10."
+        "round — in round 2 of a 32-team snake, pick_in_round 1 is draft_slot 32."
     ),
     "draft_slot": "The board column this pick belongs to, 1..teams.",
     "roster_id": (
-        "The team that receives the player (the ESPN team id) — the current owner, "
-        "which is not the slot's original owner if the pick was traded."
+        "The Sleeper roster that receives the player — the current owner, which is not "
+        "the slot's original owner if the pick was traded."
     ),
-    "user_id": (
-        "The member that owns the pick (the ESPN SWID). Null if the draft order is "
-        "unpublished or the team has no member."
-    ),
-    "username": "That member's display name. Null if the member list was unreadable.",
+    "user_id": "The Sleeper user that owns the pick. Null if the draft order is unpublished.",
+    "username": "That user's Sleeper display name. Null if the league user list was unreadable.",
     "is_mine": "True for the configured owner's picks (see `me` in the header).",
-    "status": "'made' — ESPN has recorded a selection — or 'pending'.",
+    "status": "'made' — Sleeper has recorded a selection — or 'pending'.",
     "sleeper_id": (
-        "Sleeper player id of the selection, translated from the ESPN pick; null while "
-        "pending or unmatched. This is the join key back to pool.json's sleeper_id."
+        "Sleeper player id of the selection, as a string; null while pending. This is "
+        "the join key back to pool.json's sleeper_id."
     ),
     "name": (
         "Sleeper's name for the selection, for reading the file by eye. Informational: "
@@ -42,7 +40,7 @@ FIELD_DEFINITIONS = {
     ),
     "position": "Sleeper's position for the selection. Informational, as above.",
     "team": "Sleeper's NFL team for the selection. Informational, as above.",
-    "is_keeper": "True when ESPN flagged the pick as a keeper. False for a normal pick.",
+    "is_keeper": "True when Sleeper flagged the pick as a keeper. False for a normal pick.",
 }
 
 
@@ -158,19 +156,12 @@ def index_users(users: list[dict]) -> dict[str, dict]:
     }
 
 
-def resolve_me(username: str, board: Board, by_user: dict[str, dict]) -> dict:
-    """Find the configured owner's user id, slot and roster, or say why not."""
-    wanted = (username or "").strip().lower()
-    match = next(
-        (uid for uid, user in by_user.items() if (user["username"] or "").lower() == wanted),
-        None,
-    )
-    if match is None:
-        return {"username": username, "user_id": None, "draft_slot": None, "roster_id": None}
-    slot = next((s for s, uid in board.slot_to_user.items() if uid == match), None)
+def resolve_me(user_id: str, board: Board, by_user: dict[str, dict]) -> dict:
+    """My slot and roster, straight from the user id — display name is decoration."""
+    slot = next((s for s, uid in board.slot_to_user.items() if uid == user_id), None)
     return {
-        "username": by_user[match]["username"],
-        "user_id": match,
+        "username": (by_user.get(user_id) or {}).get("username"),
+        "user_id": user_id,
         "draft_slot": slot,
         "roster_id": board.slot_to_roster.get(slot) if slot else None,
     }

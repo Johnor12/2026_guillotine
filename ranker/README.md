@@ -61,9 +61,10 @@ Personal and opponent strategies are intentionally separate. My slot alone uses
 projections and expected-lineup roster value. Each opponent uses the provider board
 closest to its completed picks, with a soft boost for unfilled dedicated starters and a
 compounding source-rank penalty for adding players beyond comfortable positional depth
-(3rd QB/TE, 7th RB/WR). These are preferences, not draft limits: a large enough
-source-rank gap can still justify another player at a deep position. The hard limits
-are Sleeper's position caps (`MAX_POSITIONS`), which bind every roster, mine included.
+(2nd QB/TE, 4th RB/WR). These are preferences, not draft limits: a large enough
+source-rank gap can still justify another player at a deep position. `MAX_POSITIONS`
+stays the hard-limit mechanism, but this league sets no per-position caps, so it is
+pinned at the roster size and never binds.
 Observed `mean_log2_loss` calibrates randomness around that preference, after shrinking
 toward the cold-start prior as if that prior had been observed on two extra picks — one
 or two on-board picks otherwise fit a near-deterministic policy.

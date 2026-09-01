@@ -9,14 +9,12 @@ own settings by ``fetch_sleeper_projections.py``), joined on ``sleeper_id``. Ide
 fields and the DraftSharks ADP are untouched — DraftSharks still says who is in the
 pool, Sleeper now says what they will score.
 
-The two point scales must never mix (Sleeper prices Josh Allen at 351.5 where
-DraftSharks says 379, and a mixed column would corrupt every replacement-level
-comparison), so a pool player with no Sleeper projection is dropped, not left at his
-DraftSharks number. ``sleeper_projections.json`` carries Sleeper's top 250 by points,
-so the pool narrows to the players both sources know — ~217 of 417, still ~100 past
-the draft's 120 offensive picks. Raise ``TOP_N`` in ``fetch_sleeper_projections.py``
-if a deeper
-tail is ever needed.
+The two point scales must never mix (a mixed column would corrupt every
+replacement-level comparison), so a pool player with no Sleeper projection is
+dropped, not left at his DraftSharks number. ``sleeper_projections.json`` carries
+Sleeper's top 500 by points, deep enough that the pool narrows only to the players
+both sources know — comfortably past the draft's 256 all-offense picks. Raise
+``TOP_N`` in ``fetch_sleeper_projections.py`` if a deeper tail is ever needed.
 
 Sleeper players the pool cannot represent (no DraftSharks row, or an id the matcher
 never assigned) are printed loudly: a missing high scorer would silently distort the

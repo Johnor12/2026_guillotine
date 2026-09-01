@@ -11,10 +11,10 @@ e.g. -1 per pass INT where this league uses -2); the page scores the raw stat
 projections with the league's own ``scoring_settings``. This script does the same
 dot product, which reproduces the page's numbers exactly.
 
-Writes ``data/sleeper_projections.json``: the top 250 players by projected points
-across QB/RB/WR/TE/DEF (the page's sort), each with ``sleeper_id``, ``name``,
-``position``, ``team``, ``points`` (league scoring), and ``adp`` (half-PPR
-redraft, the league's format; 999.0 is Sleeper's "undrafted" sentinel).
+Writes ``data/sleeper_projections.json``: the top 500 players by projected points
+across QB/RB/WR/TE (the page's sort), each with ``sleeper_id``, ``name``,
+``position``, ``team``, ``points`` (league scoring, TE premium included), and
+``adp`` (half-PPR redraft; 999.0 is Sleeper's "undrafted" sentinel).
 """
 
 from __future__ import annotations
@@ -25,9 +25,11 @@ import urllib.request
 
 import paths
 
-LEAGUE_ID = "1395974104053448704"
-POSITIONS = ("QB", "RB", "WR", "TE", "DEF")  # no kickers in this league
-TOP_N = 250
+LEAGUE_ID = "1397662420398247936"
+POSITIONS = ("QB", "RB", "WR", "TE")  # no kickers or D/ST slots in this league
+# 32 teams x 8 rounds = 256 all-offense picks, so the priced tail must run well past
+# the draft; 500 covers every DraftSharks pool player that could plausibly match.
+TOP_N = 500
 
 LEAGUE_URL = f"https://api.sleeper.app/v1/league/{LEAGUE_ID}"
 PROJECTIONS_URL = (

@@ -7,7 +7,7 @@ import sys
 
 from draft_board import (
     Board,
-    DOCUMENTED_SLOT_2_PICK_IN_ROUND,
+    DOCUMENTED_MY_SLOT_PICK_IN_ROUND,
     pick_number_problems,
     pick_rows,
     resolve_me,
@@ -60,18 +60,19 @@ def selftest() -> int:
           ["draft type 'auction' has no pick order to derive"])
     check("0 teams is refused", bool(Board(fake(teams=0)).problems()), True)
 
-    # This league, against the sequence README.md documents for slot 2.
-    real = Board({"type": "snake", "settings": {"teams": 10, "rounds": 12, "reversal_round": 0}})
-    mine = {r: p for n in range(1, 121) for r, p, s in [real.locate(n)] if s == 2}
+    # This league, against the sequence README.md documents for my slot (20 of 32,
+    # third-round reversal).
+    real = Board({"type": "snake", "settings": {"teams": 32, "rounds": 8, "reversal_round": 3}})
+    mine = {r: p for n in range(1, 257) for r, p, s in [real.locate(n)] if s == 20}
     check(
-        "slot 2 matches the documented sequence",
-        {r: mine.get(r) for r in DOCUMENTED_SLOT_2_PICK_IN_ROUND},
-        DOCUMENTED_SLOT_2_PICK_IN_ROUND,
+        "slot 20 matches the documented sequence",
+        {r: mine.get(r) for r in DOCUMENTED_MY_SLOT_PICK_IN_ROUND},
+        DOCUMENTED_MY_SLOT_PICK_IN_ROUND,
     )
-    check("slot 2 picks once per round", len(mine), 12)
+    check("slot 20 picks once per round", len(mine), 8)
     check("every slot picks once per round",
-          sorted(collections.Counter(real.locate(n)[2] for n in range(1, 121)).values()),
-          [12] * 10)
+          sorted(collections.Counter(real.locate(n)[2] for n in range(1, 257)).values()),
+          [8] * 32)
 
     # Traded picks: slot 1's round-2 pick, originally roster 101, is now roster 103's.
     traded = [{"season": "2026", "round": 2, "roster_id": 101, "owner_id": 103}]
@@ -135,9 +136,9 @@ def selftest() -> int:
     check("a clean prefix is silent",
           pick_number_problems([{"pick_no": 1}, {"pick_no": 2}], board), ([], []))
 
-    check("me resolves case-insensitively", resolve_me("NAME2", board, users),
+    check("me resolves by user id", resolve_me("u2", board, users),
           {"username": "name2", "user_id": "u2", "draft_slot": 2, "roster_id": 102})
-    check("an unknown me resolves to nothing", resolve_me("nobody", board, users)["user_id"], None)
+    check("an unknown me has no slot", resolve_me("nobody", board, users)["draft_slot"], None)
 
     for failure in failures:
         print(f"  MISMATCH {failure}", file=sys.stderr)

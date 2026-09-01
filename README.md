@@ -1,24 +1,27 @@
 # 2026 redraft
 
-A toolkit for a 10-team 0.5 PPR redraft league. Independent
-processes publish stable JSON artifacts at the repository root; the ranker consumes
-those artifacts and the static dashboard renders the result.
+A toolkit for a 32-team 0.5 PPR guillotine redraft league on Sleeper
+("Gnosis Guillotine", league 1397662420398247936). Independent processes publish
+stable JSON artifacts at the repository root; the ranker consumes those artifacts
+and the static dashboard renders the result.
 
 ## League assumptions
 
-- 0.5 PPR, no tight end premium
-- Starters: 1 QB, 2 RB, 2 WR, 1 TE, 2 W/R/T flex, 1 D/ST
-- 4 bench and 1 IR (the IR spot is not drafted into)
-- Position caps: 4 QB, 8 RB, 8 WR, 3 TE
-- 10 teams and 13 drafted players per team (130 picks)
-- Plain snake draft, no third-round reversal
-- My slot is assumed to be 2 (1.02, 2.09, 3.02, 4.09, …, 12.09, 13.02) until the
-  real draft order is published; `draft.json` overrides it with a complaint
-- The D/ST slot is drafted but not modeled: the pool and rankings are offense-only,
-  so a made D/ST pick is carried as an off-pool roster spot
+- 0.5 PPR with a +1.0/rec tight end premium, 1 QB (no superflex)
+- Starters: 1 QB, 1 RB, 2 WR, 1 TE, 2 W/R/T flex — no D/ST or kicker slot
+- 1 bench spot and 2 reserve spots (reserve is not drafted into)
+- No per-position roster caps
+- 32 teams and 8 drafted players per team (256 picks, all offense)
+- Snake draft with a third-round reversal: round 1 forward, rounds 2–3 reversed,
+  alternating from there; picks can be traded
+- My slot is 20 (johnor): 1.20, 2.13, 3.13, 4.20, 5.13, 6.20, 7.13, 8.20 before trades
+- Guillotine elimination (lowest weekly score drops out) is not modeled: rosters are
+  valued as expected optimal season lineup points, the same objective as ordinary
+  redraft
 
 These are project assumptions, not runtime configuration. Ranker constants live in
-`ranker/league.py`.
+`ranker/league.py`; the draft's actual geometry (teams, rounds, reversal, my slot) is
+adopted from `draft.json` on every run.
 
 ## Setup
 
@@ -45,11 +48,10 @@ data_source_investigator/ ────> data_source_matches.json
 
 The published files have distinct owners:
 
-- `pool.json`: ~220 QB/RB/WR/TE players keyed to Sleeper, priced by Sleeper's
+- `pool.json`: ~370 QB/RB/WR/TE players keyed to Sleeper, priced by Sleeper's
   league-scored season projections (identity and ADP from DraftSharks)
-- `draft.json`: all 130 made and pending picks from the ESPN league API, with made
-  picks overlaid from a hand-pasted `draft_history.txt` during the live draft
-  (ESPN's read API lags the draft room by minutes or more)
+- `draft.json`: all 256 made and pending picks from Sleeper's draft API, which is
+  public and real-time — a fetch between picks is current
 - `data_source_matches.json`: the provider board closest to each opponent's picks
 - `rankings.json`: undrafted-player rankings, recommendations, simulations, and validation
 
@@ -59,7 +61,7 @@ opponent source matches to the live board.
 ## Components
 
 - [Pool pipeline](pool_pipeline/README.md): provider HTML to the league-specific pool
-- [Draft pipeline](draft_pipeline/README.md): ESPN league API to the complete live board
+- [Draft pipeline](draft_pipeline/README.md): Sleeper's draft API to the complete live board
 - [Data-source investigator](data_source_investigator/README.md): normalize provider
   boards and infer opponent strategies
 - [Ranker](ranker/README.md): wire-level solver, opponent simulation, planning,
@@ -100,9 +102,8 @@ Refresh ranking snapshots and opponent associations:
 uv run data_source_investigator/pipeline.py --report
 ```
 
-Refresh the live board and recommendations between picks — first use Ctrl+A, Ctrl+C
-in the draft room and paste the full page into `draft_history.txt` (a pick-history-only
-copy also works; ESPN's API alone won't have the new picks yet), then:
+Refresh the live board and recommendations between picks — Sleeper's draft API is
+real-time, so this is one command:
 
 ```bash
 uv run refresh.py --report
@@ -111,6 +112,15 @@ uv run refresh.py --report
 `refresh.py` deliberately does only three live steps: fetch the draft, re-run source
 inference against the existing provider snapshot, then rank. It does not rebuild the
 offline pool or fetch provider boards.
+
+To follow a different draft (e.g. a league mock at `sleeper.com/draft/nfl/<id>`),
+fetch it explicitly first, then run the investigator and ranker:
+
+```bash
+uv run draft_pipeline/fetch_draft.py --draft-id <id>
+uv run data_source_investigator/investigate.py
+uv run rank.py --report
+```
 
 Run offline checks:
 
@@ -124,16 +134,9 @@ uv run evaluate_opponents.py
 Before and after changing an opponent model or pick policy, run
 `uv run evaluate_opponents.py` and compare its replay accuracy.
 
-## Dashboard and automation
+## Dashboard
 
 Run `uv run serve.py` and open the local URL; direct `file://` access cannot fetch the
-JSON files. The main dashboard's live-status strip still tries to poll Sleeper as a
-cross-check; against the ESPN league that poll fails harmlessly (ESPN's API needs auth
-cookies and blocks browser CORS), so the strip runs on the `draft.json` snapshot, shows
-when it is stale, and pins the status of any active refresh or deploy workflow run.
-
-`.github/workflows/refresh.yml` runs the live refresh on manual dispatch and commits the
-generated board, rankings, and source matches. `.github/workflows/deploy-pages.yml`
-publishes both dashboards plus `rankings.json` and `data_source_matches.json` to GitHub
-Pages, with the investigator at `data_source_investigator/`. They share one concurrency
-group so refresh and deploy do not overlap.
+JSON files. The dashboard renders the `rankings.json` snapshot — including the live
+board state embedded in it — and shows when that snapshot was taken; re-run
+`refresh.py` and reload to advance it.

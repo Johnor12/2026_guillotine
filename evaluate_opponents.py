@@ -208,6 +208,9 @@ def main() -> int:
     except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
         print(f"cannot evaluate opponent predictions: {exc}", file=sys.stderr)
         return 1
+    if not results:
+        print("no completed opponent picks to replay — pre-draft board")
+        return 0
     report(results)
     return 0
 

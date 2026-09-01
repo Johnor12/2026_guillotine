@@ -26,8 +26,10 @@ import paths
 TIMEOUT_SECONDS = 30
 USER_AGENT = "redraft-data-source-investigator/0.1"
 
-# The league is 10-team, 1 QB, 0.5 PPR redraft. Providers expose different subsets of
-# those settings; the exact format requested from each one is carried into rankings.json.
+# The league is a 32-team, 1 QB, 0.5 PPR TE-premium guillotine — a format no provider
+# publishes. These standard-format redraft boards stand in as opponents' ranking priors
+# (drafters carry ordinary redraft rankings into any format); the exact format requested
+# from each source is carried into rankings.json.
 SOURCES = {
     "fantasycalc": {
         "name": "FantasyCalc",
