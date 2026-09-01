@@ -7,24 +7,31 @@
     uv run rank.py --selftest              # verify solver, opponents, and board loader
 
 Scope is this league and nothing else; the league constants and strategy knobs live in
-ranker/league.py. The value input is `points` from `pool.json` — one-season projected
-points in this league's 0.5 PPR + TE premium scoring (see ranker/pool.py for why the
-provider's 3D value is deliberately unused). The method, in one breath: what the waiver wire holds
-after the draft is an *outcome* of how the league drafts, so wire levels are measured
-from the converged draft and feed valuation, while my roster is valued as expected
-optimal lineup points under position-wide availability with one unique waiver fallback
-per position (`ranker/value.py`). `draft.json` — the live board — is the
-simulation's starting state, not a filter (ranker/board.py). Only my slot uses the
-projection-based roster objective. Every opponent uses the external provider board most
-associated with its prior picks, loaded from the data-source investigator; unfilled
-dedicated starters softly adjust that order, and its observed adherence controls Monte
-Carlo choice noise. A compounding soft-depth preference keeps opponents' late roster
-shapes plausible — this league sets no hard per-position caps. My slot's choices
-contain no other positional roster-size heuristic.
+ranker/league.py. The value input is `weekly_points` from `pool.json` — season points
+in this league's 0.5 PPR + TE premium scoring spread over league weeks 1-17, with byes
+and known absences as zero weeks (see ranker/pool.py for why the provider's 3D value is
+deliberately unused). The method, in one breath: this is a guillotine league, so a
+roster is valued week by week as expected optimal lineup points under that week's
+starting shape and position-wide availability, and the weeks are combined by converged
+guillotine weights — each week's weight is the marginal effect of a weekly point on
+log P(surviving that week's cut), with the week 16-17 championship entering through
+log P(winning the final) (`ranker/guillotine.py`). What the waiver wire holds each week
+is an *outcome* of how the league drafts and who gets eliminated, so the weekly wire —
+best undrafted body early, rising as eliminated rosters hit waivers — is measured from
+the converged draft and feeds valuation with one unique waiver fallback per position
+per week (`ranker/value.py`). `draft.json` — the live board — is the simulation's
+starting state, not a filter (ranker/board.py). Only my slot uses the projection-based
+roster objective. Every opponent uses the external provider board most associated with
+its prior picks, loaded from the data-source investigator; unfilled dedicated starters
+softly adjust that order, and its observed adherence controls Monte Carlo choice noise.
+A compounding soft-depth preference keeps opponents' late roster shapes plausible —
+this league sets no hard per-position caps. My slot's choices contain no other
+positional roster-size heuristic.
 
 The board's headline `lineup_gain` is the decision metric itself: the player's marginal
-expected-lineup value on my current roster at the converged wire levels, so it shrinks
-at positions my roster already covers. The `my_next_picks` block is the direct answer to
+guillotine-weighted weekly lineup value on my current roster at the converged levels,
+so it shrinks at positions my roster already covers and in weeks my roster already
+clears the elimination bar. The `my_next_picks` block is the direct answer to
 "who should I draft next" — on top of that same gain it prices opponent demand and what
 my following picks keep. Its first decision searches target plans across my next four
 held picks, then plays each first-candidate plan out to the end of the draft
@@ -172,10 +179,10 @@ def main(argv: list[str] | None = None) -> int:
                 f"loss {strategy.mean_log2_loss:.3f}",
                 file=sys.stderr,
             )
-        print("converging wire levels:", file=sys.stderr)
+        print("converging levels:", file=sys.stderr)
 
-    stream, draft, history = converge(players, board, args.report, opponents)
-    draft = broaden_first_pick(draft, players, board, stream, opponents)
+    levels, draft, history, guillotine = converge(players, board, args.report, opponents)
+    draft = broaden_first_pick(draft, players, board, levels, opponents)
 
     candidates = (
         [c for _, _, c in draft.my_decisions.get(board.my_picks[0], [])]
@@ -189,7 +196,7 @@ def main(argv: list[str] | None = None) -> int:
             file=sys.stderr,
         )
     survival = candidate_survival(
-        players, board, stream, candidates,
+        players, board, levels, candidates,
         args.sims, args.noise, args.seed, opponents,
     )
     draft = apply_survival_floor(draft, board, survival)
@@ -205,11 +212,11 @@ def main(argv: list[str] | None = None) -> int:
             file=sys.stderr,
         )
     options = option_redraw(
-        players, board, stream, candidates,
+        players, board, levels, candidates,
         args.sims, args.noise, args.seed, opponents,
     )
     draft = apply_option_redraw(
-        draft, options, players, board, stream, opponents
+        draft, options, players, board, levels, opponents
     )
     candidates = (
         [c for _, _, c in draft.my_decisions.get(board.my_picks[0], [])]
@@ -222,7 +229,7 @@ def main(argv: list[str] | None = None) -> int:
             file=sys.stderr,
         )
     lookahead = four_pick_lookahead(
-        players, board, stream, candidates, survival, opponents,
+        players, board, levels, candidates, survival, opponents,
         args.noise, args.seed,
     )
     if args.report and candidates:
@@ -232,10 +239,10 @@ def main(argv: list[str] | None = None) -> int:
             file=sys.stderr,
         )
     rolled = rollout(
-        players, board, stream, candidates,
+        players, board, levels, candidates,
         ROLLOUT_SIMS, args.noise, args.seed, opponents, lookahead,
     )
-    draft = apply_rollout(draft, rolled, players, board, stream, opponents)
+    draft = apply_rollout(draft, rolled, players, board, levels, opponents)
 
     if args.report:
         print(
@@ -244,19 +251,19 @@ def main(argv: list[str] | None = None) -> int:
             file=sys.stderr,
         )
     picks = monte_carlo(
-        players, board, stream, args.sims, args.noise, args.seed, opponents
+        players, board, levels, args.sims, args.noise, args.seed, opponents
     )
-    rows = build_rankings(players, stream, draft, picks, args.sims, board)
+    rows = build_rankings(players, levels, draft, picks, args.sims, board)
 
-    problems = board_problems + validate(rows, players, stream, draft, board, history)
+    problems = board_problems + validate(rows, players, levels, draft, board, history)
     payload = build_payload(
-        players, pool_meta, board, stream, draft, history, rows, problems,
-        args.sims, args.noise, args.seed, opponents, options, rolled, survival,
+        players, pool_meta, board, levels, draft, history, rows, problems,
+        args.sims, args.noise, args.seed, opponents, guillotine, options, rolled, survival,
     )
     args.output.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n")
 
     if args.report:
-        report_summary(rows, draft, board, rolled, survival)
+        report_summary(rows, draft, board, rolled, survival, guillotine)
     if problems:
         print(f"\n{len(problems)} VALIDATION PROBLEM(S):", file=sys.stderr)
         for p in problems:

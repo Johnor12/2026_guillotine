@@ -500,14 +500,14 @@ function renderMyRoster(d) {
   const outlook = teamOutlook(mine);
   document.getElementById("rosterTitle").textContent = `Your projected final team · ${mine.team}`;
   document.getElementById("myOutlook").replaceChildren(
-    metric("Projected starters", fmt(outlook.lineup.points), "8-player optimal lineup"),
-    metric("Roster", `${mine.players} players`, "13 drafted spots"));
+    metric("Projected starters", fmt(outlook.lineup.points), "opening 7-starter optimal lineup"),
+    metric("Roster", `${mine.players} players`, "8 drafted spots"));
   const starts = Object.entries(d.league.starting_slots).map(([slot, count]) => `${count}${slot}`).join(" · ");
   document.getElementById("rosterMeta").textContent =
     `${mine.players} players · starts ${starts}`;
   document.getElementById("rosterGrid").replaceChildren(...rosterCards(mine, outlook));
   document.getElementById("rosterNote").textContent =
-    "Points is the provider's one-season projection in this league's scoring. The starter total is the best legal 8-player lineup from those raw projections; it excludes bench points and does not include weekly variance or the availability model the ranker prices with.";
+    "Points is the weeks-1-17 projection total in this league's scoring (byes and known absences excluded by the weekly shape). The starter total is the best legal opening lineup from those raw totals; it excludes bench points and does not include the per-week shapes, guillotine week weights, or availability model the ranker prices with.";
 }
 
 function renderBoard(d, state) {

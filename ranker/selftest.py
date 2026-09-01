@@ -1,9 +1,10 @@
 """Offline checks for the states the live files cannot currently reach.
 
-Three suites: the greedy lineup solver against brute force, source-based opponent
-behavior, and the board loader against synthetic draft.json boards — a traded pick, a
-selection outside the pool, a resumed partial board, and six malformed boards that must
-be rejected.
+Four suites: the weekly lineup solver against brute force over every in-season
+starting shape, the guillotine level map (bars, week weights, waiver escalation),
+source-based opponent behavior, and the board loader against synthetic draft.json
+boards — a traded pick, a selection outside the pool, a resumed partial board, and six
+malformed boards that must be rejected.
 """
 
 from __future__ import annotations
@@ -11,7 +12,7 @@ from __future__ import annotations
 import dataclasses
 import sys
 
-from . import league
+from . import guillotine, league
 from .board import fresh_board, load_board
 from .league import (
     DEDICATED_SLOTS,
@@ -21,11 +22,14 @@ from .league import (
     OPPONENT_DEPTH_TARGETS,
     OPPONENT_POSITION_TILT,
     POSITIONS,
+    REGULAR_WEEKS,
     ROUNDS,
-    STARTING_SLOTS,
+    SEED,
     TEAMS,
     UNAVAILABLE_RATE,
     TOTAL_PICKS,
+    WEEKLY_SHAPES,
+    WEEKS,
     draft_order,
     pick_label,
 )
@@ -40,11 +44,14 @@ from .pool import Player
 from .rankings import my_next_picks
 from .simulation import Draft
 from .value import (
-    expected_lineup_value,
+    Levels,
+    pos_sorted,
     position_expected_value,
-    seed_wire,
+    seed_levels,
     sorted_roster,
     team_value,
+    week_value,
+    weekly_team_values,
 )
 
 
@@ -80,12 +87,12 @@ def opponent_selftest(players: list[Player]) -> list[str]:
     """Opponent source order stays personal-value-independent and bends toward balance."""
     fails: list[str] = []
     board = fresh_board()
-    wire = seed_wire(players)
+    levels = seed_levels(players)
     # Put the lowest-projected player first on every external board. An opponent must take
     # him; my optimizer must not, demonstrating that candidate generation is separated too.
     external = sorted(players, key=lambda p: (p.points, p.player_id))
     opponents = synthetic_opponents(players, board, external)
-    draft = Draft(players, wire, board, opponents=opponents)
+    draft = Draft(players, levels, board, opponents=opponents)
     opponent_take = draft.choose_opponent(0, 1)
     my_take = draft.choose(1, board.my_slot)
     if opponent_take != external[0]:
@@ -109,7 +116,7 @@ def opponent_selftest(players: list[Player]) -> list[str]:
     close_order = complete([wrs[filled], te])
     close = Draft(
         players,
-        wire,
+        levels,
         board,
         opponents=synthetic_opponents(players, board, close_order),
     )
@@ -119,7 +126,7 @@ def opponent_selftest(players: list[Player]) -> list[str]:
     value_order = complete([wrs[filled], wrs[filled + 1], wrs[filled + 2], te])
     value = Draft(
         players,
-        wire,
+        levels,
         board,
         opponents=synthetic_opponents(players, board, value_order),
     )
@@ -140,7 +147,7 @@ def opponent_selftest(players: list[Player]) -> list[str]:
     depth_order = complete([wrs[start], te])
     depth = Draft(
         players,
-        wire,
+        levels,
         board,
         opponents=synthetic_opponents(players, board, depth_order),
     )
@@ -150,7 +157,7 @@ def opponent_selftest(players: list[Player]) -> list[str]:
     depth_value_order = complete(wrs[start : start + 6] + [te])
     depth_value = Draft(
         players,
-        wire,
+        levels,
         board,
         opponents=synthetic_opponents(players, board, depth_value_order),
     )
@@ -172,7 +179,7 @@ def opponent_selftest(players: list[Player]) -> list[str]:
     board.picks_left[0] -= len(board.rosters[0])
     capped = Draft(
         players,
-        wire,
+        levels,
         board,
         opponents=synthetic_opponents(players, board, complete([wrs[MAX_POSITIONS["WR"]]])),
     )
@@ -200,10 +207,10 @@ def planning_selftest(players: list[Player]) -> list[str]:
     """My policy uses lineup value, survival-gates live choices, and falls back safely."""
     fails: list[str] = []
     board = fresh_board()
-    wire = seed_wire(players)
+    levels = seed_levels(players)
     opponents = synthetic_opponents(players, board)
     first_index = board.pick_nos.index(board.my_picks[0])
-    state = Draft(players, wire, board, opponents=opponents)
+    state = Draft(players, levels, board, opponents=opponents)
     narrow = state.score_my_candidates(first_index)
     broad = state.score_my_candidates(first_index, per_pos=FIRST_PICK_PER_POS)
     if len(broad) <= len(narrow):
@@ -214,11 +221,11 @@ def planning_selftest(players: list[Player]) -> list[str]:
     contested = broad[0][2]
     external = [contested] + [p for p in players if p.player_id != contested.player_id]
     opponents = synthetic_opponents(players, board, external)
-    deterministic = Draft(players, wire, board, opponents=opponents)
+    deterministic = Draft(players, levels, board, opponents=opponents)
     deterministic.run()
     if deterministic.pick_of.get(contested.player_id) != 1:
         fails.append("planning: synthetic opponent did not take the contested candidate")
-    broaden_first_pick(deterministic, players, board, wire, opponents)
+    broaden_first_pick(deterministic, players, board, levels, opponents)
     detail = deterministic.my_decisions[board.my_picks[0]]
     if contested.player_id not in {candidate.player_id for _, _, candidate in detail}:
         fails.append("planning: deterministic pre-pick path erased a live candidate")
@@ -289,27 +296,30 @@ def planning_selftest(players: list[Player]) -> list[str]:
     deep_board.picks_left[deep_board.my_slot - 1] -= len(deep_roster)
     deep_state = Draft(
         players,
-        wire,
+        levels,
         deep_board,
         opponents=synthetic_opponents(players, deep_board),
     )
     deep_index = deep_board.pick_nos.index(deep_board.my_picks[0])
     deep_sorted = sorted_roster(deep_roster)
-    deep_base = team_value(deep_sorted, deep_state.wire)
+    deep_base = team_value(deep_sorted, deep_state.levels)
     for now, _, candidate in deep_state.score_my_candidates(deep_index):
-        raw_marginal = team_value(deep_sorted, deep_state.wire, candidate) - deep_base
+        raw_marginal = team_value(deep_sorted, deep_state.levels, candidate) - deep_base
         if abs(now - raw_marginal) > 1e-9:
             fails.append("planning: opponent depth heuristic changed my marginal value")
             break
 
-    first_target = broad[-1][2]
+    # A target can be an interior player the shortlist would omit. The opponents ahead
+    # of my first pick take the top of the external order, so index 30 guarantees he
+    # is still on the board when the plan reaches my turn.
+    first_target = players[30]
     second_target = next(p for p in players if p.player_id != first_target.player_id)
     external = [second_target] + [p for p in players if p.player_id != second_target.player_id]
     opponents = synthetic_opponents(players, board, external)
     my_indices = [i for i, slot in enumerate(board.order) if slot == board.my_slot]
     planned = Draft(
         players,
-        wire,
+        levels,
         board,
         opponents=opponents,
         targets={my_indices[0]: first_target, my_indices[1]: second_target},
@@ -334,14 +344,17 @@ def planning_selftest(players: list[Player]) -> list[str]:
 
 
 def lineup_selftest() -> list[str]:
-    """Expected lineup value is exact on small cases and monotone by construction."""
+    """The weekly lineup solver is exact on small cases and monotone by construction."""
     fails: list[str] = []
 
     def check(ok: bool, message: str) -> None:
         if not ok:
             fails.append(f"lineup: {message}")
 
-    def player(player_id: int, name: str, position: str, points: float) -> Player:
+    def player(
+        player_id: int, name: str, position: str, weekly: list[float]
+    ) -> Player:
+        weeks = tuple(weekly) + (0.0,) * (WEEKS - len(weekly))
         return Player(
             player_id=player_id,
             name=name,
@@ -350,57 +363,76 @@ def lineup_selftest() -> list[str]:
             age=25.0,
             bye_week=None,
             is_rookie=False,
-            points=points,
+            points=round(sum(weeks), 2),
             provider_adp=None,
+            weekly=weeks,
         )
 
-    qb1 = player(900001, "QB 1", "QB", 100)
-    qb2 = player(900002, "QB 2", "QB", 80)
+    def flat(points_per_week: float) -> list[float]:
+        return [points_per_week] * WEEKS
+
+    def levels_with(wire: dict[str, float], weights=None) -> Levels:
+        if weights is None:
+            weights = tuple(1.0 / WEEKS for _ in range(WEEKS))
+        cols = tuple(tuple((wire[pos],) for _ in range(WEEKS)) for pos in POSITIONS)
+        zero = tuple(tuple((0.0,) for _ in range(WEEKS)) for _ in POSITIONS)
+        return Levels(weights=tuple(weights), wire=cols, drop_floor=zero)
+
     # With one QB job: QB1 always supplies his unconditional projection, QB2 is used
     # when QB1 is unavailable, and the unique wire body is used only when both are out.
-    one_qb = position_expected_value([qb1, qb2], 50.0, 1)
+    u = UNAVAILABLE_RATE["QB"]
+    one_qb = position_expected_value([(1, 100.0), (2, 80.0)], (50.0,), u, 1)
     check(
-        abs(one_qb - (100.0 + 0.08 * 80.0 + 0.08**2 * 50.0)) < 1e-9,
+        abs(one_qb - (100.0 + u * 80.0 + u**2 * 50.0)) < 1e-9,
         f"one-QB expectation is {one_qb:.6f}",
     )
-    two_qb = position_expected_value([qb1, qb2], 50.0, 2)
+    two_qb = position_expected_value([(1, 100.0), (2, 80.0)], (50.0,), u, 2)
     check(
-        abs(two_qb - (180.0 + (1.0 - 0.92**2) * 50.0)) < 1e-9,
+        abs(two_qb - (180.0 + (1.0 - (1.0 - u) ** 2) * 50.0)) < 1e-9,
         f"two-QB expectation is {two_qb:.6f}",
     )
 
-    zero_wire = {"QB": 100.0, "RB": 0.0, "WR": 0.0, "TE": 0.0}
-    empty = expected_lineup_value([], zero_wire)
+    # One wire QB cannot fill the dedicated QB slot and a flex seat at once, and the
+    # QB wire never enters the flex pool at all.
+    empty = week_value(
+        {}, {"QB": (100.0,), "RB": (), "WR": (), "TE": ()}, WEEKLY_SHAPES[0]
+    )
     check(abs(empty - 100.0) < 1e-9, "one wire QB filled more than one lineup slot")
 
-    # The closed-form weekly-reopt value against literal brute force: every availability
-    # subset, weighted exactly, each solved by enumerating all legal compositions.
-    def legal_compositions() -> list[dict[str, int]]:
-        total = sum(STARTING_SLOTS.values())
-        flex = STARTING_SLOTS["FLEX"]
+    # The closed-form weekly value against literal brute force, for every distinct
+    # in-season starting shape (base, +WR, +RB, +FLEX, and the superflex-as-2QB
+    # weeks): every availability subset, weighted exactly, each solved by
+    # enumerating all legal lineup compositions.
+    def legal_compositions(shape: dict[str, int]) -> list[dict[str, int]]:
+        total = sum(shape.values())
+        flex_seats = shape["FLEX"]
         out = []
-        for rb in range(DEDICATED_SLOTS["RB"], DEDICATED_SLOTS["RB"] + flex + 1):
-            for wr in range(DEDICATED_SLOTS["WR"], DEDICATED_SLOTS["WR"] + flex + 1):
-                for te in range(DEDICATED_SLOTS["TE"], DEDICATED_SLOTS["TE"] + flex + 1):
-                    counts = {"QB": DEDICATED_SLOTS["QB"], "RB": rb, "WR": wr, "TE": te}
+        for rb in range(shape["RB"], shape["RB"] + flex_seats + 1):
+            for wr in range(shape["WR"], shape["WR"] + flex_seats + 1):
+                for te in range(shape["TE"], shape["TE"] + flex_seats + 1):
+                    counts = {"QB": shape["QB"], "RB": rb, "WR": wr, "TE": te}
                     if sum(counts.values()) == total:
                         out.append(counts)
         return out
 
-    def brute_weekly_value(roster: list[Player], wires: dict[str, float]) -> float:
-        comps = legal_compositions()
+    def brute_week_value(
+        projections: dict[str, list[tuple[int, float]]],
+        wires: dict[str, tuple[float, ...]],
+        shape: dict[str, int],
+    ) -> float:
+        comps = legal_compositions(shape)
         bodies = []
-        for p in roster:
-            if p.points > 0:
-                rate = 1.0 - UNAVAILABLE_RATE[p.position]
-                bodies.append((p.position, p.points / rate, rate))
+        certain: dict[str, list[float]] = {pos: [] for pos in POSITIONS}
         for pos in POSITIONS:
-            if wires[pos] > 0:
-                bodies.append((pos, wires[pos], 1.0))
+            for _, points in projections.get(pos, []):
+                if points > 0:
+                    rate = 1.0 - UNAVAILABLE_RATE[pos]
+                    bodies.append((pos, points / rate, rate))
+            certain[pos].extend(v for v in wires[pos] if v > 0)
         total = 0.0
         for mask in range(1 << len(bodies)):
             prob = 1.0
-            avail: dict[str, list[float]] = {pos: [] for pos in POSITIONS}
+            avail = {pos: list(certain[pos]) for pos in POSITIONS}
             for i, (pos, w, rate) in enumerate(bodies):
                 if mask >> i & 1:
                     prob *= rate
@@ -414,59 +446,106 @@ def lineup_selftest() -> list[str]:
             )
         return total
 
-    brute_roster = [
-        player(900030, "BF QB1", "QB", 300),
-        player(900031, "BF QB2", "QB", 280),
-        player(900032, "BF RB1", "RB", 240),
-        player(900033, "BF RB2", "RB", 220),
-        player(900034, "BF RB3", "RB", 190),
-        player(900035, "BF RB4", "RB", 180),
-        player(900036, "BF WR1", "WR", 230),
-        player(900037, "BF WR2", "WR", 200),
-        player(900038, "BF TE1", "TE", 190),
-        player(900039, "BF TE2", "TE", 185),
-    ]
-    brute_wire = {"QB": 13.0, "RB": 45.0, "WR": 96.0, "TE": 92.0}
-    brute = brute_weekly_value(brute_roster, brute_wire)
-    closed = expected_lineup_value(brute_roster, brute_wire)
+    brute_projections = {
+        "QB": [(9001, 21.0), (9002, 17.5)],
+        "RB": [(9010, 15.0), (9011, 13.5), (9012, 11.0), (9013, 10.5)],
+        "WR": [(9020, 14.5), (9021, 12.0), (9022, 11.5)],
+        "TE": [(9030, 12.5), (9031, 11.8)],
+    }
+    brute_wires = {"QB": (9.0,), "RB": (6.5,), "WR": (7.0,), "TE": (6.0,)}
+    for shape in {tuple(sorted(s.items())) for s in WEEKLY_SHAPES}:
+        shape = dict(shape)
+        brute = brute_week_value(brute_projections, brute_wires, shape)
+        closed = week_value(brute_projections, brute_wires, shape)
+        check(
+            abs(brute - closed) < 1e-9,
+            f"shape {shape}: closed form {closed:.6f} != brute force {brute:.6f}",
+        )
+    # Late-season rosters hold several waiver bodies per position at decaying
+    # tiers; the closed form must price the multiplicity exactly too.
+    late_wires = {
+        "QB": (9.0, 7.5),
+        "RB": (6.5, 5.5, 4.5, 3.5),
+        "WR": (7.0, 6.0, 5.0, 4.0),
+        "TE": (6.0, 5.0, 4.0),
+    }
+    late_shape = WEEKLY_SHAPES[-1]
+    brute = brute_week_value(brute_projections, late_wires, late_shape)
+    closed = week_value(brute_projections, late_wires, late_shape)
     check(
         abs(brute - closed) < 1e-9,
-        f"weekly-reopt closed form {closed:.6f} != brute force {brute:.6f}",
+        f"tiered wire bodies: closed form {closed:.6f} != brute force {brute:.6f}",
+    )
+
+    # Weekly decomposition: a zero week contributes nothing that week and leaves the
+    # other weeks untouched.
+    wires = {"QB": 5.0, "RB": 5.0, "WR": 5.0, "TE": 5.0}
+    lv = levels_with(wires)
+    active = player(900040, "Full WR", "WR", flat(12.0))
+    missing_weeks = flat(12.0)
+    missing_weeks[2] = 0.0
+    absent = player(900040, "Absent WR", "WR", missing_weeks)
+    full = weekly_team_values([active], lv)
+    gap = weekly_team_values([absent], lv)
+    check(
+        all(abs(a - b) < 1e-9 for w, (a, b) in enumerate(zip(full, gap)) if w != 2),
+        "a zero week changed another week's value",
+    )
+    check(gap[2] < full[2] - 1e-9, "a zero week did not lower that week's value")
+
+    # Guillotine weights direct value toward the weeks that matter: with all weight
+    # on week 3, the absent player is worth strictly less than the active one of
+    # identical season total; with no weight there, they tie.
+    week3_only = tuple(1.0 if w == 2 else 0.0 for w in range(WEEKS))
+    lv3 = levels_with(wires, week3_only)
+    check(
+        team_value([active], lv3) > team_value([absent], lv3) + 1e-9,
+        "a week-3 absence was not punished under week-3 weight",
+    )
+    no_week3 = tuple(0.0 if w == 2 else 1.0 / (WEEKS - 1) for w in range(WEEKS))
+    lv_not3 = levels_with(wires, no_week3)
+    check(
+        abs(team_value([active], lv_not3) - team_value([absent], lv_not3)) < 1e-9,
+        "a week-3 absence leaked into other weeks' value",
     )
 
     base = [
-        player(900010, "Base QB", "QB", 327),
-        player(900011, "RB 1", "RB", 220),
-        player(900012, "RB 2", "RB", 200),
-        player(900013, "WR 1", "WR", 230),
-        player(900014, "WR 2", "WR", 210),
-        player(900015, "TE 1", "TE", 180),
+        player(900010, "Base QB", "QB", flat(19.0)),
+        player(900011, "RB 1", "RB", flat(13.0)),
+        player(900012, "RB 2", "RB", flat(12.0)),
+        player(900013, "WR 1", "WR", flat(13.5)),
+        player(900014, "WR 2", "WR", flat(12.5)),
+        player(900015, "TE 1", "TE", flat(10.5)),
     ]
-    wire = {"QB": 13.0, "RB": 45.0, "WR": 92.0, "TE": 97.0}
-    low = player(900020, "Low WR", "WR", 150)
-    high = player(900021, "High WR", "WR", 190)
-    low_value = expected_lineup_value(base + [low], wire)
-    high_value = expected_lineup_value(base + [high], wire)
-    check(high_value > low_value, "a higher same-position projection lost value")
-
-    before = team_value(sorted_roster(base), wire)
-    after = team_value(sorted_roster(base + [low]), wire)
+    lv = levels_with({"QB": 8.0, "RB": 6.0, "WR": 5.5, "TE": 5.7})
+    low = player(900020, "Low WR", "WR", flat(9.0))
+    high = player(900021, "High WR", "WR", flat(11.0))
+    check(
+        team_value(sorted_roster(base + [high]), lv)
+        > team_value(sorted_roster(base + [low]), lv),
+        "a higher same-position projection lost value",
+    )
+    before = team_value(sorted_roster(base), lv)
+    after = team_value(sorted_roster(base + [low]), lv)
     check(after >= before, "adding a player lowered roster value")
     # Crossing the wire level must not create a discontinuous loss.
-    at_wire = player(low.player_id, low.name, low.position, 92.0)
-    above_wire = player(low.player_id, low.name, low.position, 93.0)
+    at_wire = player(low.player_id, low.name, low.position, flat(5.5))
+    above_wire = player(low.player_id, low.name, low.position, flat(5.6))
     check(
-        team_value(sorted_roster(base + [above_wire]), wire)
-        > team_value(sorted_roster(base + [at_wire]), wire),
+        team_value(sorted_roster(base + [above_wire]), lv)
+        > team_value(sorted_roster(base + [at_wire]), lv),
         "crossing the wire threshold lowered value",
     )
 
     print(
-        "  expected lineup: exact QB depth probabilities, unique wire capacity, "
-        "brute-force agreement, and projection/addition monotonicity",
+        "  weekly lineup: exact QB depth probabilities, unique wire capacity, "
+        f"brute-force agreement on {len({tuple(sorted(s.items())) for s in WEEKLY_SHAPES})} "
+        "starting shapes, zero-week isolation, week-weight response, and "
+        "projection/addition monotonicity",
         file=sys.stderr,
     )
     return fails
+
 
 
 def synthetic_draft(
@@ -628,8 +707,8 @@ def board_selftest(players: list[Player]) -> list[str]:
     check(not board.taken, "an unrankable pick took a pool player off the board")
     check(len(board.off_pool[0]) == 1, "an unrankable pick was not held as a roster spot")
     check(board.picks_left[0] == ROUNDS - 1, "an unrankable pick did not cost its team a pick")
-    wire = seed_wire(players)
-    draft = Draft(players, wire, board, opponents=synthetic_opponents(players, board))
+    levels = seed_levels(players)
+    draft = Draft(players, levels, board, opponents=synthetic_opponents(players, board))
     owed = sum(DEDICATED_SLOTS.values()) - 1  # the QB is answered, the rest still owed
     with_qb = draft.candidates([], picks_left=owed, off=board.off_pool[0])
     without = draft.candidates([], picks_left=owed, off=[])
@@ -645,13 +724,13 @@ def board_selftest(players: list[Player]) -> list[str]:
     # Resuming: every made pick survives, every pending pick is played exactly once.
     board, _ = load_board(synthetic_draft(players, made=57), players, "synthetic")
     opponents = synthetic_opponents(players, board)
-    partial = Draft(players, wire, board, opponents=opponents)
+    partial = Draft(players, levels, board, opponents=opponents)
     partial.run(stop_before=5)
     check(
         set(partial.pick_of.values()) == set(board.pick_nos[:5]),
         "a short redraw did not stop immediately before its requested pick index",
     )
-    draft = Draft(players, wire, board, opponents=opponents)
+    draft = Draft(players, levels, board, opponents=opponents)
     draft.run()
     check(
         len(draft.taken) == len(board.taken) + len(board.order),
@@ -709,10 +788,87 @@ def board_selftest(players: list[Player]) -> list[str]:
     return fails
 
 
+def guillotine_selftest(players: list[Player]) -> list[str]:
+    """Bars, week weights, and the waiver escalation respond to rosters sanely."""
+    fails: list[str] = []
+
+    def check(ok: bool, message: str) -> None:
+        if not ok:
+            fails.append(f"guillotine: {message}")
+
+    # A full league drafted round-robin off the top of the pool: slot 0 is mine.
+    top = players[: TEAMS * ROUNDS]
+    rosters = [top[i::TEAMS] for i in range(TEAMS)]
+    mine, opponent_rosters = rosters[0], rosters[1:]
+    taken = {p.player_id for p in top}
+    pos = pos_sorted(players)
+    seeded = seed_levels(players)
+    solved, diag = guillotine.solve(mine, opponent_rosters, taken, pos, seeded, SEED)
+
+    check(
+        len(solved.weights) == WEEKS and abs(sum(solved.weights) - 1.0) < 1e-9,
+        f"weights are not a normalized length-{WEEKS} distribution",
+    )
+    check(all(w >= 0.0 for w in solved.weights), "a week weight went negative")
+    check(
+        0.0 <= diag["p_reach_final"] <= 1.0 and 0.0 <= diag["p_win_final"] <= 1.0,
+        "survival probabilities left [0, 1]",
+    )
+    for i, k in enumerate(POSITIONS):
+        check(
+            all(v == 0.0 for v in solved.drop_floor[i][0]),
+            f"{k} drop floor is nonzero in week 1, before any elimination",
+        )
+        check(
+            all(
+                v + 1e-9 >= f
+                for bodies, floor_bodies in zip(solved.wire[i], solved.drop_floor[i])
+                for v, f in zip(bodies, floor_bodies)
+            ),
+            f"{k} wire dips below its drop floor",
+        )
+        check(
+            all(
+                all(hi + 1e-9 >= lo for hi, lo in zip(bodies, bodies[1:]))
+                for bodies in solved.wire[i]
+            ),
+            f"{k} wire tiers are not decaying (a later add beat an earlier one)",
+        )
+    check(
+        any(
+            solved.drop_floor[i][REGULAR_WEEKS - 1][0] > 0.0
+            for i in range(len(POSITIONS))
+        ),
+        "28 eliminated rosters raised no position's week-15 replacement level",
+    )
+
+    # Deterministic: the level map must repeat exactly for the cycle detector.
+    again, _ = guillotine.solve(mine, opponent_rosters, taken, pos, seeded, SEED)
+    check(again == solved, "the same rosters produced different levels")
+
+    # A roster of late-round leftovers must be likelier to fall to the bar than the
+    # slot-1 round-robin roster facing the same field.
+    weak = top[-ROUNDS:]
+    _, weak_diag = guillotine.solve(weak, opponent_rosters, taken, pos, seeded, SEED)
+    check(
+        weak_diag["p_reach_final"] < diag["p_reach_final"],
+        "a leftover roster out-survived the top round-robin roster",
+    )
+
+    print(
+        "  guillotine: normalized week weights, elimination floor only after cuts, "
+        "deterministic level map, and weaker rosters dying sooner "
+        f"(p_reach {weak_diag['p_reach_final']:.3f} < {diag['p_reach_final']:.3f})",
+        file=sys.stderr,
+    )
+    return fails
+
+
 def selftest(players: list[Player]) -> int:
     print("selftest:", file=sys.stderr)
     fails = (
         lineup_selftest()
+        + guillotine_selftest(players)
         + opponent_selftest(players)
         + planning_selftest(players)
         + board_selftest(players)

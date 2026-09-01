@@ -1,10 +1,13 @@
 """This league's shape (from README.md) and the strategy constants.
 
-32 teams, 0.5 PPR guillotine with a +1.0/rec TE premium, 1 QB. Starters are
-1 QB / 1 RB / 2 WR / 1 TE / 2 W-R-T = 7, plus 1 bench = 8 draftable roster
-spots = 8 rounds = 256 picks, all offense (no D/ST or K slot). The 2 reserve
-spots are not drafted into. Snake with a third-round reversal, and picks can
-be traded.
+32 teams, 0.5 PPR guillotine with a +1.0/rec TE premium, 1 QB. The two lowest
+weekly scores are eliminated each of weeks 1-15 (their players hit waivers),
+then the last two teams play a week 16-17 total-points championship. Starters
+open at 1 QB / 1 RB / 2 WR / 1 TE / 2 W-R-T = 7, plus 1 bench = 8 draftable
+roster spots = 8 rounds = 256 picks, all offense (no D/ST or K slot). The 2
+reserve spots are not drafted into. Snake with a third-round reversal, and
+picks can be traded. Lineups expand in-season (WEEKLY_SHAPES below); the extra
+bench weeks matter only for holding players and are not modeled.
 
 The geometry (teams, rounds, my slot, reversal, and everything derived from them) is a
 default: draft.json is authoritative, and `configure_from_draft()` rebinds it before
@@ -16,8 +19,51 @@ draft.json carries no lineup information.
 from __future__ import annotations
 
 SCHEME = "half_ppr"
-POINTS_FIELD = "points"  # the one value column in pool.json: one-season projected points
+POINTS_FIELD = "points"  # season column in pool.json; weekly_points carries the value input
 POSITIONS = ("QB", "RB", "WR", "TE")
+
+# --- guillotine season structure --------------------------------------------------
+# Weeks 1-15 each cut the two lowest weekly scores (30 of 32 teams); the last two
+# play a week 16-17 total-points championship. Week 18 exists in the NFL but not here.
+REGULAR_WEEKS = 15
+WEEKS = 17
+CHAMPIONSHIP_WEEKS = (16, 17)
+
+
+def _week_shape(week: int) -> dict[str, int]:
+    """Starting slots in a given week, from the league's expansion schedule.
+
+    Base 1 QB / 1 RB / 2 WR / 1 TE / 2 FLEX; +1 WR at week 7, +1 RB at week 9,
+    +1 FLEX at week 12, +1 superflex at week 14. The superflex is modeled as a
+    second dedicated QB slot: a QB nearly always outscores the flex-caliber
+    alternative and a QB waiver body is always available, so the seat's realistic
+    occupant is a QB. This slightly undervalues RB/WR/TE depth in weeks 14-17.
+    """
+    return {
+        "QB": 2 if week >= 14 else 1,
+        "RB": 2 if week >= 9 else 1,
+        "WR": 3 if week >= 7 else 2,
+        "TE": 1,
+        "FLEX": 3 if week >= 12 else 2,
+    }
+
+
+WEEKLY_SHAPES = tuple(_week_shape(w) for w in range(1, WEEKS + 1))
+WEEK_STARTERS = tuple(sum(s.values()) for s in WEEKLY_SHAPES)
+
+# Waiver-tier bodies a surviving roster holds by week, per position. The roster grows
+# from 8 spots (week 1) to 16 (week 14) while only 8 players are ever drafted, so
+# in-season adds accumulate on every surviving team; each is modeled as an
+# always-available body at that week's wire level. The allocation leans RB/WR — where
+# injury churn drives adds — with the second QB arriving for the week-14 superflex.
+# This is what stops drafted depth from being credited with the whole late-season
+# lineup: by week 15 half of everyone's roster came off the wire.
+WEEK_WIRE_BODIES = {
+    "QB": (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2),
+    "RB": (1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4),
+    "WR": (1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4),
+    "TE": (1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3),
+}
 
 TEAMS = 32
 MY_SLOT = 20
@@ -97,8 +143,35 @@ def configure_from_draft(raw: dict) -> None:
 # Chance a player is unavailable when a lineup job must be filled. The expected-lineup
 # solver applies these position-wide assumptions to the whole depth chart: the weekly
 # lineup is re-optimized across positions, and a body's contribution is the exact
-# probability that the re-optimized lineup calls on it.
-UNAVAILABLE_RATE = {"QB": 0.08, "RB": 0.20, "WR": 0.12, "TE": 0.10}
+# probability that the re-optimized lineup calls on it. Byes and known absences are
+# now explicit zero weeks in weekly_points, so these rates price only the surprise
+# in-week unavailability (injury, inactive, benching) — about a bye's worth (~6%)
+# lower than when one season aggregate had to absorb byes too.
+UNAVAILABLE_RATE = {"QB": 0.05, "RB": 0.15, "WR": 0.08, "TE": 0.06}
+
+# --- guillotine model knobs -------------------------------------------------------
+# SD of one team's weekly score around its expected lineup value at the 7-starter
+# base shape, idiosyncratic component only: a league-wide scoring swing (weather
+# slates, a dead week) moves every team together and cancels out of who gets cut, so
+# it stays out of the elimination model. Expanded weeks scale this by sqrt(starters/7)
+# in guillotine.py.
+WEEKLY_SIGMA = 16.0
+# Persistent per-team error in the projections themselves, as weekly-mean points: a
+# team projected to average 100 truly averages 92-108 at one sigma. Drawn once per
+# team per simulated season — opponents and me alike — so bad projections can survive,
+# good ones can die, and my own busts are priced into every week's safety margin.
+TEAM_SEASON_SIGMA = 8.0
+# A full starting lineup's blowup week bottoms out around two sigma below expectation;
+# the Gaussian tail below that is an artifact, and the weekly minimum over 31 teams
+# otherwise lives in that artifact tail and drags the elimination bar absurdly low.
+SCORE_FLOOR_Z = -2.2
+# Simulated guillotine seasons per fixed-point iteration for elimination bars.
+GUILLOTINE_SIMS = 512
+# Tier spacing for in-season replacement on eliminated rosters: after a cut, the best
+# dropped players are bid away with real FAAB by ~30 competing survivors, so a
+# roster's j-th waiver body sits at the (j * WIRE_DROP_RANK)-th best dropped player at
+# its position. Drives the weekly waiver-wire escalation in guillotine.py.
+WIRE_DROP_RANK = 6
 SURVIVAL_SIGMA = 3.5  # softness of "will he last until my next pick"
 # Candidates per position considered for the next pick by the bulk policy.
 LOOKAHEAD_PER_POS = 2

@@ -1,15 +1,51 @@
-"""Solve wire levels from the league shape produced by a simulated draft."""
+"""Solve the league levels from the league shape produced by a simulated draft."""
 
 from __future__ import annotations
 
 import sys
 
+from . import guillotine
 from .board import Board
-from .league import MAX_ITERS, POSITIONS
+from .league import MAX_ITERS, POSITIONS, REGULAR_WEEKS, SEED, WEEKS
 from .opponents import OpponentStrategy
-from .pool import Player, by_position
+from .pool import Player
 from .simulation import Draft
-from .value import seed_wire, wire_replacement
+from .value import Levels, pos_sorted, seed_levels, wire_replacement
+
+# Guillotine weight mass in each report band: the early no-bench weeks, the bye
+# gauntlet, the expanded-roster run-in, and the two championship weeks.
+_BANDS = ((0, 4), (4, 9), (9, 15), (15, WEEKS))
+
+
+def _weight_bands(weights: tuple[float, ...]) -> str:
+    return " ".join(
+        f"wk{lo + 1}-{hi}:{sum(weights[lo:hi]):.2f}" for lo, hi in _BANDS
+    )
+
+
+def _average_levels(cycle: list[Levels]) -> Levels:
+    n = len(cycle)
+    weights = tuple(
+        sum(levels.weights[w] for levels in cycle) / n for w in range(WEEKS)
+    )
+    total = sum(weights)
+    weights = tuple(w / total for w in weights)  # keep the sum exactly 1
+
+    def mean_bodies(pick) -> tuple:
+        # Body counts per (position, week) are league constants, so the tiers zip.
+        return tuple(
+            tuple(
+                tuple(sum(values) / n for values in zip(*bodies_across_cycle))
+                for bodies_across_cycle in zip(*(pick(levels)[i] for levels in cycle))
+            )
+            for i in range(len(POSITIONS))
+        )
+
+    return Levels(
+        weights=weights,
+        wire=mean_bodies(lambda levels: levels.wire),
+        drop_floor=mean_bodies(lambda levels: levels.drop_floor),
+    )
 
 
 def converge(
@@ -17,93 +53,117 @@ def converge(
     board: Board,
     report: bool,
     opponents: dict[int, OpponentStrategy],
-) -> tuple[dict[str, float], Draft, dict]:
-    """Fixed point: wire value -> draft -> wire value.
+) -> tuple[Levels, Draft, dict, dict]:
+    """Fixed point: levels -> draft -> guillotine measurement -> levels.
 
-    The map is piecewise-constant: the wire level jumps between adjacent players in the
-    pool instead of moving continuously. That means gradient-style damping cannot settle
-    it — it just orbits the discontinuity — while plain undamped iteration is eventually
-    periodic.
+    The map is piecewise-constant: the draft is a discrete function of the levels, and
+    the levels (weekly wire, drop floor, week weights) are a deterministic seeded
+    function of the draft's rosters. Gradient-style damping cannot settle such a map —
+    it just orbits the discontinuity — while plain undamped iteration is eventually
+    periodic. So iterate undamped, watch for a repeated draft outcome, and average the
+    levels over the cycle once one closes. The state key is the full set of final
+    rosters: levels are a function of exactly that, so a repeated outcome means a
+    repeated map state. A cycle of length 1 is an exact fixed point; a longer cycle
+    means the league genuinely alternates between neighbouring shapes and the average
+    across it is the honest answer. The cycle is reported rather than hidden.
 
-    So iterate undamped, watch for a repeated state, and average the wire levels over
-    the cycle once one closes. Each iteration's draft is a deterministic function of the
-    previous one's wire levels, so the state key is the wire levels alone. A cycle of
-    length 1 is an exact fixed point; a longer cycle means the draft genuinely
-    alternates between neighbouring league shapes and the average across it is the
-    honest answer. The cycle is reported rather than hidden.
+    Every draft here starts from `board`, so on a live board the fixed point is over
+    the rosters this league will actually finish with, and the guillotine bars are
+    measured against the opponents this league actually fields.
 
-    Every draft here starts from `board`, so on a live board the fixed point is over the
-    rosters this league will actually finish with. The measurement is still league-wide:
-    the wire is whatever the whole league leaves undrafted.
+    Returns (levels, final draft, history, guillotine diagnostics at the final state).
     """
-    pos = by_position(players)
-    stream = seed_wire(players)  # no draft to read a wire off yet
+    pos = pos_sorted(players)
+    levels = seed_levels(players)
     trace = [
         {
             "iteration": 0,
             "source": "slot_assignment",
-            "wire": dict(stream),
+            "weight_bands": _weight_bands(levels.weights),
         }
     ]
-    seen: dict[tuple[float, ...], int] = {}
-    wire_observations: list[dict[str, float]] = []
+    seen: dict[tuple, int] = {}
+    observations: list[Levels] = []
     cycle_start: int | None = None
 
     for it in range(1, MAX_ITERS + 1):
-        draft = Draft(players, stream, board, opponents=opponents)
+        draft = Draft(players, levels, board, opponents=opponents)
         draft.run()
-        wire = wire_replacement(draft.taken, pos)
-        wire_observations.append(wire)
-        key = tuple(wire[k] for k in POSITIONS)
+        my_roster = draft.rosters[board.my_slot - 1]
+        opponent_rosters = [
+            roster
+            for slot, roster in enumerate(draft.rosters, start=1)
+            if slot != board.my_slot
+        ]
+        new_levels, diag = guillotine.solve(
+            my_roster, opponent_rosters, draft.taken, pos, levels, SEED
+        )
+        observations.append(new_levels)
+        key = tuple(tuple(sorted(p.player_id for p in r)) for r in draft.rosters)
         trace.append(
             {
                 "iteration": it,
                 "source": "draft_simulation",
-                "observed_wire": {k: round(v, 1) for k, v in wire.items()},
+                "p_reach_final": diag["p_reach_final"],
+                "p_title": diag["p_title"],
+                "weight_bands": _weight_bands(new_levels.weights),
+                "wire_week1": {
+                    k: round(new_levels.wire[i][0][0], 1)
+                    for i, k in enumerate(POSITIONS)
+                },
+                "wire_week15": {
+                    k: [round(v, 1) for v in new_levels.wire[i][REGULAR_WEEKS - 1]]
+                    for i, k in enumerate(POSITIONS)
+                },
             }
         )
         if report:
             print(
-                f"  iter {it}: wire="
-                + ", ".join(f"{k} {wire[k]:.0f}" for k in POSITIONS),
+                f"  iter {it}: p_reach {diag['p_reach_final']:.3f} "
+                f"p_title {diag['p_title']:.3f}  weights {_weight_bands(new_levels.weights)}",
                 file=sys.stderr,
             )
         if key in seen:
             cycle_start = seen[key]
             break
         seen[key] = it
-        stream = wire
+        levels = new_levels
 
     assert cycle_start is not None, f"no cycle within {MAX_ITERS} iterations"
-    wire_cycle = wire_observations[cycle_start - 1 : -1] or wire_observations[cycle_start - 1 :]
-    stream = {
-        k: sum(o[k] for o in wire_cycle) / len(wire_cycle) for k in POSITIONS
-    }
+    cycle = observations[cycle_start - 1 : -1] or observations[cycle_start - 1 :]
+    levels = _average_levels(cycle)
     if report:
         print(
-            f"  cycle of length {len(wire_cycle)} closed at iteration {cycle_start}; "
-            "averaging wire levels across it",
+            f"  cycle of length {len(cycle)} closed at iteration {cycle_start}; "
+            "averaging levels across it",
             file=sys.stderr,
         )
 
-    # Final deterministic draft at the settled levels, so sim_pick, my_decisions and the
-    # reported wire levels describe one and the same draft.
-    draft = Draft(players, stream, board, opponents=opponents)
+    # Final deterministic draft at the settled levels, so sim_pick, my_decisions and
+    # the reported levels describe one and the same draft — then one more guillotine
+    # measurement of that draft for the reported diagnostics (levels stay averaged).
+    draft = Draft(players, levels, board, opponents=opponents)
     draft.run()
+    my_roster = draft.rosters[board.my_slot - 1]
+    opponent_rosters = [
+        roster
+        for slot, roster in enumerate(draft.rosters, start=1)
+        if slot != board.my_slot
+    ]
+    _, diagnostics = guillotine.solve(
+        my_roster, opponent_rosters, draft.taken, pos, levels, SEED
+    )
+    diagnostics["post_draft_wire_season_points"] = {
+        k: round(v, 1) for k, v in wire_replacement(draft.taken, pos).items()
+    }
     history = {
-        "method": "undamped iteration to a limit cycle, averaged over the cycle",
-        "cycle_length": len(wire_cycle),
+        "method": (
+            "undamped iteration to a limit cycle over draft outcomes, levels averaged "
+            "across the cycle"
+        ),
+        "cycle_length": len(cycle),
         "cycle_first_seen_at_iteration": cycle_start,
-        "iterations_run": len(wire_observations),
-        # Spread of the cycle the levels were averaged over. A wide band means the league
-        # shape genuinely wobbles between neighbouring configurations rather than settling.
-        "cycle_wire_range": {
-            k: [
-                round(min(o[k] for o in wire_cycle), 1),
-                round(max(o[k] for o in wire_cycle), 1),
-            ]
-            for k in POSITIONS
-        },
+        "iterations_run": len(observations),
         "trace": trace,
     }
-    return stream, draft, history
+    return levels, draft, history, diagnostics

@@ -1,7 +1,7 @@
 """Deterministic draft state and pick policies.
 
 `Draft` resumes an immutable live board, applies roster legality, values my slot, and
-uses each opponent's inferred provider order. Fixed-point wire convergence is in
+uses each opponent's inferred provider order. Fixed-point level convergence is in
 `convergence.py`; stochastic redraws and deeper plans are in `planning.py`.
 """
 
@@ -26,6 +26,7 @@ from .league import (
 from .opponents import OpponentStrategy
 from .pool import Player
 from .value import (
+    Levels,
     insert_sorted,
     pos_sorted,
     sorted_roster,
@@ -86,7 +87,7 @@ class Draft:
     def __init__(
         self,
         players: list[Player],
-        wire: dict[str, float],
+        levels: Levels,
         board: Board,
         noise: float = 0.0,
         rng: random.Random | None = None,
@@ -97,7 +98,7 @@ class Draft:
         my_ban: int | None = None,
     ) -> None:
         self.players = players
-        self.wire = wire
+        self.levels = levels
         self.board = board
         self.order = board.order
         self.pick_nos = board.pick_nos
@@ -335,7 +336,7 @@ class Draft:
         base_key = (taking.player_id,)
         base = value_cache.get(base_key)
         if base is None:
-            base = team_value(future_sorted, self.wire)
+            base = team_value(future_sorted, self.levels)
             value_cache[base_key] = base
         scored: list[tuple[float, float]] = []
         for cand in self.candidates(
@@ -347,7 +348,7 @@ class Draft:
             pair_key = (a, b) if a < b else (b, a)
             pair_value = value_cache.get(pair_key)
             if pair_value is None:
-                pair_value = team_value(future_sorted, self.wire, cand)
+                pair_value = team_value(future_sorted, self.levels, cand)
                 value_cache[pair_key] = pair_value
             gain = pair_value - base
             scored.append((gain, survival(self.better_available(cand), gap)))
@@ -384,7 +385,7 @@ class Draft:
         if self.my_ban is not None and slot == self.my_slot:
             # The ban yields to roster legality: if he is my only legal candidate, take him.
             cands = [c for c in cands if c.player_id != self.my_ban] or cands
-        base, candidate_values = team_values_with_candidates(roster, self.wire, cands)
+        base, candidate_values = team_values_with_candidates(roster, self.levels, cands)
         detail: list[tuple[float, float, Player]] = []
         for cand in cands:
             now = candidate_values[cand.player_id] - base

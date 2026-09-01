@@ -8,12 +8,12 @@ from .board import Board
 from .league import LOOKAHEAD_PICKS, POSITIONS, pick_label
 from .pool import Player
 from .simulation import Draft
-from .value import team_values_with_candidates
+from .value import Levels, team_values_with_candidates
 
 
 def build_rankings(
     players: list[Player],
-    wire: dict[str, float],
+    levels: Levels,
     draft: Draft,
     picks: dict[int, list[int]],
     sims: int,
@@ -23,7 +23,7 @@ def build_rankings(
 
     Drafted players are dropped rather than flagged — they cannot be picked, and leaving
     them in would put a name at rank 1 that is not available. Their points still shape the
-    converged wire levels every row's lineup gain is measured with, which happens in
+    converged levels every row's lineup gain is measured with, which happens in
     `converge`. All rank columns are renumbered over what is emitted, so they read as
     positions on the remaining board rather than as gapped survivors of the preseason one.
 
@@ -43,11 +43,12 @@ def build_rankings(
     my_picks = board.my_picks
     available = board.available(players)
     # The board's one metric and sort key — what the pick engine actually maximizes
-    # (before lookahead): the player's marginal expected-lineup value on my current
-    # roster at the converged wire levels. Matches value_now for the first pending
-    # pick's candidates; roster-aware, so it shrinks where my roster is already deep.
+    # (before lookahead): the player's marginal guillotine-weighted weekly lineup
+    # value on my current roster at the converged levels. Matches value_now for the
+    # first pending pick's candidates; roster-aware, so it shrinks where my roster is
+    # already deep, and survival-aware, so it shrinks in weeks I already clear the bar.
     base, with_candidate = team_values_with_candidates(
-        board.rosters[board.my_slot - 1], wire, available
+        board.rosters[board.my_slot - 1], levels, available
     )
     gain = {pid: value - base for pid, value in with_candidate.items()}
     ranked = sorted(available, key=lambda p: (-gain[p.player_id], p.player_id))
@@ -112,7 +113,7 @@ def build_rankings(
                 "bye_week": p.bye_week,
                 "is_rookie": p.is_rookie,
                 "points": p.points,
-                "lineup_gain": round(gain[p.player_id], 1),
+                "lineup_gain": round(gain[p.player_id], 2),
                 "sim_pick": sim_pick,
                 "sim_pick_label": pick_label(sim_pick) if sim_pick else None,
                 "sim_adp": round(mean, 1) if mean is not None else None,

@@ -12,6 +12,7 @@ data/projections.html
   -> build_pool.py            -> ../pool.json
   -> match_sleeper.py         -> ../pool.json with sleeper_id
   -> apply_sleeper_points.py  -> ../pool.json re-priced from data/sleeper_projections.json
+  -> apply_weekly_shape.py    -> ../pool.json with weekly_points from data/weekly_projections.json
 ```
 
 `pipeline.py` runs those stages in order and stops on the first failure. Every stage is
@@ -24,6 +25,7 @@ uv run pool_pipeline/parse_projections.py in.html -o out.json
 uv run pool_pipeline/build_pool.py --limit 450 -o big.json
 uv run pool_pipeline/match_sleeper.py --report
 uv run pool_pipeline/apply_sleeper_points.py --report
+uv run pool_pipeline/apply_weekly_shape.py --report
 uv run pool_pipeline/fetch_sleeper.py
 uv run pool_pipeline/fetch_sleeper_projections.py
 uv run pool_pipeline/fetch_weekly_projections.py
@@ -40,16 +42,18 @@ league players page.
 `apply_sleeper_points.py` (stage 4) then reads that committed file — refetch it when the
 projections should move.
 
-`fetch_weekly_projections.py` is also manual and feeds nothing yet: it captures
-DraftSharks' per-week stat projections (weeks 1-18, from the weekly-rankings page's
-public `load-rows` endpoint) and writes `data/weekly_projections.json`. Each QB/RB/WR/TE
-gets a per-week map of the raw stat line, DraftSharks' own half-PPR total (`ds_points`,
-for sanity checks only), and `points` — the stat line scored with the league's live
-Sleeper scoring settings, so the -2 pass INT, the +1.0 TE reception premium, and 6-point
-return TDs are all applied. A player with no entry for a week has no game that week
-(bye). DraftSharks publishes no weekly fumble or 2-pt projections, so those terms are
-absent from `points` — a small optimistic bias, largest for QBs. `player_id` is the
+`fetch_weekly_projections.py` is also manual: it captures DraftSharks' per-week stat
+projections (weeks 1-18, from the weekly-rankings page's public `load-rows` endpoint)
+and writes `data/weekly_projections.json`. Each QB/RB/WR/TE gets a per-week map of the
+raw stat line, DraftSharks' own half-PPR total (`ds_points`, for sanity checks only),
+and `points` — the stat line scored with the league's live Sleeper scoring settings, so
+the -2 pass INT, the +1.0 TE reception premium, and 6-point return TDs are all applied.
+A player with no entry for a week has no game that week (bye or known absence).
+DraftSharks publishes no weekly fumble or 2-pt projections, so those terms are absent
+from `points` — a small optimistic bias, largest for QBs. `player_id` is the
 DraftSharks id `pool.json` carries, so joining weekly points onto the pool is direct.
+Stage 5 (`apply_weekly_shape.py`) consumes the committed file — refetch it when
+injury news should move the weekly shapes.
 
 ## File contracts
 
@@ -60,7 +64,7 @@ The saved page is the provider's dynasty export; this league consumes only its o
 projection, which is an ordinary season projection.
 
 `pool.json` is the narrow draft input: every QB/RB/WR/TE player both sources know
-(~370 — DraftSharks' pool intersected with Sleeper's top-500 projection list), with 11
+(~370 — DraftSharks' pool intersected with Sleeper's top-500 projection list), with 12
 fields per player. DraftSharks supplies identity and ADP; Sleeper supplies the value
 column. The ranker uses projected points, not DraftSharks' provider-scaled 3D value.
 
@@ -68,6 +72,11 @@ column. The ranker uses projected points, not DraftSharks' provider-scaled 3D va
   from `data/sleeper_projections.json` on `sleeper_id` by stage 4. Stage 2 first fills
   the column from the provider's `half_ppr`, but stage 4 replaces it — the two point
   scales never mix, so players without a Sleeper projection are dropped there
+- `weekly_points`: `points` spread over league weeks 1-17 in proportion to
+  DraftSharks' per-week projections (stage 5), so byes and known absences are explicit
+  zero weeks. Normalized over DraftSharks' 18 weeks, so a week-18 game's share is
+  dropped — the league ends after week 17. The two point scales still never mix:
+  DraftSharks supplies only the shape, Sleeper the total
 - `adp`: overall 1QB ADP decoded from the provider's 12-team round.pick notation
 - `sleeper_id`: the join key used by stage 4, the live draft, and the investigator
 - `rank`: descending `points`; ties keep the previous pool order

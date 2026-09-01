@@ -1,0 +1,5 @@
+Data — a new pool pipeline stage (apply_weekly_shape.py, stage 5) spreads each player's Sleeper season points over league weeks 1–17 in proportion to DraftSharks' weekly profile, so byes and known absences become explicit zero weeks (weekly_points in pool.json). Week 18's share is dropped — the league ends after week 17. Only 7 fringe players lacked weekly data and fall back to uniform weeks.
+
+QBs are gold. A 32-team, 8-round draft consumes every QB in the pool, so the QB wire is literally zero, and the week-14 superflex carries heavy weight. It recommends Josh Allen at 1.20 (Bowers/McBride are statistically tied in the full rollout) and a second QB at 2.13.
+
+The endgame carries most of the weight (~70% on weeks 12+): cuts go 2-of-6, then 2-of-4, then a coin-flip final. Diagnostics for the converged roster: P(reach final) 17%, P(win it) 57%.

@@ -1,20 +1,22 @@
 """The draft pool: pool.json rows as Player objects.
 
-The one value input is `points` — one-season projected points at 0.5/rec, which is
-this league's scoring. Draftsharks' 3D value is ignored entirely and
-is not even carried into the pool: it is a provider-scaled ordinal that already bakes in
-someone else's roster assumptions, and it is not in points, so it cannot enter a
-points-denominated lineup objective. Kickers and IDP are already dropped upstream
-because the roster has no slot for them.
+The value input is `weekly_points` — season projected points at 0.5/rec in this
+league's scoring, spread over league weeks 1-17 by the pool pipeline's weekly-shape
+stage, so byes and known absences are explicit zero weeks. `points` is kept as the
+sum of those weeks, one currency throughout. Draftsharks' 3D value is ignored entirely
+and is not even carried into the pool: it is a provider-scaled ordinal that already
+bakes in someone else's roster assumptions, and it is not in points, so it cannot
+enter a points-denominated lineup objective. Kickers and IDP are already dropped
+upstream because the roster has no slot for them.
 """
 
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
-from .league import POINTS_FIELD, POSITIONS
+from .league import POINTS_FIELD, POSITIONS, WEEKS
 
 
 @dataclass(slots=True)
@@ -30,6 +32,8 @@ class Player:
     provider_adp: float | None
     sleeper_id: str | None = None  # the only key draft.json shares with the pool
     availability_index: int = 0  # rank on the opponents' consensus board, 0-based
+    # Projected points per league week (index 0 = week 1); 0.0 = bye or known absence.
+    weekly: tuple[float, ...] = field(default=())
 
 
 def load_pool(path: Path) -> tuple[list[Player], dict]:
@@ -47,10 +51,19 @@ def load_pool(path: Path) -> tuple[list[Player], dict]:
         if rec["position"] not in POSITIONS:
             dropped["non_offense"] += 1
             continue
-        # Direct key access: a pool.json without the value column predates this league's
-        # scoring and must be rebuilt, not silently valued at zero.
-        points = rec[POINTS_FIELD]
-        if not points or points <= 0:
+        # Direct key access: a pool.json without the value columns predates this league's
+        # scoring or the weekly-shape stage and must be rebuilt, not silently valued
+        # at zero. Guillotine valuation is per-week, so `points` becomes the sum of
+        # the weeks actually playable here (weeks 1-17; the shape stage already
+        # dropped any week-18 share) — one currency for sorting, display, and value.
+        season = rec[POINTS_FIELD]
+        weekly = rec["weekly_points"]
+        if len(weekly) != WEEKS:
+            raise ValueError(
+                f"{rec['name']} carries {len(weekly)} weekly points, want {WEEKS} — "
+                "rebuild pool.json (pool_pipeline/apply_weekly_shape.py)"
+            )
+        if not season or season <= 0:
             dropped["zero_projection"].append(rec["name"])
             continue
         players.append(
@@ -62,9 +75,10 @@ def load_pool(path: Path) -> tuple[list[Player], dict]:
                 age=rec.get("age"),
                 bye_week=rec.get("bye_week"),
                 is_rookie=bool(rec.get("is_rookie")),
-                points=float(points),
+                points=round(sum(weekly), 2),
                 provider_adp=rec.get("adp"),
                 sleeper_id=rec.get("sleeper_id"),
+                weekly=tuple(weekly),
             )
         )
 

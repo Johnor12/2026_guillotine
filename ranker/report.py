@@ -69,8 +69,22 @@ def report_summary(
     board: Board,
     rollout: dict | None = None,
     survival: dict[int, dict[int, float]] | None = None,
+    guillotine: dict | None = None,
 ) -> None:
     """Top of the board and the recommendation, on stderr."""
+    if guillotine:
+        print(
+            f"\nguillotine: p_reach_final {guillotine['p_reach_final']:.3f}, "
+            f"p_win_final {guillotine['p_win_final']:.3f}, "
+            f"p_title {guillotine['p_title']:.3f}",
+            file=sys.stderr,
+        )
+        mus = guillotine["my_weekly_mu"]
+        bars = guillotine["bar_mean_by_week"]
+        margins = " ".join(
+            f"wk{w + 1}:{mus[w] - bars[w]:+.0f}" for w in range(len(bars))
+        )
+        print(f"  weekly margin over the mean elimination bar: {margins}", file=sys.stderr)
     top = rows[:12]
     if top:
         width = max(len(r["name"]) for r in top)
@@ -81,7 +95,7 @@ def report_summary(
     for r in top:
         print(
             f"  {r['rank']:>3}. {r['name']:<{width}}  {r['position']}"
-            f"{r['positional_rank']:<3} gain {r['lineup_gain']:>6.1f}"
+            f"{r['positional_rank']:<3} gain {r['lineup_gain']:>6.2f}"
             f"  pts {r['points']:>5}  sim {r['sim_pick_label'] or '--':>6}"
             f"  provider adp {r['provider_adp'] or float('nan'):>5}",
             file=sys.stderr,
@@ -91,14 +105,14 @@ def report_summary(
         print("\nmy next picks (four-pick plan; two-pick scores shown):", file=sys.stderr)
         for rec in recs:
             cands = ", ".join(
-                f"{c['name']} {c['score']:.0f} ({c['value_now']:.0f}+{c['next_pick_ev']:.0f})"
+                f"{c['name']} {c['score']:.1f} ({c['value_now']:.1f}+{c['next_pick_ev']:.1f})"
                 for c in rec["candidates"]
             )
             print(f"  {rec['pick']}: take {rec['take']}  |  {cands}", file=sys.stderr)
         first = recs[0]
         if "rollout_ev" in first["candidates"][0]:
             cands = ", ".join(
-                f"{c['name']} edge {c['rollout_edge']:+.0f}±{c['rollout_se']:.0f}"
+                f"{c['name']} edge {c['rollout_edge']:+.1f}±{c['rollout_se']:.1f}"
                 for c in first["candidates"]
             )
             print(f"  {first['pick']} full-horizon rollout: {cands}", file=sys.stderr)

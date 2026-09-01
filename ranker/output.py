@@ -8,17 +8,23 @@ from .league import (
     CANDIDATE_SURVIVAL_FLOOR,
     DST_SLOTS,
     FIRST_PICK_PER_POS,
+    GUILLOTINE_SIMS,
     IR_SLOTS,
     LOOKAHEAD_PICKS,
     MAX_POSITIONS,
     OPPONENT_DEPTH_PENALTY,
     OPPONENT_DEPTH_TARGETS,
-    POINTS_FIELD,
     POSITIONS,
+    REGULAR_WEEKS,
     SCHEME,
     STARTING_SLOTS,
     SURVIVAL_SIGMA,
+    TEAM_SEASON_SIGMA,
     UNAVAILABLE_RATE,
+    WEEKLY_SHAPES,
+    WEEKLY_SIGMA,
+    WEEKS,
+    WIRE_DROP_RANK,
     draft_order,
     pick_label,
     picks_for_slot,
@@ -27,6 +33,7 @@ from .opponents import OpponentStrategy
 from .pool import Player
 from .rankings import my_next_picks
 from .simulation import Draft
+from .value import Levels
 
 
 def team_names(board: Board) -> dict[int, str | None]:
@@ -148,7 +155,7 @@ def build_payload(
     players: list[Player],
     pool_meta: dict,
     board: Board,
-    stream: dict[str, float],
+    levels: Levels,
     draft: Draft,
     history: dict,
     rows: list[dict],
@@ -157,6 +164,7 @@ def build_payload(
     noise: float,
     seed: int,
     opponents: dict[int, OpponentStrategy],
+    guillotine: dict | None = None,
     option_redraw: dict | None = None,
     rollout: dict | None = None,
     survival: dict[int, dict[int, float]] | None = None,
@@ -164,18 +172,32 @@ def build_payload(
     return {
         "generated_from": pool_meta["source_file"],
         "scoring_scheme": SCHEME,
-        "value_input": f"pool.json {POINTS_FIELD} ({SCHEME})",
+        "value_input": f"pool.json weekly_points ({SCHEME})",
         "value_note": (
-            "One-season projected points in this league's scoring (0.5/rec, no TE "
-            "premium). Roster value is the best expected legal lineup, including the "
-            "probability that deeper players are called on when higher teammates are "
-            "unavailable and one unique waiver body per position. Draftsharks' 3D value "
-            "is deliberately unused: it is a provider-scaled ordinal, not points, so it "
-            "cannot enter a points-denominated lineup objective."
+            "Season projected points in this league's scoring spread over league weeks "
+            "1-17, with byes and known absences as zero weeks. Roster value is each "
+            "week's best expected legal lineup under that week's starting shape — "
+            "including the probability that deeper players are called on when higher "
+            "teammates are unavailable and one unique waiver body per position per "
+            "week — combined across weeks by the converged guillotine week weights "
+            "(see `guillotine`). Draftsharks' 3D value is deliberately unused: it is a "
+            "provider-scaled ordinal, not points, so it cannot enter a "
+            "points-denominated lineup objective."
         ),
         "league": {
             "teams": league.TEAMS,
+            "format": (
+                "guillotine: the two lowest weekly scores are eliminated each of weeks "
+                f"1-{REGULAR_WEEKS} and their players hit waivers; the last two teams "
+                "play a week 16-17 total-points championship"
+            ),
+            "regular_weeks": REGULAR_WEEKS,
             "starting_slots": STARTING_SLOTS,
+            "weekly_shapes_note": (
+                "starting_slots is the opening (week 1) shape; lineups expand "
+                "in-season — see guillotine.weekly_shapes, where the week-14+ "
+                "superflex is modeled as a second dedicated QB slot"
+            ),
             "dst_slots": DST_SLOTS,
             "bench_slots": league.BENCH_SLOTS,
             "ir_slots": IR_SLOTS,
@@ -205,7 +227,8 @@ def build_payload(
                 "draft at the converged levels. The first shortlist starts from the live "
                 "board before intervening opponents pick, then drops candidates below a "
                 "5% chance of reaching my turn. value_now is the candidate's marginal "
-                "expected-lineup value with one unique waiver fallback per position; "
+                "guillotine-weighted weekly lineup value with one unique waiver "
+                "fallback per position per week; "
                 "next_pick_ev is E[value of the best player still there at my following "
                 "pick] if I take him now. No positional roster-size heuristic adjusts "
                 "either value. The pick "
@@ -252,9 +275,11 @@ def build_payload(
         "rankings_note": (
             "Undrafted players only, ranked by `lineup_gain` — the decision metric the "
             "pick engine maximizes (before lookahead): the player's marginal "
-            "expected-lineup value on my current roster at the converged wire levels. "
-            "Roster-aware, so it shrinks where my roster is already deep. The rank "
-            "columns are renumbered over the rows emitted here."
+            "guillotine-weighted weekly lineup value on my current roster at the "
+            "converged levels. Roster-aware, so it shrinks where my roster is already "
+            "deep, and survival-aware, so points in weeks my roster already clears the "
+            "elimination bar (or weeks I am unlikely to reach) count for little. The "
+            "rank columns are renumbered over the rows emitted here."
             if board.live
             else "The whole pool, from an empty board: no live draft was read."
         ),
@@ -314,29 +339,80 @@ def build_payload(
             },
             "strategies": [opponents[slot].public() for slot in sorted(opponents)],
         },
+        "guillotine": {
+            "note": (
+                "The guillotine model behind the week weights and the weekly wire. "
+                "Each fixed-point iteration simulates the elimination race over the "
+                f"{league.TEAMS - 1} opponents' simulated rosters: every opponent gets "
+                "a persistent projection-error bias plus weekly score noise, the two "
+                "lowest are cut each week, and the elimination bar is the "
+                "second-lowest surviving opponent's score — beat it and I survive. A "
+                "week's weight is d log P(survive that cut) / d(weekly point) at my "
+                "converged roster; the championship weeks carry d log P(win the "
+                "week 16-17 final) instead. Weights are normalized to sum to 1, so "
+                "roster value reads as guillotine-weighted expected weekly lineup "
+                "points and scaling changes no decision."
+            ),
+            "weekly_shapes": [
+                {"week": w + 1, **WEEKLY_SHAPES[w]} for w in range(WEEKS)
+            ],
+            "superflex_note": (
+                "The week-14+ superflex is modeled as a second dedicated QB slot: its "
+                "realistic occupant is a QB, and a QB waiver body always exists. This "
+                "slightly undervalues RB/WR/TE depth in weeks 14-17."
+            ),
+            "weekly_sigma": WEEKLY_SIGMA,
+            "team_season_sigma": TEAM_SEASON_SIGMA,
+            "sims": GUILLOTINE_SIMS,
+            "week_weights": [round(w, 4) for w in levels.weights],
+            "diagnostics": guillotine,
+        },
         "wire": {
             "definition": (
-                "The best player at each position left undrafted in the converged "
-                "simulated draft — the post-draft free agent baseline. Inside roster "
-                "valuation, each position contributes this body once as an "
-                "always-available fallback; it cannot fill two simultaneous lineup jobs."
+                "The body a team could sign for roughly nothing at each position, per "
+                "week: the best player left undrafted in the converged simulated "
+                "draft, rising as eliminated rosters hit waivers — the "
+                f"{WIRE_DROP_RANK}-th best weekly score among players on rosters cut "
+                "by that week (the best cut players cost real FAAB). Inside roster "
+                "valuation each position contributes this body once per week as an "
+                "always-available fallback; it cannot fill two simultaneous lineup "
+                "jobs. The escalation is why drafted depth is worth most early, when "
+                "the wire is barren, and why late expanded slots are cheap to fill — "
+                "the draft-time face of delaying FAAB spending."
             ),
-            "levels": {k: round(v, 1) for k, v in stream.items()},
+            "weekly_levels": {
+                k: [[round(v, 1) for v in bodies] for bodies in levels.wire[i]]
+                for i, k in enumerate(POSITIONS)
+            },
+            "drop_floor": {
+                k: [
+                    [round(v, 1) for v in bodies]
+                    for bodies in levels.drop_floor[i]
+                ]
+                for i, k in enumerate(POSITIONS)
+            },
             "convergence": history,
         },
         "strategy": {
             "objective": (
-                "expected optimal legal lineup points under position-wide player "
-                "availability"
+                "guillotine-weighted expected weekly lineup points: each week's "
+                "expected optimal legal lineup under that week's starting shape and "
+                "position-wide player availability, weighted by the marginal effect "
+                "of a weekly point on log P(surviving that week's cut / winning the "
+                "final)"
             ),
             "unavailable_rate": UNAVAILABLE_RATE,
+            "unavailable_note": (
+                "Byes and known absences are explicit zero weeks in weekly_points; "
+                "these rates price only surprise in-week unavailability."
+            ),
             "depth_note": (
-                "The lineup is re-optimized per availability draw: dedicated slots take "
-                "each position's best available bodies (a deeper body contributes with "
-                "the exact probability it is called on, from unavailable_rate), and the "
-                "two FLEX seats take the best RB/WR/TE leftovers pooled across positions. "
-                "Computed in closed form as expectation-of-weekly-max, not one locked "
-                "seasonal composition."
+                "Each week's lineup is re-optimized per availability draw: dedicated "
+                "slots take each position's best available bodies (a deeper body "
+                "contributes with the exact probability it is called on, from "
+                "unavailable_rate), and the week's FLEX seats take the best RB/WR/TE "
+                "leftovers pooled across positions. Computed in closed form as "
+                "expectation-of-weekly-max, not one locked seasonal composition."
             ),
             "lookahead": (
                 "first pending decision: four held picks with survival-aware target plans; "

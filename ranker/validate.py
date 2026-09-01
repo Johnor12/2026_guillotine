@@ -15,19 +15,20 @@ from .league import (
     MAX_POSITIONS,
     POSITIONS,
     STARTING_SLOTS,
+    WEEKS,
     draft_order,
     pick_label,
     picks_for_slot,
 )
 from .pool import Player
 from .simulation import Draft
-from .value import pos_sorted, starting_positions
+from .value import Levels, starting_positions
 
 
 def validate(
     rows: list[dict],
     players: list[Player],
-    stream: dict[str, float],
+    levels: Levels,
     draft: Draft,
     board: Board,
     history: dict,
@@ -137,20 +138,36 @@ def validate(
         not (board.taken & {r["player_id"] for r in rows}),
         "a player already drafted in draft.json is on the emitted board",
     )
-    # The reported wire level is a mean over the limit cycle, so the invariant that
-    # actually holds is that it lies inside the range the cycle spanned — not that it
-    # coincides with any single draft's level, which a long cycle can genuinely straddle.
-    pos = pos_sorted(players)
-    for k in POSITIONS:
-        # The stored range is rounded to 0.1, so allow half a rounding step.
-        lo, hi = history["cycle_wire_range"][k]
+    # Level invariants: the week weights are a normalized distribution over league
+    # weeks, and the weekly wire stays inside the pool's weekly range while never
+    # dipping below the eliminated-roster floor it was combined with.
+    check(
+        abs(sum(levels.weights) - 1.0) < 1e-9,
+        f"week weights sum to {sum(levels.weights):.6f}, want 1",
+    )
+    check(
+        len(levels.weights) == WEEKS and all(w >= 0.0 for w in levels.weights),
+        "week weights are not a nonnegative length-17 distribution",
+    )
+    for i, k in enumerate(POSITIONS):
+        pool_max = max(
+            (max(p.weekly) for p in players if p.position == k), default=0.0
+        )
+        wire_col = levels.wire[i]
         check(
-            lo - 0.05 - 1e-6 <= stream[k] <= hi + 0.05 + 1e-6,
-            f"{k} wire {stream[k]:.1f} outside its cycle range [{lo}, {hi}]",
+            len(wire_col) == WEEKS
+            and all(
+                0.0 <= v <= pool_max + 1e-6 for bodies in wire_col for v in bodies
+            ),
+            f"{k} weekly wire outside the pool's weekly range [0, {pool_max:.1f}]",
         )
         check(
-            pos[k][-1].points <= stream[k] <= pos[k][0].points,
-            f"{k} wire {stream[k]:.1f} outside the {k} pool range",
+            all(
+                v + 1e-9 >= f
+                for bodies, floor_bodies in zip(wire_col, levels.drop_floor[i])
+                for v, f in zip(bodies, floor_bodies)
+            ),
+            f"{k} weekly wire dips below its eliminated-roster floor",
         )
     check(
         history["iterations_run"] < MAX_ITERS,

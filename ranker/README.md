@@ -17,13 +17,14 @@ undrafted players only.
 
 ## Modules
 
-- `league.py`: league shape and hardcoded strategy constants
-- `pool.py`: pool document to `Player` objects
+- `league.py`: league shape, the guillotine season structure, and strategy constants
+- `pool.py`: pool document to `Player` objects with per-week point vectors
 - `board.py`: live `draft.json` to the immutable starting state
 - `opponents.py`: inferred provider boards to complete opponent strategies
-- `value.py`: expected lineup value and wire measurement
+- `value.py`: per-week expected lineup value, guillotine weighting, and wire measurement
+- `guillotine.py`: elimination bars, week weights, and the waiver escalation
 - `simulation.py`: one deterministic draft state and pick policies
-- `convergence.py`: wire-level fixed point
+- `convergence.py`: league-level fixed point
 - `planning.py`: Monte Carlo availability, candidate survival, lookahead, and rollouts
 - `rankings.py`: ranking rows and serialized next-pick recommendations
 - `output.py`: top-level `rankings.json` payload
@@ -33,27 +34,55 @@ undrafted players only.
 
 ## Value model
 
-The board is ranked by `lineup_gain`, each player's marginal expected-lineup value on
-my current roster at the converged wire levels.
+The board is ranked by `lineup_gain`, each player's marginal guillotine-weighted weekly
+lineup value on my current roster at the converged levels.
 
-The final waiver bodies affect my expected-lineup choices, and those choices affect who
-remains undrafted. This creates a fixed point:
+A roster is valued week by week over the league's 17 weeks. The value input is
+`weekly_points` from pool.json — season points spread over weeks 1–17 by DraftSharks'
+weekly shape, so byes and known absences are explicit zero weeks. Each week is solved
+under that week's actual starting shape from the expansion schedule (+1 WR wk 7, +1 RB
+wk 9, +1 flex wk 12, +1 superflex wk 14, modeled as a second dedicated QB slot). The
+17 weekly values are combined by the guillotine week weights.
+
+`guillotine.py` measures those weights, per fixed-point iteration, from the simulated
+rosters: an elimination Monte Carlo gives every team a persistent projection-error bias
+plus weekly score noise, cuts the bottom two opponents each week, and reads off the
+elimination bar (the second-lowest surviving opponent's score — beat it and I survive).
+A week's weight is the marginal effect of a weekly point on log P(title), averaged
+under the P(title)-weighted posterior over draws — seasons where my roster busts
+dominate exactly the weeks they die in, so early safety is priced, while weeks cleared
+in every draw get ~no weight (30th place survives week 1 exactly like 1st place). The
+championship weeks carry the marginal effect on winning the week 16–17 total-points
+final. Weights are normalized to sum to 1, so roster value reads as guillotine-weighted
+expected weekly lineup points; scaling changes no decision.
+
+The waiver wire is per-week and tiered: each roster holds WEEK_WIRE_BODIES
+always-available bodies per position (more as rosters expand to half-waiver late
+shapes), the j-th at the better of the j-th best undrafted player that week and the
+(j × WIRE_DROP_RANK)-th best fresh eliminated-roster drop — the best cut players cost
+real FAAB against ~30 competing survivors, and anything good dropped earlier was
+claimed long ago. This is why drafted depth matters most early, why late expanded
+slots are cheap to fill (the draft-time face of delaying FAAB spending), and why
+drafted stars keep their value all season.
+
+The levels affect my choices, and those choices affect who remains undrafted and which
+rosters get eliminated. This creates a fixed point:
 
 ```text
-wire levels -> expected lineup value -> simulated draft -> wire levels
+levels (weights + weekly wire) -> roster value -> simulated draft -> guillotine MC -> levels
 ```
 
 The map is discrete and can alternate between neighboring league shapes, so convergence
-detects a repeated state and averages levels over that cycle. The expected-lineup solver
-values the weekly re-optimized lineup: the starter composition is re-chosen per
+detects a repeated draft outcome and averages levels over that cycle. The single-week
+solver values the weekly re-optimized lineup: the starter composition is re-chosen per
 availability draw, so a flex seat vacated at one position is refilled by the best
 remaining body at any flex position. It is exact and closed-form — dedicated slots via a
-per-position Bernoulli cascade ordered by points when active, the two FLEX seats via
+per-position Bernoulli cascade ordered by points when active, the week's FLEX seats via
 layer-cake integrals of the pooled RB/WR/TE marginal count (a QB can never take a flex
 seat) — and `--selftest` checks it against brute-force enumeration of every
-availability subset. One always-available waiver body can fill one job at each position;
-it is not an unlimited scalar. Expectation-of-max keeps value monotone when a projection
-improves or a player is added.
+availability subset for every in-season shape, tiered wire bodies included. A waiver
+body can fill one job; it is not an unlimited scalar. Expectation-of-max keeps value
+monotone when a projection improves or a player is added.
 
 ## Opponents and planning
 

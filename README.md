@@ -7,17 +7,23 @@ and the static dashboard renders the result.
 
 ## League assumptions
 
-- 0.5 PPR with a +1.0/rec tight end premium, 1 QB (no superflex)
-- Starters: 1 QB, 1 RB, 2 WR, 1 TE, 2 W/R/T flex — no D/ST or kicker slot
-- 1 bench spot and 2 reserve spots (reserve is not drafted into)
+- 0.5 PPR with a +1.0/rec tight end premium, 1 QB (superflex arrives in week 14)
+- Guillotine: the two lowest weekly scores are eliminated each of weeks 1–15 and
+  their players go to FAAB waivers; the last two teams play a week 16–17
+  total-points championship
+- Opening starters: 1 QB, 1 RB, 2 WR, 1 TE, 2 W/R/T flex — no D/ST or kicker slot;
+  lineups expand in-season (+1 WR wk 7, +1 RB wk 9, +1 flex wk 12, +1 superflex
+  wk 14, bench grows from 1 to 5)
+- 2 reserve spots (reserve is not drafted into)
 - No per-position roster caps
 - 32 teams and 8 drafted players per team (256 picks, all offense)
 - Snake draft with a third-round reversal: round 1 forward, rounds 2–3 reversed,
   alternating from there; picks can be traded
 - My slot is 20 (johnor): 1.20, 2.13, 3.13, 4.20, 5.13, 6.20, 7.13, 8.20 before trades
-- Guillotine elimination (lowest weekly score drops out) is not modeled: rosters are
-  valued as expected optimal season lineup points, the same objective as ordinary
-  redraft
+- The guillotine is the objective: a roster is valued week by week (byes and known
+  absences are zero weeks, lineups take each week's actual shape) and the weeks are
+  combined by survival-hazard weights from a simulated elimination race — see the
+  [ranker](ranker/README.md)
 
 These are project assumptions, not runtime configuration. Ranker constants live in
 `ranker/league.py`; the draft's actual geometry (teams, rounds, reversal, my slot) is
@@ -49,7 +55,9 @@ data_source_investigator/ ────> data_source_matches.json
 The published files have distinct owners:
 
 - `pool.json`: ~370 QB/RB/WR/TE players keyed to Sleeper, priced by Sleeper's
-  league-scored season projections (identity and ADP from DraftSharks)
+  league-scored season projections spread over league weeks 1–17 by DraftSharks'
+  weekly shape, which carries byes and known absences (identity and ADP from
+  DraftSharks)
 - `draft.json`: all 256 made and pending picks from Sleeper's draft API, which is
   public and real-time — a fetch between picks is current
 - `data_source_matches.json`: the provider board closest to each opponent's picks
@@ -74,12 +82,16 @@ Each component keeps its own paths, entry points, and implementation context. Of
 checks remain beside the draft, investigator, and ranker code they exercise. The pipelines
 meet through their published JSON contracts rather than shared orchestration.
 
-The ranker values a roster as expected optimal lineup points from one-season
-projections. Position-wide availability determines when depth is called on, and
-one unique final waiver body per position supplies the fallback. Personal and
-opponent strategies are intentionally separate: my slot uses the projection-based roster
-objective, while each opponent follows its inferred external board with roster-balance
-adjustments and fitted choice noise. Opponent picks never use my projections or board.
+The ranker values a roster as guillotine-weighted expected weekly lineup points: each
+week's expected optimal lineup under that week's starting shape and per-week
+projections, weighted by the marginal effect of a weekly point on surviving that
+week's cut (championship weeks by winning the final). Position-wide availability
+determines when depth is called on, and per-week tiered waiver bodies — the best
+undrafted player early, fresh eliminated-roster drops later — supply the fallback.
+Personal and opponent strategies are intentionally separate: my slot uses the
+projection-based roster objective, while each opponent follows its inferred external
+board with roster-balance adjustments and fitted choice noise. Opponent picks never
+use my projections or board.
 
 ## Common workflows
 

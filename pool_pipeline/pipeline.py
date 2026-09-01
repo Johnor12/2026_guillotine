@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Run the data build: projections.html -> projections.json -> pool.json (+ sleeper ids + points).
 
-Four stages, in order:
+Five stages, in order:
 
     1. parse_projections.py     html  -> json   full provider export, 900 players, 8 schemes
     2. build_pool.py            json  -> json   this league's pool, one value column
     3. match_sleeper.py         pool.json       adds each player's Sleeper id, in place
     4. apply_sleeper_points.py  pool.json       re-prices points from sleeper_projections.json
+    5. apply_weekly_shape.py    pool.json       spreads points over weeks 1-17 from weekly_projections.json
 
 Everything the build reads and every intermediate it writes lives in this folder;
 the one file it publishes is ``pool.json`` at the repo root, which is what
@@ -27,7 +28,9 @@ which then fails stage 4 loudly: without ids there is nothing to join the projec
 on. Running ``--only sleeper`` makes the missing dump an error instead, since there the
 dump is the whole point of the run. Stage 4 reads the committed
 ``data/sleeper_projections.json``, refreshed by hand with
-``fetch_sleeper_projections.py``.
+``fetch_sleeper_projections.py``. Stage 5 reads the committed
+``data/weekly_projections.json``, refreshed by hand with
+``fetch_weekly_projections.py``.
 
 All scripts remain usable as standalone CLIs — this only fixes the order and stops
 on the first failure.
@@ -53,12 +56,13 @@ import time
 from pathlib import Path
 
 import apply_sleeper_points
+import apply_weekly_shape
 import build_pool
 import match_sleeper
 import parse_projections as parse
 import paths
 
-STAGES = ("parse", "pool", "sleeper", "points")
+STAGES = ("parse", "pool", "sleeper", "points", "weekly")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -99,6 +103,7 @@ def main(argv: list[str] | None = None) -> int:
         "pool": (build_pool.main, [str(args.projections), "-o", str(args.output), *shared]),
         "sleeper": (match_sleeper.main, sleeper_argv),
         "points": (apply_sleeper_points.main, [str(args.output), *shared]),
+        "weekly": (apply_weekly_shape.main, [str(args.output), *shared]),
     }
     selected = [args.only] if args.only else list(STAGES)
 

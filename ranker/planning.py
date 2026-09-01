@@ -1,6 +1,6 @@
 """Stochastic availability, lookahead, and rollout planning.
 
-The deterministic draft engine lives in `simulation.py`, and wire convergence
+The deterministic draft engine lives in `simulation.py`, and level convergence
 lives in `convergence.py`. This module fans independent redraws and plan playouts across
 worker processes, then applies the selected recommendation back to a deterministic draft.
 """
@@ -16,16 +16,16 @@ from collections.abc import Sequence
 from .board import Board
 from .league import CANDIDATE_SURVIVAL_FLOOR, FIRST_PICK_PER_POS, LOOKAHEAD_PICKS
 from .opponents import OpponentStrategy
-from .pool import Player, by_position
+from .pool import Player
 from .simulation import Draft
-from .value import sorted_roster, team_value, wire_replacement
+from .value import Levels, refresh_wire, sorted_roster, team_value
 
 
 def broaden_first_pick(
     draft: Draft,
     players: list[Player],
     board: Board,
-    stream: dict[str, float],
+    levels: Levels,
     opponents: dict[int, OpponentStrategy],
 ) -> Draft:
     """Build the live shortlist before intervening opponents can remove candidates."""
@@ -33,7 +33,7 @@ def broaden_first_pick(
         return draft
     pick_no = board.my_picks[0]
     pick_index = board.pick_nos.index(pick_no)
-    state = Draft(players, stream, board, opponents=opponents)
+    state = Draft(players, levels, board, opponents=opponents)
     draft.my_decisions[pick_no] = state.score_my_candidates(
         pick_index, per_pos=FIRST_PICK_PER_POS
     )
@@ -70,12 +70,12 @@ _FOUR_PICK_BEAM = 16
 
 
 def _init_worker(
-    players, board, stream, noise, seed, opponents, i_my, plans=None
+    players, board, levels, noise, seed, opponents, i_my, plans=None
 ) -> None:
     _WORKER.update(
         players=players,
         board=board,
-        stream=stream,
+        levels=levels,
         noise=noise,
         seed=seed,
         opponents=opponents,
@@ -112,7 +112,7 @@ def _conditioned_seed(kind: str, cand_id: int, sample: int) -> str:
         draw_seed = f"{kind}-{w['seed']}-{sample}-{attempt}"
         probe = Draft(
             w["players"],
-            w["stream"],
+            w["levels"],
             w["board"],
             noise=w["noise"],
             rng=random.Random(draw_seed),
@@ -125,9 +125,14 @@ def _conditioned_seed(kind: str, cand_id: int, sample: int) -> str:
 
 
 def _final_roster_value(draft: Draft) -> float:
-    """The common end-of-draft objective used by plan screening and noisy rollouts."""
-    wire = wire_replacement(draft.taken, by_position(draft.players))
-    return team_value(sorted_roster(draft.rosters[draft.board.my_slot - 1]), wire)
+    """The common end-of-draft objective used by plan screening and noisy rollouts.
+
+    The undrafted part of the weekly wire is re-measured from this playout's own
+    final board; the guillotine drop floor and week weights carry over unchanged —
+    they are league-level quantities the single playout cannot move.
+    """
+    levels = refresh_wire(draft.levels, draft.taken, draft.pos_lists)
+    return team_value(sorted_roster(draft.rosters[draft.board.my_slot - 1]), levels)
 
 
 def _plan_playout(plan: tuple[int, ...]) -> float:
@@ -136,7 +141,7 @@ def _plan_playout(plan: tuple[int, ...]) -> float:
     draw_seed = _conditioned_seed("screen", plan[0], 0)
     d = Draft(
         w["players"],
-        w["stream"],
+        w["levels"],
         w["board"],
         noise=w["noise"],
         rng=random.Random(draw_seed),
@@ -160,7 +165,7 @@ def _mc_draft(s: int) -> dict[int, tuple[int, bool]]:
     w = _WORKER
     d = Draft(
         w["players"],
-        w["stream"],
+        w["levels"],
         w["board"],
         noise=w["noise"],
         rng=random.Random(w["seed"] + s),
@@ -177,7 +182,7 @@ def _rollout_playout(task: tuple[int, int]) -> tuple[list[float], float]:
     draw_seed = _conditioned_seed("rollout", cand_id, s)
     baseline = Draft(
         w["players"],
-        w["stream"],
+        w["levels"],
         w["board"],
         noise=w["noise"],
         rng=random.Random(draw_seed),
@@ -189,7 +194,7 @@ def _rollout_playout(task: tuple[int, int]) -> tuple[list[float], float]:
     for plan in w["plans"].get(cand_id, ((cand_id,),)):
         d = Draft(
             w["players"],
-            w["stream"],
+            w["levels"],
             w["board"],
             noise=w["noise"],
             rng=random.Random(draw_seed),
@@ -206,10 +211,10 @@ def _best_option_value(draft: Draft) -> float:
     slot = draft.my_slot
     roster = draft.rosters[slot - 1]
     roster_sorted = sorted_roster(roster)
-    base = team_value(roster_sorted, draft.wire)
+    base = team_value(roster_sorted, draft.levels)
     off = draft.off_pool[slot - 1]
     values = [
-        team_value(roster_sorted, draft.wire, cand) - base
+        team_value(roster_sorted, draft.levels, cand) - base
         for cand in draft.candidates(
             roster,
             per_pos=1,
@@ -230,7 +235,7 @@ def _option_playout(task: tuple[int, int]) -> float:
     draw_seed = _conditioned_seed("option", cand_id, s)
     d = Draft(
         w["players"],
-        w["stream"],
+        w["levels"],
         w["board"],
         noise=w["noise"],
         rng=random.Random(draw_seed),
@@ -246,7 +251,7 @@ def _option_playout(task: tuple[int, int]) -> float:
 def monte_carlo(
     players: list[Player],
     board: Board,
-    stream: dict[str, float],
+    levels: Levels,
     sims: int,
     noise: float,
     seed: int,
@@ -263,7 +268,7 @@ def monte_carlo(
     with multiprocessing.Pool(
         _worker_pool_size(),
         initializer=_init_worker,
-        initargs=(players, board, stream, noise, seed, opponents, None),
+        initargs=(players, board, levels, noise, seed, opponents, None),
     ) as pool:
         for pick_of in pool.map(_mc_draft, range(sims)):
             for pid, (pick, mine) in pick_of.items():
@@ -276,7 +281,7 @@ def _survival_draft(task: tuple[int, int]) -> int | None:
     w = _WORKER
     d = Draft(
         w["players"],
-        w["stream"],
+        w["levels"],
         w["board"],
         noise=w["noise"],
         rng=random.Random(w["seed"] + s),
@@ -289,7 +294,7 @@ def _survival_draft(task: tuple[int, int]) -> int | None:
 def candidate_survival(
     players: list[Player],
     board: Board,
-    stream: dict[str, float],
+    levels: Levels,
     candidates: list[Player],
     sims: int,
     noise: float,
@@ -312,7 +317,7 @@ def candidate_survival(
     with multiprocessing.Pool(
         _worker_pool_size(),
         initializer=_init_worker,
-        initargs=(players, board, stream, noise, seed, opponents, None),
+        initargs=(players, board, levels, noise, seed, opponents, None),
     ) as pool:
         flat = pool.map(_survival_draft, tasks)
     out: dict[int, dict[int, float]] = {}
@@ -340,7 +345,7 @@ def conditional_survival(
 def four_pick_lookahead(
     players: list[Player],
     board: Board,
-    stream: dict[str, float],
+    levels: Levels,
     candidates: list[Player],
     survival_by_candidate: dict[int, dict[int, float]],
     opponents: dict[int, OpponentStrategy],
@@ -363,13 +368,13 @@ def four_pick_lookahead(
 
     # Generate from the live board. Opponents between now and my pick are uncertain, and
     # candidate_survival decides which of these current options remain worth planning for.
-    state = Draft(players, stream, board, opponents=opponents)
+    state = Draft(players, levels, board, opponents=opponents)
     roster = state.rosters[board.my_slot - 1]
     off = state.off_pool[board.my_slot - 1]
     picks_left = state.picks_left[board.my_slot - 1]
     by_id = {p.player_id: p for p in candidates}
     candidate_ids = tuple(by_id)
-    base = team_value(sorted_roster(roster), state.wire)
+    base = team_value(sorted_roster(roster), state.levels)
     value_cache: dict[tuple[int, ...], float] = {(): base}
 
     def roster_value(plan: tuple[int, ...]) -> float:
@@ -378,7 +383,7 @@ def four_pick_lookahead(
         if value is None:
             value = team_value(
                 sorted_roster(roster + [by_id[player_id] for player_id in plan]),
-                state.wire,
+                state.levels,
             )
             value_cache[key] = value
         return value
@@ -432,7 +437,7 @@ def four_pick_lookahead(
     with multiprocessing.Pool(
         _worker_pool_size(),
         initializer=_init_worker,
-        initargs=(players, board, stream, noise, seed, opponents, first_index),
+        initargs=(players, board, levels, noise, seed, opponents, first_index),
     ) as pool:
         final_values = pool.map(_plan_playout, all_plans)
 
@@ -474,7 +479,7 @@ def four_pick_lookahead(
 def option_redraw(
     players: list[Player],
     board: Board,
-    stream: dict[str, float],
+    levels: Levels,
     candidates: list[Player],
     sims: int,
     noise: float,
@@ -511,7 +516,7 @@ def option_redraw(
     with multiprocessing.Pool(
         _worker_pool_size(),
         initializer=_init_worker,
-        initargs=(players, board, stream, noise, seed, opponents, i_my),
+        initargs=(players, board, levels, noise, seed, opponents, i_my),
     ) as pool:
         flat = pool.map(_option_playout, tasks)
     return {
@@ -533,7 +538,7 @@ def _replay_pick(
     detail: list[tuple[float, float, Player]],
     players: list[Player],
     board: Board,
-    stream: dict[str, float],
+    levels: Levels,
     opponents: dict[int, OpponentStrategy],
     targets: dict[int, Player] | None = None,
 ) -> Draft:
@@ -544,7 +549,7 @@ def _replay_pick(
         return draft
     forced = Draft(
         players,
-        stream,
+        levels,
         board,
         opponents=opponents,
         forced=None if targets else {board.pick_nos.index(pick_no): take},
@@ -568,7 +573,7 @@ def apply_option_redraw(
     redrawn: dict | None,
     players: list[Player],
     board: Board,
-    stream: dict[str, float],
+    levels: Levels,
     opponents: dict[int, OpponentStrategy],
 ) -> Draft:
     """Replace the first pick's sigmoid lookahead with its branch-redraw estimates."""
@@ -596,7 +601,7 @@ def apply_option_redraw(
         detail,
         players,
         board,
-        stream,
+        levels,
         opponents,
     )
 
@@ -648,7 +653,7 @@ def rollout_decision(
 def rollout(
     players: list[Player],
     board: Board,
-    stream: dict[str, float],
+    levels: Levels,
     candidates: list[Player],
     sims: int,
     noise: float,
@@ -686,7 +691,7 @@ def rollout(
     with multiprocessing.Pool(
         _worker_pool_size(),
         initializer=_init_worker,
-        initargs=(players, board, stream, noise, seed, opponents, i_my, plans),
+        initargs=(players, board, levels, noise, seed, opponents, i_my, plans),
     ) as pool:
         flat = pool.map(_rollout_playout, tasks)
     values: dict[int, list[float]] = {}
@@ -729,7 +734,7 @@ def apply_rollout(
     rolled: dict | None,
     players: list[Player],
     board: Board,
-    stream: dict[str, float],
+    levels: Levels,
     opponents: dict[int, OpponentStrategy],
 ) -> Draft:
     """Apply the recommended plan when its first target survives the noiseless path.
@@ -762,7 +767,7 @@ def apply_rollout(
         detail,
         players,
         board,
-        stream,
+        levels,
         opponents,
         targets,
     )
