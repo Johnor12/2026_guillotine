@@ -38,8 +38,8 @@ The board is ranked by `lineup_gain`, each player's marginal guillotine-weighted
 lineup value on my current roster at the converged levels.
 
 A roster is valued week by week over the league's 17 weeks. The value input is
-`weekly_points` from pool.json — season points spread over weeks 1–17 by DraftSharks'
-weekly shape, so byes and known absences are explicit zero weeks. Each week is solved
+`weekly_points` from pool.json — DraftSharks' native per-week projections for weeks
+1–17 in this league's scoring, so byes and known absences are explicit zero weeks. Each week is solved
 under that week's actual starting shape from the expansion schedule (+1 WR wk 7, +1 RB
 wk 9, +1 flex wk 12, +1 superflex wk 14, modeled as a second dedicated QB slot). The
 17 weekly values are combined by the guillotine week weights.

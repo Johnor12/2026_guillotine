@@ -190,13 +190,20 @@ OPPONENT_BALANCE_STRENGTH = 2.0
 # Opponents become increasingly reluctant to add players beyond these comfortable depths.
 # The penalty starts at the 2nd QB/TE and the 4th RB/WR — past what a roster with 8
 # offensive spots ordinarily carries — so it only prices the extremes, and the caps in
-# MAX_POSITIONS remain the hard limits. My slot never uses this heuristic.
+# MAX_POSITIONS remain the hard limits. The targets sum to the 8 roster spots: they
+# describe a realizable roster, and QB urgency is priced by OPPONENT_POSITION_TILT
+# below, not by loosening this profile. My slot never uses this heuristic.
 OPPONENT_DEPTH_TARGETS = {"QB": 1, "RB": 3, "WR": 3, "TE": 1}
 OPPONENT_DEPTH_PENALTY = 2.0
 # Flat source-rank multiplier per position; < 1 pulls the position up an opponent's
-# board. Empty until this league produces its own replay evidence — the old 0.67 RB
-# tilt was fitted to a different league's drafters (evaluate_opponents.py refits it).
-OPPONENT_POSITION_TILT: dict[str, float] = {}
+# board. Every available source board is a 1QB board, but 32 teams and the week-14
+# superflex make QBs far scarcer here than any of them prices: at 1.0 the simulated
+# room leaves starting QBs on the board into round 7, which nobody believes. 0.2 is a
+# prior, not a fit (the league has no completed picks yet): it moves the 32nd starting
+# QB off the board around round 7 -> 5 and prices roughly a 5x-ADP QB urgency without
+# distorting the rest of the order. Refit with evaluate_opponents.py once real picks
+# exist.
+OPPONENT_POSITION_TILT: dict[str, float] = {"QB": 0.2}
 # Multiplier around each opponent's fitted source adherence: 1 reproduces the observed
 # mean log-rank loss before roster-balance adjustments, while 0 removes random variation.
 NOISE = 1.0

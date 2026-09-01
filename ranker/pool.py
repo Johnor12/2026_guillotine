@@ -1,9 +1,9 @@
 """The draft pool: pool.json rows as Player objects.
 
-The value input is `weekly_points` — season projected points at 0.5/rec in this
-league's scoring, spread over league weeks 1-17 by the pool pipeline's weekly-shape
-stage, so byes and known absences are explicit zero weeks. `points` is kept as the
-sum of those weeks, one currency throughout. Draftsharks' 3D value is ignored entirely
+The value input is `weekly_points` — DraftSharks' native per-week projections in this
+league's scoring for weeks 1-17, attached by the pool pipeline's weekly stage, so byes
+and known absences are explicit zero weeks. `points` is kept as the sum of those
+weeks, one currency throughout. Draftsharks' 3D value is ignored entirely
 and is not even carried into the pool: it is a provider-scaled ordinal that already
 bakes in someone else's roster assumptions, and it is not in points, so it cannot
 enter a points-denominated lineup objective. Kickers and IDP are already dropped

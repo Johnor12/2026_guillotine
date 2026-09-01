@@ -866,13 +866,21 @@ def guillotine_selftest(players: list[Player]) -> list[str]:
 
 def selftest(players: list[Player]) -> int:
     print("selftest:", file=sys.stderr)
-    fails = (
-        lineup_selftest()
-        + guillotine_selftest(players)
-        + opponent_selftest(players)
-        + planning_selftest(players)
-        + board_selftest(players)
-    )
+    # The synthetic scenarios verify the balance/depth/cap machinery around a known
+    # external order; a configured league tilt (e.g. the QB scarcity prior) would
+    # reorder their hand-built boards, so it is neutralized for the duration.
+    saved_tilt = dict(OPPONENT_POSITION_TILT)
+    OPPONENT_POSITION_TILT.clear()
+    try:
+        fails = (
+            lineup_selftest()
+            + guillotine_selftest(players)
+            + opponent_selftest(players)
+            + planning_selftest(players)
+            + board_selftest(players)
+        )
+    finally:
+        OPPONENT_POSITION_TILT.update(saved_tilt)
     for f in fails:
         print(f"  FAIL {f}", file=sys.stderr)
     verdict = f"{len(fails)} failure(s)" if fails else "all checks passed"

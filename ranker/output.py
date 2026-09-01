@@ -174,8 +174,8 @@ def build_payload(
         "scoring_scheme": SCHEME,
         "value_input": f"pool.json weekly_points ({SCHEME})",
         "value_note": (
-            "Season projected points in this league's scoring spread over league weeks "
-            "1-17, with byes and known absences as zero weeks. Roster value is each "
+            "DraftSharks' per-week projected points in this league's scoring for "
+            "league weeks 1-17, with byes and known absences as zero weeks. Roster value is each "
             "week's best expected legal lineup under that week's starting shape — "
             "including the probability that deeper players are called on when higher "
             "teammates are unavailable and one unique waiver body per position per "

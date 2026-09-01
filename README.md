@@ -54,10 +54,10 @@ data_source_investigator/ ────> data_source_matches.json
 
 The published files have distinct owners:
 
-- `pool.json`: ~370 QB/RB/WR/TE players keyed to Sleeper, priced by Sleeper's
-  league-scored season projections spread over league weeks 1–17 by DraftSharks'
-  weekly shape, which carries byes and known absences (identity and ADP from
-  DraftSharks)
+- `pool.json`: ~370 QB/RB/WR/TE players keyed to Sleeper, priced by DraftSharks'
+  league-scored per-week projections for weeks 1–17, which carry byes and known
+  absences as zero weeks (identity and ADP from DraftSharks; Sleeper's season
+  projection remains as the pool-membership filter)
 - `draft.json`: all 256 made and pending picks from Sleeper's draft API, which is
   public and real-time — a fetch between picks is current
 - `data_source_matches.json`: the provider board closest to each opponent's picks

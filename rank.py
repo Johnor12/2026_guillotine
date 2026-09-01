@@ -7,9 +7,9 @@
     uv run rank.py --selftest              # verify solver, opponents, and board loader
 
 Scope is this league and nothing else; the league constants and strategy knobs live in
-ranker/league.py. The value input is `weekly_points` from `pool.json` — season points
-in this league's 0.5 PPR + TE premium scoring spread over league weeks 1-17, with byes
-and known absences as zero weeks (see ranker/pool.py for why the provider's 3D value is
+ranker/league.py. The value input is `weekly_points` from `pool.json` — DraftSharks'
+per-week projections in this league's 0.5 PPR + TE premium scoring for weeks 1-17, with
+byes and known absences as zero weeks (see ranker/pool.py for why the provider's 3D value is
 deliberately unused). The method, in one breath: this is a guillotine league, so a
 roster is valued week by week as expected optimal lineup points under that week's
 starting shape and position-wide availability, and the weeks are combined by converged
