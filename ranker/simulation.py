@@ -358,9 +358,12 @@ class Draft:
         return expected
 
     def score_my_candidates(
-        self, pick_index: int, per_pos: int = 1
+        self, pick_index: int, per_pos: int = 1, extra: Sequence[Player] = ()
     ) -> list[tuple[float, float, Player]]:
-        """Roster and next-pick value for my legal candidates at one draft state."""
+        """Roster and next-pick value for my legal candidates at one draft state.
+
+        `extra` adds named players to the shortlist whether or not this state still has
+        them: the live shortlist scores long shots the survival redraws then prune."""
         slot = self.my_slot
         roster = self.rosters[slot - 1]
         off = self.off_pool[slot - 1]
@@ -377,6 +380,9 @@ class Draft:
             # would omit. Score them too so the reported decision remains inspectable.
             if target.player_id not in {c.player_id for c in cands}:
                 cands.append(target)
+        for p in extra:
+            if p.player_id not in {c.player_id for c in cands}:
+                cands.append(p)
         if self.my_ban is not None and slot == self.my_slot:
             # The ban yields to roster legality: if he is my only legal candidate, take him.
             cands = [c for c in cands if c.player_id != self.my_ban] or cands

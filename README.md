@@ -52,7 +52,9 @@ rank.py ────────────────────────
   rookie flag and 1QB ADP from a hand-saved rankings page; a Sleeper season projection
   gates membership and supplies `sleeper_id`; `weekly_points` is DraftSharks' per-week
   projection for weeks 1–17 in the league's scoring, with byes and known absences as
-  zero weeks. It is the ranker's value input.
+  zero weeks. It is the ranker's value input, after `ranker/market.py` blends each
+  season total equally with Sleeper's projection (`points`) and the consensus board's
+  rank-matched level within the position.
 - `draft.json`: all 256 made and pending picks from Sleeper's public, real-time draft
   API, with pending picks derived from the draft settings and traded picks applied.
 - `sources/data/boards.json`: provider boards (FantasyCalc, KeepTradeCut, FF Calculator
@@ -74,13 +76,17 @@ per-week projections, and the 17 weekly values are combined by guillotine week w
 each week's weight is the marginal effect of a weekly point on log P(surviving that
 week's cut), measured by simulating the elimination race over the opponents' simulated
 rosters, with the championship weeks entering through log P(winning the final). The
-waiver wire is per week and tiered: the best undrafted bodies early, rising as
-eliminated rosters hit waivers. Levels and the simulated draft are a fixed point that
-converges to a limit cycle. My slot alone uses this objective; each opponent follows
-the external board most associated with its picks, with roster-balance adjustments and
-fitted choice noise, and never sees my projections. The first pending decision searches
-target plans across my next four held picks and plays each plan out to the end of the
-draft. See `rank.py` and the `ranker/` module docstrings for the details.
+waiver wire is per week and tiered: the undrafted tail early, then the survivors' equal
+split of every roster eliminated so far, so by the final the wire is other teams'
+first-round picks and drafted depth is worth nothing while drafted stars still clear
+it. Levels and the simulated draft are a fixed point that converges to a limit cycle.
+My slot alone uses this objective, on projections blended toward the market so the
+draft does not build around one source's outliers; each opponent follows the external
+board most associated with its picks, with roster-balance adjustments, fitted choice
+noise, and prior tilts for what no 1QB no-TE-premium board prices (QB scarcity across
+32 teams, the TE premium), and never sees my projections. The first pending decision
+searches target plans across my next four held picks and plays each plan out to the
+end of the draft. See `rank.py` and the `ranker/` module docstrings for the details.
 
 ## Workflows
 

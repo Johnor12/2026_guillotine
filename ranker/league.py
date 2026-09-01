@@ -111,11 +111,6 @@ TEAM_SEASON_SIGMA = 8.0
 SCORE_FLOOR_Z = -2.2
 # Simulated guillotine seasons per fixed-point iteration for elimination bars.
 GUILLOTINE_SIMS = 512
-# Tier spacing for in-season replacement on eliminated rosters: after a cut, the best
-# dropped players are bid away with real FAAB by ~30 competing survivors, so a
-# roster's j-th waiver body sits at the (j * WIRE_DROP_RANK)-th best dropped player at
-# its position. Drives the weekly waiver-wire escalation in guillotine.py.
-WIRE_DROP_RANK = 6
 SURVIVAL_SIGMA = 3.5  # softness of "will he last until my next pick"
 # Candidates per position considered for the next pick by the bulk policy.
 LOOKAHEAD_PER_POS = 2
@@ -125,6 +120,10 @@ FIRST_PICK_PER_POS = 3
 # A live-board candidate or later target must survive to that decision in at least one
 # redraw out of twenty. Rarer paths are noise, not useful draft choices.
 CANDIDATE_SURVIVAL_FLOOR = 0.05
+# Survivors of that floor go to the branch redraws and full-draft rollouts in two-pick
+# score order, up to this many: the shortlist is the deterministic board's positional
+# heads plus the live board's, and the tail of it never wins the rollout.
+ROLLOUT_CANDIDATES = 8
 # The live decision plans targets across this many of my held picks before the ordinary
 # two-pick policy resumes. Four reaches across both sides of the next snake turn here.
 LOOKAHEAD_PICKS = 4
@@ -139,14 +138,16 @@ OPPONENT_BALANCE_STRENGTH = 2.0
 OPPONENT_DEPTH_TARGETS = {"QB": 1, "RB": 3, "WR": 3, "TE": 1}
 OPPONENT_DEPTH_PENALTY = 2.0
 # Flat source-rank multiplier per position; < 1 pulls the position up an opponent's
-# board. Every available source board is a 1QB board, but 32 teams and the week-14
-# superflex make QBs far scarcer here than any of them prices: at 1.0 the simulated
-# room leaves starting QBs on the board into round 7, which nobody believes. 0.2 is a
-# prior, not a fit (the league has no completed picks yet): it moves the 32nd starting
-# QB off the board around round 7 -> 5 and prices roughly a 5x-ADP QB urgency without
-# distorting the rest of the order. Refit with evaluate_opponents.py once real picks
-# exist.
-OPPONENT_POSITION_TILT: dict[str, float] = {"QB": 0.2}
+# board. Every available source board is a 1QB, no-TE-premium board, and this league is
+# neither. 32 teams and the week-14 superflex make QBs far scarcer than any board
+# prices: at 1.0 the simulated room leaves starting QBs on the board into round 7,
+# which nobody believes; 0.2 moves the 32nd starting QB off the board around round
+# 7 -> 5. The +1.0/rec TE premium lifts a 70-catch TE by ~4 points a week, which puts
+# TE2 above WR1 in this scoring and makes TE2-TE9 first-to-third-round players on my
+# board; a room that is blind to that hands me four of them, so 0.6 assumes the room
+# half sees it. Both are priors, not fits (the league has no completed picks yet).
+# Refit with evaluate_opponents.py once real picks exist.
+OPPONENT_POSITION_TILT: dict[str, float] = {"QB": 0.2, "TE": 0.6}
 # Multiplier around each opponent's fitted source adherence: 1 reproduces the observed
 # mean log-rank loss before roster-balance adjustments, while 0 removes random variation.
 NOISE = 1.0

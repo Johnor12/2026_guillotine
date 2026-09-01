@@ -28,6 +28,7 @@ class Player:
     is_rookie: bool
     points: float
     provider_adp: float | None
+    sleeper_points: float = 0.0  # Sleeper's season projection in league scoring
     sleeper_id: str | None = None  # the only key draft.json shares with the pool
     availability_index: int = 0  # rank on the opponents' consensus board, 0-based
     # Projected points per league week (index 0 = week 1); 0.0 = bye or known absence.
@@ -57,6 +58,7 @@ def load_pool(path: Path) -> tuple[list[Player], dict]:
                 is_rookie=bool(rec.get("is_rookie")),
                 points=round(sum(weekly), 2),
                 provider_adp=rec.get("adp"),
+                sleeper_points=float(rec["points"]),
                 sleeper_id=rec.get("sleeper_id"),
                 weekly=tuple(weekly),
             )

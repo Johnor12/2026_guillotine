@@ -14,7 +14,12 @@ import random
 from collections.abc import Sequence
 
 from .board import Board
-from .league import CANDIDATE_SURVIVAL_FLOOR, FIRST_PICK_PER_POS, LOOKAHEAD_PICKS
+from .league import (
+    CANDIDATE_SURVIVAL_FLOOR,
+    FIRST_PICK_PER_POS,
+    LOOKAHEAD_PICKS,
+    ROLLOUT_CANDIDATES,
+)
 from .opponents import OpponentStrategy
 from .pool import Player
 from .simulation import Draft
@@ -28,14 +33,25 @@ def broaden_first_pick(
     levels: Levels,
     opponents: dict[int, OpponentStrategy],
 ) -> Draft:
-    """Build the live shortlist before intervening opponents can remove candidates."""
+    """Build the live shortlist: the positional heads the deterministic path leaves me
+    at my pick, plus the live board's heads as long shots for the survival redraws to
+    price or prune. Reading the heads off the live board alone omits every player
+    between the heads and my pick — at 1.20 that left no WR on the shortlist."""
     if not board.my_picks:
         return draft
     pick_no = board.my_picks[0]
     pick_index = board.pick_nos.index(pick_no)
     state = Draft(players, levels, board, opponents=opponents)
+    slot = board.my_slot
+    live_heads = state.candidates(
+        state.rosters[slot - 1],
+        per_pos=FIRST_PICK_PER_POS,
+        picks_left=state.picks_left[slot - 1],
+        off=state.off_pool[slot - 1],
+    )
+    state.run(stop_before=pick_index)
     draft.my_decisions[pick_no] = state.score_my_candidates(
-        pick_index, per_pos=FIRST_PICK_PER_POS
+        pick_index, per_pos=FIRST_PICK_PER_POS, extra=live_heads
     )
     return draft
 
@@ -45,7 +61,8 @@ def apply_survival_floor(
     board: Board,
     survival: dict[int, dict[int, float]],
 ) -> Draft:
-    """Drop live candidates that almost never reach the pending decision."""
+    """Drop live candidates that almost never reach the pending decision, then keep the
+    top ROLLOUT_CANDIDATES by the two-pick score for the expensive branch redraws."""
     if not board.my_picks:
         return draft
     pick_no = board.my_picks[0]
@@ -55,7 +72,7 @@ def apply_survival_floor(
         if survival[row[2].player_id][pick_no] >= CANDIDATE_SURVIVAL_FLOOR
     ]
     assert detail, "no first-pick candidate clears the survival floor"
-    draft.my_decisions[pick_no] = detail
+    draft.my_decisions[pick_no] = detail[:ROLLOUT_CANDIDATES]
     return draft
 
 
@@ -82,6 +99,7 @@ def _init_worker(
         i_my=i_my,
         plans=plans or {},
         by_id={p.player_id: p for p in players},
+        baselines={},
     )
 
 
@@ -181,16 +199,21 @@ def _rollout_playout(task: tuple[int, int]) -> tuple[list[float], float]:
     cand_id, s = task
     w = _WORKER
     draw_seed = _conditioned_seed("rollout", cand_id, s)
-    baseline = Draft(
-        w["players"],
-        w["levels"],
-        w["board"],
-        noise=w["noise"],
-        rng=random.Random(draw_seed),
-        opponents=w["opponents"],
-    )
-    baseline.run()
-    baseline_value = _final_roster_value(baseline)
+    # The unplanned baseline depends on the seed alone, and most candidates survive the
+    # first attempt of a sample, so tasks are issued sample-major and the baseline is
+    # memoized per worker.
+    baseline_value = w["baselines"].get(draw_seed)
+    if baseline_value is None:
+        baseline = Draft(
+            w["players"],
+            w["levels"],
+            w["board"],
+            noise=w["noise"],
+            rng=random.Random(draw_seed),
+            opponents=w["opponents"],
+        )
+        baseline.run()
+        baseline_value = w["baselines"][draw_seed] = _final_roster_value(baseline)
     values = []
     for plan in w["plans"].get(cand_id, ((cand_id,),)):
         d = Draft(
@@ -688,7 +711,7 @@ def rollout(
         )
         for cand in candidates
     }
-    tasks = [(cand.player_id, s) for cand in candidates for s in range(sims)]
+    tasks = [(cand.player_id, s) for s in range(sims) for cand in candidates]
     with multiprocessing.Pool(
         _worker_pool_size(),
         initializer=_init_worker,
@@ -699,7 +722,7 @@ def rollout(
     baselines: dict[int, list[float]] = {}
     selected_plans: dict[int, dict] = {}
     for i, cand in enumerate(candidates):
-        runs = flat[i * sims : (i + 1) * sims]
+        runs = flat[i :: len(candidates)]
         finalists = (
             (lookahead or {})
             .get("plans", {})

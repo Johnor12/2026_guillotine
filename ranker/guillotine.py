@@ -6,15 +6,13 @@ levels valuation runs on (value.Levels):
 1. Waiver escalation. Each week the two lowest teams are cut and their players hit
    waivers, so the in-season replacement level rises as the season runs. Opponents are
    ranked by projected strength and assumed to be eliminated weakest-first (two per
-   week); a roster's j-th waiver body (WEEK_WIRE_BODIES — more as rosters expand) then
-   sits at the (j * WIRE_DROP_RANK)-th best player among the fresh drops — the rosters
-   cut in the last two elimination rounds, since anything good dropped earlier was
-   claimed with real FAAB long ago — and each additional add is a strictly worse
-   player. Body by body, the week wire is the better of that floor and the
-   corresponding undrafted body. This is what makes drafted depth worth most
-   in the early weeks, when the wire is barren, and cheap to replace late — the
-   draft-time face of "delay FAAB spending as long as possible" — while drafted stars
-   keep clearing the decaying tiers all season.
+   week); the survivors then split every roster cut so far, so a roster's j-th waiver
+   body (WEEK_WIRE_BODIES — more as rosters expand) is the j-th tier of S drops, S the
+   teams still alive. Body by body, the week wire is the better of that floor and the
+   corresponding undrafted body. Early the floor is nothing: thirty survivors chase a
+   dozen drops and the wire is the undrafted tail. Late it is everything: four
+   finalists share twenty-eight eliminated rosters, so cheap drafted depth washes out
+   while drafted stars keep clearing the tiers all season.
 
 2. Elimination bars. GUILLOTINE_SIMS seasons are simulated over the 31 opponents'
    weekly expected lineup values: each opponent gets a persistent projection-error
@@ -50,11 +48,11 @@ from .league import (
     REGULAR_WEEKS,
     SCORE_FLOOR_Z,
     TEAM_SEASON_SIGMA,
+    TEAMS,
     WEEK_STARTERS,
     WEEK_WIRE_BODIES,
     WEEKLY_SIGMA,
     WEEKS,
-    WIRE_DROP_RANK,
 )
 from .pool import Player
 from .value import Levels, combine_wire, weekly_team_values, weekly_wire_base
@@ -81,38 +79,37 @@ def _drop_floor(
     opponent_rosters: list[list[Player]],
     strength_order: list[int],
 ) -> tuple[tuple[tuple[float, ...], ...], ...]:
-    """Per position, per week: tiered replacement levels among players on rosters
-    eliminated by that week, weakest opponents cut first, two per week.
+    """Per position, per week: tiered replacement levels a surviving roster claims from
+    every roster eliminated so far, weakest opponents cut first, two per week.
 
-    A roster's j-th waiver body (WEEK_WIRE_BODIES) sits at the (j * WIRE_DROP_RANK)-th
-    best player among the FRESH drops — the rosters cut in the last two elimination
-    rounds. Anything good dropped earlier was claimed (with real FAAB, by ~30
-    competing survivors) long ago; the persistent unclaimed tail is no better than
-    the undrafted base this floor is combined with. Each additional add a team stacks
-    up is a strictly worse player. The decaying tiers are what keep drafted stars
-    meaningful deep into the season while cheap depth washes out.
+    Dropped talent is shared out among the survivors. With S teams alive entering a
+    week (me included), the top S drops at a position are one claim each, the next S
+    the second claim, and so on: a roster's j-th waiver body (WEEK_WIRE_BODIES) is the
+    mean of the j-th tier of S weekly values among the cumulative drops, missing entries
+    counting zero. Early the crowd is large and the drops few, so this sits below the
+    undrafted base it is combined with — a typical survivor gets nothing above that
+    without spending real FAAB. Late, a handful of survivors split twenty-plus
+    eliminated rosters and every finalist fills up with other teams' early-round picks,
+    which is what makes drafted depth worthless by then and drafted stars the only
+    draft-day asset that still matters.
     """
     floor: list[list[tuple[float, ...]]] = [[] for _ in POSITIONS]
     pos_index = {pos: i for i, pos in enumerate(POSITIONS)}
     for w in range(WEEKS):
-        # Going into week w+1, cut rounds 1..min(w, 15) have run; the fresh window is
-        # the last two of them (up to 4 rosters).
+        # Going into week w+1, cut rounds 1..min(w, 15) have run.
         rounds_run = min(w, REGULAR_WEEKS)
-        window = strength_order[max(0, 2 * (rounds_run - 2)) : 2 * rounds_run]
-        fresh: list[list[Player]] = [[] for _ in POSITIONS]
-        for team in window:
+        survivors = TEAMS - 2 * rounds_run
+        dropped: list[list[float]] = [[] for _ in POSITIONS]
+        for team in strength_order[: 2 * rounds_run]:
             for player in opponent_rosters[team]:
-                fresh[pos_index[player.position]].append(player)
+                dropped[pos_index[player.position]].append(player.weekly[w])
         for i, pos in enumerate(POSITIONS):
             body_count = WEEK_WIRE_BODIES[pos][w]
-            deepest = WIRE_DROP_RANK * body_count
-            best = heapq.nlargest(deepest, (p.weekly[w] for p in fresh[i]))
+            best = heapq.nlargest(survivors * body_count, dropped[i])
             floor[i].append(
                 tuple(
-                    best[rank - 1] if rank <= len(best) else 0.0
-                    for rank in (
-                        WIRE_DROP_RANK * (j + 1) for j in range(body_count)
-                    )
+                    sum(best[j * survivors : (j + 1) * survivors]) / survivors
+                    for j in range(body_count)
                 )
             )
     return tuple(tuple(col) for col in floor)

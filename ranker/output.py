@@ -25,7 +25,6 @@ from .league import (
     WEEKLY_SHAPES,
     WEEKLY_SIGMA,
     WEEKS,
-    WIRE_DROP_RANK,
     draft_order,
     pick_label,
     picks_for_slot,
@@ -157,7 +156,11 @@ def build_payload(
     survival: dict[int, dict[int, float]] | None,
 ) -> dict:
     return {
-        "value_input": "pool.json weekly_points (DraftSharks per-week, league scoring)",
+        "value_input": (
+            "pool.json weekly_points (DraftSharks per-week, league scoring), blended "
+            "equally with Sleeper's season projection and the consensus board's "
+            "rank-matched level (ranker/market.py)"
+        ),
         "method": (
             "Roster value is each week's expected optimal legal lineup under that week's "
             "starting shape and position-wide availability, combined across weeks 1-17 by "
@@ -250,8 +253,8 @@ def build_payload(
         "wire": {
             "note": (
                 "Per position per week, the waiver bodies a surviving roster holds: the "
-                "better of the best undrafted players and the "
-                f"{WIRE_DROP_RANK}-th-best tiers of fresh eliminated-roster drops."
+                "better of the best undrafted players and the survivors' equal split of "
+                "every eliminated roster's players so far."
             ),
             "weekly_levels": {
                 k: [[round(v, 1) for v in bodies] for bodies in levels.wire[i]]
