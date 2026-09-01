@@ -17,7 +17,6 @@ from .board import fresh_board, load_board
 from .league import (
     DEDICATED_SLOTS,
     FIRST_PICK_PER_POS,
-    MAX_POSITIONS,
     MY_SLOT,
     OPPONENT_DEPTH_TARGETS,
     OPPONENT_POSITION_TILT,
@@ -170,24 +169,21 @@ def opponent_selftest(players: list[Player]) -> list[str]:
     if depth.opponent_depth_penalty(wrs[: start + 1], (), "WR") != 4.0:
         fails.append("opponent depth preference did not compound with excess depth")
 
-    # The Sleeper position caps are hard: an opponent at the WR cap cannot take a WR
-    # however high its source board puts one, and my candidate set drops WR too.
-    # picks_left=None isolates the cap from the mandatory-position narrowing, so the
-    # check exercises the cap alone whatever the board's geometry.
+    # Mandatory slots bind: with exactly the owed picks left, only owed positions are
+    # legal for opponents and for me alike.
     board = fresh_board()
-    board.rosters[0] = wrs[: MAX_POSITIONS["WR"]]
-    board.picks_left[0] -= len(board.rosters[0])
-    capped = Draft(
+    board.rosters[0] = wrs[:4]
+    board.picks_left[0] = 3  # QB, RB, TE still owed
+    owed = Draft(
         players,
         levels,
         board,
-        opponents=synthetic_opponents(players, board, complete([wrs[MAX_POSITIONS["WR"]]])),
+        opponents=synthetic_opponents(players, board, complete([wrs[4]])),
     )
-    if capped.choose_opponent(0, 1).position == "WR":
-        fails.append("an opponent at the WR cap drafted another WR")
-    capped_cands = capped.candidates(wrs[: MAX_POSITIONS["WR"]], per_pos=1, picks_left=None)
-    if any(c.position == "WR" for c in capped_cands):
-        fails.append("my candidate set offered a WR past the WR cap")
+    if owed.choose_opponent(0, 1).position == "WR":
+        fails.append("an opponent drafted a WR with only its owed positions left")
+    if any(c.position == "WR" for c in owed.candidates(wrs[:4], per_pos=1, picks_left=3)):
+        fails.append("my candidate set offered a WR with only owed positions left")
 
     for loss in (0.3, 1.5, 2.7):
         power = rank_power(loss, len(players))
@@ -196,7 +192,7 @@ def opponent_selftest(players: list[Player]) -> list[str]:
 
     print(
         "  opponent strategies: provider order stays personal-value-independent, starter "
-        "needs and excessive depth softly adjust it, the position caps bind, and fitted "
+        "needs and excessive depth softly adjust it, owed positions bind, and fitted "
         "rank noise reproduces source adherence",
         file=sys.stderr,
     )
@@ -637,7 +633,7 @@ def synthetic_draft(
             "type": "snake",
             "teams": TEAMS,
             "rounds": ROUNDS,
-            "reversal_round": league.REVERSAL_ROUND or None,
+            "reversal_round": league.REVERSAL_ROUND,
         },
         "pick_count": TOTAL_PICKS,
         "picks_made": made,

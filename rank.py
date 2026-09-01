@@ -1,42 +1,35 @@
 #!/usr/bin/env python3
 """Roster-aware draft board for this league, with an optimal-drafter draft simulation.
 
-    uv run rank.py                         # pool + draft + source artifacts -> rankings.json
-    uv run rank.py --report                # + board, convergence and recommendation on stderr
-    uv run rank.py --no-draft              # ignore the live board, rank the whole pool
-    uv run rank.py --selftest              # verify solver, opponents, and board loader
+    uv run rank.py               # pool.json + draft.json + source boards -> rankings.json
+    uv run rank.py --report      # + board, convergence and recommendation on stderr
+    uv run rank.py --selftest    # verify solver, opponents, planning, and board loader
 
 Scope is this league and nothing else; the league constants and strategy knobs live in
-ranker/league.py. The value input is `weekly_points` from `pool.json` — DraftSharks'
+ranker/league.py. The value input is `weekly_points` from `pool.json`: DraftSharks'
 per-week projections in this league's 0.5 PPR + TE premium scoring for weeks 1-17, with
-byes and known absences as zero weeks (see ranker/pool.py for why the provider's 3D value is
-deliberately unused). The method, in one breath: this is a guillotine league, so a
-roster is valued week by week as expected optimal lineup points under that week's
-starting shape and position-wide availability, and the weeks are combined by converged
-guillotine weights — each week's weight is the marginal effect of a weekly point on
-log P(surviving that week's cut), with the week 16-17 championship entering through
-log P(winning the final) (`ranker/guillotine.py`). What the waiver wire holds each week
-is an *outcome* of how the league drafts and who gets eliminated, so the weekly wire —
-best undrafted body early, rising as eliminated rosters hit waivers — is measured from
-the converged draft and feeds valuation with one unique waiver fallback per position
-per week (`ranker/value.py`). `draft.json` — the live board — is the simulation's
-starting state, not a filter (ranker/board.py). Only my slot uses the projection-based
-roster objective. Every opponent uses the external provider board most associated with
-its prior picks, loaded from the data-source investigator; unfilled dedicated starters
-softly adjust that order, and its observed adherence controls Monte Carlo choice noise.
-A compounding soft-depth preference keeps opponents' late roster shapes plausible —
-this league sets no hard per-position caps. My slot's choices contain no other
-positional roster-size heuristic.
+byes and known absences as zero weeks. The method, in one breath: this is a guillotine
+league, so a roster is valued week by week as expected optimal lineup points under that
+week's starting shape and position-wide availability, and the weeks are combined by
+converged guillotine weights, each week's weight being the marginal effect of a weekly
+point on log P(surviving that week's cut), with the week 16-17 championship entering
+through log P(winning the final) (`ranker/guillotine.py`). What the waiver wire holds
+each week is an *outcome* of how the league drafts and who gets eliminated, so the
+weekly wire (best undrafted body early, rising as eliminated rosters hit waivers) is
+measured from the converged draft and feeds valuation as tiered waiver bodies per
+position per week (`ranker/value.py`). `draft.json`, the live board, is the
+simulation's starting state, not a filter (`ranker/board.py`). Only my slot uses the
+projection-based roster objective. Every opponent uses the external provider board most
+associated with its prior picks, loaded from the source investigator; unfilled dedicated
+starters softly adjust that order, and its observed adherence controls Monte Carlo
+choice noise. Opponent picks never use my projections or board.
 
 The board's headline `lineup_gain` is the decision metric itself: the player's marginal
-guillotine-weighted weekly lineup value on my current roster at the converged levels,
-so it shrinks at positions my roster already covers and in weeks my roster already
-clears the elimination bar. The `my_next_picks` block is the direct answer to
-"who should I draft next" — on top of that same gain it prices opponent demand and what
-my following picks keep. Its first decision searches target plans across my next four
-held picks, then plays each first-candidate plan out to the end of the draft
-(`ranker/planning.py`). Rank columns are renumbered over the undrafted
-players actually emitted.
+guillotine-weighted weekly lineup value on my current roster at the converged levels.
+The `my_next_picks` block is the direct answer to "who should I draft next": on top of
+that same gain it prices opponent demand and what my following picks keep. Its first
+decision searches target plans across my next four held picks, then plays each
+first-candidate plan out to the end of the draft (`ranker/planning.py`).
 
 Python stdlib only. Deterministic: every tie breaks on player_id and the RNG is seeded.
 """
@@ -48,8 +41,7 @@ import json
 import sys
 from pathlib import Path
 
-from ranker import league
-from ranker.board import fresh_board, load_board
+from ranker.board import load_board
 from ranker.convergence import converge
 from ranker.league import NOISE, ROLLOUT_SIMS, SEED, SIMS
 from ranker.opponents import load_opponent_strategies
@@ -72,91 +64,36 @@ from ranker.selftest import selftest
 from ranker.validate import validate
 
 REPO_ROOT = Path(__file__).resolve().parent
+POOL = REPO_ROOT / "pool.json"
+DRAFT = REPO_ROOT / "draft.json"
+RANKINGS = REPO_ROOT / "rankings.json"
 SOURCE_MATCHES = REPO_ROOT / "data_source_matches.json"
-SOURCE_RANKINGS = REPO_ROOT / "data_source_investigator/data/rankings.json"
+SOURCE_BOARDS = REPO_ROOT / "sources/data/boards.json"
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    ap.add_argument("input", nargs="?", default=Path("pool.json"), type=Path)
-    ap.add_argument("-o", "--output", default=Path("rankings.json"), type=Path)
-    ap.add_argument(
-        "--draft",
-        type=Path,
-        default=None,
-        help="live board to start from (default: draft.json if it is there)",
-    )
-    ap.add_argument(
-        "--no-draft",
-        action="store_true",
-        help="ignore the live board: rank the whole pool from an empty draft",
-    )
     ap.add_argument("--report", action="store_true", help="validation summary on stderr")
-    ap.add_argument(
-        "--selftest",
-        action="store_true",
-        help="check the solver, opponent separation, and board loader, then exit",
-    )
-    ap.add_argument("--sims", type=int, default=SIMS, help="noisy redraws for availability")
-    ap.add_argument(
-        "--noise",
-        type=float,
-        default=NOISE,
-        help="opponent pick randomness (0 = deterministic balance-adjusted source order)",
-    )
-    ap.add_argument("--seed", type=int, default=SEED)
+    ap.add_argument("--selftest", action="store_true", help="offline checks, then exit")
     args = ap.parse_args(argv)
 
-    if not args.input.exists():
-        print(f"missing {args.input} - run pipeline.py first", file=sys.stderr)
-        return 1
-
-    players, pool_meta = load_pool(args.input)
+    players, pool_meta = load_pool(POOL)
     if args.selftest:
         return selftest(players)
 
-    # Even --no-draft needs draft.json's roster-to-slot map: the investigator associates
-    # providers with roster ids, while the simulation assigns strategies by draft slot.
-    board_problems: list[str] = []
-    draft_path = args.draft or Path("draft.json")
-    draft_raw = None
-    if draft_path.exists():
-        try:
-            draft_raw = json.loads(draft_path.read_text())
-        except (OSError, json.JSONDecodeError) as exc:
-            print(f"cannot read {draft_path}: {exc}", file=sys.stderr)
-            return 1
-        # The draft's geometry wins over league.py's defaults, --no-draft included:
-        # even an empty board should be shaped like the draft being tested.
-        try:
-            league.configure_from_draft(draft_raw)
-        except ValueError as exc:
-            print(f"cannot adopt {draft_path}'s geometry: {exc}", file=sys.stderr)
-            return 1
-    if args.no_draft:
-        board = fresh_board()
-    elif draft_raw is not None:
-        board, board_problems = load_board(draft_raw, players, str(draft_path))
-    elif args.draft is not None:
-        print(f"missing {draft_path} - run draft_pipeline/fetch_draft.py", file=sys.stderr)
-        return 1
-    else:
-        print(f"missing {draft_path} - opponent source association requires it", file=sys.stderr)
-        return 1
-
-    if draft_raw is None:
-        print(f"missing {draft_path} - opponent source association requires it", file=sys.stderr)
-        return 1
     try:
-        opponents = load_opponent_strategies(
-            players, board, draft_raw, SOURCE_MATCHES, SOURCE_RANKINGS
-        )
+        draft_raw = json.loads(DRAFT.read_text())
+    except (OSError, json.JSONDecodeError) as exc:
+        print(f"cannot read {DRAFT.name}: {exc}; run draft/fetch_draft.py", file=sys.stderr)
+        return 1
+    board, board_problems = load_board(draft_raw, players, DRAFT.name)
+    try:
+        opponents = load_opponent_strategies(players, board, draft_raw, SOURCE_MATCHES, SOURCE_BOARDS)
     except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
         print(
-            f"cannot build opponent strategies: {exc} - run "
-            "data_source_investigator/investigate.py",
+            f"cannot build opponent strategies: {exc}; run sources/investigate.py",
             file=sys.stderr,
         )
         return 1
@@ -164,9 +101,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.report:
         print(
             f"pool: {len(players)} players "
-            + ", ".join(f"{k} {v}" for k, v in pool_meta["by_position"].items())
-            + f"; dropped {pool_meta['dropped_non_offense']} non-offense and "
-            f"{len(pool_meta['dropped_zero_projection'])} zero-projection",
+            + ", ".join(f"{k} {v}" for k, v in pool_meta["by_position"].items()),
             file=sys.stderr,
         )
         report_board(board)
@@ -184,83 +119,55 @@ def main(argv: list[str] | None = None) -> int:
     levels, draft, history, guillotine = converge(players, board, args.report, opponents)
     draft = broaden_first_pick(draft, players, board, levels, opponents)
 
-    candidates = (
-        [c for _, _, c in draft.my_decisions.get(board.my_picks[0], [])]
-        if board.my_picks
-        else []
-    )
+    def first_pick_candidates():
+        return [c for _, _, c in draft.my_decisions.get(board.my_picks[0], [])] if board.my_picks else []
+
+    candidates = first_pick_candidates()
     if args.report and candidates:
         print(
-            f"candidate survival: {args.sims} banned-me redraws x {len(candidates)} "
-            f"live-board candidates",
+            f"candidate survival: {SIMS} banned-me redraws x {len(candidates)} live-board candidates",
             file=sys.stderr,
         )
-    survival = candidate_survival(
-        players, board, levels, candidates,
-        args.sims, args.noise, args.seed, opponents,
-    )
+    survival = candidate_survival(players, board, levels, candidates, SIMS, NOISE, SEED, opponents)
     draft = apply_survival_floor(draft, board, survival)
-    candidates = (
-        [c for _, _, c in draft.my_decisions.get(board.my_picks[0], [])]
-        if board.my_picks
-        else []
-    )
+    candidates = first_pick_candidates()
     if args.report and candidates:
         print(
-            f"next-pick options: {args.sims} conditional opponent redraws x "
-            f"{len(candidates)} candidates",
+            f"next-pick options: {SIMS} conditional opponent redraws x {len(candidates)} candidates",
             file=sys.stderr,
         )
-    options = option_redraw(
-        players, board, levels, candidates,
-        args.sims, args.noise, args.seed, opponents,
-    )
-    draft = apply_option_redraw(
-        draft, options, players, board, levels, opponents
-    )
-    candidates = (
-        [c for _, _, c in draft.my_decisions.get(board.my_picks[0], [])]
-        if board.my_picks
-        else []
-    )
+    options = option_redraw(players, board, levels, candidates, SIMS, NOISE, SEED, opponents)
+    draft = apply_option_redraw(draft, options, players, board, levels, opponents)
+    candidates = first_pick_candidates()
     if args.report and candidates:
         print(
             f"four-pick lookahead: broadened {len(candidates)}-candidate first-pick pool",
             file=sys.stderr,
         )
     lookahead = four_pick_lookahead(
-        players, board, levels, candidates, survival, opponents,
-        args.noise, args.seed,
+        players, board, levels, candidates, survival, opponents, NOISE, SEED
     )
     if args.report and candidates:
         print(
-            f"rollout: {ROLLOUT_SIMS} full-draft playouts x "
-            f"{len(candidates)} four-pick plan sets",
+            f"rollout: {ROLLOUT_SIMS} full-draft playouts x {len(candidates)} four-pick plan sets",
             file=sys.stderr,
         )
     rolled = rollout(
-        players, board, levels, candidates,
-        ROLLOUT_SIMS, args.noise, args.seed, opponents, lookahead,
+        players, board, levels, candidates, ROLLOUT_SIMS, NOISE, SEED, opponents, lookahead
     )
     draft = apply_rollout(draft, rolled, players, board, levels, opponents)
 
     if args.report:
-        print(
-            f"monte carlo: {args.sims} source-strategy drafts "
-            f"(adherence noise multiplier={args.noise})",
-            file=sys.stderr,
-        )
-    picks = monte_carlo(
-        players, board, levels, args.sims, args.noise, args.seed, opponents
-    )
-    rows = build_rankings(players, levels, draft, picks, args.sims, board)
+        print(f"monte carlo: {SIMS} source-strategy drafts (noise multiplier={NOISE})", file=sys.stderr)
+    picks = monte_carlo(players, board, levels, SIMS, NOISE, SEED, opponents)
+    rows = build_rankings(players, levels, draft, picks, SIMS, board)
 
     problems = board_problems + validate(rows, players, levels, draft, board, history)
     payload = build_payload(
         players, pool_meta, board, levels, draft, history, rows, problems,
-        args.sims, args.noise, args.seed, opponents, guillotine, options, rolled, survival,
+        opponents, guillotine, options, rolled, survival,
     )
-    args.output.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n")
+    RANKINGS.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n")
 
     if args.report:
         report_summary(rows, draft, board, rolled, survival, guillotine)
@@ -268,8 +175,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"\n{len(problems)} VALIDATION PROBLEM(S):", file=sys.stderr)
         for p in problems:
             print(f"  - {p}", file=sys.stderr)
-    scope = f"{len(rows)} undrafted of {len(players)}" if board.live else f"{len(rows)} players"
-    print(f"wrote {args.output} ({scope})", file=sys.stderr)
+    print(f"wrote {RANKINGS.name} ({len(rows)} undrafted of {len(players)})", file=sys.stderr)
     return 1 if problems else 0
 
 

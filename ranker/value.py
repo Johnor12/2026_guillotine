@@ -347,19 +347,17 @@ def weekly_team_values(roster: list[Player], levels: Levels) -> tuple[float, ...
     return tuple(out)
 
 
-def starting_positions(roster: list[Player]) -> list[str]:
-    """Which positions fill the week-1 slots when a team must field everyone it can.
-
-    Validation uses this to check every simulated roster can field a full opening
-    lineup; the drafted roster only ever has to satisfy the base shape.
-    """
+def starting_positions(positions: list[str]) -> list[str]:
+    """Which of these rostered positions fill the week-1 slots when a team must field
+    everyone it can. Validation uses this to check every simulated roster, off-pool
+    picks included, can field a full opening lineup."""
     caps = dict(STARTING_SLOTS)
     out: list[str] = []
-    for p in sorted(roster, key=_KEY):
-        for slot in SLOT_CHAIN[p.position]:
+    for position in positions:
+        for slot in SLOT_CHAIN[position]:
             if caps[slot]:
                 caps[slot] -= 1
-                out.append(p.position)
+                out.append(position)
                 break
     return out
 

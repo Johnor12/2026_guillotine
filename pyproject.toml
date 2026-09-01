@@ -1,15 +1,15 @@
 [project]
 name = "redraft-2026"
 version = "0.1.0"
-description = "Draft pool, live board, and rankings for a 10-team 0.5 PPR redraft league"
+description = "Draft pool, live board, and rankings for a 32-team 0.5 PPR guillotine league"
 readme = "README.md"
 requires-python = ">=3.12"
 
-# Stdlib only, on purpose: the html parse uses html.parser, both fetches use
+# Stdlib only, on purpose: the html parses use html.parser, the fetches use
 # urllib.request, and the ranker is arithmetic. Nothing here needs a wheel.
 dependencies = []
 
 [tool.uv]
-# A folder of scripts, not an importable package — there is nothing to build or
-# install, and each pipeline is run by path (`uv run pool_pipeline/pipeline.py`).
+# A folder of scripts, not an importable package: there is nothing to build or
+# install, and each process is run by path (`uv run pool/build_pool.py`).
 package = false

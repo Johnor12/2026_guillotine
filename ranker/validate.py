@@ -12,7 +12,6 @@ from .board import Board
 from .league import (
     DEDICATED_SLOTS,
     MAX_ITERS,
-    MAX_POSITIONS,
     POSITIONS,
     STARTING_SLOTS,
     WEEKS,
@@ -39,14 +38,11 @@ def validate(
         if not ok:
             problems.append(msg)
 
-    # The static snake is the yardstick even on a live board. The pinned README labels
-    # only apply to the README's own geometry; a reconfigured test draft has no external
-    # pin to check the snake against.
+    # The static snake is the yardstick even on a live board, pinned to the README.
     full = picks_for_slot(board.my_slot, draft_order())
-    if (league.TEAMS, league.ROUNDS, board.my_slot) == (32, 8, 20):
-        readme = ["1.20", "2.13", "3.13", "4.20", "5.13", "6.20", "7.13", "8.20"]
-        labels = [pick_label(p) for p in full]
-        check(labels == readme, f"draft order {labels} != README {readme}")
+    readme = ["1.20", "2.13", "3.13", "4.20", "5.13", "6.20", "7.13", "8.20"]
+    labels = [pick_label(p) for p in full]
+    check(labels == readme, f"draft order {labels} != README {readme}")
     check(
         len(full) == league.ROUNDS,
         f"{len(full)} picks for slot {board.my_slot}, want {league.ROUNDS}",
@@ -104,7 +100,10 @@ def validate(
         )
         want = len(made) + board.picks_left[i - 1]
         check(len(roster) == want, f"slot {i} ends with {len(roster)} players, want {want}")
-        starters = starting_positions(roster)
+        # Off-pool picks fill slots too: a live pick on an unranked QB is still a QB.
+        starters = starting_positions(
+            [p.position for p in roster] + [o["position"] for o in off if o.get("position") in POSITIONS]
+        )
         check(
             len(starters) == sum(STARTING_SLOTS.values()),
             f"slot {i} cannot field a full lineup "
@@ -114,11 +113,6 @@ def validate(
             have = sum(1 for p in roster if p.position == pos)
             have += sum(1 for o in off if o.get("position") == pos)
             check(have >= need, f"slot {i} has {have} {pos}, needs {need}")
-            # Off-pool picks count against the cap too: Sleeper enforced it live.
-            check(
-                have <= MAX_POSITIONS[pos],
-                f"slot {i} has {have} {pos}, over the {MAX_POSITIONS[pos]} cap",
-            )
     gains = [r["lineup_gain"] for r in rows]
     check(gains == sorted(gains, reverse=True), "rows are not sorted by lineup gain descending")
     source_ids = {strategy.source_id for strategy in draft.opponents.values()}

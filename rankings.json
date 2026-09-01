@@ -1,8 +1,6 @@
 {
-  "generated_from": "pool.json",
-  "scoring_scheme": "half_ppr",
-  "value_input": "pool.json weekly_points (half_ppr)",
-  "value_note": "DraftSharks' per-week projected points in this league's scoring for league weeks 1-17, with byes and known absences as zero weeks. Roster value is each week's best expected legal lineup under that week's starting shape — including the probability that deeper players are called on when higher teammates are unavailable and one unique waiver body per position per week — combined across weeks by the converged guillotine week weights (see `guillotine`). Draftsharks' 3D value is deliberately unused: it is a provider-scaled ordinal, not points, so it cannot enter a points-denominated lineup objective.",
+  "value_input": "pool.json weekly_points (DraftSharks per-week, league scoring)",
+  "method": "Roster value is each week's expected optimal legal lineup under that week's starting shape and position-wide availability, combined across weeks 1-17 by the converged guillotine week weights; see rank.py and ranker/*.py.",
   "league": {
     "teams": 32,
     "format": "guillotine: the two lowest weekly scores are eliminated each of weeks 1-15 and their players hit waivers; the last two teams play a week 16-17 total-points championship",
@@ -14,19 +12,11 @@
       "TE": 1,
       "FLEX": 2
     },
-    "weekly_shapes_note": "starting_slots is the opening (week 1) shape; lineups expand in-season — see guillotine.weekly_shapes, where the week-14+ superflex is modeled as a second dedicated QB slot",
-    "dst_slots": 0,
     "bench_slots": 1,
-    "ir_slots": 2,
-    "max_positions": {
-      "QB": 8,
-      "RB": 8,
-      "WR": 8,
-      "TE": 8
-    },
     "rounds": 8,
     "total_picks": 256,
     "draft_type": "snake",
+    "reversal_round": 3,
     "my_slot": 20,
     "my_picks": [
       "1.20",
@@ -41,9 +31,17 @@
   },
   "pool": {
     "source_file": "pool.json",
-    "source_player_count": 370,
-    "source_of_pool": "projections.json",
-    "points_source": "sleeper_projections.json",
+    "sources": {
+      "identity_and_adp": "projections.html",
+      "points": {
+        "file": "sleeper_projections.json",
+        "fetched_at": "2026-09-01T00:14:47+00:00"
+      },
+      "weekly_points": {
+        "file": "weekly_projections.json",
+        "fetched_at": "2026-09-01T01:11:03+00:00"
+      }
+    },
     "pool_size": 370,
     "by_position": {
       "QB": 42,
@@ -51,16 +49,14 @@
       "WR": 149,
       "TE": 76
     },
-    "with_sleeper_id": 370,
-    "dropped_non_offense": 0,
-    "dropped_zero_projection": []
+    "with_sleeper_id": 370
   },
   "draft": {
     "source_file": "draft.json",
     "draft_id": "1397662421937565696",
     "league_name": "Gnosis Guillotine",
     "status": "pre_draft",
-    "fetched_at": "2026-09-01T00:28:48+00:00",
+    "fetched_at": "2026-09-01T20:08:30+00:00",
     "last_picked_at": "2026-08-24T18:58:45+00:00",
     "me": {
       "username": "johnor",
@@ -102,8 +98,7 @@
       "7.13",
       "8.20"
     ],
-    "note": "The simulation starts here: made picks are already on their teams' rosters and out of the pool, and only the pending picks are played out, in this order — so a traded pick is exercised by the roster that acquired it. `rankings` covers the undrafted players only.",
-    "off_pool_note": "Made picks with no match in pool.json by sleeper_id: kickers, defenses and anyone past the pool's rank cut. They fill a roster spot and satisfy a mandatory position, so the team owes one fewer pick, but they are never started and never valued — there is no projection to value them with.",
+    "off_pool_note": "Made picks with no match in pool.json by sleeper_id: they fill a roster spot and satisfy a mandatory position but are never started or valued.",
     "rosters": [
       {
         "draft_slot": 1,
@@ -307,7 +302,7 @@
       },
       {
         "draft_slot": 21,
-        "team": null,
+        "team": "candivanpeltz",
         "is_mine": false,
         "picks_made": 0,
         "picks_left": 8,
@@ -428,7 +423,7 @@
     ]
   },
   "example_draft": {
-    "note": "Full final rosters from the single deterministic draft at the converged levels — the same draft sim_pick reports. When the conditional first-pick recommendation is taken earlier on this noiseless path, this block follows the reported deterministic fallback instead. Made picks are facts from the live board; every pending pick is the model drafting. Read it for smells: position hoarding or a position left to the last rounds.",
+    "note": "Full final rosters from the single deterministic draft at the converged levels, the same draft sim_pick reports. Made picks are facts from the live board; every pending pick is the model drafting.",
     "rosters": [
       {
         "draft_slot": 1,
@@ -2792,7 +2787,7 @@
       },
       {
         "draft_slot": 21,
-        "team": null,
+        "team": "candivanpeltz",
         "is_mine": false,
         "players": 8,
         "positions": {
@@ -4209,7 +4204,7 @@
     ]
   },
   "my_next_picks": {
-    "note": "The model's own choice at each of my next picks, from the deterministic draft at the converged levels. The first shortlist starts from the live board before intervening opponents pick, then drops candidates below a 5% chance of reaching my turn. value_now is the candidate's marginal guillotine-weighted weekly lineup value with one unique waiver fallback per position per week; next_pick_ev is E[value of the best player still there at my following pick] if I take him now. No positional roster-size heuristic adjusts either value. The pick maximizes their sum, so it can disagree with the board's static lineup_gain order — the lookahead prices what my following pick keeps, which a single-pick gain does not. At my first pending pick, each next_pick_ev redraws the pre-pick opponents until that candidate survives, takes him, and measures the best marginal option actually left at my following turn; later displayed picks retain the fast global-rank approximation used by the bulk draft policy. My first pending pick searches target plans across my next four held picks; every shorter prefix is eligible, so the ordinary policy can resume at any turn. Later targets below 5% conditional survival are dropped. The best screened plan of each length is then scored over the whole remaining draft, and the best noisy EV represents that first candidate (rollout_ev/rollout_edge/rollout_se), with a planned target used only if he survives and the ordinary policy used otherwise. rollout_edge is that plan's paired gain over the ordinary policy on the same draws, measured for every candidate including the two-pick leader, whose plan is a plan too — so rollout_ev ranks candidates directly. `take` is the EV choice conditional on being available; `deterministic_fallback` is emitted when the noiseless example removes that choice first. The two-pick leader's take stands unless another candidate beats his plan by twice the standard error of their paired difference. When the recommended player survives the noiseless prefix, that draft is re-played with the selected plan; otherwise the example draft and later displayed picks describe the fallback path. Its candidates also carry p_available_if_i_pass — P(no opponent has taken him before each of my picks) across redraws where my slot never takes him: the honest 'how long can I wait', with the pass-on-him counterfactual actually played out rather than estimated (compare p_available_at_my_picks, which is Kaplan-Meier from redraws where I do take him). It covers every remaining pick, including the certainties, because 'nobody else ever wants him' and 'gone before my next pick' are the two answers that decide the pick.",
+    "note": "value_now is the candidate's marginal guillotine-weighted lineup value; next_pick_ev is E[best option at my following pick] if I take him. At my first pending pick next_pick_ev comes from conditional opponent redraws, and rollout_ev/rollout_edge/rollout_se score each candidate's best four-pick target plan over the whole remaining draft; `take` is the rollout's recommendation conditional on availability. p_available_if_i_pass is measured from redraws where my slot never takes him. See ranker/rankings.py and ranker/planning.py.",
     "option_sims": 200,
     "rollout_sims": 100,
     "lookahead_picks": 4,
@@ -4558,23 +4553,19 @@
       }
     ]
   },
-  "rankings_note": "Undrafted players only, ranked by `lineup_gain` — the decision metric the pick engine maximizes (before lookahead): the player's marginal guillotine-weighted weekly lineup value on my current roster at the converged levels. Roster-aware, so it shrinks where my roster is already deep, and survival-aware, so points in weeks my roster already clears the elimination bar (or weeks I am unlikely to reach) count for little. The rank columns are renumbered over the rows emitted here.",
+  "rankings_note": "Undrafted players only, ranked by lineup_gain: the player's marginal guillotine-weighted weekly lineup value on my current roster at the converged levels. Rank columns are renumbered over the rows emitted here.",
   "opponent_model": {
-    "who": "the other 31 teams; my slot alone uses projections and roster value",
-    "how": "Each opponent orders legal available players by the provider board most associated with its completed picks in data_source_matches.json. Opponent valuation never reads personal projections, wire levels, or team value. A position's source rank receives a soft boost in proportion to its unfilled dedicated starters and a compounding penalty beyond its comfortable depth; the deterministic draft takes the best adjusted rank, and Monte Carlo draws around that preference.",
-    "depth_preference": {
-      "targets": {
-        "QB": 1,
-        "RB": 3,
-        "WR": 3,
-        "TE": 1
-      },
-      "penalty_per_extra_player": 2.0,
-      "note": "The penalty starts past what a roster with 12 offensive spots ordinarily carries at each position. This adjusts opponent source rank only; the hard limits are max_positions, which every roster obeys."
+    "how": "Each opponent orders legal available players by the provider board most associated with its completed picks in data_source_matches.json, with a soft boost for unfilled dedicated starters, a compounding penalty beyond comfortable depth, and a per-position tilt; Monte Carlo draws around that preference with noise calibrated to the investigator's mean_log2_loss. Opponents never read my projections or board.",
+    "depth_targets": {
+      "QB": 1,
+      "RB": 3,
+      "WR": 3,
+      "TE": 1
     },
-    "adherence": "The investigator's mean_log2_loss is converted to a power distribution over source rank among legal available players, before the roster-balance adjustment. --noise 1 uses that fitted randomness; 0 removes randomness but retains the balance adjustment. fit_score and confidence identify association strength, while mean_log2_loss determines adherence.",
-    "coverage": "A provider's normalized players come first. Any pool player it does not rank is appended in consensus-average order so all 256 picks remain possible; the fallback is still an external opponent board, never my personal board.",
-    "delta": "opponent_consensus_rank averages the 31 managers' complete source orders, counting a source once per associated manager, then re-ranks the available pool. opponent_rank_delta is opponent_consensus_rank - rank; positive identifies players my board values earlier than the modeled field. Monte Carlo availability determines whether that gap is exploitable.",
+    "depth_penalty_per_extra_player": 2.0,
+    "position_tilt": {
+      "QB": 0.2
+    },
     "divergence": {
       "distinct_sources": 1,
       "mean_absolute_rank_delta": 42.1,
@@ -4831,7 +4822,7 @@
       {
         "draft_slot": 21,
         "roster_id": 31,
-        "username": null,
+        "username": "candivanpeltz",
         "source_id": "consensus",
         "source_name": "Consensus Average",
         "source_format": "mean provider rank across the other 6 sources",
@@ -4987,7 +4978,7 @@
     ]
   },
   "guillotine": {
-    "note": "The guillotine model behind the week weights and the weekly wire. Each fixed-point iteration simulates the elimination race over the 31 opponents' simulated rosters: every opponent gets a persistent projection-error bias plus weekly score noise, the two lowest are cut each week, and the elimination bar is the second-lowest surviving opponent's score — beat it and I survive. A week's weight is d log P(survive that cut) / d(weekly point) at my converged roster; the championship weeks carry d log P(win the week 16-17 final) instead. Weights are normalized to sum to 1, so roster value reads as guillotine-weighted expected weekly lineup points and scaling changes no decision.",
+    "note": "Elimination race simulated over the opponents' rosters each fixed-point iteration; a week's weight is d log P(title) / d(weekly point). See ranker/guillotine.py.",
     "weekly_shapes": [
       {
         "week": 1,
@@ -5126,7 +5117,6 @@
         "FLEX": 3
       }
     ],
-    "superflex_note": "The week-14+ superflex is modeled as a second dedicated QB slot: its realistic occupant is a QB, and a QB waiver body always exists. This slightly undervalues RB/WR/TE depth in weeks 14-17.",
     "weekly_sigma": 16.0,
     "team_season_sigma": 8.0,
     "sims": 512,
@@ -5216,7 +5206,7 @@
     }
   },
   "wire": {
-    "definition": "The body a team could sign for roughly nothing at each position, per week: the best player left undrafted in the converged simulated draft, rising as eliminated rosters hit waivers — the 6-th best weekly score among players on rosters cut by that week (the best cut players cost real FAAB). Inside roster valuation each position contributes this body once per week as an always-available fallback; it cannot fill two simultaneous lineup jobs. The escalation is why drafted depth is worth most early, when the wire is barren, and why late expanded slots are cheap to fill — the draft-time face of delaying FAAB spending.",
+    "note": "Per position per week, the waiver bodies a surviving roster holds: the better of the best undrafted players and the 6-th-best tiers of fresh eliminated-roster drops.",
     "weekly_levels": {
       "QB": [
         [
@@ -5946,24 +5936,20 @@
     }
   },
   "strategy": {
-    "objective": "guillotine-weighted expected weekly lineup points: each week's expected optimal legal lineup under that week's starting shape and position-wide player availability, weighted by the marginal effect of a weekly point on log P(surviving that week's cut / winning the final)",
     "unavailable_rate": {
       "QB": 0.05,
       "RB": 0.15,
       "WR": 0.08,
       "TE": 0.06
     },
-    "unavailable_note": "Byes and known absences are explicit zero weeks in weekly_points; these rates price only surprise in-week unavailability.",
-    "depth_note": "Each week's lineup is re-optimized per availability draw: dedicated slots take each position's best available bodies (a deeper body contributes with the exact probability it is called on, from unavailable_rate), and the week's FLEX seats take the best RB/WR/TE leftovers pooled across positions. Computed in closed form as expectation-of-weekly-max, not one locked seasonal composition.",
-    "lookahead": "first pending decision: four held picks with survival-aware target plans; personal bulk policy: value now + E[best value at the following pick]",
     "survival_sigma": 3.5,
-    "note": "The bulk policy is a two-pick greedy with an independence approximation. The first pending pick uses banned-me availability redraws to build plans across four held picks, then noisy full-draft rollouts choose among them — see my_next_picks."
+    "lookahead": "first pending decision: four held picks with survival-aware target plans; bulk policy: value now + E[best value at the following pick]"
   },
   "monte_carlo": {
     "sims": 200,
     "noise": 1.0,
     "seed": 20260804,
-    "note": "Balance-adjusted source-rank Gumbel draws on the other 31 teams only, to turn 0/1 availability under the deterministic preference into a usable probability band. At noise=1 the source-rank component is calibrated to each manager's observed mean log-rank loss before the balance adjustment; noise=0 removes random variation but retains that adjustment. sim_pick is from the noiseless draft; sim_adp, p_drafted and p_available_at_my_picks are from these redraws and measure the other teams' demand only — my own simulated picks are the policy under evaluation, not opponent demand. p_available_at_my_picks is a Kaplan-Meier estimate (an opponent take is the event, my own take censors the redraw); my_next_picks.p_available_if_i_pass is the assumption-free counterfactual for the candidates that matter. sim_adp and p_drafted are over observed opponent takes, so both read shallow for a player this policy usually grabs first."
+    "note": "sim_adp, p_drafted and p_available_at_my_picks are over the opponents' takes in these redraws (Kaplan-Meier: an opponent take is the event, my own take censors the redraw); sim_pick is from the noiseless draft."
   },
   "validation": {
     "problems": [],

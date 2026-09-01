@@ -7,19 +7,15 @@ open at 1 QB / 1 RB / 2 WR / 1 TE / 2 W-R-T = 7, plus 1 bench = 8 draftable
 roster spots = 8 rounds = 256 picks, all offense (no D/ST or K slot). The 2
 reserve spots are not drafted into. Snake with a third-round reversal, and
 picks can be traded. Lineups expand in-season (WEEKLY_SHAPES below); the extra
-bench weeks matter only for holding players and are not modeled.
+bench weeks matter only for holding players and are not modeled. The league sets
+no per-position roster caps.
 
-The geometry (teams, rounds, my slot, reversal, and everything derived from them) is a
-default: draft.json is authoritative, and `configure_from_draft()` rebinds it before
-any board is built, so test drafts with other league and roster sizes work unchanged.
-The starting-lineup shape and the strategy knobs are this league's and stay fixed —
-draft.json carries no lineup information.
+These are constants, not configuration: board.load_board complains loudly when
+draft.json disagrees with them, which is the cue to edit this file.
 """
 
 from __future__ import annotations
 
-SCHEME = "half_ppr"
-POINTS_FIELD = "points"  # season column in pool.json; weekly_points carries the value input
 POSITIONS = ("QB", "RB", "WR", "TE")
 
 # --- guillotine season structure --------------------------------------------------
@@ -27,7 +23,6 @@ POSITIONS = ("QB", "RB", "WR", "TE")
 # play a week 16-17 total-points championship. Week 18 exists in the NFL but not here.
 REGULAR_WEEKS = 15
 WEEKS = 17
-CHAMPIONSHIP_WEEKS = (16, 17)
 
 
 def _week_shape(week: int) -> dict[str, int]:
@@ -54,8 +49,8 @@ WEEK_STARTERS = tuple(sum(s.values()) for s in WEEKLY_SHAPES)
 # Waiver-tier bodies a surviving roster holds by week, per position. The roster grows
 # from 8 spots (week 1) to 16 (week 14) while only 8 players are ever drafted, so
 # in-season adds accumulate on every surviving team; each is modeled as an
-# always-available body at that week's wire level. The allocation leans RB/WR — where
-# injury churn drives adds — with the second QB arriving for the week-14 superflex.
+# always-available body at that week's wire level. The allocation leans RB/WR, where
+# injury churn drives adds, with the second QB arriving for the week-14 superflex.
 # This is what stops drafted depth from being credited with the whole late-season
 # lineup: by week 15 half of everyone's roster came off the wire.
 WEEK_WIRE_BODIES = {
@@ -70,14 +65,8 @@ MY_SLOT = 20
 STARTING_SLOTS = {"QB": 1, "RB": 1, "WR": 2, "TE": 1, "FLEX": 2}
 # Slots no other position can cover, so every roster must end up with at least these.
 DEDICATED_SLOTS = {"QB": 1, "RB": 1, "WR": 2, "TE": 1}
-# This league sets no per-position caps, so the roster size is the only bound.
-MAX_POSITIONS = {"QB": 8, "RB": 8, "WR": 8, "TE": 8}
-# Every roster slot is offense: the league has no D/ST or kicker slot at all.
-DST_SLOTS = 0
 BENCH_SLOTS = 1
-IR_SLOTS = 2  # the league's reserve spots; not drafted into
-ROSTER_SLOTS = sum(STARTING_SLOTS.values()) + DST_SLOTS + BENCH_SLOTS  # 8
-ROUNDS = ROSTER_SLOTS
+ROUNDS = sum(STARTING_SLOTS.values()) + BENCH_SLOTS  # 8
 TOTAL_PICKS = TEAMS * ROUNDS  # 256
 # Round the snake stops alternating: round 3 repeats round 2's direction, inverting
 # parity from there on (forward, reverse, reverse, forward, reverse, forward, ...).
@@ -92,50 +81,6 @@ SLOT_CHAIN = {
     "WR": ("WR", "FLEX"),
     "TE": ("TE", "FLEX"),
 }
-SLOT_ELIGIBLE = {
-    "QB": ("QB",),
-    "RB": ("RB",),
-    "WR": ("WR",),
-    "TE": ("TE",),
-    "FLEX": ("RB", "WR", "TE"),
-}
-
-
-# --- dynamic geometry -------------------------------------------------------------
-# Modules that consume the geometry above read it as `league.X` attributes, never
-# `from .league import X`, so a rebind here reaches everyone.
-
-
-def configure(teams: int, rounds: int, my_slot: int, reversal_round: int = 0) -> None:
-    """Rebind the geometry to a draft's actual shape. Strategy knobs are untouched."""
-    global TEAMS, MY_SLOT, ROUNDS, ROSTER_SLOTS, BENCH_SLOTS, TOTAL_PICKS, REVERSAL_ROUND
-    starters = sum(STARTING_SLOTS.values()) + DST_SLOTS
-    if rounds < starters:
-        raise ValueError(f"{rounds} rounds cannot fill the {starters} starting slots")
-    if rounds > sum(MAX_POSITIONS.values()):
-        raise ValueError(f"{rounds} rounds cannot be drafted under the caps {MAX_POSITIONS}")
-    if not 1 <= my_slot <= teams:
-        raise ValueError(f"my slot {my_slot} is not a slot in a {teams}-team draft")
-    TEAMS, ROUNDS, MY_SLOT = teams, rounds, my_slot
-    ROSTER_SLOTS = rounds
-    BENCH_SLOTS = rounds - starters
-    TOTAL_PICKS = teams * rounds
-    REVERSAL_ROUND = reversal_round
-
-
-def configure_from_draft(raw: dict) -> None:
-    """Adopt draft.json's geometry: format.{teams,rounds,reversal_round}, my slot."""
-    fmt = raw.get("format") or {}
-    if not fmt.get("teams") or not fmt.get("rounds"):
-        raise ValueError("no format.teams/format.rounds to configure the league from")
-    # An unpublished draft order leaves me.draft_slot null; the README default stands.
-    my_slot = (raw.get("me") or {}).get("draft_slot") or MY_SLOT
-    configure(
-        int(fmt["teams"]),
-        int(fmt["rounds"]),
-        int(my_slot),
-        int(fmt.get("reversal_round") or 0),
-    )
 
 
 # --- strategy knobs ---------------------------------------------------------------
@@ -144,9 +89,8 @@ def configure_from_draft(raw: dict) -> None:
 # solver applies these position-wide assumptions to the whole depth chart: the weekly
 # lineup is re-optimized across positions, and a body's contribution is the exact
 # probability that the re-optimized lineup calls on it. Byes and known absences are
-# now explicit zero weeks in weekly_points, so these rates price only the surprise
-# in-week unavailability (injury, inactive, benching) — about a bye's worth (~6%)
-# lower than when one season aggregate had to absorb byes too.
+# explicit zero weeks in weekly_points, so these rates price only the surprise
+# in-week unavailability (injury, inactive, benching).
 UNAVAILABLE_RATE = {"QB": 0.05, "RB": 0.15, "WR": 0.08, "TE": 0.06}
 
 # --- guillotine model knobs -------------------------------------------------------
@@ -158,7 +102,7 @@ UNAVAILABLE_RATE = {"QB": 0.05, "RB": 0.15, "WR": 0.08, "TE": 0.06}
 WEEKLY_SIGMA = 16.0
 # Persistent per-team error in the projections themselves, as weekly-mean points: a
 # team projected to average 100 truly averages 92-108 at one sigma. Drawn once per
-# team per simulated season — opponents and me alike — so bad projections can survive,
+# team per simulated season, opponents and me alike, so bad projections can survive,
 # good ones can die, and my own busts are priced into every week's safety margin.
 TEAM_SEASON_SIGMA = 8.0
 # A full starting lineup's blowup week bottoms out around two sigma below expectation;
@@ -188,11 +132,10 @@ LOOKAHEAD_PICKS = 4
 # the boost fades linearly as that position's dedicated starters are filled.
 OPPONENT_BALANCE_STRENGTH = 2.0
 # Opponents become increasingly reluctant to add players beyond these comfortable depths.
-# The penalty starts at the 2nd QB/TE and the 4th RB/WR — past what a roster with 8
-# offensive spots ordinarily carries — so it only prices the extremes, and the caps in
-# MAX_POSITIONS remain the hard limits. The targets sum to the 8 roster spots: they
-# describe a realizable roster, and QB urgency is priced by OPPONENT_POSITION_TILT
-# below, not by loosening this profile. My slot never uses this heuristic.
+# The penalty starts at the 2nd QB/TE and the 4th RB/WR, past what a roster with 8
+# offensive spots ordinarily carries, so it only prices the extremes. The targets sum
+# to the 8 roster spots: they describe a realizable roster, and QB urgency is priced by
+# OPPONENT_POSITION_TILT below, not by loosening this profile. My slot never uses this.
 OPPONENT_DEPTH_TARGETS = {"QB": 1, "RB": 3, "WR": 3, "TE": 1}
 OPPONENT_DEPTH_PENALTY = 2.0
 # Flat source-rank multiplier per position; < 1 pulls the position up an opponent's
@@ -217,28 +160,25 @@ SEED = 20260804
 # --- draft order ------------------------------------------------------------------
 
 
-def draft_order(teams: int | None = None, rounds: int | None = None) -> list[int]:
+def draft_order() -> list[int]:
     """Slot (1-based) picking at each overall pick, honoring the reversal round.
 
     Odd rounds forward, even rounds reverse; from REVERSAL_ROUND on the parity is
     inverted, so round 3 repeats round 2's direction. Pinned to the README's stated
     picks for slot 20 (1.20, 2.13, 3.13, 4.20, ..., 7.13, 8.20) in validate().
-    Defaults resolve at call time so a configure() rebind is honored.
     """
-    teams = TEAMS if teams is None else teams
-    rounds = ROUNDS if rounds is None else rounds
     order: list[int] = []
-    for rnd in range(1, rounds + 1):
+    for rnd in range(1, ROUNDS + 1):
         forward = rnd % 2 == 1
-        if REVERSAL_ROUND and rnd >= REVERSAL_ROUND:
+        if rnd >= REVERSAL_ROUND:
             forward = not forward
-        order.extend(range(1, teams + 1) if forward else range(teams, 0, -1))
+        order.extend(range(1, TEAMS + 1) if forward else range(TEAMS, 0, -1))
     return order
 
 
-def pick_label(pick_no: int, teams: int | None = None) -> str:
+def pick_label(pick_no: int) -> str:
     """1-based overall pick number -> 'round.slot-in-round' as the draft room shows it."""
-    rnd, idx = divmod(pick_no - 1, TEAMS if teams is None else teams)
+    rnd, idx = divmod(pick_no - 1, TEAMS)
     return f"{rnd + 1}.{idx + 1:02d}"
 
 

@@ -1,28 +1,20 @@
 #!/usr/bin/env python3
-"""Pull the live board, re-rank, and re-evaluate source matches between picks.
+"""Pull the live board, re-evaluate source matches, and re-rank between picks.
 
-Three steps, all of which already stand alone; this only fixes the order and stops on
-the first failure:
+Three steps, each of which stands alone; this fixes the order and stops on the first
+failure:
 
-    1. draft_pipeline/fetch_draft.py   Sleeper's draft API -> draft.json
-    2. data_source_investigator/investigate.py
-                                        existing source rankings + draft.json
-                                        -> data_source_matches.json
-    3. rank.py                         pool + draft + source matches/rankings
-                                        -> rankings.json
+    1. draft/fetch_draft.py       Sleeper's draft API -> draft.json
+    2. sources/investigate.py     provider boards + draft.json -> data_source_matches.json
+    3. rank.py                    pool + draft + source matches -> rankings.json
 
-The pool pipeline and the investigator's source fetch/build stages are deliberately not
-steps. They are re-run only when their underlying rankings change; this loop applies the
+The pool build and the provider-board fetch are deliberately not steps: they are re-run
+only when their underlying projections or rankings change, and this loop applies the
 existing snapshots to the current draft without hitting any ranking provider. Source
 investigation precedes ranking because each simulated opponent consumes its latest match.
 
-Each step is a separate ``uv run``, not an import. All run with the repo root as their
-working directory, so their own default paths apply and this works from anywhere
-(``rank.py`` resolves ``pool.json`` and ``draft.json`` from the shell's cwd, not from
-the script).
-
 Usage:
-    uv run refresh.py            # draft.json, rankings.json, data_source_matches.json
+    uv run refresh.py            # draft.json, data_source_matches.json, rankings.json
     uv run refresh.py --report   # + every step's validation summary on stderr
 """
 
@@ -46,8 +38,8 @@ def main(argv: list[str] | None = None) -> int:
 
     report = ["--report"] if args.report else []
     steps = [
-        ("draft", ["draft_pipeline/fetch_draft.py", *report]),
-        ("investigate", ["data_source_investigator/investigate.py", *report]),
+        ("draft", ["draft/fetch_draft.py", *report]),
+        ("investigate", ["sources/investigate.py", *report]),
         ("rank", ["rank.py", *report]),
     ]
 
@@ -60,10 +52,7 @@ def main(argv: list[str] | None = None) -> int:
             return code
         print(f"--- {name} ok in {time.monotonic() - started:.1f}s", file=sys.stderr)
 
-    print(
-        "\nrefresh complete -> rankings.json + data_source_matches.json",
-        file=sys.stderr,
-    )
+    print("\nrefresh complete -> rankings.json + data_source_matches.json", file=sys.stderr)
     return 0
 
 

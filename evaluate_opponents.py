@@ -22,12 +22,11 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent
-INVESTIGATOR_DIR = REPO_ROOT / "data_source_investigator"
-sys.path.insert(0, str(INVESTIGATOR_DIR))
+# sources/ is a folder of scripts, not a package; investigate.py imports its siblings bare.
+sys.path.insert(0, str(REPO_ROOT / "sources"))
 
 import investigate as source_investigator  # noqa: E402
 
-from ranker import league  # noqa: E402
 from ranker.board import load_board  # noqa: E402
 from ranker.league import NOISE, SEED  # noqa: E402
 from ranker.opponents import build_opponent_strategies  # noqa: E402
@@ -38,7 +37,7 @@ from ranker.value import seed_levels  # noqa: E402
 TRIALS = 100
 POOL = REPO_ROOT / "pool.json"
 DRAFT = REPO_ROOT / "draft.json"
-SOURCE_RANKINGS = INVESTIGATOR_DIR / "data/rankings.json"
+SOURCE_BOARDS = REPO_ROOT / "sources/data/boards.json"
 
 
 def replay_before(draft: dict, pick_no: int) -> dict:
@@ -202,14 +201,13 @@ def main() -> int:
     try:
         players, _ = load_pool(POOL)
         draft = json.loads(DRAFT.read_text())
-        league.configure_from_draft(draft)
-        rankings = json.loads(SOURCE_RANKINGS.read_text())
+        rankings = json.loads(SOURCE_BOARDS.read_text())
         results = evaluate(players, draft, rankings)
     except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
         print(f"cannot evaluate opponent predictions: {exc}", file=sys.stderr)
         return 1
     if not results:
-        print("no completed opponent picks to replay — pre-draft board")
+        print("no completed opponent picks to replay: pre-draft board")
         return 0
     report(results)
     return 0

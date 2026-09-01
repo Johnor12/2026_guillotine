@@ -1,4 +1,5 @@
-"""Assemble the documented rankings.json payload."""
+"""Assemble the rankings.json payload. The method is documented in the module
+docstrings and README.md; the payload carries the numbers plus one-line pointers."""
 
 from __future__ import annotations
 
@@ -6,17 +7,17 @@ from . import league
 from .board import Board
 from .league import (
     CANDIDATE_SURVIVAL_FLOOR,
-    DST_SLOTS,
     FIRST_PICK_PER_POS,
     GUILLOTINE_SIMS,
-    IR_SLOTS,
     LOOKAHEAD_PICKS,
-    MAX_POSITIONS,
+    NOISE,
     OPPONENT_DEPTH_PENALTY,
     OPPONENT_DEPTH_TARGETS,
+    OPPONENT_POSITION_TILT,
     POSITIONS,
     REGULAR_WEEKS,
-    SCHEME,
+    SEED,
+    SIMS,
     STARTING_SLOTS,
     SURVIVAL_SIGMA,
     TEAM_SEASON_SIGMA,
@@ -43,34 +44,32 @@ def team_names(board: Board) -> dict[int, str | None]:
     }
 
 
+def _position_counts(roster: list[Player], off: list[dict]) -> dict[str, int]:
+    counts = {pos: 0 for pos in POSITIONS}
+    for p in roster:
+        counts[p.position] += 1
+    for o in off:
+        if o.get("position") in counts:
+            counts[o["position"]] += 1
+    return counts
+
+
 def draft_block(board: Board) -> dict | None:
-    """How the output describes the board it started from. None when there was no live one."""
+    """The live board the simulation started from: made picks are already on their
+    rosters and out of the pool, only pending picks are played (a traded pick by the
+    roster that acquired it), and `rankings` covers the undrafted players only."""
     if not board.live:
         return None
     names = team_names(board)
     block = {k: v for k, v in board.live.items() if k != "slots"}
     block["my_remaining_picks"] = [pick_label(n) for n in board.my_picks]
-    block["note"] = (
-        "The simulation starts here: made picks are already on their teams' rosters and out "
-        "of the pool, and only the pending picks are played out, in this order — so a traded "
-        "pick is exercised by the roster that acquired it. `rankings` covers the undrafted "
-        "players only."
-    )
     block["off_pool_note"] = (
-        "Made picks with no match in pool.json by sleeper_id: kickers, defenses and anyone "
-        "past the pool's rank cut. They fill a roster spot and satisfy a mandatory position, "
-        "so the team owes one fewer pick, but they are never started and never valued — "
-        "there is no projection to value them with."
+        "Made picks with no match in pool.json by sleeper_id: they fill a roster spot "
+        "and satisfy a mandatory position but are never started or valued."
     )
     block["rosters"] = []
     for slot in range(1, league.TEAMS + 1):
         made, off = board.rosters[slot - 1], board.off_pool[slot - 1]
-        counts = {pos: 0 for pos in POSITIONS}
-        for p in made:
-            counts[p.position] += 1
-        for o in off:
-            if o.get("position") in counts:
-                counts[o["position"]] += 1
         block["rosters"].append(
             {
                 "draft_slot": slot,
@@ -78,7 +77,7 @@ def draft_block(board: Board) -> dict | None:
                 "is_mine": slot == board.my_slot,
                 "picks_made": len(made) + len(off),
                 "picks_left": board.picks_left[slot - 1],
-                "positions": {pos: n for pos, n in counts.items() if n},
+                "positions": {pos: n for pos, n in _position_counts(made, off).items() if n},
                 "players": [f"{p.name} ({p.position})" for p in made],
                 "off_pool": [f"{o['name']} ({o['position']})" for o in off],
             }
@@ -87,23 +86,14 @@ def draft_block(board: Board) -> dict | None:
 
 
 def example_rosters(draft: Draft, board: Board) -> list[dict]:
-    """Every team's final roster from the deterministic draft, for eyeballing smells.
-
-    Rosters read in pick order: the live board's made picks first (the board does not keep
-    their pick numbers), then the simulated picks with the pick they were taken at. Each
-    entry carries the projection fields the dashboard needs; rankings only contains
-    undrafted players, so looking rostered players up there leaves every live pick blank.
-    """
+    """Every team's final roster from the deterministic draft: the live board's made
+    picks first (the board does not keep their pick numbers), then the simulated picks
+    with the pick they were taken at. Each entry carries what the dashboard needs, since
+    `rankings` only lists undrafted players."""
     names = team_names(board)
     out: list[dict] = []
     for slot in range(1, league.TEAMS + 1):
         roster, off = draft.rosters[slot - 1], draft.off_pool[slot - 1]
-        counts = {pos: 0 for pos in POSITIONS}
-        for p in roster:
-            counts[p.position] += 1
-        for o in off:
-            if o.get("position") in counts:
-                counts[o["position"]] += 1
         picks: list[dict] = []
         for p in roster:
             pick_no = draft.pick_of.get(p.player_id)
@@ -144,7 +134,7 @@ def example_rosters(draft: Draft, board: Board) -> list[dict]:
                 "team": names.get(slot),
                 "is_mine": slot == board.my_slot,
                 "players": len(roster) + len(off),
-                "positions": counts,
+                "positions": _position_counts(roster, off),
                 "picks": picks,
             }
         )
@@ -160,29 +150,18 @@ def build_payload(
     history: dict,
     rows: list[dict],
     problems: list[str],
-    sims: int,
-    noise: float,
-    seed: int,
     opponents: dict[int, OpponentStrategy],
-    guillotine: dict | None = None,
-    option_redraw: dict | None = None,
-    rollout: dict | None = None,
-    survival: dict[int, dict[int, float]] | None = None,
+    guillotine: dict,
+    option_redraw: dict | None,
+    rollout: dict | None,
+    survival: dict[int, dict[int, float]] | None,
 ) -> dict:
     return {
-        "generated_from": pool_meta["source_file"],
-        "scoring_scheme": SCHEME,
-        "value_input": f"pool.json weekly_points ({SCHEME})",
-        "value_note": (
-            "DraftSharks' per-week projected points in this league's scoring for "
-            "league weeks 1-17, with byes and known absences as zero weeks. Roster value is each "
-            "week's best expected legal lineup under that week's starting shape — "
-            "including the probability that deeper players are called on when higher "
-            "teammates are unavailable and one unique waiver body per position per "
-            "week — combined across weeks by the converged guillotine week weights "
-            "(see `guillotine`). Draftsharks' 3D value is deliberately unused: it is a "
-            "provider-scaled ordinal, not points, so it cannot enter a "
-            "points-denominated lineup objective."
+        "value_input": "pool.json weekly_points (DraftSharks per-week, league scoring)",
+        "method": (
+            "Roster value is each week's expected optimal legal lineup under that week's "
+            "starting shape and position-wide availability, combined across weeks 1-17 by "
+            "the converged guillotine week weights; see rank.py and ranker/*.py."
         ),
         "league": {
             "teams": league.TEAMS,
@@ -193,18 +172,11 @@ def build_payload(
             ),
             "regular_weeks": REGULAR_WEEKS,
             "starting_slots": STARTING_SLOTS,
-            "weekly_shapes_note": (
-                "starting_slots is the opening (week 1) shape; lineups expand "
-                "in-season — see guillotine.weekly_shapes, where the week-14+ "
-                "superflex is modeled as a second dedicated QB slot"
-            ),
-            "dst_slots": DST_SLOTS,
             "bench_slots": league.BENCH_SLOTS,
-            "ir_slots": IR_SLOTS,
-            "max_positions": MAX_POSITIONS,
             "rounds": league.ROUNDS,
             "total_picks": league.TOTAL_PICKS,
             "draft_type": "snake",
+            "reversal_round": league.REVERSAL_ROUND,
             "my_slot": board.my_slot,
             "my_picks": [pick_label(p) for p in picks_for_slot(board.my_slot, draft_order())],
         },
@@ -213,57 +185,21 @@ def build_payload(
         "example_draft": {
             "note": (
                 "Full final rosters from the single deterministic draft at the converged "
-                "levels — the same draft sim_pick reports. When the conditional first-pick "
-                "recommendation is taken earlier on this noiseless path, this block follows "
-                "the reported deterministic fallback instead. Made picks are "
-                "facts from the live board; every pending pick is the model drafting. Read "
-                "it for smells: position hoarding or a position left to the last rounds."
+                "levels, the same draft sim_pick reports. Made picks are facts from the "
+                "live board; every pending pick is the model drafting."
             ),
             "rosters": example_rosters(draft, board),
         },
         "my_next_picks": {
             "note": (
-                "The model's own choice at each of my next picks, from the deterministic "
-                "draft at the converged levels. The first shortlist starts from the live "
-                "board before intervening opponents pick, then drops candidates below a "
-                "5% chance of reaching my turn. value_now is the candidate's marginal "
-                "guillotine-weighted weekly lineup value with one unique waiver "
-                "fallback per position per week; "
-                "next_pick_ev is E[value of the best player still there at my following "
-                "pick] if I take him now. No positional roster-size heuristic adjusts "
-                "either value. The pick "
-                "maximizes their sum, so it can disagree with the board's static "
-                "lineup_gain order — the lookahead prices what my following pick keeps, "
-                "which a single-pick gain does not. At my first pending pick, each "
-                "next_pick_ev redraws the pre-pick opponents until that candidate survives, "
-                "takes him, and measures the best marginal option actually left at my "
-                "following turn; "
-                "later displayed picks retain the fast global-rank approximation used by "
-                "the bulk draft policy. My first pending pick searches target plans across "
-                "my next four held picks; every shorter prefix is eligible, so the ordinary "
-                "policy can resume at any turn. Later targets below 5% conditional survival "
-                "are dropped. The best screened plan of each length is then scored over the "
-                "whole remaining draft, and the best noisy EV "
-                "represents that first candidate "
-                "(rollout_ev/rollout_edge/rollout_se), with a planned target used only if he "
-                "survives and the ordinary policy used otherwise. rollout_edge is that "
-                "plan's paired gain over the ordinary policy on the same draws, measured "
-                "for every candidate including the two-pick leader, whose plan is a plan "
-                "too — so rollout_ev ranks candidates directly. `take` is the EV choice "
-                "conditional on being available; `deterministic_fallback` is emitted when "
-                "the noiseless example removes that choice first. The two-pick leader's "
-                "take stands unless another candidate beats his plan by twice the standard "
-                "error of their paired difference. When the recommended player survives the noiseless "
-                "prefix, that draft is re-played with the selected plan; otherwise the "
-                "example draft and later displayed picks describe the fallback path. Its "
-                "candidates also carry "
-                "p_available_if_i_pass — P(no opponent has taken him before each of my "
-                "picks) across redraws where my slot never takes him: the honest 'how "
-                "long can I wait', with the pass-on-him counterfactual actually played "
-                "out rather than estimated (compare p_available_at_my_picks, which is "
-                "Kaplan-Meier from redraws where I do take him). It covers every remaining "
-                "pick, including the certainties, because 'nobody else ever wants him' and "
-                "'gone before my next pick' are the two answers that decide the pick."
+                "value_now is the candidate's marginal guillotine-weighted lineup value; "
+                "next_pick_ev is E[best option at my following pick] if I take him. At my "
+                "first pending pick next_pick_ev comes from conditional opponent redraws, "
+                "and rollout_ev/rollout_edge/rollout_se score each candidate's best "
+                "four-pick target plan over the whole remaining draft; `take` is the "
+                "rollout's recommendation conditional on availability. "
+                "p_available_if_i_pass is measured from redraws where my slot never takes "
+                "him. See ranker/rankings.py and ranker/planning.py."
             ),
             "option_sims": option_redraw["sims"] if option_redraw else None,
             "rollout_sims": rollout["sims"] if rollout else None,
@@ -273,94 +209,38 @@ def build_payload(
             "picks": my_next_picks(draft, board, rollout, survival),
         },
         "rankings_note": (
-            "Undrafted players only, ranked by `lineup_gain` — the decision metric the "
-            "pick engine maximizes (before lookahead): the player's marginal "
-            "guillotine-weighted weekly lineup value on my current roster at the "
-            "converged levels. Roster-aware, so it shrinks where my roster is already "
-            "deep, and survival-aware, so points in weeks my roster already clears the "
-            "elimination bar (or weeks I am unlikely to reach) count for little. The "
-            "rank columns are renumbered over the rows emitted here."
-            if board.live
-            else "The whole pool, from an empty board: no live draft was read."
+            "Undrafted players only, ranked by lineup_gain: the player's marginal "
+            "guillotine-weighted weekly lineup value on my current roster at the converged "
+            "levels. Rank columns are renumbered over the rows emitted here."
         ),
         "opponent_model": {
-            "who": (
-                f"the other {league.TEAMS - 1} teams; my slot alone uses projections "
-                "and roster value"
-            ),
             "how": (
                 "Each opponent orders legal available players by the provider board most "
-                "associated with its completed picks in data_source_matches.json. Opponent "
-                "valuation never reads personal projections, wire levels, or team "
-                "value. A position's source rank receives a soft boost in "
-                "proportion to its unfilled dedicated starters and a compounding penalty "
-                "beyond its comfortable depth; the deterministic draft takes the best "
-                "adjusted rank, and Monte Carlo draws around that preference."
+                "associated with its completed picks in data_source_matches.json, with a "
+                "soft boost for unfilled dedicated starters, a compounding penalty beyond "
+                "comfortable depth, and a per-position tilt; Monte Carlo draws around that "
+                "preference with noise calibrated to the investigator's mean_log2_loss. "
+                "Opponents never read my projections or board."
             ),
-            "depth_preference": {
-                "targets": OPPONENT_DEPTH_TARGETS,
-                "penalty_per_extra_player": OPPONENT_DEPTH_PENALTY,
-                "note": (
-                    "The penalty starts past what a roster with 12 offensive spots "
-                    "ordinarily carries at each position. This adjusts opponent source "
-                    "rank only; "
-                    "the hard limits are max_positions, which every roster obeys."
-                ),
-            },
-            "adherence": (
-                "The investigator's mean_log2_loss is converted to a power distribution "
-                "over source rank among legal available players, before the roster-balance "
-                "adjustment. --noise 1 uses that fitted randomness; 0 removes randomness "
-                "but retains the balance adjustment. fit_score and confidence identify "
-                "association strength, while mean_log2_loss determines adherence."
-            ),
-            "coverage": (
-                "A provider's normalized players come first. Any pool player it does not "
-                f"rank is appended in consensus-average order so all {league.TOTAL_PICKS} "
-                "picks remain possible; the fallback is still an external opponent board, "
-                "never my personal board."
-            ),
-            "delta": (
-                f"opponent_consensus_rank averages the {league.TEAMS - 1} managers' "
-                "complete source "
-                "orders, counting a source once per associated manager, then re-ranks the "
-                "available pool. opponent_rank_delta is opponent_consensus_rank - rank; "
-                "positive identifies players my board values earlier than the modeled "
-                "field. Monte Carlo availability determines whether that gap is exploitable."
-            ),
+            "depth_targets": OPPONENT_DEPTH_TARGETS,
+            "depth_penalty_per_extra_player": OPPONENT_DEPTH_PENALTY,
+            "position_tilt": OPPONENT_POSITION_TILT,
             "divergence": {
                 "distinct_sources": len({s.source_id for s in opponents.values()}),
                 "mean_absolute_rank_delta": round(
                     sum(abs(row["opponent_rank_delta"]) for row in rows) / len(rows), 1
                 ),
-                "max_absolute_rank_delta": max(
-                    abs(row["opponent_rank_delta"]) for row in rows
-                ),
+                "max_absolute_rank_delta": max(abs(row["opponent_rank_delta"]) for row in rows),
             },
             "strategies": [opponents[slot].public() for slot in sorted(opponents)],
         },
         "guillotine": {
             "note": (
-                "The guillotine model behind the week weights and the weekly wire. "
-                "Each fixed-point iteration simulates the elimination race over the "
-                f"{league.TEAMS - 1} opponents' simulated rosters: every opponent gets "
-                "a persistent projection-error bias plus weekly score noise, the two "
-                "lowest are cut each week, and the elimination bar is the "
-                "second-lowest surviving opponent's score — beat it and I survive. A "
-                "week's weight is d log P(survive that cut) / d(weekly point) at my "
-                "converged roster; the championship weeks carry d log P(win the "
-                "week 16-17 final) instead. Weights are normalized to sum to 1, so "
-                "roster value reads as guillotine-weighted expected weekly lineup "
-                "points and scaling changes no decision."
+                "Elimination race simulated over the opponents' rosters each fixed-point "
+                "iteration; a week's weight is d log P(title) / d(weekly point). "
+                "See ranker/guillotine.py."
             ),
-            "weekly_shapes": [
-                {"week": w + 1, **WEEKLY_SHAPES[w]} for w in range(WEEKS)
-            ],
-            "superflex_note": (
-                "The week-14+ superflex is modeled as a second dedicated QB slot: its "
-                "realistic occupant is a QB, and a QB waiver body always exists. This "
-                "slightly undervalues RB/WR/TE depth in weeks 14-17."
-            ),
+            "weekly_shapes": [{"week": w + 1, **WEEKLY_SHAPES[w]} for w in range(WEEKS)],
             "weekly_sigma": WEEKLY_SIGMA,
             "team_season_sigma": TEAM_SEASON_SIGMA,
             "sims": GUILLOTINE_SIMS,
@@ -368,85 +248,37 @@ def build_payload(
             "diagnostics": guillotine,
         },
         "wire": {
-            "definition": (
-                "The body a team could sign for roughly nothing at each position, per "
-                "week: the best player left undrafted in the converged simulated "
-                "draft, rising as eliminated rosters hit waivers — the "
-                f"{WIRE_DROP_RANK}-th best weekly score among players on rosters cut "
-                "by that week (the best cut players cost real FAAB). Inside roster "
-                "valuation each position contributes this body once per week as an "
-                "always-available fallback; it cannot fill two simultaneous lineup "
-                "jobs. The escalation is why drafted depth is worth most early, when "
-                "the wire is barren, and why late expanded slots are cheap to fill — "
-                "the draft-time face of delaying FAAB spending."
+            "note": (
+                "Per position per week, the waiver bodies a surviving roster holds: the "
+                "better of the best undrafted players and the "
+                f"{WIRE_DROP_RANK}-th-best tiers of fresh eliminated-roster drops."
             ),
             "weekly_levels": {
                 k: [[round(v, 1) for v in bodies] for bodies in levels.wire[i]]
                 for i, k in enumerate(POSITIONS)
             },
             "drop_floor": {
-                k: [
-                    [round(v, 1) for v in bodies]
-                    for bodies in levels.drop_floor[i]
-                ]
+                k: [[round(v, 1) for v in bodies] for bodies in levels.drop_floor[i]]
                 for i, k in enumerate(POSITIONS)
             },
             "convergence": history,
         },
         "strategy": {
-            "objective": (
-                "guillotine-weighted expected weekly lineup points: each week's "
-                "expected optimal legal lineup under that week's starting shape and "
-                "position-wide player availability, weighted by the marginal effect "
-                "of a weekly point on log P(surviving that week's cut / winning the "
-                "final)"
-            ),
             "unavailable_rate": UNAVAILABLE_RATE,
-            "unavailable_note": (
-                "Byes and known absences are explicit zero weeks in weekly_points; "
-                "these rates price only surprise in-week unavailability."
-            ),
-            "depth_note": (
-                "Each week's lineup is re-optimized per availability draw: dedicated "
-                "slots take each position's best available bodies (a deeper body "
-                "contributes with the exact probability it is called on, from "
-                "unavailable_rate), and the week's FLEX seats take the best RB/WR/TE "
-                "leftovers pooled across positions. Computed in closed form as "
-                "expectation-of-weekly-max, not one locked seasonal composition."
-            ),
+            "survival_sigma": SURVIVAL_SIGMA,
             "lookahead": (
                 "first pending decision: four held picks with survival-aware target plans; "
-                "personal bulk policy: value now + E[best value at the following pick]"
-            ),
-            "survival_sigma": SURVIVAL_SIGMA,
-            "note": (
-                "The bulk policy is a two-pick greedy with an independence approximation. "
-                "The first pending pick uses banned-me availability redraws to build plans "
-                "across four held picks, then noisy full-draft rollouts choose among them — "
-                "see my_next_picks."
+                "bulk policy: value now + E[best value at the following pick]"
             ),
         },
         "monte_carlo": {
-            "sims": sims,
-            "noise": noise,
-            "seed": seed,
+            "sims": SIMS,
+            "noise": NOISE,
+            "seed": SEED,
             "note": (
-                f"Balance-adjusted source-rank Gumbel draws on the other {league.TEAMS - 1} "
-                "teams only, to "
-                "turn 0/1 availability under the deterministic preference into a usable "
-                "probability band. At noise=1 the source-rank component is calibrated to "
-                "each manager's observed mean log-rank loss before the balance adjustment; "
-                "noise=0 removes random variation but retains that adjustment. sim_pick is "
-                "from the noiseless draft; sim_adp, p_drafted and "
-                "p_available_at_my_picks are from these redraws and measure the other "
-                "teams' demand only — my own "
-                "simulated picks are the policy under evaluation, not opponent demand. "
-                "p_available_at_my_picks is a Kaplan-Meier estimate (an opponent take is "
-                "the event, my own take censors the redraw); "
-                "my_next_picks.p_available_if_i_pass is the assumption-free counterfactual "
-                "for the candidates that matter. sim_adp and p_drafted are over observed "
-                "opponent takes, so both read shallow for a player this policy usually "
-                "grabs first."
+                "sim_adp, p_drafted and p_available_at_my_picks are over the opponents' "
+                "takes in these redraws (Kaplan-Meier: an opponent take is the event, my "
+                "own take censors the redraw); sim_pick is from the noiseless draft."
             ),
         },
         "validation": {"problems": problems, "ok": not problems},

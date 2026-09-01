@@ -1,13 +1,11 @@
 """The draft pool: pool.json rows as Player objects.
 
-The value input is `weekly_points` — DraftSharks' native per-week projections in this
-league's scoring for weeks 1-17, attached by the pool pipeline's weekly stage, so byes
-and known absences are explicit zero weeks. `points` is kept as the sum of those
-weeks, one currency throughout. Draftsharks' 3D value is ignored entirely
-and is not even carried into the pool: it is a provider-scaled ordinal that already
-bakes in someone else's roster assumptions, and it is not in points, so it cannot
-enter a points-denominated lineup objective. Kickers and IDP are already dropped
-upstream because the roster has no slot for them.
+The value input is `weekly_points`: DraftSharks' native per-week projections in this
+league's scoring for weeks 1-17, attached by pool/build_pool.py, so byes and known
+absences are explicit zero weeks. `points` here is the sum of those weeks, one currency
+throughout (pool.json's own `points` column is Sleeper's season projection, the pool's
+membership gate). The pool build already restricts membership to QB/RB/WR/TE with a
+Sleeper id, so this only checks the shape it promises.
 """
 
 from __future__ import annotations
@@ -16,7 +14,7 @@ import json
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from .league import POINTS_FIELD, POSITIONS, WEEKS
+from .league import POSITIONS, WEEKS
 
 
 @dataclass(slots=True)
@@ -37,35 +35,17 @@ class Player:
 
 
 def load_pool(path: Path) -> tuple[list[Player], dict]:
-    """Read pool.json: already filtered to QB/RB/WR/TE with a usable one-season projection.
-
-    build_pool.py does the filtering — positions with no roster slot, the source's zeros
-    where a null belongs — so this only re-checks the
-    invariants it promises rather than re-deriving them. The guards stay because a
-    hand-edited or stale pool is the likeliest way this ever gets bad input.
-    """
     raw = json.loads(path.read_text())
     players: list[Player] = []
-    dropped = {"non_offense": 0, "zero_projection": []}
     for rec in raw["players"]:
         if rec["position"] not in POSITIONS:
-            dropped["non_offense"] += 1
-            continue
-        # Direct key access: a pool.json without the value columns predates this league's
-        # scoring or the weekly-shape stage and must be rebuilt, not silently valued
-        # at zero. Guillotine valuation is per-week, so `points` becomes the sum of
-        # the weeks actually playable here (weeks 1-17; the shape stage already
-        # dropped any week-18 share) — one currency for sorting, display, and value.
-        season = rec[POINTS_FIELD]
+            raise ValueError(f"{rec['name']} is a {rec['position']}; rebuild pool.json")
         weekly = rec["weekly_points"]
         if len(weekly) != WEEKS:
             raise ValueError(
-                f"{rec['name']} carries {len(weekly)} weekly points, want {WEEKS} — "
-                "rebuild pool.json (pool_pipeline/apply_weekly_shape.py)"
+                f"{rec['name']} carries {len(weekly)} weekly points, want {WEEKS}; "
+                "rebuild pool.json (pool/build_pool.py)"
             )
-        if not season or season <= 0:
-            dropped["zero_projection"].append(rec["name"])
-            continue
         players.append(
             Player(
                 player_id=rec["player_id"],
@@ -86,19 +66,14 @@ def load_pool(path: Path) -> tuple[list[Player], dict]:
     counts = {pos: 0 for pos in POSITIONS}
     for p in players:
         counts[p.position] += 1
-
     meta = {
-        "source_file": str(path),
-        "source_player_count": raw.get("player_count", len(raw["players"])),
-        "source_of_pool": raw.get("source_file"),
-        "points_source": (raw.get("points_source") or {}).get("file"),
+        "source_file": path.name,
+        "sources": raw.get("sources"),
         "pool_size": len(players),
         "by_position": counts,
         # The join key to draft.json. A pool player without one can never be recognised
         # as drafted, so a shortfall here is a silent way for the live board to go wrong.
         "with_sleeper_id": sum(1 for p in players if p.sleeper_id),
-        "dropped_non_offense": dropped["non_offense"],
-        "dropped_zero_projection": sorted(dropped["zero_projection"]),
     }
     return players, meta
 

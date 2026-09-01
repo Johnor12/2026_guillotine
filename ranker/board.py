@@ -1,7 +1,7 @@
 """The draft's starting state: draft.json as a Board, or a fresh one.
 
-By default the draft does not start empty: `draft.json` (written by
-`draft_pipeline/fetch_draft.py`) is the live board, and it is the simulation's initial
+The draft does not start empty: `draft.json` (written by
+`draft/fetch_draft.py`) is the live board, and it is the simulation's initial
 state. Made picks are already on their teams' rosters and off the pool; the simulated
 draft plays out only the picks that are still pending, in the order that file says they
 will happen — which is where traded picks enter, since a pick's owner there is the roster
@@ -78,9 +78,9 @@ class Board:
         return len(self.rosters[i]) + len(self.off_pool[i]) + self.picks_left[i]
 
 
-def fresh_board(my_slot: int | None = None) -> Board:
-    """An untouched board: the static snake, empty rosters, every pick pending."""
-    my_slot = league.MY_SLOT if my_slot is None else my_slot
+def fresh_board() -> Board:
+    """An untouched board: the static snake, empty rosters, every pick pending.
+    Only the offline selftest starts here; a real run always loads draft.json."""
     order = draft_order()
     return Board(
         order=order,
@@ -88,8 +88,8 @@ def fresh_board(my_slot: int | None = None) -> Board:
         rosters=[[] for _ in range(league.TEAMS)],
         off_pool=[[] for _ in range(league.TEAMS)],
         picks_left=[league.ROUNDS] * league.TEAMS,
-        my_slot=my_slot,
-        my_picks=picks_for_slot(my_slot, order),
+        my_slot=league.MY_SLOT,
+        my_picks=picks_for_slot(league.MY_SLOT, order),
     )
 
 
@@ -98,17 +98,14 @@ def load_board(
 ) -> tuple[Board, list[str]]:
     """Turn `draft.json` into a Board. Returns the board and any complaints about it.
 
-    The join is on `sleeper_id`, the one key the two pipelines share — `match_sleeper.py`
+    The join is on `sleeper_id`, the one key the two pipelines share: the pool build
     writes it into every pool player and every made pick in `draft.json` carries it. A
     made pick with no match in the pool is not an error: D/STs, kickers, IDP and anyone
     past the pool's rank cut are draftable and unrankable at the same time, so they become
     `off_pool` entries (see the module docstring).
 
-    Geometry disagreements with the configured league are reported rather than raised.
-    rank.py configures the geometry from this same file first, so these fire only when a
-    draft's header contradicts itself (pick_count != teams * rounds) or when a caller
-    skipped `league.configure_from_draft`; both are worth seeing in `validation.problems`
-    next to the numbers they broke.
+    Geometry disagreements with league.py are reported rather than raised, so they land
+    in `validation.problems` next to the numbers they broke; the fix is editing league.py.
     """
     problems: list[str] = []
     fmt = raw.get("format") or {}
@@ -118,17 +115,14 @@ def load_board(
         ("pick_count", raw.get("pick_count"), league.TOTAL_PICKS),
     ):
         if got is not None and got != want:
-            problems.append(f"{source} says {label}={got}, this run is configured for {want}")
+            problems.append(f"{source} says {label}={got}, league.py says {want}")
 
     slot_of_roster = {
         s["roster_id"]: s["draft_slot"] for s in raw.get("slots", []) if s.get("roster_id")
     }
     my_slot = (raw.get("me") or {}).get("draft_slot") or league.MY_SLOT
     if my_slot != league.MY_SLOT:
-        problems.append(
-            f"{source} says my draft slot is {my_slot}, this run is configured "
-            f"for {league.MY_SLOT}"
-        )
+        problems.append(f"{source} says my draft slot is {my_slot}, league.py says {league.MY_SLOT}")
 
     by_sleeper: dict[str, Player] = {}
     for p in players:
@@ -206,7 +200,7 @@ def load_board(
         # Otherwise this fails silently in the worst possible way: every made pick looks
         # unrankable, so drafted players stay on the emitted board as if available.
         problems.append(
-            f"no pool player carries a sleeper_id, so no pick in {source} can be joined "
-            "- run pool_pipeline/match_sleeper.py"
+            f"no pool player carries a sleeper_id, so no pick in {source} can be joined; "
+            "rebuild pool.json"
         )
     return board, problems

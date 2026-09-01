@@ -1,9 +1,9 @@
-# 2026 redraft
+# 2026 guillotine
 
-A toolkit for a 32-team 0.5 PPR guillotine redraft league on Sleeper
-("Gnosis Guillotine", league 1397662420398247936). Independent processes publish
-stable JSON artifacts at the repository root; the ranker consumes those artifacts
-and the static dashboard renders the result.
+A draft toolkit for a 32-team 0.5 PPR guillotine redraft league on Sleeper
+("Gnosis Guillotine", league 1397662420398247936). Four processes each publish one JSON
+artifact at the repository root; the ranker consumes the other three and the static
+dashboard renders its output.
 
 ## League assumptions
 
@@ -11,144 +11,129 @@ and the static dashboard renders the result.
 - Guillotine: the two lowest weekly scores are eliminated each of weeks 1–15 and
   their players go to FAAB waivers; the last two teams play a week 16–17
   total-points championship
-- Opening starters: 1 QB, 1 RB, 2 WR, 1 TE, 2 W/R/T flex — no D/ST or kicker slot;
+- Opening starters: 1 QB, 1 RB, 2 WR, 1 TE, 2 W/R/T flex; no D/ST or kicker slot;
   lineups expand in-season (+1 WR wk 7, +1 RB wk 9, +1 flex wk 12, +1 superflex
   wk 14, bench grows from 1 to 5)
-- 2 reserve spots (reserve is not drafted into)
-- No per-position roster caps
+- 2 reserve spots (reserve is not drafted into), no per-position roster caps
 - 32 teams and 8 drafted players per team (256 picks, all offense)
 - Snake draft with a third-round reversal: round 1 forward, rounds 2–3 reversed,
   alternating from there; picks can be traded
 - My slot is 20 (johnor): 1.20, 2.13, 3.13, 4.20, 5.13, 6.20, 7.13, 8.20 before trades
-- The guillotine is the objective: a roster is valued week by week (byes and known
-  absences are zero weeks, lineups take each week's actual shape) and the weeks are
-  combined by survival-hazard weights from a simulated elimination race — see the
-  [ranker](ranker/README.md)
 
-These are project assumptions, not runtime configuration. Ranker constants live in
-`ranker/league.py`; the draft's actual geometry (teams, rounds, reversal, my slot) is
-adopted from `draft.json` on every run.
+These are constants in `ranker/league.py`, not runtime configuration. The ranker
+complains loudly when `draft.json` disagrees with them.
 
 ## Setup
 
-[uv](https://docs.astral.sh/uv/) pins Python 3.12.
+[uv](https://docs.astral.sh/uv/) pins Python 3.12; everything is stdlib.
 
 ```bash
 uv sync
 uv run <script>
 ```
 
-Commands work from the repository root. Pipeline defaults are anchored to their own
-directories, so their documented direct invocations also work from inside the pipeline.
+Every script anchors its paths to its own location, so commands work from anywhere.
 
 ## Data flow
 
 ```text
-pool_pipeline/ ───────────────> pool.json ──────────┐
-                                                   │
-draft_pipeline/ ──────────────> draft.json ─────────┼─> rank.py ────> rankings.json
-                                                   │
-data_source_investigator/ ────> data_source_matches.json
-                         └────> data/rankings.json ─┘
+pool/    projections.html + sleeper_projections.json + weekly_projections.json
+         └─ build_pool.py ─────────────────────────────> pool.json ──────────────┐
+sources/ fetch_rankings.py -> data/raw/ -> build_rankings.py -> data/boards.json ─┤
+                                                                                  │
+draft/   fetch_draft.py ──────────────────────────────> draft.json ──────────────┤
+                                                                                  │
+sources/ investigate.py (boards + draft) ─────────────> data_source_matches.json ─┤
+                                                                                  │
+rank.py ──────────────────────────────────────────────> rankings.json <───────────┘
 ```
 
-The published files have distinct owners:
+- `pool.json`: ~370 QB/RB/WR/TE players. DraftSharks supplies identity, age, bye,
+  rookie flag and 1QB ADP from a hand-saved rankings page; a Sleeper season projection
+  gates membership and supplies `sleeper_id`; `weekly_points` is DraftSharks' per-week
+  projection for weeks 1–17 in the league's scoring, with byes and known absences as
+  zero weeks. It is the ranker's value input.
+- `draft.json`: all 256 made and pending picks from Sleeper's public, real-time draft
+  API, with pending picks derived from the draft settings and traded picks applied.
+- `sources/data/boards.json`: provider boards (FantasyCalc, KeepTradeCut, FF Calculator
+  ADP, FantasyPros ECR, DraftSharks ADP, Sleeper ADP, and a consensus average),
+  each row resolved to the pool's `sleeper_id`.
+- `data_source_matches.json`: for each drafter, the board closest to its picks so far,
+  with fit scores and pick-level evidence.
+- `rankings.json`: undrafted-player rankings, next-pick recommendations, the example
+  draft, and validation.
 
-- `pool.json`: ~370 QB/RB/WR/TE players keyed to Sleeper, priced by DraftSharks'
-  league-scored per-week projections for weeks 1–17, which carry byes and known
-  absences as zero weeks (identity and ADP from DraftSharks; Sleeper's season
-  projection remains as the pool-membership filter)
-- `draft.json`: all 256 made and pending picks from Sleeper's draft API, which is
-  public and real-time — a fetch between picks is current
-- `data_source_matches.json`: the provider board closest to each opponent's picks
-- `rankings.json`: undrafted-player rankings, recommendations, simulations, and validation
-
-`sleeper_id` is the cross-process player key. `roster_id` and `draft_slot` connect
+`sleeper_id` is the cross-process player key; `roster_id` and `draft_slot` connect
 opponent source matches to the live board.
 
-## Components
+## Method
 
-- [Pool pipeline](pool_pipeline/README.md): provider HTML to the league-specific pool
-- [Draft pipeline](draft_pipeline/README.md): Sleeper's draft API to the complete live board
-- [Data-source investigator](data_source_investigator/README.md): normalize provider
-  boards and infer opponent strategies
-- [Ranker](ranker/README.md): wire-level solver, opponent simulation, planning,
-  and output contracts
-- `index.html`: dependency-free dashboard for `rankings.json`
-- `data_source_investigator/index.html`: source-fit and pick-evidence dashboard
-- `serve.py`: serves both dashboards at http://127.0.0.1:8123
+The guillotine is the objective. A roster is valued week by week as the expected
+optimal lineup under that week's starting shape and position-wide availability, using
+per-week projections, and the 17 weekly values are combined by guillotine week weights:
+each week's weight is the marginal effect of a weekly point on log P(surviving that
+week's cut), measured by simulating the elimination race over the opponents' simulated
+rosters, with the championship weeks entering through log P(winning the final). The
+waiver wire is per week and tiered: the best undrafted bodies early, rising as
+eliminated rosters hit waivers. Levels and the simulated draft are a fixed point that
+converges to a limit cycle. My slot alone uses this objective; each opponent follows
+the external board most associated with its picks, with roster-balance adjustments and
+fitted choice noise, and never sees my projections. The first pending decision searches
+target plans across my next four held picks and plays each plan out to the end of the
+draft. See `rank.py` and the `ranker/` module docstrings for the details.
 
-Each component keeps its own paths, entry points, and implementation context. Offline
-checks remain beside the draft, investigator, and ranker code they exercise. The pipelines
-meet through their published JSON contracts rather than shared orchestration.
+## Workflows
 
-The ranker values a roster as guillotine-weighted expected weekly lineup points: each
-week's expected optimal lineup under that week's starting shape and per-week
-projections, weighted by the marginal effect of a weekly point on surviving that
-week's cut (championship weeks by winning the final). Position-wide availability
-determines when depth is called on, and per-week tiered waiver bodies — the best
-undrafted player early, fresh eliminated-roster drops later — supply the fallback.
-Personal and opponent strategies are intentionally separate: my slot uses the
-projection-based roster objective, while each opponent follows its inferred external
-board with roster-balance adjustments and fitted choice noise. Opponent picks never
-use my projections or board.
-
-## Common workflows
-
-Rebuild the projection pool after saving updated provider HTML:
-
-```bash
-uv run pool_pipeline/pipeline.py --report
-```
-
-Re-price the pool after refetching Sleeper projections:
-
-```bash
-uv run pool_pipeline/fetch_sleeper_projections.py
-uv run pool_pipeline/pipeline.py --report
-```
-
-Refresh ranking snapshots and opponent associations:
-
-```bash
-uv run data_source_investigator/pipeline.py --report
-```
-
-Refresh the live board and recommendations between picks — Sleeper's draft API is
-real-time, so this is one command:
+Refresh the live board and recommendations between picks (Sleeper's draft API is
+real-time, so this is the whole live loop):
 
 ```bash
 uv run refresh.py --report
 ```
 
-`refresh.py` deliberately does only three live steps: fetch the draft, re-run source
-inference against the existing provider snapshot, then rank. It does not rebuild the
-offline pool or fetch provider boards.
+It runs three steps: fetch the draft, re-run source inference against the existing
+boards snapshot, then rank. It never rebuilds the pool or fetches provider boards.
 
-To follow a different draft (e.g. a league mock at `sleeper.com/draft/nfl/<id>`),
-fetch it explicitly first, then run the investigator and ranker:
+Rebuild the pool after refetching projections or saving a new DraftSharks page to
+`pool/data/projections.html`:
 
 ```bash
-uv run draft_pipeline/fetch_draft.py --draft-id <id>
-uv run data_source_investigator/investigate.py
+uv run pool/fetch_projections.py      # Sleeper season + DraftSharks weekly, manual
+uv run pool/build_pool.py --report
+```
+
+Refresh the provider boards (rebuild the pool first if it changed, since every board
+resolves onto it):
+
+```bash
+uv run sources/fetch_rankings.py
+uv run sources/build_rankings.py --report
+```
+
+Follow a different draft, such as a league mock at `sleeper.com/draft/nfl/<id>`:
+
+```bash
+uv run draft/fetch_draft.py --draft-id <id>
+uv run sources/investigate.py
 uv run rank.py --report
 ```
 
-Run offline checks:
+Offline checks:
 
 ```bash
 uv run rank.py --selftest
-uv run draft_pipeline/fetch_draft.py --selftest
-uv run data_source_investigator/investigate.py --selftest
-uv run evaluate_opponents.py
+uv run draft/fetch_draft.py --selftest
+uv run sources/investigate.py --selftest
+uv run evaluate_opponents.py   # replays every completed opponent pick through the model
 ```
 
-Before and after changing an opponent model or pick policy, run
-`uv run evaluate_opponents.py` and compare its replay accuracy.
+Before and after changing the opponent model, compare `evaluate_opponents.py`'s replay
+accuracy.
 
-## Dashboard
+## Dashboards
 
-Run `uv run serve.py` and open the local URL; direct `file://` access cannot fetch the
-JSON files. The dashboard renders the `rankings.json` snapshot — including the live
-board state embedded in it — and shows when that snapshot was taken; re-run
-`refresh.py` and reload to advance it.
+`uv run serve.py` serves the repository at http://127.0.0.1:8123 (direct `file://`
+access cannot fetch the JSON). `/` renders `rankings.json`, including the live board
+state embedded in it and when that snapshot was taken; `/sources/` renders
+`data_source_matches.json` as a team-by-source fit heatmap with pick-level evidence.
+Re-run `refresh.py` and reload to advance either.

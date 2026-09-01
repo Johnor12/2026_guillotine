@@ -15,7 +15,6 @@ from .board import Board
 from .league import (
     DEDICATED_SLOTS,
     LOOKAHEAD_PER_POS,
-    MAX_POSITIONS,
     OPPONENT_BALANCE_STRENGTH,
     OPPONENT_DEPTH_PENALTY,
     OPPONENT_DEPTH_TARGETS,
@@ -111,9 +110,9 @@ class Draft:
             raise ValueError(f"no source strategy for opponent slot(s) {sorted(missing)}")
         self.by_id = {p.player_id: p for p in players}
         # The fast survival approximation for my later picks needs one league-wide order.
-        # Average the nine source ranks, counting repeated sources once per manager. This
-        # is only an approximation of the slot-specific policies; the decision in front
-        # of me is priced by branch-specific Monte Carlo redraws instead.
+        # Average the 31 opponents' source ranks, counting a repeated source once per
+        # manager. This is only an approximation of the slot-specific policies; the
+        # decision in front of me is priced by branch-specific Monte Carlo redraws.
         consensus_score = {
             p.player_id: sum(s.ranks[p.player_id] for s in self.opponents.values())
             / len(self.opponents)
@@ -185,18 +184,14 @@ class Draft:
         picks_left: int | None = None,
         off: Sequence[dict] = (),
     ) -> list[Player]:
-        """Best available players at each legal position, honouring roster limits.
+        """Best available players at each legal position, honouring the mandatory slots.
 
-        A lineup needs 1 QB, 2 RB, 2 WR and 1 TE from positions that nothing else can
+        A lineup needs 1 QB, 1 RB, 2 WR and 1 TE from positions that nothing else can
         cover, so a manager cannot spend every pick on the best name available and end up
         without a quarterback. Once the picks remaining are exactly the unfilled mandatory
         spots, candidates narrow to the positions still owed. This is the honest way to stop
-        a team punting a position — an earlier attempt distorted the value of an empty slot
+        a team punting a position; an earlier attempt distorted the value of an empty slot
         instead, which broke the board.
-
-        `MAX_POSITIONS` also caps each position; a position at its cap is removed from
-        the candidate set. (This league sets no per-position caps, so the caps there
-        equal the roster size and never bind — the mechanism stays for leagues that do.)
 
         `off` is the team's already-drafted players the pool cannot value. They count here
         and only here: they occupy a roster spot and they answer a mandatory position, so a
@@ -224,16 +219,16 @@ class Draft:
         picks_left: int | None,
         off: Sequence[dict],
     ) -> tuple[tuple[str, ...], ...]:
-        """Roster-legality filters shared by my board and the opponent boards."""
-        have = self.position_counts(roster, off)
-        eligible = tuple(pos for pos in POSITIONS if have[pos] < MAX_POSITIONS[pos])
+        """Roster-legality filters shared by my board and the opponent boards: the
+        positions still owed once the remaining picks are exactly the unfilled
+        mandatory spots, else every position. The second scenario is the fallback
+        when a position is exhausted, which a 370-player pool never reaches."""
+        eligible = POSITIONS
         if picks_left is not None:
+            have = self.position_counts(roster, off)
             owed = {pos: max(0, DEDICATED_SLOTS[pos] - have[pos]) for pos in POSITIONS}
             if picks_left <= sum(owed.values()):
-                eligible = tuple(pos for pos in eligible if owed[pos]) or eligible
-        # Every pick is mandatory, so an impossible plan relaxes to any position rather
-        # than stalling the draft; the caps sum to 23 > 12 picks, so this cannot happen
-        # on a legal board, only on synthetic ones.
+                eligible = tuple(pos for pos in POSITIONS if owed[pos]) or POSITIONS
         return (eligible, POSITIONS)
 
     def opponent_candidates(self, slot: int) -> list[Player]:

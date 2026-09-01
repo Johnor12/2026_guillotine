@@ -18,7 +18,7 @@ def main() -> None:
     with ThreadingHTTPServer(ADDRESS, handler) as server:
         print(
             f"Serving the draft board at http://{ADDRESS[0]}:{ADDRESS[1]}/ "
-            f"and source investigator at /data_source_investigator/"
+            f"and the source investigator at /sources/"
         )
         try:
             server.serve_forever()

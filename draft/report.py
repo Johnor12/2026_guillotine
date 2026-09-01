@@ -7,7 +7,6 @@ import json
 import sys
 from pathlib import Path
 
-import paths
 from draft_board import Board, DOCUMENTED_MY_SLOT_PICK_IN_ROUND, round_pick
 
 
@@ -37,20 +36,21 @@ def pool_join(rows: list[dict], pool_path: Path) -> dict | None:
             players = json.load(handle).get("players") or []
     except (OSError, json.JSONDecodeError, AttributeError):
         return None
-    by_id = {str(p["sleeper_id"]): p for p in players if p.get("sleeper_id")}
+    # pool.json is ordered by season projection, so the index is the pool rank.
+    by_id = {str(p["sleeper_id"]): (rank, p) for rank, p in enumerate(players, start=1)}
     made = [row for row in rows if row["status"] == "made" and row["sleeper_id"]]
-    hits = [(row, by_id[row["sleeper_id"]]) for row in made if row["sleeper_id"] in by_id]
+    hits = [(row, *by_id[row["sleeper_id"]]) for row in made if row["sleeper_id"] in by_id]
     return {
         "pool_size": len(players),
         "pool_with_id": len(by_id),
         "made": len(made),
         "matched": len(hits),
         "outside_pool": [row for row in made if row["sleeper_id"] not in by_id],
-        "top_50_gone": sum(1 for _, player in hits if player.get("rank", 0) <= 50),
-        # A position mismatch on a joined id would mean match_sleeper.py joined the
-        # wrong player — the one failure mode a name-based join can hide.
+        "top_50_gone": sum(1 for _, rank, _ in hits if rank <= 50),
+        # A position mismatch on a joined id would mean the pool build joined the
+        # wrong player, the one failure mode a name-based join can hide.
         "disagreements": [
-            (row, player) for row, player in hits if row["position"] != player["position"]
+            (row, player) for row, _, player in hits if row["position"] != player["position"]
         ],
     }
 
@@ -178,7 +178,7 @@ def report(document: dict, rows: list[dict], board: Board, pool_path: Path) -> N
     )
 
     join = pool_join(rows, pool_path)
-    print(f"\npool join ({paths.display(pool_path)})", file=out)
+    print(f"\npool join ({pool_path.name})", file=out)
     if join is None:
         print("  pool.json not readable — skipped", file=out)
     else:

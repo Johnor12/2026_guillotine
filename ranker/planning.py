@@ -86,7 +86,8 @@ def _init_worker(
 
 
 def _worker_pool_size() -> int:
-    # Four busy workers leave enough host headroom for sustained reranks.
+    # Capped at twelve so a rerank does not saturate every host CPU; this changes
+    # elapsed time, never the seeded results.
     # sched_getaffinity is Linux-only; on Windows fall back to the raw CPU count.
     cpus = (
         len(os.sched_getaffinity(0))

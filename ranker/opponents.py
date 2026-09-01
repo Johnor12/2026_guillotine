@@ -1,27 +1,24 @@
 """Opponent boards inferred from this league's completed picks.
 
 Each opponent uses the provider board that best fits their picks in
-``data_source_matches.json``. Provider ranks are joined to the pool by Sleeper id, then
-by conservative name variants when a normalized source row lacks that id. A provider's
-uncovered tail follows the consensus board (the mean rank across every other source),
-which also serves as the cold-start source before an opponent has picked, so every
-mandatory pick remains possible without ever falling back to this ranker's projections
-or board.
+``data_source_matches.json``. Provider rows join the pool by the Sleeper id the source
+build already resolved against this same pool; a row it could not resolve is a player
+the pool does not carry. A provider's uncovered tail follows the consensus board (the
+mean rank across every other source), which also serves as the cold-start source before
+an opponent has picked, so every mandatory pick remains possible without ever falling
+back to this ranker's projections or board.
 """
 
 from __future__ import annotations
 
 import json
 import math
-import re
-import unicodedata
 from dataclasses import dataclass
 from pathlib import Path
 
 from .board import Board
 from .pool import Player
 
-SUFFIXES = {"jr", "sr", "ii", "iii", "iv", "v"}
 COLD_START_LOG2_LOSS = 1.5
 # An owner whose 1-2 observed picks happen to sit exactly on a source board gets a
 # fitted loss near 0, which calibrates to a near-deterministic policy (replayed picks
@@ -82,43 +79,12 @@ def rank_power(mean_log2_loss: float, choices: int) -> float:
     return (lo + hi) / 2
 
 
-def _name_parts(value: str) -> list[str]:
-    parts = re.findall(r"[a-z0-9]+", unicodedata.normalize("NFKD", value).casefold())
-    while parts and parts[-1] in SUFFIXES:
-        parts.pop()
-    return parts
-
-
 def _source_order(source: dict, by_sleeper: dict[str, Player]) -> list[int]:
+    """The provider's pool players in its rank order, by the resolved Sleeper id."""
     order: list[int] = []
     seen: set[int] = set()
-    by_name: dict[tuple[str, str], list[Player]] = {}
-    by_last_team: dict[tuple[str, str, str], list[Player]] = {}
-    for player in by_sleeper.values():
-        parts = _name_parts(player.name)
-        by_name.setdefault(("".join(parts), player.position), []).append(player)
-        if len(parts) >= 2 and player.team:
-            by_last_team.setdefault(
-                (parts[-1], player.position, player.team), []
-            ).append(player)
     for row in source["players"]:
-        sleeper_id = row.get("sleeper_id")
-        player = by_sleeper.get(str(sleeper_id)) if sleeper_id is not None else None
-        parts = _name_parts(str(row.get("name") or ""))
-        if player is None:
-            matches = by_name.get(("".join(parts), str(row.get("position") or "")), [])
-            player = matches[0] if len(matches) == 1 else None
-        if player is None and len(parts) >= 2 and row.get("team"):
-            matches = by_last_team.get(
-                (parts[-1], str(row.get("position") or ""), row["team"]), []
-            )
-            matches = [
-                match
-                for match in matches
-                if (ours := _name_parts(match.name))
-                and (parts[0].startswith(ours[0]) or ours[0].startswith(parts[0]))
-            ]
-            player = matches[0] if len(matches) == 1 else None
+        player = by_sleeper.get(str(row.get("sleeper_id")))
         if player is not None and player.player_id not in seen:
             seen.add(player.player_id)
             order.append(player.player_id)

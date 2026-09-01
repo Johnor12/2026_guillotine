@@ -1,54 +1,18 @@
 {
-  "source_file": "projections.json",
-  "source_player_count": 900,
-  "scoring_scheme": {
-    "name": "half_ppr",
-    "description": "0.5 points per reception, +1.0/rec tight end premium, one-QB roster format; final points come from Sleeper's league-scored projections (stage 4), not this provider column.",
-    "reception_points": {
-      "all_positions": 0.5,
-      "te_bonus": 1.0
+  "sources": {
+    "identity_and_adp": "projections.html",
+    "points": {
+      "file": "sleeper_projections.json",
+      "fetched_at": "2026-09-01T00:14:47+00:00"
     },
-    "points_copied_from": "sleeper_projections.json",
-    "adp_copied_from": "half_ppr"
+    "weekly_points": {
+      "file": "weekly_projections.json",
+      "fetched_at": "2026-09-01T01:11:03+00:00"
+    }
   },
-  "horizon": "1yr",
-  "positions": [
-    "QB",
-    "RB",
-    "WR",
-    "TE"
-  ],
   "player_count": 370,
-  "excluded": {
-    "by_position": {
-      "DB": 162,
-      "DL": 159,
-      "LB": 89,
-      "K": 36
-    },
-    "no_usable_projection": 37,
-    "below_rank_limit": 0,
-    "no_sleeper_projection": 47
-  },
-  "fields": {
-    "rank": "Pool rank, 1..N, by points descending (ties broken by the provider's overall rank). Unique and gap-free.",
-    "positional_rank": "Rank within position under the same ordering.",
-    "player_id": "Provider player id. The only unique key — names collide.",
-    "sleeper_id": "Sleeper's player id (a string), for looking this player up against the league on Sleeper's API. Null when no unambiguous match exists in their player dump.",
-    "name": "Player name.",
-    "position": "QB, RB, WR or TE.",
-    "team": "NFL team abbreviation; 'UNS'/'RK' mean unsigned.",
-    "age": "Age in years.",
-    "bye_week": "Team bye week; null for unsigned players.",
-    "is_rookie": "True for 2026 rookies.",
-    "points": "One-season projected fantasy points under this league's own Sleeper scoring settings: the Sleeper/Rotowire season projection, joined on sleeper_id by apply_sleeper_points.py.",
-    "adp": "1QB ADP as an overall pick number in the source's 12-team draft (its round.pick value decoded: 2.03 -> 15). Past pick 540 the source's tail is noise, i.e. 'effectively undrafted' rather than a real slot.",
-    "weekly_points": "DraftSharks' per-week projection for league weeks 1-17 (index 0 = week 1), scored with the league's live Sleeper scoring settings. A week DraftSharks does not project is 0.0 (bye or known absence); week 18 is ignored — the league ends after week 17. Native DraftSharks numbers: the sum is this provider's season total and differs from the Sleeper-priced `points` column by a few percent."
-  },
   "players": [
     {
-      "rank": 1,
-      "positional_rank": 1,
       "player_id": 9962,
       "sleeper_id": "4984",
       "name": "Josh Allen",
@@ -80,8 +44,6 @@
       ]
     },
     {
-      "rank": 2,
-      "positional_rank": 2,
       "player_id": 9964,
       "sleeper_id": "4881",
       "name": "Lamar Jackson",
@@ -113,8 +75,6 @@
       ]
     },
     {
-      "rank": 3,
-      "positional_rank": 3,
       "player_id": 15318,
       "sleeper_id": "11564",
       "name": "Drake Maye",
@@ -146,8 +106,6 @@
       ]
     },
     {
-      "rank": 4,
-      "positional_rank": 1,
       "player_id": 35006,
       "sleeper_id": "11604",
       "name": "Brock Bowers",
@@ -179,8 +137,6 @@
       ]
     },
     {
-      "rank": 5,
-      "positional_rank": 4,
       "player_id": 10490,
       "sleeper_id": "6904",
       "name": "Jalen Hurts",
@@ -212,8 +168,6 @@
       ]
     },
     {
-      "rank": 6,
-      "positional_rank": 1,
       "player_id": 13542,
       "sleeper_id": "9221",
       "name": "Jahmyr Gibbs",
@@ -245,8 +199,6 @@
       ]
     },
     {
-      "rank": 7,
-      "positional_rank": 5,
       "player_id": 34982,
       "sleeper_id": "11566",
       "name": "Jayden Daniels",
@@ -278,8 +230,6 @@
       ]
     },
     {
-      "rank": 8,
-      "positional_rank": 6,
       "player_id": 10482,
       "sleeper_id": "6770",
       "name": "Joe Burrow",
@@ -311,8 +261,6 @@
       ]
     },
     {
-      "rank": 9,
-      "positional_rank": 2,
       "player_id": 13541,
       "sleeper_id": "9509",
       "name": "Bijan Robinson",
@@ -344,8 +292,6 @@
       ]
     },
     {
-      "rank": 10,
-      "positional_rank": 7,
       "player_id": 10748,
       "sleeper_id": "7523",
       "name": "Trevor Lawrence",
@@ -377,8 +323,6 @@
       ]
     },
     {
-      "rank": 11,
-      "positional_rank": 8,
       "player_id": 7453,
       "sleeper_id": "3294",
       "name": "Dak Prescott",
@@ -410,8 +354,6 @@
       ]
     },
     {
-      "rank": 12,
-      "positional_rank": 9,
       "player_id": 12737,
       "sleeper_id": "8183",
       "name": "Brock Purdy",
@@ -443,8 +385,6 @@
       ]
     },
     {
-      "rank": 13,
-      "positional_rank": 10,
       "player_id": 34974,
       "sleeper_id": "11560",
       "name": "Caleb Williams",
@@ -476,8 +416,6 @@
       ]
     },
     {
-      "rank": 14,
-      "positional_rank": 11,
       "player_id": 10488,
       "sleeper_id": "6797",
       "name": "Justin Herbert",
@@ -509,8 +447,6 @@
       ]
     },
     {
-      "rank": 15,
-      "positional_rank": 12,
       "player_id": 35312,
       "sleeper_id": "12508",
       "name": "Jaxson Dart",
@@ -542,8 +478,6 @@
       ]
     },
     {
-      "rank": 16,
-      "positional_rank": 13,
       "player_id": 34984,
       "sleeper_id": "11563",
       "name": "Bo Nix",
@@ -575,8 +509,6 @@
       ]
     },
     {
-      "rank": 17,
-      "positional_rank": 2,
       "player_id": 12587,
       "sleeper_id": "8130",
       "name": "Trey McBride",
@@ -608,8 +540,6 @@
       ]
     },
     {
-      "rank": 18,
-      "positional_rank": 14,
       "player_id": 7746,
       "sleeper_id": "4046",
       "name": "Patrick Mahomes",
@@ -641,8 +571,6 @@
       ]
     },
     {
-      "rank": 19,
-      "positional_rank": 15,
       "player_id": 7449,
       "sleeper_id": "3163",
       "name": "Jared Goff",
@@ -674,8 +602,6 @@
       ]
     },
     {
-      "rank": 20,
-      "positional_rank": 16,
       "player_id": 10217,
       "sleeper_id": "5849",
       "name": "Kyler Murray",
@@ -707,8 +633,6 @@
       ]
     },
     {
-      "rank": 21,
-      "positional_rank": 17,
       "player_id": 2,
       "sleeper_id": "421",
       "name": "Matthew Stafford",
@@ -740,8 +664,6 @@
       ]
     },
     {
-      "rank": 22,
-      "positional_rank": 18,
       "player_id": 10489,
       "sleeper_id": "6804",
       "name": "Jordan Love",
@@ -773,8 +695,6 @@
       ]
     },
     {
-      "rank": 23,
-      "positional_rank": 19,
       "player_id": 9960,
       "sleeper_id": "4892",
       "name": "Baker Mayfield",
@@ -806,8 +726,6 @@
       ]
     },
     {
-      "rank": 24,
-      "positional_rank": 20,
       "player_id": 12572,
       "sleeper_id": "8161",
       "name": "Malik Willis",
@@ -839,8 +757,6 @@
       ]
     },
     {
-      "rank": 25,
-      "positional_rank": 1,
       "player_id": 13680,
       "sleeper_id": "9493",
       "name": "Puka Nacua",
@@ -872,8 +788,6 @@
       ]
     },
     {
-      "rank": 26,
-      "positional_rank": 21,
       "player_id": 35510,
       "sleeper_id": "12545",
       "name": "Tyler Shough",
@@ -905,8 +819,6 @@
       ]
     },
     {
-      "rank": 27,
-      "positional_rank": 3,
       "player_id": 35360,
       "sleeper_id": "12517",
       "name": "Colston Loveland",
@@ -938,8 +850,6 @@
       ]
     },
     {
-      "rank": 28,
-      "positional_rank": 2,
       "player_id": 10771,
       "sleeper_id": "7564",
       "name": "Ja'Marr Chase",
@@ -971,8 +881,6 @@
       ]
     },
     {
-      "rank": 29,
-      "positional_rank": 3,
       "player_id": 7750,
       "sleeper_id": "4034",
       "name": "Christian McCaffrey",
@@ -1004,8 +912,6 @@
       ]
     },
     {
-      "rank": 30,
-      "positional_rank": 4,
       "player_id": 10500,
       "sleeper_id": "6813",
       "name": "Jonathan Taylor",
@@ -1037,8 +943,6 @@
       ]
     },
     {
-      "rank": 31,
-      "positional_rank": 22,
       "player_id": 9963,
       "sleeper_id": "4943",
       "name": "Sam Darnold",
@@ -1070,8 +974,6 @@
       ]
     },
     {
-      "rank": 32,
-      "positional_rank": 5,
       "player_id": 12585,
       "sleeper_id": "8138",
       "name": "James Cook",
@@ -1103,8 +1005,6 @@
       ]
     },
     {
-      "rank": 33,
-      "positional_rank": 4,
       "player_id": 35359,
       "sleeper_id": "12518",
       "name": "Tyler Warren",
@@ -1136,8 +1036,6 @@
       ]
     },
     {
-      "rank": 34,
-      "positional_rank": 6,
       "player_id": 7461,
       "sleeper_id": "3198",
       "name": "Derrick Henry",
@@ -1169,8 +1067,6 @@
       ]
     },
     {
-      "rank": 35,
-      "positional_rank": 23,
       "player_id": 13539,
       "sleeper_id": "9758",
       "name": "C.J. Stroud",
@@ -1202,8 +1098,6 @@
       ]
     },
     {
-      "rank": 36,
-      "positional_rank": 3,
       "player_id": 13547,
       "sleeper_id": "9488",
       "name": "Jaxon Smith-Njigba",
@@ -1235,8 +1129,6 @@
       ]
     },
     {
-      "rank": 37,
-      "positional_rank": 5,
       "player_id": 13576,
       "sleeper_id": "10859",
       "name": "Sam LaPorta",
@@ -1268,8 +1160,6 @@
       ]
     },
     {
-      "rank": 38,
-      "positional_rank": 7,
       "player_id": 13563,
       "sleeper_id": "9226",
       "name": "De'Von Achane",
@@ -1301,8 +1191,6 @@
       ]
     },
     {
-      "rank": 39,
-      "positional_rank": 8,
       "player_id": 9994,
       "sleeper_id": "4866",
       "name": "Saquon Barkley",
@@ -1334,8 +1222,6 @@
       ]
     },
     {
-      "rank": 40,
-      "positional_rank": 4,
       "player_id": 10783,
       "sleeper_id": "7547",
       "name": "Amon-Ra St. Brown",
@@ -1367,8 +1253,6 @@
       ]
     },
     {
-      "rank": 41,
-      "positional_rank": 9,
       "player_id": 13586,
       "sleeper_id": "9224",
       "name": "Chase Brown",
@@ -1400,8 +1284,6 @@
       ]
     },
     {
-      "rank": 42,
-      "positional_rank": 10,
       "player_id": 12579,
       "sleeper_id": "8151",
       "name": "Kenneth Walker III",
@@ -1433,8 +1315,6 @@
       ]
     },
     {
-      "rank": 43,
-      "positional_rank": 24,
       "player_id": 13540,
       "sleeper_id": "9228",
       "name": "Bryce Young",
@@ -1466,8 +1346,6 @@
       ]
     },
     {
-      "rank": 44,
-      "positional_rank": 5,
       "player_id": 10590,
       "sleeper_id": "6786",
       "name": "CeeDee Lamb",
@@ -1499,8 +1377,6 @@
       ]
     },
     {
-      "rank": 45,
-      "positional_rank": 6,
       "player_id": 10796,
       "sleeper_id": "7569",
       "name": "Nico Collins",
@@ -1532,8 +1408,6 @@
       ]
     },
     {
-      "rank": 46,
-      "positional_rank": 11,
       "player_id": 35318,
       "sleeper_id": "12507",
       "name": "Omarion Hampton",
@@ -1565,8 +1439,6 @@
       ]
     },
     {
-      "rank": 47,
-      "positional_rank": 6,
       "player_id": 35361,
       "sleeper_id": "12506",
       "name": "Harold Fannin Jr.",
@@ -1598,8 +1470,6 @@
       ]
     },
     {
-      "rank": 48,
-      "positional_rank": 25,
       "player_id": 35310,
       "sleeper_id": "12522",
       "name": "Cameron Ward",
@@ -1631,8 +1501,6 @@
       ]
     },
     {
-      "rank": 49,
-      "positional_rank": 26,
       "player_id": 10225,
       "sleeper_id": "5870",
       "name": "Daniel Jones",
@@ -1664,8 +1532,6 @@
       ]
     },
     {
-      "rank": 50,
-      "positional_rank": 12,
       "player_id": 35317,
       "sleeper_id": "12527",
       "name": "Ashton Jeanty",
@@ -1697,8 +1563,6 @@
       ]
     },
     {
-      "rank": 51,
-      "positional_rank": 27,
       "player_id": 6653,
       "sleeper_id": "1373",
       "name": "Geno Smith",
@@ -1730,8 +1594,6 @@
       ]
     },
     {
-      "rank": 52,
-      "positional_rank": 7,
       "player_id": 13575,
       "sleeper_id": "9484",
       "name": "Tucker Kraft",
@@ -1763,8 +1625,6 @@
       ]
     },
     {
-      "rank": 53,
-      "positional_rank": 7,
       "player_id": 10198,
       "sleeper_id": "5859",
       "name": "A.J. Brown",
@@ -1796,8 +1656,6 @@
       ]
     },
     {
-      "rank": 54,
-      "positional_rank": 8,
       "player_id": 6709,
       "sleeper_id": "1466",
       "name": "Travis Kelce",
@@ -1829,8 +1687,6 @@
       ]
     },
     {
-      "rank": 55,
-      "positional_rank": 8,
       "player_id": 12599,
       "sleeper_id": "8137",
       "name": "George Pickens",
@@ -1862,8 +1718,6 @@
       ]
     },
     {
-      "rank": 56,
-      "positional_rank": 9,
       "player_id": 10586,
       "sleeper_id": "6794",
       "name": "Justin Jefferson",
@@ -1895,8 +1749,6 @@
       ]
     },
     {
-      "rank": 57,
-      "positional_rank": 10,
       "player_id": 12594,
       "sleeper_id": "8112",
       "name": "Drake London",
@@ -1928,8 +1780,6 @@
       ]
     },
     {
-      "rank": 58,
-      "positional_rank": 9,
       "player_id": 10747,
       "sleeper_id": "7553",
       "name": "Kyle Pitts",
@@ -1961,8 +1811,6 @@
       ]
     },
     {
-      "rank": 59,
-      "positional_rank": 28,
       "player_id": 35915,
       "sleeper_id": "13269",
       "name": "Fernando Mendoza",
@@ -1994,8 +1842,6 @@
       ]
     },
     {
-      "rank": 60,
-      "positional_rank": 10,
       "player_id": 9540,
       "sleeper_id": "4217",
       "name": "George Kittle",
@@ -2027,8 +1873,6 @@
       ]
     },
     {
-      "rank": 61,
-      "positional_rank": 11,
       "player_id": 13573,
       "sleeper_id": "10236",
       "name": "Dalton Kincaid",
@@ -2060,8 +1904,6 @@
       ]
     },
     {
-      "rank": 62,
-      "positional_rank": 11,
       "player_id": 12596,
       "sleeper_id": "8144",
       "name": "Chris Olave",
@@ -2093,8 +1935,6 @@
       ]
     },
     {
-      "rank": 63,
-      "positional_rank": 12,
       "player_id": 12708,
       "sleeper_id": "8110",
       "name": "Jake Ferguson",
@@ -2126,8 +1966,6 @@
       ]
     },
     {
-      "rank": 64,
-      "positional_rank": 12,
       "player_id": 34977,
       "sleeper_id": "11632",
       "name": "Malik Nabers",
@@ -2159,8 +1997,6 @@
       ]
     },
     {
-      "rank": 65,
-      "positional_rank": 13,
       "player_id": 10759,
       "sleeper_id": "7588",
       "name": "Javonte Williams",
@@ -2192,41 +2028,6 @@
       ]
     },
     {
-      "rank": 66,
-      "positional_rank": 14,
-      "player_id": 12577,
-      "sleeper_id": "8155",
-      "name": "Breece Hall",
-      "position": "RB",
-      "team": "NYJ",
-      "age": 25.2,
-      "bye_week": 13,
-      "is_rookie": false,
-      "points": 192.5,
-      "adp": 39,
-      "weekly_points": [
-        13.41,
-        13.35,
-        13.35,
-        13.35,
-        13.35,
-        13.35,
-        13.35,
-        13.35,
-        13.35,
-        13.35,
-        13.35,
-        13.35,
-        0.0,
-        13.35,
-        13.35,
-        13.35,
-        13.35
-      ]
-    },
-    {
-      "rank": 67,
-      "positional_rank": 13,
       "player_id": 10009,
       "sleeper_id": "5012",
       "name": "Mark Andrews",
@@ -2258,8 +2059,37 @@
       ]
     },
     {
-      "rank": 68,
-      "positional_rank": 14,
+      "player_id": 12577,
+      "sleeper_id": "8155",
+      "name": "Breece Hall",
+      "position": "RB",
+      "team": "NYJ",
+      "age": 25.2,
+      "bye_week": 13,
+      "is_rookie": false,
+      "points": 192.5,
+      "adp": 39,
+      "weekly_points": [
+        13.41,
+        13.35,
+        13.35,
+        13.35,
+        13.35,
+        13.35,
+        13.35,
+        13.35,
+        13.35,
+        13.35,
+        13.35,
+        13.35,
+        0.0,
+        13.35,
+        13.35,
+        13.35,
+        13.35
+      ]
+    },
+    {
       "player_id": 13686,
       "sleeper_id": "9480",
       "name": "Brenton Strange",
@@ -2291,8 +2121,6 @@
       ]
     },
     {
-      "rank": 69,
-      "positional_rank": 15,
       "player_id": 12580,
       "sleeper_id": "8150",
       "name": "Kyren Williams",
@@ -2324,8 +2152,6 @@
       ]
     },
     {
-      "rank": 70,
-      "positional_rank": 16,
       "player_id": 10194,
       "sleeper_id": "5892",
       "name": "David Montgomery",
@@ -2357,8 +2183,6 @@
       ]
     },
     {
-      "rank": 71,
-      "positional_rank": 17,
       "player_id": 10757,
       "sleeper_id": "7543",
       "name": "Travis Etienne",
@@ -2390,8 +2214,6 @@
       ]
     },
     {
-      "rank": 72,
-      "positional_rank": 18,
       "player_id": 10476,
       "sleeper_id": "6790",
       "name": "D'Andre Swift",
@@ -2423,8 +2245,6 @@
       ]
     },
     {
-      "rank": 73,
-      "positional_rank": 13,
       "player_id": 10773,
       "sleeper_id": "7525",
       "name": "DeVonta Smith",
@@ -2456,41 +2276,6 @@
       ]
     },
     {
-      "rank": 74,
-      "positional_rank": 19,
-      "player_id": 35925,
-      "sleeper_id": "13287",
-      "name": "Jeremiyah Love",
-      "position": "RB",
-      "team": "ARI",
-      "age": 21.2,
-      "bye_week": 14,
-      "is_rookie": true,
-      "points": 188.3,
-      "adp": 16,
-      "weekly_points": [
-        10.91,
-        12.04,
-        13.04,
-        13.04,
-        13.04,
-        13.04,
-        13.04,
-        13.04,
-        13.04,
-        13.04,
-        13.04,
-        13.04,
-        13.04,
-        0.0,
-        13.04,
-        13.04,
-        13.04
-      ]
-    },
-    {
-      "rank": 75,
-      "positional_rank": 15,
       "player_id": 12589,
       "sleeper_id": "8131",
       "name": "Isaiah Likely",
@@ -2522,8 +2307,37 @@
       ]
     },
     {
-      "rank": 76,
-      "positional_rank": 16,
+      "player_id": 35925,
+      "sleeper_id": "13287",
+      "name": "Jeremiyah Love",
+      "position": "RB",
+      "team": "ARI",
+      "age": 21.2,
+      "bye_week": 14,
+      "is_rookie": true,
+      "points": 188.3,
+      "adp": 16,
+      "weekly_points": [
+        10.91,
+        12.04,
+        13.04,
+        13.04,
+        13.04,
+        13.04,
+        13.04,
+        13.04,
+        13.04,
+        13.04,
+        13.04,
+        13.04,
+        13.04,
+        0.0,
+        13.04,
+        13.04,
+        13.04
+      ]
+    },
+    {
       "player_id": 10223,
       "sleeper_id": "5844",
       "name": "T.J. Hockenson",
@@ -2555,8 +2369,6 @@
       ]
     },
     {
-      "rank": 77,
-      "positional_rank": 14,
       "player_id": 13550,
       "sleeper_id": "9997",
       "name": "Zay Flowers",
@@ -2588,8 +2400,6 @@
       ]
     },
     {
-      "rank": 78,
-      "positional_rank": 15,
       "player_id": 35015,
       "sleeper_id": "11635",
       "name": "Ladd McConkey",
@@ -2621,8 +2431,6 @@
       ]
     },
     {
-      "rank": 79,
-      "positional_rank": 16,
       "player_id": 6938,
       "sleeper_id": "2216",
       "name": "Mike Evans",
@@ -2654,8 +2462,6 @@
       ]
     },
     {
-      "rank": 80,
-      "positional_rank": 17,
       "player_id": 10607,
       "sleeper_id": "6801",
       "name": "Tee Higgins",
@@ -2687,8 +2493,6 @@
       ]
     },
     {
-      "rank": 81,
-      "positional_rank": 18,
       "player_id": 35335,
       "sleeper_id": "12514",
       "name": "Emeka Egbuka",
@@ -2720,8 +2524,6 @@
       ]
     },
     {
-      "rank": 82,
-      "positional_rank": 19,
       "player_id": 13553,
       "sleeper_id": "10229",
       "name": "Rashee Rice",
@@ -2753,8 +2555,6 @@
       ]
     },
     {
-      "rank": 83,
-      "positional_rank": 20,
       "player_id": 35333,
       "sleeper_id": "12526",
       "name": "Tetairoa McMillan",
@@ -2786,8 +2586,6 @@
       ]
     },
     {
-      "rank": 84,
-      "positional_rank": 21,
       "player_id": 12592,
       "sleeper_id": "8146",
       "name": "Garrett Wilson",
@@ -2819,8 +2617,6 @@
       ]
     },
     {
-      "rank": 85,
-      "positional_rank": 17,
       "player_id": 10059,
       "sleeper_id": "5001",
       "name": "Dalton Schultz",
@@ -2852,41 +2648,6 @@
       ]
     },
     {
-      "rank": 86,
-      "positional_rank": 22,
-      "player_id": 10772,
-      "sleeper_id": "7526",
-      "name": "Jaylen Waddle",
-      "position": "WR",
-      "team": "DEN",
-      "age": 27.7,
-      "bye_week": 10,
-      "is_rookie": false,
-      "points": 182.5,
-      "adp": 70,
-      "weekly_points": [
-        11.35,
-        11.35,
-        11.35,
-        11.35,
-        11.35,
-        11.35,
-        11.35,
-        11.35,
-        11.35,
-        0.0,
-        11.35,
-        11.35,
-        11.35,
-        11.35,
-        11.35,
-        11.35,
-        11.35
-      ]
-    },
-    {
-      "rank": 87,
-      "positional_rank": 18,
       "player_id": 7470,
       "sleeper_id": "3214",
       "name": "Hunter Henry",
@@ -2918,8 +2679,37 @@
       ]
     },
     {
-      "rank": 88,
-      "positional_rank": 20,
+      "player_id": 10772,
+      "sleeper_id": "7526",
+      "name": "Jaylen Waddle",
+      "position": "WR",
+      "team": "DEN",
+      "age": 27.7,
+      "bye_week": 10,
+      "is_rookie": false,
+      "points": 182.5,
+      "adp": 70,
+      "weekly_points": [
+        11.35,
+        11.35,
+        11.35,
+        11.35,
+        11.35,
+        11.35,
+        11.35,
+        11.35,
+        11.35,
+        0.0,
+        11.35,
+        11.35,
+        11.35,
+        11.35,
+        11.35,
+        11.35,
+        11.35
+      ]
+    },
+    {
       "player_id": 35382,
       "sleeper_id": "12481",
       "name": "Cameron Skattebo",
@@ -2951,8 +2741,6 @@
       ]
     },
     {
-      "rank": 89,
-      "positional_rank": 21,
       "player_id": 35320,
       "sleeper_id": "12512",
       "name": "Quinshon Judkins",
@@ -2984,8 +2772,6 @@
       ]
     },
     {
-      "rank": 90,
-      "positional_rank": 22,
       "player_id": 34991,
       "sleeper_id": "11584",
       "name": "Bucky Irving",
@@ -3017,8 +2803,6 @@
       ]
     },
     {
-      "rank": 91,
-      "positional_rank": 23,
       "player_id": 10269,
       "sleeper_id": "5927",
       "name": "Terry McLaurin",
@@ -3050,8 +2834,6 @@
       ]
     },
     {
-      "rank": 92,
-      "positional_rank": 24,
       "player_id": 13551,
       "sleeper_id": "9487",
       "name": "Parker Washington",
@@ -3083,8 +2865,6 @@
       ]
     },
     {
-      "rank": 93,
-      "positional_rank": 25,
       "player_id": 12595,
       "sleeper_id": "8148",
       "name": "Jameson Williams",
@@ -3116,8 +2896,6 @@
       ]
     },
     {
-      "rank": 94,
-      "positional_rank": 26,
       "player_id": 12607,
       "sleeper_id": "8167",
       "name": "Christian Watson",
@@ -3149,8 +2927,6 @@
       ]
     },
     {
-      "rank": 95,
-      "positional_rank": 19,
       "player_id": 12711,
       "sleeper_id": "8210",
       "name": "Chigoziem Okonkwo",
@@ -3182,8 +2958,6 @@
       ]
     },
     {
-      "rank": 96,
-      "positional_rank": 27,
       "player_id": 34980,
       "sleeper_id": "11620",
       "name": "Rome Odunze",
@@ -3215,8 +2989,6 @@
       ]
     },
     {
-      "rank": 97,
-      "positional_rank": 28,
       "player_id": 35334,
       "sleeper_id": "12519",
       "name": "Luther Burden III",
@@ -3248,8 +3020,6 @@
       ]
     },
     {
-      "rank": 98,
-      "positional_rank": 20,
       "player_id": 35009,
       "sleeper_id": "11603",
       "name": "AJ Barner",
@@ -3281,8 +3051,6 @@
       ]
     },
     {
-      "rank": 99,
-      "positional_rank": 29,
       "player_id": 2636,
       "sleeper_id": "96",
       "name": "Aaron Rodgers",
@@ -3314,8 +3082,6 @@
       ]
     },
     {
-      "rank": 100,
-      "positional_rank": 21,
       "player_id": 35532,
       "sleeper_id": "12493",
       "name": "Oronde Gadsden II",
@@ -3347,8 +3113,6 @@
       ]
     },
     {
-      "rank": 101,
-      "positional_rank": 22,
       "player_id": 12426,
       "sleeper_id": "7002",
       "name": "Juwan Johnson",
@@ -3380,8 +3144,6 @@
       ]
     },
     {
-      "rank": 102,
-      "positional_rank": 29,
       "player_id": 35014,
       "sleeper_id": "11631",
       "name": "Brian Thomas Jr.",
@@ -3413,8 +3175,6 @@
       ]
     },
     {
-      "rank": 103,
-      "positional_rank": 30,
       "player_id": 13557,
       "sleeper_id": "10222",
       "name": "Jayden Reed",
@@ -3446,8 +3206,6 @@
       ]
     },
     {
-      "rank": 104,
-      "positional_rank": 23,
       "player_id": 9997,
       "sleeper_id": "5022",
       "name": "Dallas Goedert",
@@ -3479,8 +3237,6 @@
       ]
     },
     {
-      "rank": 105,
-      "positional_rank": 31,
       "player_id": 6973,
       "sleeper_id": "2133",
       "name": "Davante Adams",
@@ -3512,8 +3268,6 @@
       ]
     },
     {
-      "rank": 106,
-      "positional_rank": 23,
       "player_id": 35926,
       "sleeper_id": "13286",
       "name": "Jadarian Price",
@@ -3545,8 +3299,6 @@
       ]
     },
     {
-      "rank": 107,
-      "positional_rank": 24,
       "player_id": 35322,
       "sleeper_id": "12490",
       "name": "Bhayshul Tuten",
@@ -3578,8 +3330,6 @@
       ]
     },
     {
-      "rank": 108,
-      "positional_rank": 24,
       "player_id": 35365,
       "sleeper_id": "12502",
       "name": "Gunnar Helm",
@@ -3611,8 +3361,6 @@
       ]
     },
     {
-      "rank": 109,
-      "positional_rank": 32,
       "player_id": 34975,
       "sleeper_id": "11628",
       "name": "Marvin Harrison Jr.",
@@ -3644,8 +3392,6 @@
       ]
     },
     {
-      "rank": 110,
-      "positional_rank": 25,
       "player_id": 10763,
       "sleeper_id": "7611",
       "name": "Rhamondre Stevenson",
@@ -3677,8 +3423,6 @@
       ]
     },
     {
-      "rank": 111,
-      "positional_rank": 25,
       "player_id": 10749,
       "sleeper_id": "7600",
       "name": "Pat Freiermuth",
@@ -3710,8 +3454,6 @@
       ]
     },
     {
-      "rank": 112,
-      "positional_rank": 26,
       "player_id": 35323,
       "sleeper_id": "12529",
       "name": "TreVeyon Henderson",
@@ -3743,8 +3485,6 @@
       ]
     },
     {
-      "rank": 113,
-      "positional_rank": 30,
       "player_id": 7555,
       "sleeper_id": "3257",
       "name": "Jacoby Brissett",
@@ -3776,8 +3516,6 @@
       ]
     },
     {
-      "rank": 114,
-      "positional_rank": 27,
       "player_id": 13199,
       "sleeper_id": "8228",
       "name": "Jaylen Warren",
@@ -3809,8 +3547,6 @@
       ]
     },
     {
-      "rank": 115,
-      "positional_rank": 33,
       "player_id": 10197,
       "sleeper_id": "5846",
       "name": "D.K. Metcalf",
@@ -3842,8 +3578,6 @@
       ]
     },
     {
-      "rank": 116,
-      "positional_rank": 34,
       "player_id": 12605,
       "sleeper_id": "8142",
       "name": "Alec Pierce",
@@ -3875,8 +3609,6 @@
       ]
     },
     {
-      "rank": 117,
-      "positional_rank": 26,
       "player_id": 12705,
       "sleeper_id": "8111",
       "name": "Cade Otton",
@@ -3908,8 +3640,6 @@
       ]
     },
     {
-      "rank": 118,
-      "positional_rank": 35,
       "player_id": 9970,
       "sleeper_id": "4983",
       "name": "D.J. Moore",
@@ -3941,8 +3671,6 @@
       ]
     },
     {
-      "rank": 119,
-      "positional_rank": 28,
       "player_id": 10478,
       "sleeper_id": "6806",
       "name": "J.K. Dobbins",
@@ -3974,41 +3702,6 @@
       ]
     },
     {
-      "rank": 120,
-      "positional_rank": 29,
-      "player_id": 10305,
-      "sleeper_id": "5967",
-      "name": "Tony Pollard",
-      "position": "RB",
-      "team": "TEN",
-      "age": 29.3,
-      "bye_week": 9,
-      "is_rookie": false,
-      "points": 146.1,
-      "adp": 153,
-      "weekly_points": [
-        9.71,
-        9.71,
-        9.71,
-        9.71,
-        9.71,
-        9.71,
-        9.71,
-        9.71,
-        0.0,
-        9.71,
-        9.71,
-        9.71,
-        9.71,
-        9.71,
-        9.71,
-        9.71,
-        9.71
-      ]
-    },
-    {
-      "rank": 121,
-      "positional_rank": 27,
       "player_id": 10208,
       "sleeper_id": "2505",
       "name": "Darren Waller",
@@ -4040,8 +3733,37 @@
       ]
     },
     {
-      "rank": 122,
-      "positional_rank": 36,
+      "player_id": 10305,
+      "sleeper_id": "5967",
+      "name": "Tony Pollard",
+      "position": "RB",
+      "team": "TEN",
+      "age": 29.3,
+      "bye_week": 9,
+      "is_rookie": false,
+      "points": 146.1,
+      "adp": 153,
+      "weekly_points": [
+        9.71,
+        9.71,
+        9.71,
+        9.71,
+        9.71,
+        9.71,
+        9.71,
+        9.71,
+        0.0,
+        9.71,
+        9.71,
+        9.71,
+        9.71,
+        9.71,
+        9.71,
+        9.71,
+        9.71
+      ]
+    },
+    {
       "player_id": 9968,
       "sleeper_id": "5045",
       "name": "Courtland Sutton",
@@ -4073,8 +3795,6 @@
       ]
     },
     {
-      "rank": 123,
-      "positional_rank": 37,
       "player_id": 35950,
       "sleeper_id": "13279",
       "name": "Carnell Tate",
@@ -4106,8 +3826,6 @@
       ]
     },
     {
-      "rank": 124,
-      "positional_rank": 30,
       "player_id": 13153,
       "sleeper_id": "8408",
       "name": "Jordan Mason",
@@ -4139,8 +3857,6 @@
       ]
     },
     {
-      "rank": 125,
-      "positional_rank": 31,
       "player_id": 35326,
       "sleeper_id": "12534",
       "name": "Kyle Monangai",
@@ -4172,8 +3888,6 @@
       ]
     },
     {
-      "rank": 126,
-      "positional_rank": 32,
       "player_id": 12103,
       "sleeper_id": "7021",
       "name": "Rico Dowdle",
@@ -4205,8 +3919,6 @@
       ]
     },
     {
-      "rank": 127,
-      "positional_rank": 38,
       "player_id": 13546,
       "sleeper_id": "9756",
       "name": "Jordan Addison",
@@ -4238,8 +3950,6 @@
       ]
     },
     {
-      "rank": 128,
-      "positional_rank": 39,
       "player_id": 35515,
       "sleeper_id": "12501",
       "name": "Matthew Golden",
@@ -4271,8 +3981,6 @@
       ]
     },
     {
-      "rank": 129,
-      "positional_rank": 40,
       "player_id": 7783,
       "sleeper_id": "4037",
       "name": "Chris Godwin",
@@ -4304,8 +4012,6 @@
       ]
     },
     {
-      "rank": 130,
-      "positional_rank": 41,
       "player_id": 35948,
       "sleeper_id": "13294",
       "name": "Makai Lemon",
@@ -4337,8 +4043,6 @@
       ]
     },
     {
-      "rank": 131,
-      "positional_rank": 33,
       "player_id": 34987,
       "sleeper_id": "11583",
       "name": "Jonathon Brooks",
@@ -4370,8 +4074,6 @@
       ]
     },
     {
-      "rank": 132,
-      "positional_rank": 42,
       "player_id": 10364,
       "sleeper_id": "5947",
       "name": "Jakobi Meyers",
@@ -4403,8 +4105,6 @@
       ]
     },
     {
-      "rank": 133,
-      "positional_rank": 43,
       "player_id": 13548,
       "sleeper_id": "9500",
       "name": "Josh Downs",
@@ -4436,8 +4136,6 @@
       ]
     },
     {
-      "rank": 134,
-      "positional_rank": 34,
       "player_id": 34994,
       "sleeper_id": "11581",
       "name": "MarShawn Lloyd",
@@ -4469,8 +4167,6 @@
       ]
     },
     {
-      "rank": 135,
-      "positional_rank": 35,
       "player_id": 10766,
       "sleeper_id": "7594",
       "name": "Chuba Hubbard",
@@ -4502,8 +4198,6 @@
       ]
     },
     {
-      "rank": 136,
-      "positional_rank": 44,
       "player_id": 13558,
       "sleeper_id": "10232",
       "name": "Michael Wilson",
@@ -4535,8 +4229,6 @@
       ]
     },
     {
-      "rank": 137,
-      "positional_rank": 45,
       "player_id": 10584,
       "sleeper_id": "6819",
       "name": "Michael Pittman Jr.",
@@ -4568,8 +4260,6 @@
       ]
     },
     {
-      "rank": 138,
-      "positional_rank": 46,
       "player_id": 35137,
       "sleeper_id": "11646",
       "name": "Jalen Coker",
@@ -4601,41 +4291,6 @@
       ]
     },
     {
-      "rank": 139,
-      "positional_rank": 47,
-      "player_id": 12603,
-      "sleeper_id": "8134",
-      "name": "Khalil Shakir",
-      "position": "WR",
-      "team": "BUF",
-      "age": 26.5,
-      "bye_week": 7,
-      "is_rookie": false,
-      "points": 135.2,
-      "adp": 135,
-      "weekly_points": [
-        8.04,
-        8.04,
-        8.04,
-        8.04,
-        8.04,
-        8.04,
-        0.0,
-        8.04,
-        8.04,
-        8.04,
-        8.04,
-        8.04,
-        8.04,
-        8.04,
-        8.04,
-        8.04,
-        8.04
-      ]
-    },
-    {
-      "rank": 140,
-      "positional_rank": 48,
       "player_id": 12600,
       "sleeper_id": "8126",
       "name": "Wan'Dale Robinson",
@@ -4667,8 +4322,37 @@
       ]
     },
     {
-      "rank": 141,
-      "positional_rank": 31,
+      "player_id": 12603,
+      "sleeper_id": "8134",
+      "name": "Khalil Shakir",
+      "position": "WR",
+      "team": "BUF",
+      "age": 26.5,
+      "bye_week": 7,
+      "is_rookie": false,
+      "points": 135.2,
+      "adp": 135,
+      "weekly_points": [
+        8.04,
+        8.04,
+        8.04,
+        8.04,
+        8.04,
+        8.04,
+        0.0,
+        8.04,
+        8.04,
+        8.04,
+        8.04,
+        8.04,
+        8.04,
+        8.04,
+        8.04,
+        8.04,
+        8.04
+      ]
+    },
+    {
       "player_id": 34983,
       "sleeper_id": "11559",
       "name": "Michael Penix Jr.",
@@ -4700,8 +4384,6 @@
       ]
     },
     {
-      "rank": 142,
-      "positional_rank": 49,
       "player_id": 13545,
       "sleeper_id": "9754",
       "name": "Quentin Johnston",
@@ -4733,8 +4415,6 @@
       ]
     },
     {
-      "rank": 143,
-      "positional_rank": 28,
       "player_id": 12615,
       "sleeper_id": "8172",
       "name": "Greg Dulcich",
@@ -4766,8 +4446,6 @@
       ]
     },
     {
-      "rank": 144,
-      "positional_rank": 50,
       "player_id": 35021,
       "sleeper_id": "11624",
       "name": "Xavier Worthy",
@@ -4799,8 +4477,6 @@
       ]
     },
     {
-      "rank": 145,
-      "positional_rank": 51,
       "player_id": 12606,
       "sleeper_id": "8121",
       "name": "Romeo Doubs",
@@ -4832,8 +4508,6 @@
       ]
     },
     {
-      "rank": 146,
-      "positional_rank": 36,
       "player_id": 10761,
       "sleeper_id": "7567",
       "name": "Kenneth Gainwell",
@@ -4865,8 +4539,6 @@
       ]
     },
     {
-      "rank": 147,
-      "positional_rank": 37,
       "player_id": 34990,
       "sleeper_id": "11586",
       "name": "Blake Corum",
@@ -4898,8 +4570,6 @@
       ]
     },
     {
-      "rank": 148,
-      "positional_rank": 52,
       "player_id": 10205,
       "sleeper_id": "5872",
       "name": "Deebo Samuel",
@@ -4931,8 +4601,6 @@
       ]
     },
     {
-      "rank": 149,
-      "positional_rank": 53,
       "player_id": 35951,
       "sleeper_id": "13298",
       "name": "KC Concepcion",
@@ -4964,8 +4632,6 @@
       ]
     },
     {
-      "rank": 150,
-      "positional_rank": 29,
       "player_id": 10008,
       "sleeper_id": "4993",
       "name": "Mike Gesicki",
@@ -4997,8 +4663,6 @@
       ]
     },
     {
-      "rank": 151,
-      "positional_rank": 38,
       "player_id": 35325,
       "sleeper_id": "12489",
       "name": "RJ Harvey",
@@ -5030,8 +4694,6 @@
       ]
     },
     {
-      "rank": 152,
-      "positional_rank": 54,
       "player_id": 7280,
       "sleeper_id": "2449",
       "name": "Stefon Diggs",
@@ -5063,8 +4725,6 @@
       ]
     },
     {
-      "rank": 153,
-      "positional_rank": 39,
       "player_id": 13677,
       "sleeper_id": "10219",
       "name": "Chris Rodriguez",
@@ -5096,8 +4756,6 @@
       ]
     },
     {
-      "rank": 154,
-      "positional_rank": 30,
       "player_id": 35973,
       "sleeper_id": "13330",
       "name": "Kenyon Sadiq",
@@ -5129,8 +4787,6 @@
       ]
     },
     {
-      "rank": 155,
-      "positional_rank": 40,
       "player_id": 9550,
       "sleeper_id": "4199",
       "name": "Aaron Jones",
@@ -5162,8 +4818,6 @@
       ]
     },
     {
-      "rank": 156,
-      "positional_rank": 41,
       "player_id": 35720,
       "sleeper_id": "12533",
       "name": "Jacory Croskey-Merritt",
@@ -5195,8 +4849,6 @@
       ]
     },
     {
-      "rank": 157,
-      "positional_rank": 31,
       "player_id": 35364,
       "sleeper_id": "12487",
       "name": "Terrance Ferguson",
@@ -5228,8 +4880,6 @@
       ]
     },
     {
-      "rank": 158,
-      "positional_rank": 32,
       "player_id": 35362,
       "sleeper_id": "12498",
       "name": "Mason Taylor",
@@ -5261,8 +4911,6 @@
       ]
     },
     {
-      "rank": 159,
-      "positional_rank": 55,
       "player_id": 13347,
       "sleeper_id": "8676",
       "name": "Rashid Shaheed",
@@ -5294,8 +4942,6 @@
       ]
     },
     {
-      "rank": 160,
-      "positional_rank": 42,
       "player_id": 12583,
       "sleeper_id": "8136",
       "name": "Rachaad White",
@@ -5327,8 +4973,6 @@
       ]
     },
     {
-      "rank": 161,
-      "positional_rank": 56,
       "player_id": 35949,
       "sleeper_id": "13346",
       "name": "Denzel Boston",
@@ -5360,8 +5004,6 @@
       ]
     },
     {
-      "rank": 162,
-      "positional_rank": 57,
       "player_id": 12720,
       "sleeper_id": "8180",
       "name": "Jalen Nailor",
@@ -5393,8 +5035,6 @@
       ]
     },
     {
-      "rank": 163,
-      "positional_rank": 58,
       "player_id": 35045,
       "sleeper_id": "11610",
       "name": "Malik Washington",
@@ -5426,8 +5066,6 @@
       ]
     },
     {
-      "rank": 164,
-      "positional_rank": 59,
       "player_id": 35026,
       "sleeper_id": "11618",
       "name": "Jalen McMillan",
@@ -5459,8 +5097,6 @@
       ]
     },
     {
-      "rank": 165,
-      "positional_rank": 60,
       "player_id": 36057,
       "sleeper_id": "13417",
       "name": "De'Zhaun Stribling",
@@ -5492,8 +5128,6 @@
       ]
     },
     {
-      "rank": 166,
-      "positional_rank": 61,
       "player_id": 13582,
       "sleeper_id": "9504",
       "name": "Kayshon Boutte",
@@ -5525,8 +5159,6 @@
       ]
     },
     {
-      "rank": 167,
-      "positional_rank": 62,
       "player_id": 35970,
       "sleeper_id": "13276",
       "name": "Omar Cooper Jr.",
@@ -5558,8 +5190,6 @@
       ]
     },
     {
-      "rank": 168,
-      "positional_rank": 63,
       "player_id": 13739,
       "sleeper_id": "10213",
       "name": "Tre Tucker",
@@ -5591,8 +5221,6 @@
       ]
     },
     {
-      "rank": 169,
-      "positional_rank": 33,
       "player_id": 13574,
       "sleeper_id": "9479",
       "name": "Darnell Washington",
@@ -5624,8 +5252,6 @@
       ]
     },
     {
-      "rank": 170,
-      "positional_rank": 43,
       "player_id": 34997,
       "sleeper_id": "11655",
       "name": "Tyrone Tracy Jr.",
@@ -5657,8 +5283,6 @@
       ]
     },
     {
-      "rank": 171,
-      "positional_rank": 64,
       "player_id": 10598,
       "sleeper_id": "6783",
       "name": "Jerry Jeudy",
@@ -5690,8 +5314,6 @@
       ]
     },
     {
-      "rank": 172,
-      "positional_rank": 34,
       "player_id": 13571,
       "sleeper_id": "9482",
       "name": "Michael Mayer",
@@ -5723,8 +5345,6 @@
       ]
     },
     {
-      "rank": 173,
-      "positional_rank": 65,
       "player_id": 35132,
       "sleeper_id": "11783",
       "name": "Ryan Flournoy",
@@ -5756,8 +5376,6 @@
       ]
     },
     {
-      "rank": 174,
-      "positional_rank": 44,
       "player_id": 13569,
       "sleeper_id": "9508",
       "name": "Tyjae Spears",
@@ -5789,8 +5407,6 @@
       ]
     },
     {
-      "rank": 175,
-      "positional_rank": 35,
       "player_id": 35974,
       "sleeper_id": "13349",
       "name": "Eli Stowers",
@@ -5822,8 +5438,6 @@
       ]
     },
     {
-      "rank": 176,
-      "positional_rank": 36,
       "player_id": 10485,
       "sleeper_id": "6826",
       "name": "Cole Kmet",
@@ -5855,8 +5469,6 @@
       ]
     },
     {
-      "rank": 177,
-      "positional_rank": 32,
       "player_id": 7744,
       "sleeper_id": "4017",
       "name": "Deshaun Watson",
@@ -5888,8 +5500,6 @@
       ]
     },
     {
-      "rank": 178,
-      "positional_rank": 66,
       "player_id": 35339,
       "sleeper_id": "12509",
       "name": "Tre Harris",
@@ -5921,8 +5531,6 @@
       ]
     },
     {
-      "rank": 179,
-      "positional_rank": 37,
       "player_id": 35010,
       "sleeper_id": "11597",
       "name": "Theo Johnson",
@@ -5954,8 +5562,6 @@
       ]
     },
     {
-      "rank": 180,
-      "positional_rank": 33,
       "player_id": 35309,
       "sleeper_id": "12524",
       "name": "Shedeur Sanders",
@@ -5987,8 +5593,6 @@
       ]
     },
     {
-      "rank": 181,
-      "positional_rank": 38,
       "player_id": 10622,
       "sleeper_id": "6865",
       "name": "Colby Parkinson",
@@ -6020,8 +5624,6 @@
       ]
     },
     {
-      "rank": 182,
-      "positional_rank": 67,
       "player_id": 35947,
       "sleeper_id": "13281",
       "name": "Jordyn Tyson",
@@ -6053,8 +5655,6 @@
       ]
     },
     {
-      "rank": 183,
-      "positional_rank": 39,
       "player_id": 10281,
       "sleeper_id": "5906",
       "name": "Dawson Knox",
@@ -6086,8 +5686,6 @@
       ]
     },
     {
-      "rank": 184,
-      "positional_rank": 68,
       "player_id": 35134,
       "sleeper_id": "11834",
       "name": "Devaughn Vele",
@@ -6119,8 +5717,6 @@
       ]
     },
     {
-      "rank": 185,
-      "positional_rank": 45,
       "player_id": 35935,
       "sleeper_id": "13305",
       "name": "Mike Washington Jr.",
@@ -6152,8 +5748,6 @@
       ]
     },
     {
-      "rank": 186,
-      "positional_rank": 46,
       "player_id": 13674,
       "sleeper_id": "9511",
       "name": "Keaton Mitchell",
@@ -6185,8 +5779,6 @@
       ]
     },
     {
-      "rank": 187,
-      "positional_rank": 69,
       "player_id": 35955,
       "sleeper_id": "13293",
       "name": "Ja'Kobi Lane",
@@ -6218,8 +5810,6 @@
       ]
     },
     {
-      "rank": 188,
-      "positional_rank": 34,
       "player_id": 10483,
       "sleeper_id": "6768",
       "name": "Tua Tagovailoa",
@@ -6251,8 +5841,6 @@
       ]
     },
     {
-      "rank": 189,
-      "positional_rank": 40,
       "player_id": 35366,
       "sleeper_id": "12521",
       "name": "Elijah Arroyo",
@@ -6284,41 +5872,6 @@
       ]
     },
     {
-      "rank": 190,
-      "positional_rank": 70,
-      "player_id": 12430,
-      "sleeper_id": "7049",
-      "name": "Jauan Jennings",
-      "position": "WR",
-      "team": "MIN",
-      "age": 29,
-      "bye_week": 6,
-      "is_rookie": false,
-      "points": 86.2,
-      "adp": 145,
-      "weekly_points": [
-        6.25,
-        6.25,
-        6.25,
-        6.25,
-        6.25,
-        0.0,
-        6.25,
-        6.25,
-        6.25,
-        6.25,
-        6.25,
-        6.25,
-        6.25,
-        6.25,
-        6.25,
-        6.25,
-        6.22
-      ]
-    },
-    {
-      "rank": 191,
-      "positional_rank": 41,
       "player_id": 7769,
       "sleeper_id": "4066",
       "name": "Evan Engram",
@@ -6350,8 +5903,37 @@
       ]
     },
     {
-      "rank": 192,
-      "positional_rank": 71,
+      "player_id": 12430,
+      "sleeper_id": "7049",
+      "name": "Jauan Jennings",
+      "position": "WR",
+      "team": "MIN",
+      "age": 29,
+      "bye_week": 6,
+      "is_rookie": false,
+      "points": 86.2,
+      "adp": 145,
+      "weekly_points": [
+        6.25,
+        6.25,
+        6.25,
+        6.25,
+        6.25,
+        0.0,
+        6.25,
+        6.25,
+        6.25,
+        6.25,
+        6.25,
+        6.25,
+        6.25,
+        6.25,
+        6.25,
+        6.25,
+        6.22
+      ]
+    },
+    {
       "player_id": 35961,
       "sleeper_id": "13285",
       "name": "Malachi Fields",
@@ -6383,8 +5965,6 @@
       ]
     },
     {
-      "rank": 193,
-      "positional_rank": 42,
       "player_id": 35877,
       "sleeper_id": "8698",
       "name": "Jake Tonges",
@@ -6416,8 +5996,6 @@
       ]
     },
     {
-      "rank": 194,
-      "positional_rank": 72,
       "player_id": 6678,
       "sleeper_id": "1479",
       "name": "Keenan Allen",
@@ -6449,8 +6027,6 @@
       ]
     },
     {
-      "rank": 195,
-      "positional_rank": 73,
       "player_id": 10776,
       "sleeper_id": "7571",
       "name": "Rashod Bateman",
@@ -6482,8 +6058,6 @@
       ]
     },
     {
-      "rank": 196,
-      "positional_rank": 74,
       "player_id": 35953,
       "sleeper_id": "13274",
       "name": "Germie Bernard",
@@ -6515,8 +6089,6 @@
       ]
     },
     {
-      "rank": 197,
-      "positional_rank": 75,
       "player_id": 35018,
       "sleeper_id": "11625",
       "name": "Adonai Mitchell",
@@ -6548,8 +6120,6 @@
       ]
     },
     {
-      "rank": 198,
-      "positional_rank": 47,
       "player_id": 10195,
       "sleeper_id": "5850",
       "name": "Josh Jacobs",
@@ -6581,8 +6151,6 @@
       ]
     },
     {
-      "rank": 199,
-      "positional_rank": 76,
       "player_id": 35963,
       "sleeper_id": "13317",
       "name": "Ted Hurst",
@@ -6614,8 +6182,6 @@
       ]
     },
     {
-      "rank": 200,
-      "positional_rank": 77,
       "player_id": 35371,
       "sleeper_id": "12530",
       "name": "Travis Hunter",
@@ -6647,8 +6213,6 @@
       ]
     },
     {
-      "rank": 201,
-      "positional_rank": 78,
       "player_id": 35355,
       "sleeper_id": "12492",
       "name": "Pat Bryant",
@@ -6680,8 +6244,6 @@
       ]
     },
     {
-      "rank": 202,
-      "positional_rank": 79,
       "player_id": 35990,
       "sleeper_id": "13296",
       "name": "Caleb Douglas",
@@ -6713,8 +6275,6 @@
       ]
     },
     {
-      "rank": 203,
-      "positional_rank": 80,
       "player_id": 36031,
       "sleeper_id": "13413",
       "name": "Cyrus Allen",
@@ -6746,41 +6306,6 @@
       ]
     },
     {
-      "rank": 204,
-      "positional_rank": 48,
-      "player_id": 35390,
-      "sleeper_id": "12469",
-      "name": "Dylan Sampson",
-      "position": "RB",
-      "team": "CLE",
-      "age": 21.8,
-      "bye_week": 11,
-      "is_rookie": false,
-      "points": 77.2,
-      "adp": 180,
-      "weekly_points": [
-        6.13,
-        6.29,
-        6.29,
-        6.29,
-        6.29,
-        6.29,
-        6.29,
-        6.28,
-        6.28,
-        6.28,
-        0.0,
-        6.28,
-        6.28,
-        6.28,
-        6.28,
-        6.28,
-        6.22
-      ]
-    },
-    {
-      "rank": 205,
-      "positional_rank": 81,
       "player_id": 7572,
       "sleeper_id": "3321",
       "name": "Tyreek Hill",
@@ -6812,8 +6337,37 @@
       ]
     },
     {
-      "rank": 206,
-      "positional_rank": 82,
+      "player_id": 35390,
+      "sleeper_id": "12469",
+      "name": "Dylan Sampson",
+      "position": "RB",
+      "team": "CLE",
+      "age": 21.8,
+      "bye_week": 11,
+      "is_rookie": false,
+      "points": 77.2,
+      "adp": 180,
+      "weekly_points": [
+        6.13,
+        6.29,
+        6.29,
+        6.29,
+        6.29,
+        6.29,
+        6.29,
+        6.28,
+        6.28,
+        6.28,
+        0.0,
+        6.28,
+        6.28,
+        6.28,
+        6.28,
+        6.28,
+        6.22
+      ]
+    },
+    {
       "player_id": 35349,
       "sleeper_id": "12497",
       "name": "Tory Horton",
@@ -6845,8 +6399,6 @@
       ]
     },
     {
-      "rank": 207,
-      "positional_rank": 83,
       "player_id": 13583,
       "sleeper_id": "10226",
       "name": "Andrei Iosivas",
@@ -6878,8 +6430,6 @@
       ]
     },
     {
-      "rank": 208,
-      "positional_rank": 49,
       "player_id": 35328,
       "sleeper_id": "12474",
       "name": "Woody Marks",
@@ -6911,8 +6461,6 @@
       ]
     },
     {
-      "rank": 209,
-      "positional_rank": 43,
       "player_id": 36042,
       "sleeper_id": "13434",
       "name": "Will Kacmarek",
@@ -6944,8 +6492,6 @@
       ]
     },
     {
-      "rank": 210,
-      "positional_rank": 84,
       "player_id": 35572,
       "sleeper_id": "12535",
       "name": "Isaac TeSlaa",
@@ -6977,8 +6523,6 @@
       ]
     },
     {
-      "rank": 211,
-      "positional_rank": 50,
       "player_id": 12582,
       "sleeper_id": "8132",
       "name": "Tyler Allgeier",
@@ -7010,8 +6554,6 @@
       ]
     },
     {
-      "rank": 212,
-      "positional_rank": 85,
       "player_id": 35017,
       "sleeper_id": "11637",
       "name": "Keon Coleman",
@@ -7043,8 +6585,6 @@
       ]
     },
     {
-      "rank": 213,
-      "positional_rank": 86,
       "player_id": 7761,
       "sleeper_id": "4039",
       "name": "Cooper Kupp",
@@ -7076,8 +6616,6 @@
       ]
     },
     {
-      "rank": 214,
-      "positional_rank": 87,
       "player_id": 35563,
       "sleeper_id": "12540",
       "name": "Chimere Dike",
@@ -7109,8 +6647,6 @@
       ]
     },
     {
-      "rank": 215,
-      "positional_rank": 44,
       "player_id": 7770,
       "sleeper_id": "4033",
       "name": "David Njoku",
@@ -7142,8 +6678,6 @@
       ]
     },
     {
-      "rank": 216,
-      "positional_rank": 45,
       "player_id": 36014,
       "sleeper_id": "13400",
       "name": "Justin Joly",
@@ -7175,8 +6709,6 @@
       ]
     },
     {
-      "rank": 217,
-      "positional_rank": 46,
       "player_id": 35978,
       "sleeper_id": "13435",
       "name": "Joe Royer",
@@ -7208,8 +6740,6 @@
       ]
     },
     {
-      "rank": 218,
-      "positional_rank": 88,
       "player_id": 35357,
       "sleeper_id": "12536",
       "name": "Jaylin Noel",
@@ -7241,8 +6771,6 @@
       ]
     },
     {
-      "rank": 219,
-      "positional_rank": 47,
       "player_id": 35975,
       "sleeper_id": "13278",
       "name": "Max Klare",
@@ -7274,8 +6802,6 @@
       ]
     },
     {
-      "rank": 220,
-      "positional_rank": 89,
       "player_id": 13766,
       "sleeper_id": "9501",
       "name": "Demario Douglas",
@@ -7307,8 +6833,6 @@
       ]
     },
     {
-      "rank": 221,
-      "positional_rank": 90,
       "player_id": 9966,
       "sleeper_id": "4981",
       "name": "Calvin Ridley",
@@ -7340,8 +6864,6 @@
       ]
     },
     {
-      "rank": 222,
-      "positional_rank": 48,
       "player_id": 35976,
       "sleeper_id": "13282",
       "name": "Jack Endries",
@@ -7373,8 +6895,6 @@
       ]
     },
     {
-      "rank": 223,
-      "positional_rank": 91,
       "player_id": 35993,
       "sleeper_id": "13320",
       "name": "Zachariah Branch",
@@ -7406,8 +6926,6 @@
       ]
     },
     {
-      "rank": 224,
-      "positional_rank": 51,
       "player_id": 12581,
       "sleeper_id": "8154",
       "name": "Brian Robinson Jr.",
@@ -7439,8 +6957,6 @@
       ]
     },
     {
-      "rank": 225,
-      "positional_rank": 92,
       "player_id": 10331,
       "sleeper_id": "6149",
       "name": "Darius Slayton",
@@ -7472,8 +6988,6 @@
       ]
     },
     {
-      "rank": 226,
-      "positional_rank": 93,
       "player_id": 35352,
       "sleeper_id": "12483",
       "name": "Jack Bech",
@@ -7505,8 +7019,6 @@
       ]
     },
     {
-      "rank": 227,
-      "positional_rank": 52,
       "player_id": 7756,
       "sleeper_id": "4147",
       "name": "Samaje Perine",
@@ -7538,8 +7050,6 @@
       ]
     },
     {
-      "rank": 228,
-      "positional_rank": 53,
       "player_id": 13564,
       "sleeper_id": "9753",
       "name": "Zach Charbonnet",
@@ -7571,41 +7081,6 @@
       ]
     },
     {
-      "rank": 229,
-      "positional_rank": 94,
-      "player_id": 35957,
-      "sleeper_id": "13301",
-      "name": "Antonio Williams",
-      "position": "WR",
-      "team": "WAS",
-      "age": 22,
-      "bye_week": 7,
-      "is_rookie": true,
-      "points": 61.2,
-      "adp": 175,
-      "weekly_points": [
-        3.07,
-        3.29,
-        3.29,
-        3.29,
-        3.29,
-        3.29,
-        0.0,
-        3.29,
-        3.29,
-        3.29,
-        3.29,
-        3.29,
-        3.29,
-        3.29,
-        3.29,
-        3.29,
-        3.29
-      ]
-    },
-    {
-      "rank": 230,
-      "positional_rank": 54,
       "player_id": 13565,
       "sleeper_id": "9225",
       "name": "Tank Bigsby",
@@ -7637,8 +7112,37 @@
       ]
     },
     {
-      "rank": 231,
-      "positional_rank": 95,
+      "player_id": 35957,
+      "sleeper_id": "13301",
+      "name": "Antonio Williams",
+      "position": "WR",
+      "team": "WAS",
+      "age": 22,
+      "bye_week": 7,
+      "is_rookie": true,
+      "points": 61.2,
+      "adp": 175,
+      "weekly_points": [
+        3.07,
+        3.29,
+        3.29,
+        3.29,
+        3.29,
+        3.29,
+        0.0,
+        3.29,
+        3.29,
+        3.29,
+        3.29,
+        3.29,
+        3.29,
+        3.29,
+        3.29,
+        3.29,
+        3.29
+      ]
+    },
+    {
       "player_id": 13534,
       "sleeper_id": "8917",
       "name": "KaVontae Turpin",
@@ -7670,8 +7174,6 @@
       ]
     },
     {
-      "rank": 232,
-      "positional_rank": 96,
       "player_id": 10628,
       "sleeper_id": "7090",
       "name": "Darnell Mooney",
@@ -7703,8 +7205,6 @@
       ]
     },
     {
-      "rank": 233,
-      "positional_rank": 55,
       "player_id": 34993,
       "sleeper_id": "11575",
       "name": "Ray Davis",
@@ -7736,8 +7236,6 @@
       ]
     },
     {
-      "rank": 234,
-      "positional_rank": 56,
       "player_id": 35932,
       "sleeper_id": "13337",
       "name": "Emmett Johnson",
@@ -7769,8 +7267,6 @@
       ]
     },
     {
-      "rank": 235,
-      "positional_rank": 57,
       "player_id": 35927,
       "sleeper_id": "13345",
       "name": "Jonah Coleman",
@@ -7802,8 +7298,6 @@
       ]
     },
     {
-      "rank": 236,
-      "positional_rank": 97,
       "player_id": 12597,
       "sleeper_id": "8119",
       "name": "Jahan Dotson",
@@ -7835,8 +7329,6 @@
       ]
     },
     {
-      "rank": 237,
-      "positional_rank": 58,
       "player_id": 35929,
       "sleeper_id": "13288",
       "name": "Nicholas Singleton",
@@ -7868,8 +7360,6 @@
       ]
     },
     {
-      "rank": 238,
-      "positional_rank": 98,
       "player_id": 13562,
       "sleeper_id": "9486",
       "name": "Dontayvion Wicks",
@@ -7901,8 +7391,6 @@
       ]
     },
     {
-      "rank": 239,
-      "positional_rank": 99,
       "player_id": 13554,
       "sleeper_id": "9494",
       "name": "Marvin Mims Jr.",
@@ -7934,8 +7422,6 @@
       ]
     },
     {
-      "rank": 240,
-      "positional_rank": 59,
       "player_id": 10226,
       "sleeper_id": "5995",
       "name": "Justice Hill",
@@ -7967,8 +7453,6 @@
       ]
     },
     {
-      "rank": 241,
-      "positional_rank": 100,
       "player_id": 10204,
       "sleeper_id": "5848",
       "name": "Marquise Brown",
@@ -8000,8 +7484,6 @@
       ]
     },
     {
-      "rank": 242,
-      "positional_rank": 101,
       "player_id": 35952,
       "sleeper_id": "13311",
       "name": "Chris Bell",
@@ -8033,8 +7515,6 @@
       ]
     },
     {
-      "rank": 243,
-      "positional_rank": 60,
       "player_id": 35329,
       "sleeper_id": "12467",
       "name": "Jordan James",
@@ -8066,8 +7546,6 @@
       ]
     },
     {
-      "rank": 244,
-      "positional_rank": 102,
       "player_id": 34981,
       "sleeper_id": "11627",
       "name": "Troy Franklin",
@@ -8099,41 +7577,6 @@
       ]
     },
     {
-      "rank": 245,
-      "positional_rank": 103,
-      "player_id": 35020,
-      "sleeper_id": "11626",
-      "name": "Xavier Legette",
-      "position": "WR",
-      "team": "CAR",
-      "age": 25.5,
-      "bye_week": 5,
-      "is_rookie": false,
-      "points": 54.0,
-      "adp": 250,
-      "weekly_points": [
-        4.02,
-        4.02,
-        4.02,
-        4.02,
-        0.0,
-        4.02,
-        4.02,
-        4.02,
-        4.02,
-        4.02,
-        4.02,
-        4.02,
-        4.02,
-        4.02,
-        4.02,
-        4.02,
-        4.02
-      ]
-    },
-    {
-      "rank": 246,
-      "positional_rank": 61,
       "player_id": 35005,
       "sleeper_id": "11571",
       "name": "Isaiah Davis",
@@ -8165,8 +7608,37 @@
       ]
     },
     {
-      "rank": 247,
-      "positional_rank": 62,
+      "player_id": 35020,
+      "sleeper_id": "11626",
+      "name": "Xavier Legette",
+      "position": "WR",
+      "team": "CAR",
+      "age": 25.5,
+      "bye_week": 5,
+      "is_rookie": false,
+      "points": 54.0,
+      "adp": 250,
+      "weekly_points": [
+        4.02,
+        4.02,
+        4.02,
+        4.02,
+        0.0,
+        4.02,
+        4.02,
+        4.02,
+        4.02,
+        4.02,
+        4.02,
+        4.02,
+        4.02,
+        4.02,
+        4.02,
+        4.02,
+        4.02
+      ]
+    },
+    {
       "player_id": 7751,
       "sleeper_id": "4035",
       "name": "Alvin Kamara",
@@ -8198,8 +7670,6 @@
       ]
     },
     {
-      "rank": 248,
-      "positional_rank": 63,
       "player_id": 34998,
       "sleeper_id": "11647",
       "name": "Kimani Vidal",
@@ -8231,8 +7701,6 @@
       ]
     },
     {
-      "rank": 249,
-      "positional_rank": 104,
       "player_id": 12679,
       "sleeper_id": "8188",
       "name": "Tyquan Thornton",
@@ -8264,8 +7732,6 @@
       ]
     },
     {
-      "rank": 250,
-      "positional_rank": 105,
       "player_id": 35965,
       "sleeper_id": "13402",
       "name": "Skyler Bell",
@@ -8297,8 +7763,6 @@
       ]
     },
     {
-      "rank": 251,
-      "positional_rank": 64,
       "player_id": 35533,
       "sleeper_id": "12457",
       "name": "Jaydon Blue",
@@ -8330,8 +7794,6 @@
       ]
     },
     {
-      "rank": 252,
-      "positional_rank": 106,
       "player_id": 35966,
       "sleeper_id": "13533",
       "name": "Barion Brown",
@@ -8363,8 +7825,6 @@
       ]
     },
     {
-      "rank": 253,
-      "positional_rank": 107,
       "player_id": 35337,
       "sleeper_id": "12503",
       "name": "Isaiah Bond",
@@ -8396,8 +7856,6 @@
       ]
     },
     {
-      "rank": 254,
-      "positional_rank": 65,
       "player_id": 7778,
       "sleeper_id": "4137",
       "name": "James Conner",
@@ -8429,8 +7887,6 @@
       ]
     },
     {
-      "rank": 255,
-      "positional_rank": 66,
       "player_id": 14231,
       "sleeper_id": "11435",
       "name": "Emanuel Wilson",
@@ -8462,8 +7918,6 @@
       ]
     },
     {
-      "rank": 256,
-      "positional_rank": 35,
       "player_id": 35924,
       "sleeper_id": "13272",
       "name": "Carson Beck",
@@ -8495,8 +7949,6 @@
       ]
     },
     {
-      "rank": 257,
-      "positional_rank": 108,
       "player_id": 35954,
       "sleeper_id": "13268",
       "name": "Elijah Sarratt",
@@ -8528,8 +7980,6 @@
       ]
     },
     {
-      "rank": 258,
-      "positional_rank": 109,
       "player_id": 36054,
       "sleeper_id": "13329",
       "name": "Malik Benson",
@@ -8561,8 +8011,6 @@
       ]
     },
     {
-      "rank": 259,
-      "positional_rank": 110,
       "player_id": 35958,
       "sleeper_id": "13394",
       "name": "Josh Cameron",
@@ -8594,41 +8042,6 @@
       ]
     },
     {
-      "rank": 260,
-      "positional_rank": 67,
-      "player_id": 12735,
-      "sleeper_id": "8205",
-      "name": "Isiah Pacheco",
-      "position": "RB",
-      "team": "DET",
-      "age": 27.4,
-      "bye_week": 6,
-      "is_rookie": false,
-      "points": 48.6,
-      "adp": 191,
-      "weekly_points": [
-        4.99,
-        4.99,
-        4.99,
-        4.99,
-        4.99,
-        0.0,
-        4.99,
-        4.99,
-        4.99,
-        4.99,
-        4.99,
-        4.99,
-        4.99,
-        4.99,
-        4.99,
-        4.99,
-        4.99
-      ]
-    },
-    {
-      "rank": 261,
-      "positional_rank": 49,
       "player_id": 12706,
       "sleeper_id": "8225",
       "name": "Daniel Bellinger",
@@ -8660,8 +8073,37 @@
       ]
     },
     {
-      "rank": 262,
-      "positional_rank": 68,
+      "player_id": 12735,
+      "sleeper_id": "8205",
+      "name": "Isiah Pacheco",
+      "position": "RB",
+      "team": "DET",
+      "age": 27.4,
+      "bye_week": 6,
+      "is_rookie": false,
+      "points": 48.6,
+      "adp": 191,
+      "weekly_points": [
+        4.99,
+        4.99,
+        4.99,
+        4.99,
+        4.99,
+        0.0,
+        4.99,
+        4.99,
+        4.99,
+        4.99,
+        4.99,
+        4.99,
+        4.99,
+        4.99,
+        4.99,
+        4.99,
+        4.99
+      ]
+    },
+    {
       "player_id": 13568,
       "sleeper_id": "9506",
       "name": "Sean Tucker",
@@ -8693,8 +8135,6 @@
       ]
     },
     {
-      "rank": 263,
-      "positional_rank": 50,
       "player_id": 35977,
       "sleeper_id": "13319",
       "name": "Oscar Delp",
@@ -8726,8 +8166,6 @@
       ]
     },
     {
-      "rank": 264,
-      "positional_rank": 69,
       "player_id": 10342,
       "sleeper_id": "6039",
       "name": "Ty Johnson",
@@ -8759,8 +8197,6 @@
       ]
     },
     {
-      "rank": 265,
-      "positional_rank": 70,
       "player_id": 34996,
       "sleeper_id": "11576",
       "name": "Braelon Allen",
@@ -8792,8 +8228,6 @@
       ]
     },
     {
-      "rank": 266,
-      "positional_rank": 71,
       "player_id": 35514,
       "sleeper_id": "12544",
       "name": "LeQuint Allen",
@@ -8825,8 +8259,6 @@
       ]
     },
     {
-      "rank": 267,
-      "positional_rank": 111,
       "player_id": 36058,
       "sleeper_id": "13411",
       "name": "Zavion Thomas",
@@ -8858,8 +8290,6 @@
       ]
     },
     {
-      "rank": 268,
-      "positional_rank": 112,
       "player_id": 35338,
       "sleeper_id": "12499",
       "name": "Elic Ayomanor",
@@ -8891,8 +8321,6 @@
       ]
     },
     {
-      "rank": 269,
-      "positional_rank": 51,
       "player_id": 12590,
       "sleeper_id": "8127",
       "name": "Charlie Kolar",
@@ -8924,8 +8352,6 @@
       ]
     },
     {
-      "rank": 270,
-      "positional_rank": 52,
       "player_id": 10201,
       "sleeper_id": "5857",
       "name": "Noah Fant",
@@ -8957,41 +8383,6 @@
       ]
     },
     {
-      "rank": 271,
-      "positional_rank": 113,
-      "player_id": 13552,
-      "sleeper_id": "9502",
-      "name": "Nathaniel Dell",
-      "position": "WR",
-      "team": "HOU",
-      "age": 26.8,
-      "bye_week": 8,
-      "is_rookie": false,
-      "points": 43.4,
-      "adp": 200,
-      "weekly_points": [
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        3.61,
-        3.61,
-        3.61,
-        0.0,
-        4.5,
-        4.5,
-        4.5,
-        4.5,
-        4.5,
-        4.5,
-        4.5,
-        4.5,
-        4.5
-      ]
-    },
-    {
-      "rank": 272,
-      "positional_rank": 53,
       "player_id": 9531,
       "sleeper_id": "4144",
       "name": "Jonnu Smith",
@@ -9023,8 +8414,37 @@
       ]
     },
     {
-      "rank": 273,
-      "positional_rank": 72,
+      "player_id": 13552,
+      "sleeper_id": "9502",
+      "name": "Nathaniel Dell",
+      "position": "WR",
+      "team": "HOU",
+      "age": 26.8,
+      "bye_week": 8,
+      "is_rookie": false,
+      "points": 43.4,
+      "adp": 200,
+      "weekly_points": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        3.61,
+        3.61,
+        3.61,
+        0.0,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5,
+        4.5
+      ]
+    },
+    {
       "player_id": 35930,
       "sleeper_id": "13405",
       "name": "Kaytron Allen",
@@ -9056,8 +8476,6 @@
       ]
     },
     {
-      "rank": 274,
-      "positional_rank": 114,
       "player_id": 10582,
       "sleeper_id": "6803",
       "name": "Brandon Aiyuk",
@@ -9089,8 +8507,6 @@
       ]
     },
     {
-      "rank": 275,
-      "positional_rank": 73,
       "player_id": 34988,
       "sleeper_id": "11643",
       "name": "Jaylen Wright",
@@ -9122,8 +8538,6 @@
       ]
     },
     {
-      "rank": 276,
-      "positional_rank": 54,
       "player_id": 35979,
       "sleeper_id": "13401",
       "name": "Michael Trigg",
@@ -9155,8 +8569,6 @@
       ]
     },
     {
-      "rank": 277,
-      "positional_rank": 55,
       "player_id": 35982,
       "sleeper_id": "13322",
       "name": "Sam Roush",
@@ -9188,8 +8600,6 @@
       ]
     },
     {
-      "rank": 278,
-      "positional_rank": 56,
       "player_id": 35008,
       "sleeper_id": "11599",
       "name": "Cade Stover",
@@ -9221,8 +8631,6 @@
       ]
     },
     {
-      "rank": 279,
-      "positional_rank": 57,
       "player_id": 36072,
       "sleeper_id": "13421",
       "name": "Eli Raridon",
@@ -9254,8 +8662,6 @@
       ]
     },
     {
-      "rank": 280,
-      "positional_rank": 58,
       "player_id": 7562,
       "sleeper_id": "3271",
       "name": "Tyler Higbee",
@@ -9287,8 +8693,6 @@
       ]
     },
     {
-      "rank": 281,
-      "positional_rank": 59,
       "player_id": 35980,
       "sleeper_id": "13408",
       "name": "Tanner Koziol",
@@ -9320,8 +8724,6 @@
       ]
     },
     {
-      "rank": 282,
-      "positional_rank": 74,
       "player_id": 36026,
       "sleeper_id": "13414",
       "name": "Kaelon Black",
@@ -9353,8 +8755,6 @@
       ]
     },
     {
-      "rank": 283,
-      "positional_rank": 115,
       "player_id": 12602,
       "sleeper_id": "8147",
       "name": "John Metchie",
@@ -9386,8 +8786,6 @@
       ]
     },
     {
-      "rank": 284,
-      "positional_rank": 60,
       "player_id": 35367,
       "sleeper_id": "12658",
       "name": "Jackson Hawes",
@@ -9419,8 +8817,6 @@
       ]
     },
     {
-      "rank": 285,
-      "positional_rank": 61,
       "player_id": 10798,
       "sleeper_id": "7694",
       "name": "Tommy Tremble",
@@ -9452,8 +8848,6 @@
       ]
     },
     {
-      "rank": 286,
-      "positional_rank": 62,
       "player_id": 36041,
       "sleeper_id": "13324",
       "name": "Matthew Hibner",
@@ -9485,8 +8879,6 @@
       ]
     },
     {
-      "rank": 287,
-      "positional_rank": 63,
       "player_id": 36063,
       "sleeper_id": "13422",
       "name": "Jaren Kanak",
@@ -9518,8 +8910,6 @@
       ]
     },
     {
-      "rank": 288,
-      "positional_rank": 64,
       "player_id": 13672,
       "sleeper_id": "10871",
       "name": "Luke Schoonmaker",
@@ -9551,8 +8941,6 @@
       ]
     },
     {
-      "rank": 289,
-      "positional_rank": 116,
       "player_id": 12410,
       "sleeper_id": "5970",
       "name": "Greg Dortch",
@@ -9584,8 +8972,6 @@
       ]
     },
     {
-      "rank": 290,
-      "positional_rank": 117,
       "player_id": 9969,
       "sleeper_id": "4950",
       "name": "Christian Kirk",
@@ -9617,8 +9003,6 @@
       ]
     },
     {
-      "rank": 291,
-      "positional_rank": 36,
       "player_id": 5105,
       "sleeper_id": "1166",
       "name": "Kirk Cousins",
@@ -9650,8 +9034,6 @@
       ]
     },
     {
-      "rank": 292,
-      "positional_rank": 65,
       "player_id": 36011,
       "sleeper_id": "13307",
       "name": "Marlin Klein",
@@ -9683,8 +9065,6 @@
       ]
     },
     {
-      "rank": 293,
-      "positional_rank": 118,
       "player_id": 35543,
       "sleeper_id": "12718",
       "name": "Konata Mumpfield",
@@ -9716,8 +9096,6 @@
       ]
     },
     {
-      "rank": 294,
-      "positional_rank": 66,
       "player_id": 36012,
       "sleeper_id": "13273",
       "name": "Josh Cuevas",
@@ -9749,8 +9127,6 @@
       ]
     },
     {
-      "rank": 295,
-      "positional_rank": 67,
       "player_id": 35012,
       "sleeper_id": "11596",
       "name": "Ben Sinnott",
@@ -9782,8 +9158,6 @@
       ]
     },
     {
-      "rank": 296,
-      "positional_rank": 68,
       "player_id": 36015,
       "sleeper_id": "13299",
       "name": "Nate Boerkircher",
@@ -9815,8 +9189,6 @@
       ]
     },
     {
-      "rank": 297,
-      "positional_rank": 75,
       "player_id": 35936,
       "sleeper_id": "13424",
       "name": "Seth McGowan",
@@ -9848,8 +9220,6 @@
       ]
     },
     {
-      "rank": 298,
-      "positional_rank": 76,
       "player_id": 35121,
       "sleeper_id": "11570",
       "name": "Rasheen Ali",
@@ -9881,8 +9251,6 @@
       ]
     },
     {
-      "rank": 299,
-      "positional_rank": 77,
       "player_id": 14427,
       "sleeper_id": "11199",
       "name": "Emari Demercado",
@@ -9914,8 +9282,6 @@
       ]
     },
     {
-      "rank": 300,
-      "positional_rank": 78,
       "player_id": 35525,
       "sleeper_id": "12531",
       "name": "Trevor Etienne",
@@ -9947,8 +9313,6 @@
       ]
     },
     {
-      "rank": 301,
-      "positional_rank": 119,
       "player_id": 36028,
       "sleeper_id": "13380",
       "name": "Brenen Thompson",
@@ -9980,8 +9344,6 @@
       ]
     },
     {
-      "rank": 302,
-      "positional_rank": 120,
       "player_id": 36018,
       "sleeper_id": "13270",
       "name": "CJ Daniels",
@@ -10013,8 +9375,6 @@
       ]
     },
     {
-      "rank": 303,
-      "positional_rank": 121,
       "player_id": 35342,
       "sleeper_id": "12485",
       "name": "Tez Johnson",
@@ -10046,8 +9406,6 @@
       ]
     },
     {
-      "rank": 304,
-      "positional_rank": 122,
       "player_id": 35960,
       "sleeper_id": "13420",
       "name": "Bryce Lance",
@@ -10079,8 +9437,6 @@
       ]
     },
     {
-      "rank": 305,
-      "positional_rank": 123,
       "player_id": 7565,
       "sleeper_id": "3286",
       "name": "Demarcus Robinson",
@@ -10112,8 +9468,6 @@
       ]
     },
     {
-      "rank": 306,
-      "positional_rank": 124,
       "player_id": 35358,
       "sleeper_id": "12641",
       "name": "Jaylin Lane",
@@ -10145,8 +9499,6 @@
       ]
     },
     {
-      "rank": 307,
-      "positional_rank": 69,
       "player_id": 35007,
       "sleeper_id": "11600",
       "name": "Ja'Tavion Sanders",
@@ -10178,8 +9530,6 @@
       ]
     },
     {
-      "rank": 308,
-      "positional_rank": 125,
       "player_id": 13556,
       "sleeper_id": "10218",
       "name": "Xavier Hutchinson",
@@ -10211,8 +9561,6 @@
       ]
     },
     {
-      "rank": 309,
-      "positional_rank": 79,
       "player_id": 35319,
       "sleeper_id": "12504",
       "name": "Kaleb Johnson",
@@ -10244,8 +9592,6 @@
       ]
     },
     {
-      "rank": 310,
-      "positional_rank": 126,
       "player_id": 35561,
       "sleeper_id": "12670",
       "name": "KeAndre Lambert-Smith",
@@ -10277,8 +9623,6 @@
       ]
     },
     {
-      "rank": 311,
-      "positional_rank": 127,
       "player_id": 12593,
       "sleeper_id": "8135",
       "name": "Treylon Burks",
@@ -10310,8 +9654,6 @@
       ]
     },
     {
-      "rank": 312,
-      "positional_rank": 80,
       "player_id": 34995,
       "sleeper_id": "11577",
       "name": "Will Shipley",
@@ -10343,8 +9685,6 @@
       ]
     },
     {
-      "rank": 313,
-      "positional_rank": 81,
       "player_id": 35392,
       "sleeper_id": "12476",
       "name": "Devin Neal",
@@ -10376,8 +9716,6 @@
       ]
     },
     {
-      "rank": 314,
-      "positional_rank": 37,
       "player_id": 36000,
       "sleeper_id": "13306",
       "name": "Taylen Green",
@@ -10409,8 +9747,6 @@
       ]
     },
     {
-      "rank": 315,
-      "positional_rank": 82,
       "player_id": 36002,
       "sleeper_id": "13348",
       "name": "J'Mari Taylor",
@@ -10442,8 +9778,6 @@
       ]
     },
     {
-      "rank": 316,
-      "positional_rank": 128,
       "player_id": 12601,
       "sleeper_id": "8117",
       "name": "Jalen Tolbert",
@@ -10475,8 +9809,6 @@
       ]
     },
     {
-      "rank": 317,
-      "positional_rank": 129,
       "player_id": 35340,
       "sleeper_id": "12505",
       "name": "Jalen Royals",
@@ -10508,8 +9840,6 @@
       ]
     },
     {
-      "rank": 318,
-      "positional_rank": 130,
       "player_id": 35378,
       "sleeper_id": "12482",
       "name": "Savion Williams",
@@ -10541,8 +9871,6 @@
       ]
     },
     {
-      "rank": 319,
-      "positional_rank": 83,
       "player_id": 35528,
       "sleeper_id": "12471",
       "name": "DJ Giddens",
@@ -10574,8 +9902,6 @@
       ]
     },
     {
-      "rank": 320,
-      "positional_rank": 131,
       "player_id": 10834,
       "sleeper_id": "7670",
       "name": "Joshua Palmer",
@@ -10607,8 +9933,6 @@
       ]
     },
     {
-      "rank": 321,
-      "positional_rank": 132,
       "player_id": 36008,
       "sleeper_id": "13338",
       "name": "Kevin Coleman Jr.",
@@ -10640,8 +9964,6 @@
       ]
     },
     {
-      "rank": 322,
-      "positional_rank": 133,
       "player_id": 35557,
       "sleeper_id": "12547",
       "name": "Kyle Williams",
@@ -10673,8 +9995,6 @@
       ]
     },
     {
-      "rank": 323,
-      "positional_rank": 84,
       "player_id": 35991,
       "sleeper_id": "13302",
       "name": "Adam Randall",
@@ -10706,8 +10026,6 @@
       ]
     },
     {
-      "rank": 324,
-      "positional_rank": 85,
       "player_id": 10216,
       "sleeper_id": "6130",
       "name": "Devin Singletary",
@@ -10739,8 +10057,6 @@
       ]
     },
     {
-      "rank": 325,
-      "positional_rank": 134,
       "player_id": 36060,
       "sleeper_id": "13477",
       "name": "Colbie Young",
@@ -10772,8 +10088,6 @@
       ]
     },
     {
-      "rank": 326,
-      "positional_rank": 135,
       "player_id": 35534,
       "sleeper_id": "12523",
       "name": "Jimmy Horn Jr.",
@@ -10805,8 +10119,6 @@
       ]
     },
     {
-      "rank": 327,
-      "positional_rank": 136,
       "player_id": 35016,
       "sleeper_id": "11629",
       "name": "Devontez Walker",
@@ -10838,8 +10150,6 @@
       ]
     },
     {
-      "rank": 328,
-      "positional_rank": 137,
       "player_id": 36029,
       "sleeper_id": "13309",
       "name": "Aaron Anderson",
@@ -10871,8 +10181,6 @@
       ]
     },
     {
-      "rank": 329,
-      "positional_rank": 138,
       "player_id": 35972,
       "sleeper_id": "13354",
       "name": "Eric McAlister",
@@ -10904,8 +10212,6 @@
       ]
     },
     {
-      "rank": 330,
-      "positional_rank": 139,
       "player_id": 12034,
       "sleeper_id": "7496",
       "name": "Nick Westbrook-Ikhine",
@@ -10937,8 +10243,6 @@
       ]
     },
     {
-      "rank": 331,
-      "positional_rank": 86,
       "player_id": 35042,
       "sleeper_id": "11588",
       "name": "Jawhar Jordan",
@@ -10970,8 +10274,6 @@
       ]
     },
     {
-      "rank": 332,
-      "positional_rank": 140,
       "player_id": 35344,
       "sleeper_id": "12496",
       "name": "Tai Felton",
@@ -11003,8 +10305,6 @@
       ]
     },
     {
-      "rank": 333,
-      "positional_rank": 141,
       "player_id": 36036,
       "sleeper_id": "13316",
       "name": "Eric Rivers",
@@ -11036,8 +10336,6 @@
       ]
     },
     {
-      "rank": 334,
-      "positional_rank": 87,
       "player_id": 10758,
       "sleeper_id": "7528",
       "name": "Najee Harris",
@@ -11069,8 +10367,6 @@
       ]
     },
     {
-      "rank": 335,
-      "positional_rank": 88,
       "player_id": 35944,
       "sleeper_id": "13327",
       "name": "Desmond Reid",
@@ -11102,8 +10398,6 @@
       ]
     },
     {
-      "rank": 336,
-      "positional_rank": 89,
       "player_id": 35551,
       "sleeper_id": "12543",
       "name": "Tahj Brooks",
@@ -11135,8 +10429,6 @@
       ]
     },
     {
-      "rank": 337,
-      "positional_rank": 90,
       "player_id": 35933,
       "sleeper_id": "13347",
       "name": "Demond Claiborne",
@@ -11168,8 +10460,6 @@
       ]
     },
     {
-      "rank": 338,
-      "positional_rank": 142,
       "player_id": 35025,
       "sleeper_id": "11630",
       "name": "Roman Wilson",
@@ -11201,8 +10491,6 @@
       ]
     },
     {
-      "rank": 339,
-      "positional_rank": 38,
       "player_id": 35923,
       "sleeper_id": "13303",
       "name": "Cade Klubnik",
@@ -11234,8 +10522,6 @@
       ]
     },
     {
-      "rank": 340,
-      "positional_rank": 91,
       "player_id": 35321,
       "sleeper_id": "12495",
       "name": "Ollie Gordon II",
@@ -11267,8 +10553,6 @@
       ]
     },
     {
-      "rank": 341,
-      "positional_rank": 143,
       "player_id": 36009,
       "sleeper_id": "13297",
       "name": "Reggie Virgil",
@@ -11300,8 +10584,6 @@
       ]
     },
     {
-      "rank": 342,
-      "positional_rank": 92,
       "player_id": 34992,
       "sleeper_id": "11579",
       "name": "Audric Estime",
@@ -11333,8 +10615,6 @@
       ]
     },
     {
-      "rank": 343,
-      "positional_rank": 39,
       "player_id": 36021,
       "sleeper_id": "13289",
       "name": "Drew Allar",
@@ -11366,8 +10646,6 @@
       ]
     },
     {
-      "rank": 344,
-      "positional_rank": 70,
       "player_id": 35573,
       "sleeper_id": "12473",
       "name": "Mitchell Evans",
@@ -11399,8 +10677,6 @@
       ]
     },
     {
-      "rank": 345,
-      "positional_rank": 71,
       "player_id": 35084,
       "sleeper_id": "11716",
       "name": "Tip Reiman",
@@ -11432,8 +10708,6 @@
       ]
     },
     {
-      "rank": 346,
-      "positional_rank": 144,
       "player_id": 35131,
       "sleeper_id": "11623",
       "name": "Jordan Whittington",
@@ -11465,8 +10739,6 @@
       ]
     },
     {
-      "rank": 347,
-      "positional_rank": 145,
       "player_id": 35964,
       "sleeper_id": "13333",
       "name": "Deion Burks",
@@ -11498,8 +10770,6 @@
       ]
     },
     {
-      "rank": 348,
-      "positional_rank": 93,
       "player_id": 35996,
       "sleeper_id": "13403",
       "name": "Jamarion Miller",
@@ -11531,8 +10801,6 @@
       ]
     },
     {
-      "rank": 349,
-      "positional_rank": 94,
       "player_id": 35522,
       "sleeper_id": "12455",
       "name": "Brashard Smith",
@@ -11564,8 +10832,6 @@
       ]
     },
     {
-      "rank": 350,
-      "positional_rank": 40,
       "player_id": 34985,
       "sleeper_id": "11565",
       "name": "J.J. McCarthy",
@@ -11597,8 +10863,6 @@
       ]
     },
     {
-      "rank": 351,
-      "positional_rank": 41,
       "player_id": 35918,
       "sleeper_id": "13275",
       "name": "Ty Simpson",
@@ -11630,8 +10894,6 @@
       ]
     },
     {
-      "rank": 352,
-      "positional_rank": 72,
       "player_id": 36040,
       "sleeper_id": "13433",
       "name": "Riley Nowakowski",
@@ -11663,8 +10925,6 @@
       ]
     },
     {
-      "rank": 353,
-      "positional_rank": 73,
       "player_id": 12701,
       "sleeper_id": "8145",
       "name": "Jeremy Ruckert",
@@ -11696,8 +10956,6 @@
       ]
     },
     {
-      "rank": 354,
-      "positional_rank": 42,
       "player_id": 35545,
       "sleeper_id": "12486",
       "name": "Dillon Gabriel",
@@ -11729,8 +10987,6 @@
       ]
     },
     {
-      "rank": 355,
-      "positional_rank": 74,
       "player_id": 36043,
       "sleeper_id": "13429",
       "name": "Seydou Traore",
@@ -11762,8 +11018,6 @@
       ]
     },
     {
-      "rank": 356,
-      "positional_rank": 95,
       "player_id": 36020,
       "sleeper_id": "13419",
       "name": "Jaydn Ott",
@@ -11795,8 +11049,6 @@
       ]
     },
     {
-      "rank": 357,
-      "positional_rank": 75,
       "player_id": 35135,
       "sleeper_id": "11820",
       "name": "Devin Culp",
@@ -11828,8 +11080,6 @@
       ]
     },
     {
-      "rank": 358,
-      "positional_rank": 146,
       "player_id": 10781,
       "sleeper_id": "7562",
       "name": "Tutu Atwell",
@@ -11861,8 +11111,6 @@
       ]
     },
     {
-      "rank": 359,
-      "positional_rank": 96,
       "player_id": 35331,
       "sleeper_id": "11569",
       "name": "Jarquez Hunter",
@@ -11894,8 +11142,6 @@
       ]
     },
     {
-      "rank": 360,
-      "positional_rank": 76,
       "player_id": 13671,
       "sleeper_id": "10214",
       "name": "Davis Allen",
@@ -11927,8 +11173,6 @@
       ]
     },
     {
-      "rank": 361,
-      "positional_rank": 147,
       "player_id": 35037,
       "sleeper_id": "11650",
       "name": "Luke McCaffrey",
@@ -11960,8 +11204,6 @@
       ]
     },
     {
-      "rank": 362,
-      "positional_rank": 97,
       "player_id": 10760,
       "sleeper_id": "7607",
       "name": "Michael Carter",
@@ -11993,8 +11235,6 @@
       ]
     },
     {
-      "rank": 363,
-      "positional_rank": 98,
       "player_id": 13579,
       "sleeper_id": "10235",
       "name": "Roschon Johnson",
@@ -12026,8 +11266,6 @@
       ]
     },
     {
-      "rank": 364,
-      "positional_rank": 99,
       "player_id": 15400,
       "sleeper_id": "11439",
       "name": "Jaleel McLaughlin",
@@ -12059,8 +11297,6 @@
       ]
     },
     {
-      "rank": 365,
-      "positional_rank": 100,
       "player_id": 35223,
       "sleeper_id": "8208",
       "name": "Tyler Badie",
@@ -12092,41 +11328,6 @@
       ]
     },
     {
-      "rank": 366,
-      "positional_rank": 101,
-      "player_id": 35330,
-      "sleeper_id": "12738",
-      "name": "Phil Mafah",
-      "position": "RB",
-      "team": "DAL",
-      "age": 23.8,
-      "bye_week": 14,
-      "is_rookie": false,
-      "points": 5.7,
-      "adp": 5320,
-      "weekly_points": [
-        1.64,
-        1.64,
-        1.64,
-        1.64,
-        1.64,
-        1.64,
-        1.64,
-        1.64,
-        1.64,
-        1.64,
-        1.64,
-        1.64,
-        1.64,
-        1.64,
-        1.64,
-        1.64,
-        1.64
-      ]
-    },
-    {
-      "rank": 367,
-      "positional_rank": 102,
       "player_id": 35003,
       "sleeper_id": "11651",
       "name": "Isaac Guerendo",
@@ -12158,8 +11359,37 @@
       ]
     },
     {
-      "rank": 368,
-      "positional_rank": 148,
+      "player_id": 35330,
+      "sleeper_id": "12738",
+      "name": "Phil Mafah",
+      "position": "RB",
+      "team": "DAL",
+      "age": 23.8,
+      "bye_week": 14,
+      "is_rookie": false,
+      "points": 5.7,
+      "adp": 5320,
+      "weekly_points": [
+        1.64,
+        1.64,
+        1.64,
+        1.64,
+        1.64,
+        1.64,
+        1.64,
+        1.64,
+        1.64,
+        1.64,
+        1.64,
+        1.64,
+        1.64,
+        1.64,
+        1.64,
+        1.64,
+        1.64
+      ]
+    },
+    {
       "player_id": 35516,
       "sleeper_id": "12539",
       "name": "Arian Smith",
@@ -12191,8 +11421,6 @@
       ]
     },
     {
-      "rank": 369,
-      "positional_rank": 149,
       "player_id": 13555,
       "sleeper_id": "10444",
       "name": "Cedric Tillman",
@@ -12224,8 +11452,6 @@
       ]
     },
     {
-      "rank": 370,
-      "positional_rank": 103,
       "player_id": 13570,
       "sleeper_id": "9757",
       "name": "Kendre Miller",
@@ -12256,30 +11482,5 @@
         2.83
       ]
     }
-  ],
-  "sleeper": {
-    "source": "https://api.sleeper.app/v1/players/nfl",
-    "fetched_at": "2026-08-29T14:28:59+00:00",
-    "dump_player_count": 12225,
-    "dump_offensive_count": 4158,
-    "matched": 417,
-    "unmatched": 0,
-    "matched_by": {
-      "name": 386,
-      "name_without_suffix": 22,
-      "last_name_team": 9
-    },
-    "unmatched_players": []
-  },
-  "points_source": {
-    "file": "sleeper_projections.json",
-    "season": "2026",
-    "fetched_at": "2026-09-01T00:14:47+00:00"
-  },
-  "weekly_source": {
-    "file": "weekly_projections.json",
-    "season": "2026",
-    "fetched_at": "2026-09-01T01:11:03+00:00",
-    "uniform_fallbacks": 7
-  }
+  ]
 }

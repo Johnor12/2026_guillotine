@@ -12,10 +12,10 @@ e.g. a league mock, which carries the same shape (a mock's `league_id` moves int
 `metadata`, so the league user list still resolves).
 
 Usage:
-    uv run draft_pipeline/fetch_draft.py
-    uv run draft_pipeline/fetch_draft.py --draft-id 1400304132081893376
-    uv run draft_pipeline/fetch_draft.py --report
-    uv run draft_pipeline/fetch_draft.py --selftest
+    uv run draft/fetch_draft.py
+    uv run draft/fetch_draft.py --draft-id 1400304132081893376
+    uv run draft/fetch_draft.py --report
+    uv run draft/fetch_draft.py --selftest
 """
 
 from __future__ import annotations
@@ -27,7 +27,6 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-import paths
 import report as draft_report
 from draft_board import (
     Board,
@@ -38,6 +37,11 @@ from draft_board import (
     resolve_me,
 )
 from selftest import selftest as run_selftest
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+DRAFT = REPO_ROOT / "draft.json"
+#: The pool pipeline's artifact: read only by --report, to check the join by sleeper_id.
+POOL = REPO_ROOT / "pool.json"
 
 #: The Gnosis Guillotine draft (league 1397662420398247936).
 DRAFT_ID = "1397662421937565696"
@@ -87,7 +91,6 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    ap.add_argument("-o", "--output", default=paths.DRAFT, type=Path)
     ap.add_argument("--draft-id", default=DRAFT_ID, help=f"default: {DRAFT_ID} (the league draft)")
     ap.add_argument("--report", action="store_true", help="print a validation summary to stderr")
     ap.add_argument(
@@ -147,10 +150,7 @@ def main(argv: list[str] | None = None) -> int:
         )
 
     document = build_document(fetched, board, rows, checks, me, API)
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    with args.output.open("w", encoding="utf-8") as handle:
-        json.dump(document, handle, indent=2, ensure_ascii=False)
-        handle.write("\n")
+    DRAFT.write_text(json.dumps(document, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
     clock = document["on_the_clock"]
     mine_next = document["my_next_pick"]
@@ -169,11 +169,11 @@ def main(argv: list[str] | None = None) -> int:
             if mine_next
             else ""
         )
-        + f" -> {paths.display(args.output)}",
+        + f" -> {DRAFT.name}",
         file=sys.stderr,
     )
     if args.report:
-        draft_report.report(document, rows, board, paths.POOL)
+        draft_report.report(document, rows, board, POOL)
     return 0
 
 

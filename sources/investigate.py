@@ -5,10 +5,15 @@ For every pick, the selected player is ranked only against players who were stil
 available at that moment. A provider fits when the drafter repeatedly selects near
 the top of that provider's remaining board.
 
+Picks and source rows are matched by Sleeper id when both carry one; a source row the
+pool could not resolve (sleeper_id null) falls back to normalized name and position,
+then to a conservative Cam/Cameron-style first-name-prefix match on last name, team
+and position. It never makes last-name-only guesses (Tahj vs. Malik Washington).
+
 Usage:
-    uv run data_source_investigator/investigate.py
-    uv run data_source_investigator/investigate.py --report
-    uv run data_source_investigator/investigate.py --selftest
+    uv run sources/investigate.py
+    uv run sources/investigate.py --report
+    uv run sources/investigate.py --selftest
 """
 
 from __future__ import annotations
@@ -22,8 +27,13 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-import paths
 from identity import SUFFIXES, normalized_name, words
+
+PROCESS_DIR = Path(__file__).resolve().parent
+REPO_ROOT = PROCESS_DIR.parent
+BOARDS = PROCESS_DIR / "data" / "boards.json"
+DRAFT = REPO_ROOT / "draft.json"
+REPORT = REPO_ROOT / "data_source_matches.json"
 
 MISSING_PICK_LOSS = 5.0  # Same loss as repeatedly choosing 32nd among available players.
 SKIPPED_EXAMPLES = 5
@@ -322,23 +332,12 @@ def selftest() -> list[str]:
     return problems
 
 
-def write_json(path: Path, payload: dict, indent: int) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_name(path.name + ".tmp")
-    temporary.write_text(json.dumps(payload, indent=indent, ensure_ascii=False) + "\n")
-    temporary.replace(path)
-
-
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    ap.add_argument("--rankings", type=Path, default=paths.RANKINGS)
-    ap.add_argument("--draft", type=Path, default=paths.DRAFT)
-    ap.add_argument("-o", "--output", type=Path, default=paths.REPORT)
     ap.add_argument("--report", action="store_true")
     ap.add_argument("--selftest", action="store_true")
-    ap.add_argument("--indent", type=int, default=2)
     args = ap.parse_args(argv)
 
     if args.selftest:
@@ -351,20 +350,20 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     try:
-        rankings = json.loads(args.rankings.read_text())
-        draft = json.loads(args.draft.read_text())
+        rankings = json.loads(BOARDS.read_text())
+        draft = json.loads(DRAFT.read_text())
         if len(rankings["sources"]) < 2:
             raise ValueError("need at least two ranking sources")
         if not any(pick["status"] == "made" for pick in draft["picks"]):
             # Pre-draft: still write a valid zero-owner document so the ranker can
-            # run — every opponent falls back to its cold-start source.
-            print("no picks made yet — every drafter keeps the cold-start fallback", file=sys.stderr)
+            # run; every opponent falls back to its cold-start source.
+            print("no picks made yet; every drafter keeps the cold-start fallback", file=sys.stderr)
         result = investigate(rankings, draft)
     except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
         print(f"cannot investigate sources: {exc}", file=sys.stderr)
         return 1
 
-    write_json(args.output, result, args.indent)
+    REPORT.write_text(json.dumps(result, indent=2, ensure_ascii=False) + "\n")
     if args.report:
         for owner in result["owners"]:
             best = owner["inferred_source"]
@@ -376,7 +375,7 @@ def main(argv: list[str] | None = None) -> int:
             )
     print(
         f"investigated {result['draft']['picks_analyzed']} picks for "
-        f"{result['owner_count']} drafters -> {paths.display(args.output)}",
+        f"{result['owner_count']} drafters -> {REPORT.name}",
         file=sys.stderr,
     )
     return 0
