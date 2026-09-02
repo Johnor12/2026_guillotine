@@ -18,6 +18,7 @@ from .league import (
     OPPONENT_BALANCE_STRENGTH,
     OPPONENT_DEPTH_PENALTY,
     OPPONENT_DEPTH_TARGETS,
+    OPPONENT_INTEL,
     OPPONENT_POSITION_TILT,
     POSITIONS,
     SURVIVAL_SIGMA,
@@ -172,6 +173,17 @@ class Draft:
             for p in players
             if p.position == "QB" and _starts_week1(p) and p.player_id not in self.taken
         )
+        # OPPONENT_INTEL by slot, names resolved to pool players. Synthetic boards
+        # (the selftest) carry no real usernames and so no intel.
+        by_name = {p.name: p for p in players}
+        self.intel: dict[int, list[list[Player] | str]] = {
+            strategy.slot: [
+                step if isinstance(step, str) else [by_name[name] for name in step]
+                for step in OPPONENT_INTEL[strategy.username]
+            ]
+            for strategy in self.opponents.values()
+            if strategy.username in OPPONENT_INTEL
+        }
 
     def _next_pick_table(self) -> list[int | None]:
         """For each pick index, the slot's following pick index (None if it is their last)."""
@@ -249,6 +261,8 @@ class Draft:
     def opponent_candidates(self, pick_index: int, slot: int) -> list[Player]:
         """All legal players, ordered only by this opponent's inferred source board.
 
+        A drafter with OPPONENT_INTEL follows the plan while it lasts, falling back
+        to the board when the planned players are gone or the position is exhausted.
         A team still without a quarterback is assumed to be at least this rational
         about the one position every roster must fill from a supply of 32 week-1
         starters: it never spends the pick on a QB who does not start week 1 while a
@@ -271,6 +285,15 @@ class Draft:
             ]
             if candidates:
                 break
+        plan = self.intel.get(slot)
+        if plan is not None and len(roster) + len(off) < len(plan):
+            step = plan[len(roster) + len(off)]
+            if isinstance(step, str):
+                wanted = [p for p in candidates if p.position == step]
+            else:
+                wanted = [p for p in step if p.player_id not in self.taken][:1]
+            if wanted:
+                return wanted
         if self.position_counts(roster, off)["QB"] == 0:
             starters = [p for p in candidates if p.position == "QB" and _starts_week1(p)]
             if starters:

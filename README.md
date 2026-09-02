@@ -59,11 +59,14 @@ rank.py ────────────────────────
 - `sources/data/boards.json`: provider boards in two families, ordinary 1QB redraft
   (FantasyCalc, KeepTradeCut, FF Calculator ADP, FantasyPros ECR, DraftSharks ADP,
   Sleeper ADP) and the superflex/2QB variant of each provider for this room's QB
-  scarcity, plus Sleeper's league-scored points order (the one board that prices the
-  TE premium), a consensus average, and the `cold_start` room prior: Sleeper's
-  half-PPR ADP, which is what the draft room displays and autopick drafts from,
-  blended 30% toward the format-adjusted boards. Each row is resolved to the pool's
-  `sleeper_id`.
+  scarcity, plus Sleeper's league-scored points order and a value-over-replacement
+  board on that projection under the opening lineup across 32 teams (the two boards
+  that price the TE premium; the VORP board is what an LLM handed the league id and
+  Sleeper's API arrives at), a consensus average, and the `cold_start` room prior:
+  50% Sleeper's half-PPR ADP, which is what the draft room displays and autopick
+  drafts from, 30% the VORP board for the LLM-assisted minority this office is
+  expected to hold, and 20% the format-adjusted boards. Each row is resolved to the
+  pool's `sleeper_id`.
 - `data_source_matches.json`: for each drafter, the board closest to its picks so far,
   with fit scores and pick-level evidence.
 - `rankings.json`: undrafted-player rankings, next-pick recommendations, the example
@@ -93,11 +96,13 @@ simulated draft are a fixed point that converges to a limit cycle.
 My slot alone uses this objective, on DraftSharks projections blended 2:1 with
 Sleeper's so the draft does not build around one model's outliers; each opponent
 follows the external board most associated with its picks (the `cold_start` blend
-until it has any), with roster-balance adjustments, fitted choice noise, a prior TE
-tilt for the premium that only Sleeper's points list prices, and QB scarcity sense (a
-team without a quarterback never takes one who does not start week 1, and takes a
-starter once the run leaves none likely to last to its next pick), and never sees my
-projections. The first pending decision
+until it has any), with roster-balance adjustments, fitted choice noise, a residual
+TE tilt for the share of the room that half-notices the premium without a board
+that prices it, and QB scarcity sense (a team without a quarterback never takes one
+who does not start week 1, and takes a starter once the run leaves none likely to
+last to its next pick), and never sees my projections. A drafter named in
+`OPPONENT_INTEL` (`ranker/league.py`) follows its stated plan for its next picks
+before any of that applies. The first pending decision
 searches target plans across my next four held picks and plays each plan out to the
 end of the draft. See `rank.py` and the `ranker/` module docstrings for the details.
 

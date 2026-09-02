@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-01T23:43:04+00:00",
+  "generated_at": "2026-09-02T17:30:12+00:00",
   "draft": {
     "draft_id": "1397662421937565696",
     "draft_fetched_at": "2026-09-01T23:43:04+00:00",
@@ -7,64 +7,64 @@
     "picks_analyzed": 0
   },
   "ranking_snapshot": {
-    "generated_at": "2026-09-01T23:42:19+00:00",
-    "source_count": 14,
+    "generated_at": "2026-09-02T17:30:12+00:00",
+    "source_count": 15,
     "sources": [
       {
         "id": "fantasycalc",
         "name": "FantasyCalc",
         "format": "10-team redraft, 1 QB, 0.5 PPR",
-        "fetched_at": "2026-09-01T12:22:49+00:00",
+        "fetched_at": "2026-09-02T17:29:50+00:00",
         "player_count": 199
       },
       {
         "id": "fantasycalc_sf",
         "name": "FantasyCalc SF",
         "format": "14-team redraft, superflex, 0.5 PPR",
-        "fetched_at": "2026-09-01T12:22:49+00:00",
+        "fetched_at": "2026-09-02T17:29:50+00:00",
         "player_count": 199
       },
       {
         "id": "keeptradecut",
         "name": "KeepTradeCut",
         "format": "redraft 1QB (KTC fantasy rankings); no TE premium",
-        "fetched_at": "2026-09-01T12:22:49+00:00",
+        "fetched_at": "2026-09-02T17:29:50+00:00",
         "player_count": 300
       },
       {
         "id": "keeptradecut_sf",
         "name": "KeepTradeCut SF",
         "format": "redraft superflex (KTC fantasy rankings); no TE premium",
-        "fetched_at": "2026-09-01T12:22:49+00:00",
+        "fetched_at": "2026-09-02T17:29:50+00:00",
         "player_count": 300
       },
       {
         "id": "ffcalculator",
         "name": "FF Calculator ADP",
         "format": "10-team half-PPR mock-draft ADP",
-        "fetched_at": "2026-09-01T12:22:49+00:00",
+        "fetched_at": "2026-09-02T17:29:50+00:00",
         "player_count": 192
       },
       {
         "id": "ffcalculator_2qb",
         "name": "FF Calculator 2QB ADP",
         "format": "14-team 2QB mock-draft ADP",
-        "fetched_at": "2026-09-01T12:22:49+00:00",
-        "player_count": 208
+        "fetched_at": "2026-09-02T17:29:50+00:00",
+        "player_count": 209
       },
       {
         "id": "fantasypros",
         "name": "FantasyPros ECR",
         "format": "redraft half-PPR expert consensus",
-        "fetched_at": "2026-09-01T12:22:49+00:00",
-        "player_count": 867
+        "fetched_at": "2026-09-02T17:29:50+00:00",
+        "player_count": 703
       },
       {
         "id": "fantasypros_sf",
         "name": "FantasyPros SF ECR",
         "format": "redraft half-PPR superflex expert consensus",
-        "fetched_at": "2026-09-01T12:22:49+00:00",
-        "player_count": 946
+        "fetched_at": "2026-09-02T17:29:50+00:00",
+        "player_count": 951
       },
       {
         "id": "draftsharks_adp",
@@ -95,16 +95,23 @@
         "player_count": 498
       },
       {
+        "id": "sleeper_vorp",
+        "name": "Sleeper League VORP",
+        "format": "value over replacement on the league-scored projection with the opening lineup across 32 teams: an assistant reading the settings and projections through Sleeper's API",
+        "fetched_at": "2026-09-01T23:38:44+00:00",
+        "player_count": 498
+      },
+      {
         "id": "consensus",
         "name": "Consensus Average",
-        "format": "mean provider rank across the other 12 sources",
+        "format": "mean provider rank across the other 13 sources",
         "fetched_at": null,
         "player_count": 370
       },
       {
         "id": "cold_start",
         "name": "Cold-Start Room Prior",
-        "format": "70% Sleeper half-PPR ADP + 30% mean rank of the format-adjusted boards",
+        "format": "50% Sleeper half-PPR ADP + 30% league VORP + 20% mean rank of the format-adjusted boards",
         "fetched_at": null,
         "player_count": 370
       }

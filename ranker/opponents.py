@@ -20,6 +20,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .board import Board
+from .league import OPPONENT_INTEL
 from .pool import Player
 
 COLD_START_SOURCE_ID = "cold_start"
@@ -203,6 +204,15 @@ def build_opponent_strategies(
             f"built opponent strategies for slots {sorted(strategies)}, "
             f"want {sorted(expected_slots)}"
         )
+    unknown = set(OPPONENT_INTEL) - {s.username for s in strategies.values()}
+    if unknown:
+        raise ValueError(f"OPPONENT_INTEL names drafters not in this draft: {sorted(unknown)}")
+    by_name = {p.name for p in players}
+    for plan in OPPONENT_INTEL.values():
+        for step in plan:
+            missing = set(step) - by_name if isinstance(step, tuple) else set()
+            if missing:
+                raise ValueError(f"OPPONENT_INTEL names players not in the pool: {sorted(missing)}")
     return strategies
 
 

@@ -7,13 +7,14 @@
 Eight boards are parsed from the raw snapshots fetch_rankings.py saved: FantasyCalc,
 KeepTradeCut, FantasyFootballCalculator ADP and FantasyPros ECR in their ordinary 1QB
 form, and the superflex/2QB variant of each (KeepTradeCut's sits in the same page).
-Six more are derived: DraftSharks 1QB ADP from pool.json; Sleeper half-PPR ADP,
-Sleeper 2QB ADP and the league-scored projected-points order (the one board that
-prices the TE premium) from the pool's Sleeper projections snapshot; a consensus
-board averaging each pool player's rank across every other source; and the cold-start
-room prior the ranker gives an opponent who has not picked yet: Sleeper's half-PPR
-ADP, the list this league's draft room displays and autopick drafts from, blended
-30% toward the mean of the format-adjusted boards for the savvy minority. The
+Seven more are derived: DraftSharks 1QB ADP from pool.json; Sleeper half-PPR ADP,
+Sleeper 2QB ADP, the league-scored projected-points order and a value-over-replacement
+board on that projection under the league's opening lineup (the two boards that price
+the TE premium) from the pool's Sleeper projections snapshot; a consensus board
+averaging each pool player's rank across every other source; and the cold-start room
+prior the ranker gives an opponent who has not picked yet: Sleeper's half-PPR ADP, the
+list this league's draft room displays and autopick drafts from, blended with the VORP
+board for the LLM-assisted minority and the format-adjusted boards for the savvy. The
 consensus board completes each provider's uncovered tail in the ranker.
 
 Every row is resolved onto the pool's Sleeper id (identity.PlayerResolver): by supplied
@@ -189,6 +190,50 @@ def sleeper_points(projections: dict) -> list[dict]:
     ]
 
 
+# The league's opening starting shape, for the replacement levels below. The draft
+# fills 8 spots per team; the extra bench spot is not a starter.
+TEAMS = 32
+DEDICATED_STARTERS = {"QB": 1, "RB": 1, "WR": 2, "TE": 1}
+FLEX_STARTERS = 2
+
+
+def sleeper_vorp(projections: dict) -> list[dict]:
+    """Value over replacement on the league-scored projection with this league's
+    opening lineup across 32 teams: the board an assistant handed the league settings
+    and Sleeper's API arrives at. Replacement is the best player left at each position
+    once every dedicated starter and, greedily by points, every flex is filled. The
+    32nd QB projects as a backup and the 49th TE carries the premium on nothing, so
+    the board front-loads quarterbacks and tight ends the way this scoring does."""
+    rows = [raw for raw in projections["players"] if raw["position"] in POSITIONS]
+    by_pos = {
+        pos: sorted((raw for raw in rows if raw["position"] == pos), key=lambda raw: -raw["points"])
+        for pos in DEDICATED_STARTERS
+    }
+    starters = {pos: count * TEAMS for pos, count in DEDICATED_STARTERS.items()}
+    for _ in range(FLEX_STARTERS * TEAMS):
+        best = max(("RB", "WR", "TE"), key=lambda pos: by_pos[pos][starters[pos]]["points"])
+        starters[best] += 1
+    replacement = {pos: by_pos[pos][starters[pos]]["points"] for pos in DEDICATED_STARTERS}
+    rows.sort(
+        key=lambda raw: (
+            -(raw["points"] - replacement[raw["position"]]),
+            raw.get("adp") or 999.0,
+            raw["name"],
+        )
+    )
+    return [
+        player(
+            rank,
+            raw["name"],
+            raw["position"],
+            raw.get("team"),
+            round(raw["points"] - replacement[raw["position"]], 2),
+            raw["sleeper_id"],
+        )
+        for rank, raw in enumerate(rows, start=1)
+    ]
+
+
 def consensus(sources: list[dict], pool: dict) -> list[dict]:
     """Mean provider rank per pool player over the sources that rank him. Every pool
     player carries a DraftSharks ADP, so the board covers the whole pool."""
@@ -215,8 +260,8 @@ def consensus(sources: list[dict], pool: dict) -> list[dict]:
     ]
 
 
-# The format-adjusted boards a savvy drafter plausibly finds or approximates: the
-# superflex/2QB variants plus the league-scored points list (the one TE-premium board).
+# The format-adjusted provider boards a savvy drafter plausibly finds or approximates:
+# the superflex/2QB variants plus the league-scored points list.
 SAVVY_SOURCE_IDS = (
     "fantasycalc_sf",
     "keeptradecut_sf",
@@ -225,38 +270,55 @@ SAVVY_SOURCE_IDS = (
     "sleeper_2qb",
     "sleeper_points",
 )
-# Most of this room drafts off the list Sleeper displays (a league mock showed the
-# draft room's numbers matching adp_half_ppr to the decimal, and autopick follows the
-# same list); roughly a 30% minority is expected to find real boards or adjust.
-SAVVY_WEIGHT = 0.3
+# The room prior is a population guess. Half of it drafts off the list Sleeper displays
+# (a league mock showed the draft room's numbers matching adp_half_ppr to the decimal,
+# and autopick follows the same list). The office is LLM-aware, and an assistant given
+# the league id reads the scoring and roster settings and Sleeper's projections through
+# the same API this repository uses, so a decent minority is expected to draft off
+# something like the VORP board. The rest find or approximate a format-adjusted board.
+ROOM_WEIGHT = 0.5
+LLM_WEIGHT = 0.3
+SAVVY_WEIGHT = 0.2
 
 
 def cold_start_blend(sources: list[dict], pool: dict) -> list[dict]:
-    """Rank-space blend, (1 - w) * Sleeper half-PPR ADP + w * mean savvy-board rank. A
-    player only one side ranks takes that rank alone; a player neither ranks is left
+    """Rank-space blend of Sleeper half-PPR ADP, the VORP board and the mean savvy
+    provider rank, weighted by the share of the room expected on each. A player some
+    boards do not rank is blended over the ones that do; a player none ranks is left
     to the ranker's consensus tail completion."""
     by_id = {source["id"]: source for source in sources}
-    default_ranks = {
-        row["sleeper_id"]: row["rank"]
-        for row in by_id["sleeper_adp"]["players"]
-        if row["sleeper_id"] is not None
-    }
+
+    def ranks(source_id: str) -> dict[str, int]:
+        return {
+            row["sleeper_id"]: row["rank"]
+            for row in by_id[source_id]["players"]
+            if row["sleeper_id"] is not None
+        }
+
+    room = ranks("sleeper_adp")
+    llm = ranks("sleeper_vorp")
     savvy_ranks: dict[str, list[int]] = {}
     for source_id in SAVVY_SOURCE_IDS:
-        for row in by_id[source_id]["players"]:
-            if row["sleeper_id"] is not None:
-                savvy_ranks.setdefault(row["sleeper_id"], []).append(row["rank"])
+        for sleeper_id, rank in ranks(source_id).items():
+            savvy_ranks.setdefault(sleeper_id, []).append(rank)
     pool_by_id = {str(row["sleeper_id"]): row for row in pool["players"]}
     scored = []
     for sleeper_id in pool_by_id:
-        default = default_ranks.get(sleeper_id)
-        savvy = statistics.fmean(savvy_ranks[sleeper_id]) if sleeper_id in savvy_ranks else None
-        if default is None and savvy is None:
+        parts = [
+            (weight, rank)
+            for weight, rank in (
+                (ROOM_WEIGHT, room.get(sleeper_id)),
+                (LLM_WEIGHT, llm.get(sleeper_id)),
+                (
+                    SAVVY_WEIGHT,
+                    statistics.fmean(savvy_ranks[sleeper_id]) if sleeper_id in savvy_ranks else None,
+                ),
+            )
+            if rank is not None
+        ]
+        if not parts:
             continue
-        if default is None or savvy is None:
-            score = default if savvy is None else savvy
-        else:
-            score = (1 - SAVVY_WEIGHT) * default + SAVVY_WEIGHT * savvy
+        score = sum(weight * rank for weight, rank in parts) / sum(weight for weight, _ in parts)
         scored.append((score, sleeper_id))
     scored.sort(key=lambda item: (item[0], pool_by_id[item[1]]["name"]))
     return [
@@ -382,6 +444,14 @@ def main(argv: list[str] | None = None) -> int:
             "Sleeper's league players page shows",
             sleeper_points(projections),
         ),
+        (
+            "sleeper_vorp",
+            "Sleeper League VORP",
+            "value over replacement on the league-scored projection with the opening "
+            "lineup across 32 teams: an assistant reading the settings and projections "
+            "through Sleeper's API",
+            sleeper_vorp(projections),
+        ),
     ):
         sources.append(source(source_id, name, fmt, projections.get("fetched_at"), resolved(rows)))
     if failures:
@@ -405,8 +475,8 @@ def main(argv: list[str] | None = None) -> int:
         source(
             "cold_start",
             "Cold-Start Room Prior",
-            f"{1 - SAVVY_WEIGHT:.0%} Sleeper half-PPR ADP + {SAVVY_WEIGHT:.0%} mean rank of "
-            "the format-adjusted boards",
+            f"{ROOM_WEIGHT:.0%} Sleeper half-PPR ADP + {LLM_WEIGHT:.0%} league VORP + "
+            f"{SAVVY_WEIGHT:.0%} mean rank of the format-adjusted boards",
             None,
             cold_start_blend(sources, pool),
         )

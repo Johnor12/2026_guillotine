@@ -15,6 +15,7 @@ from .league import (
     NOISE,
     OPPONENT_DEPTH_PENALTY,
     OPPONENT_DEPTH_TARGETS,
+    OPPONENT_INTEL,
     OPPONENT_POSITION_TILT,
     POSITIONS,
     REGULAR_WEEKS,
@@ -225,8 +226,10 @@ def build_payload(
                 "soft boost for unfilled dedicated starters, a compounding penalty beyond "
                 "comfortable depth, and a per-position tilt; Monte Carlo draws around that "
                 "preference with noise calibrated to the investigator's mean_log2_loss. "
+                "Drafters named in intel follow their stated plan first. "
                 "Opponents never read my projections or board."
             ),
+            "intel": OPPONENT_INTEL,
             "depth_targets": OPPONENT_DEPTH_TARGETS,
             "depth_penalty_per_extra_player": OPPONENT_DEPTH_PENALTY,
             "position_tilt": OPPONENT_POSITION_TILT,

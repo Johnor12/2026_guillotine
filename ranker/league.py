@@ -159,13 +159,23 @@ OPPONENT_DEPTH_PENALTY = 2.0
 # superflex/2QB board when its picks say so, and that room already clears the 32nd
 # starting QB around round 7 with ~8 QBs gone by the end of round 2. A QB tilt on top
 # of those boards double-counts (0.2 pulled 14 QBs into the first two rounds). The
-# +1.0/rec TE premium is still a tilt: only Sleeper's league-scored points board
-# prices it, a sliver of the blend, while the premium lifts a 70-catch TE by ~4
-# points a week, puts TE2 above WR1 in this scoring and makes TE2-TE9
-# first-to-third-round players on my board; a room blind to that hands me four of
-# them, so 0.6 assumes the room half sees it. A prior, not a fit (no completed picks
-# yet). Refit with evaluate_opponents.py once real picks exist.
-OPPONENT_POSITION_TILT: dict[str, float] = {"TE": 0.6}
+# +1.0/rec TE premium is priced by two boards, Sleeper's league-scored points and the
+# VORP board built on it, and the cold_start blend gives the VORP board the 30% of the
+# room expected to draft with an LLM on the Sleeper API. The premium lifts a 70-catch
+# TE by ~4 points a week, puts TE2 above WR1 in this scoring and makes TE2-TE9
+# first-to-third-round players on my board; with the blend carrying the LLM
+# minority, a residual 0.8 says the rest of the room half-notices on top of whatever
+# board it follows. A prior, not a fit (no completed picks yet). Refit with
+# evaluate_opponents.py once real picks exist.
+OPPONENT_POSITION_TILT: dict[str, float] = {"TE": 0.8}
+# Intel on named drafters: each one's plan for its next picks, in order, applied over
+# its board and the QB scarcity rule. A step is a tuple of player names (the first
+# still available is taken) or a position (the board's best there, with the usual
+# noise). Indexed by how many picks the drafter has made, so it holds up live.
+# MyFatherLamar (slot 5) takes Bowers at 1.05, McBride if he is gone, then TE, QB.
+OPPONENT_INTEL: dict[str, list[tuple[str, ...] | str]] = {
+    "MyFatherLamar": [("Brock Bowers", "Trey McBride"), "TE", "QB"],
+}
 # Multiplier around each opponent's fitted source adherence: 1 reproduces the observed
 # mean log-rank loss before roster-balance adjustments, while 0 removes random variation.
 NOISE = 1.0
