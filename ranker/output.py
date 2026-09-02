@@ -157,9 +157,9 @@ def build_payload(
 ) -> dict:
     return {
         "value_input": (
-            "pool.json weekly_points (DraftSharks per-week, league scoring), blended "
-            "equally with Sleeper's season projection and the consensus board's "
-            "rank-matched level (ranker/market.py)"
+            "pool.json weekly_points (DraftSharks per-week, league scoring), season "
+            "total blended 2:1 with Sleeper's league-scored projection "
+            "(ranker/projections.py)"
         ),
         "method": (
             "Roster value is each week's expected optimal legal lineup under that week's "

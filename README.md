@@ -52,9 +52,8 @@ rank.py ────────────────────────
   rookie flag and 1QB ADP from a hand-saved rankings page; a Sleeper season projection
   gates membership and supplies `sleeper_id`; `weekly_points` is DraftSharks' per-week
   projection for weeks 1–17 in the league's scoring, with byes and known absences as
-  zero weeks. It is the ranker's value input, after `ranker/market.py` blends each
-  season total equally with Sleeper's projection (`points`) and the consensus board's
-  rank-matched level within the position.
+  zero weeks. It is the ranker's value input, after `ranker/projections.py` blends
+  each season total 2:1 with Sleeper's league-scored projection (`points`).
 - `draft.json`: all 256 made and pending picks from Sleeper's public, real-time draft
   API, with pending picks derived from the draft settings and traded picks applied.
 - `sources/data/boards.json`: provider boards in two families, ordinary 1QB redraft
@@ -85,11 +84,12 @@ waiver wire is per week and tiered: the undrafted tail early, then the survivors
 split of every roster eliminated so far, so by the final the wire is other teams'
 first-round picks and drafted depth is worth nothing while drafted stars still clear
 it. Levels and the simulated draft are a fixed point that converges to a limit cycle.
-My slot alone uses this objective, on projections blended toward the market so the
-draft does not build around one source's outliers; each opponent follows the external
-board most associated with its picks (the `cold_start` blend until it has any), with
-roster-balance adjustments, fitted choice noise, and a prior TE tilt for the premium
-that only Sleeper's points list prices, and never sees my projections. The first pending decision
+My slot alone uses this objective, on DraftSharks projections blended 2:1 with
+Sleeper's so the draft does not build around one model's outliers; each opponent
+follows the external board most associated with its picks (the `cold_start` blend
+until it has any), with roster-balance adjustments, fitted choice noise, and a prior TE
+tilt for the premium that only Sleeper's points list prices, and never sees my
+projections. The first pending decision
 searches target plans across my next four held picks and plays each plan out to the
 end of the draft. See `rank.py` and the `ranker/` module docstrings for the details.
 

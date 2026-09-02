@@ -8,9 +8,9 @@
 Scope is this league and nothing else; the league constants and strategy knobs live in
 ranker/league.py. The value input is `weekly_points` from `pool.json`: DraftSharks'
 per-week projections in this league's 0.5 PPR + TE premium scoring for weeks 1-17, with
-byes and known absences as zero weeks, each player's season total blended equally with
-Sleeper's projection and the market's rank-matched level so the draft does not chase
-one source's outliers (`ranker/market.py`). The method, in one breath: this is a guillotine
+byes and known absences as zero weeks, each player's season total blended 2:1 with
+Sleeper's league-scored projection so the draft does not chase one model's outliers
+(`ranker/projections.py`). The method, in one breath: this is a guillotine
 league, so a roster is valued week by week as expected optimal lineup points under that
 week's starting shape and position-wide availability, and the weeks are combined by
 converged guillotine weights, each week's weight being the marginal effect of a weekly
@@ -48,7 +48,7 @@ from pathlib import Path
 from ranker.board import load_board
 from ranker.convergence import converge
 from ranker.league import NOISE, ROLLOUT_SIMS, SEED, SIMS
-from ranker.market import blend_to_market
+from ranker.projections import blend_projections
 from ranker.opponents import load_opponent_strategies
 from ranker.output import build_payload
 from ranker.planning import (
@@ -87,7 +87,7 @@ def main(argv: list[str] | None = None) -> int:
     players, pool_meta = load_pool(POOL)
     if args.selftest:
         return selftest(players)
-    blend_to_market(players, SOURCE_BOARDS)
+    blend_projections(players)
 
     try:
         draft_raw = json.loads(DRAFT.read_text())
