@@ -100,19 +100,20 @@ def _init_worker(
         plans=plans or {},
         by_id={p.player_id: p for p in players},
         baselines={},
+        probes={},
     )
 
 
 def _worker_pool_size() -> int:
-    # Capped at twelve so a rerank does not saturate every host CPU; this changes
-    # elapsed time, never the seeded results.
+    # Every CPU the process may run on: a rerank is the only real load on this host
+    # and the worker count changes elapsed time, never the seeded results.
     # sched_getaffinity is Linux-only; on Windows fall back to the raw CPU count.
     cpus = (
         len(os.sched_getaffinity(0))
         if hasattr(os, "sched_getaffinity")
         else os.cpu_count()
     )
-    return max(1, min(12, cpus or 1))
+    return max(1, cpus or 1)
 
 
 def _target_map(plan: Sequence[int]) -> dict[int, Player]:
@@ -125,20 +126,29 @@ def _target_map(plan: Sequence[int]) -> dict[int, Player]:
 
 
 def _conditioned_seed(kind: str, cand_id: int, sample: int) -> str:
-    """A seeded opponent path where the candidate reaches my pending pick."""
+    """A seeded opponent path where the candidate reaches my pending pick.
+
+    The probe draft depends on the seed alone, not the candidate, so what it took before
+    my pick is memoized per worker and every candidate of a sample reads the same probes;
+    tasks are issued sample-major with one sample per chunk so they land on one worker.
+    """
     w = _WORKER
+    probes = w["probes"]
     for attempt in range(10_000):
         draw_seed = f"{kind}-{w['seed']}-{sample}-{attempt}"
-        probe = Draft(
-            w["players"],
-            w["levels"],
-            w["board"],
-            noise=w["noise"],
-            rng=random.Random(draw_seed),
-            opponents=w["opponents"],
-        )
-        probe.run(stop_before=w["i_my"])
-        if cand_id not in probe.taken:
+        taken = probes.get(draw_seed)
+        if taken is None:
+            probe = Draft(
+                w["players"],
+                w["levels"],
+                w["board"],
+                noise=w["noise"],
+                rng=random.Random(draw_seed),
+                opponents=w["opponents"],
+            )
+            probe.run(stop_before=w["i_my"])
+            taken = probes[draw_seed] = probe.taken
+        if cand_id not in taken:
             return draw_seed
     raise RuntimeError(f"candidate {cand_id} never survived to my pick")
 
@@ -200,8 +210,8 @@ def _rollout_playout(task: tuple[int, int]) -> tuple[list[float], float]:
     w = _WORKER
     draw_seed = _conditioned_seed("rollout", cand_id, s)
     # The unplanned baseline depends on the seed alone, and most candidates survive the
-    # first attempt of a sample, so tasks are issued sample-major and the baseline is
-    # memoized per worker.
+    # first attempt of a sample, so tasks are issued sample-major, one sample per chunk,
+    # and the baseline is memoized per worker.
     baseline_value = w["baselines"].get(draw_seed)
     if baseline_value is None:
         baseline = Draft(
@@ -536,19 +546,19 @@ def option_redraw(
             "stats": {cand.player_id: {"ev": 0.0} for cand in candidates},
         }
 
-    tasks = [(cand.player_id, s) for cand in candidates for s in range(sims)]
+    tasks = [(cand.player_id, s) for s in range(sims) for cand in candidates]
     with multiprocessing.Pool(
         _worker_pool_size(),
         initializer=_init_worker,
         initargs=(players, board, levels, noise, seed, opponents, i_my),
     ) as pool:
-        flat = pool.map(_option_playout, tasks)
+        flat = pool.map(_option_playout, tasks, chunksize=len(candidates))
     return {
         "pick_no": pick_no,
         "sims": sims,
         "stats": {
             cand.player_id: {
-                "ev": sum(flat[i * sims : (i + 1) * sims]) / sims,
+                "ev": sum(flat[i :: len(candidates)]) / sims,
             }
             for i, cand in enumerate(candidates)
         },
@@ -717,7 +727,7 @@ def rollout(
         initializer=_init_worker,
         initargs=(players, board, levels, noise, seed, opponents, i_my, plans),
     ) as pool:
-        flat = pool.map(_rollout_playout, tasks)
+        flat = pool.map(_rollout_playout, tasks, chunksize=len(candidates))
     values: dict[int, list[float]] = {}
     baselines: dict[int, list[float]] = {}
     selected_plans: dict[int, dict] = {}

@@ -10,6 +10,7 @@ from __future__ import annotations
 import math
 import random
 from collections.abc import Sequence
+from functools import lru_cache
 
 from .board import Board
 from .league import (
@@ -21,6 +22,7 @@ from .league import (
     OPPONENT_INTEL,
     OPPONENT_POSITION_TILT,
     POSITIONS,
+    STARTING_SLOTS,
     SURVIVAL_SIGMA,
 )
 from .opponents import OpponentStrategy
@@ -30,6 +32,7 @@ from .value import (
     insert_sorted,
     pos_sorted,
     sorted_roster,
+    starting_positions,
     team_value,
     team_values_with_candidates,
 )
@@ -64,6 +67,12 @@ class Fenwick:
 def _starts_week1(p: Player) -> bool:
     """Projected to score in week 1 — the depth-chart starter test the opponents use."""
     return p.weekly[0] > 0.0
+
+
+@lru_cache(maxsize=64)
+def _rank_weights(q: float, n: int) -> tuple[float, ...]:
+    """rank**-q for ranks 1..n (index 0 unused): the opponents' choice law by source rank."""
+    return (0.0,) + tuple(rank**-q for rank in range(1, n + 1))
 
 
 def survival(better_available: int, gap: int) -> float:
@@ -153,6 +162,9 @@ class Draft:
         self.my_decisions: dict[int, list[tuple[float, float, Player]]] = {}
         self.next_pick = self._next_pick_table()
         self.picks_left = list(board.picks_left)
+        # Each source order resolved to Player objects once, keyed by the order tuple's
+        # identity (the strategies outlive the draft); most opponents share a board.
+        self._order_players: dict[int, tuple[Player, ...]] = {}
         # Rollout hooks (see `rollout`): picks dictated by the caller instead of chosen,
         # and the first pick index where the other teams' noise applies — everything
         # before it plays deterministically, so every playout branches from one state.
@@ -172,6 +184,9 @@ class Draft:
             1
             for p in players
             if p.position == "QB" and _starts_week1(p) and p.player_id not in self.taken
+        )
+        self.qb_left = sum(
+            1 for p in players if p.position == "QB" and p.player_id not in self.taken
         )
         # OPPONENT_INTEL by slot, names resolved to pool players. Synthetic boards
         # (the selftest) carry no real usernames and so no intel.
@@ -213,10 +228,10 @@ class Draft:
     ) -> list[Player]:
         """Best available players at each legal position, honouring the mandatory slots.
 
-        A lineup needs 1 QB, 1 RB, 2 WR and 1 TE from positions that nothing else can
-        cover, so a manager cannot spend every pick on the best name available and end up
-        without a quarterback. Once the picks remaining are exactly the unfilled mandatory
-        spots, candidates narrow to the positions still owed. This is the honest way to stop
+        A lineup needs 1 QB, 1 RB, 2 WR, 1 TE and two flex, so a manager cannot spend
+        every pick on the best name available and end up without a quarterback, or hoard
+        quarterbacks on a one-bench roster. Once the picks remaining are exactly the
+        unfilled starting slots, candidates narrow to the positions that fill one. This is the honest way to stop
         a team punting a position; an earlier attempt distorted the value of an empty slot
         instead, which broke the board.
 
@@ -246,16 +261,23 @@ class Draft:
         picks_left: int | None,
         off: Sequence[dict],
     ) -> tuple[tuple[str, ...], ...]:
-        """Roster-legality filters shared by my board and the opponent boards: the
-        positions still owed once the remaining picks are exactly the unfilled
-        mandatory spots, else every position. The second scenario is the fallback
-        when a position is exhausted, which a 370-player pool never reaches."""
+        """Roster-legality filters shared by my board and the opponent boards: once the
+        remaining picks are no more than the unfilled starting slots (flex included, so
+        a one-bench roster cannot carry a third QB), only positions that add a starter,
+        else every position. The second scenario is the fallback when a position is
+        exhausted, which a 370-player pool never reaches."""
         eligible = POSITIONS
         if picks_left is not None:
-            have = self.position_counts(roster, off)
-            owed = {pos: max(0, DEDICATED_SLOTS[pos] - have[pos]) for pos in POSITIONS}
-            if picks_left <= sum(owed.values()):
-                eligible = tuple(pos for pos in POSITIONS if owed[pos]) or POSITIONS
+            positions = [p.position for p in roster] + [
+                o["position"] for o in off if o.get("position") in POSITIONS
+            ]
+            filled = len(starting_positions(positions))
+            if picks_left <= sum(STARTING_SLOTS.values()) - filled:
+                eligible = tuple(
+                    pos
+                    for pos in POSITIONS
+                    if len(starting_positions(positions + [pos])) > filled
+                ) or POSITIONS
         return (eligible, POSITIONS)
 
     def opponent_candidates(self, pick_index: int, slot: int) -> list[Player]:
@@ -273,16 +295,24 @@ class Draft:
         strategy = self.opponents[slot]
         roster = self.rosters[slot - 1]
         off = self.off_pool[slot - 1]
+        order_players = self._order_players.get(id(strategy.order))
+        if order_players is None:
+            order_players = self._order_players[id(strategy.order)] = tuple(
+                self.by_id[player_id] for player_id in strategy.order
+            )
+        taken = self.taken
         candidates: list[Player] = []
         for positions in self._eligibility_scenarios(
             roster, self.picks_left[slot - 1], off
         ):
-            candidates = [
-                self.by_id[player_id]
-                for player_id in strategy.order
-                if player_id not in self.taken
-                and self.by_id[player_id].position in positions
-            ]
+            if positions == POSITIONS:
+                candidates = [p for p in order_players if p.player_id not in taken]
+            else:
+                candidates = [
+                    p
+                    for p in order_players
+                    if p.player_id not in taken and p.position in positions
+                ]
             if candidates:
                 break
         plan = self.intel.get(slot)
@@ -297,23 +327,38 @@ class Draft:
         if self.position_counts(roster, off)["QB"] == 0:
             starters = [p for p in candidates if p.position == "QB" and _starts_week1(p)]
             if starters:
-                if self._qb_run_forces(pick_index):
+                if self._qb_run_forces(pick_index, self.qb_starters_left):
                     return starters
                 candidates = [
                     p for p in candidates if p.position != "QB" or _starts_week1(p)
                 ]
+            else:
+                # The starters are gone; the same rule now guards the backups, since
+                # 42 pool QBs do not cover 32 teams once ten of them carry two.
+                backups = [p for p in candidates if p.position == "QB"]
+                if backups and self._qb_run_forces(pick_index, self.qb_left):
+                    return backups
         return candidates
 
-    def _qb_run_forces(self, pick_index: int) -> bool:
-        """Whether, at the rate quarterbacks have gone in this draft, no week-1
-        starter is expected to survive to this slot's next pick. A pseudo-count of 4
-        QBs per 32 picks stands in before the room has shown its rate, so nothing is
-        forced at the open even though the supply exactly matches the 32 teams."""
+    def _qb_run_forces(self, pick_index: int, supply: int) -> bool:
+        """Whether none of the `supply` QBs still on the board is expected to survive
+        to this slot's next pick, at the rate quarterbacks have gone in this draft or
+        given the QB-less teams picking before then. A pseudo-count of 4 QBs per 32 picks stands in before the room has shown
+        its rate, so nothing is forced at the open even though the starter supply
+        exactly matches the 32 teams."""
         nxt = self.next_pick[pick_index]
         if nxt is None:
             return True
+        gap = self.order[pick_index + 1 : nxt]
         rate = (self.qb_taken + 4) / (self.picks_made + 32)
-        return self.qb_starters_left - rate * (nxt - pick_index - 1) < 1.0
+        # Every QB-less team picking in between is under this same rule, so the
+        # visible demand bounds the draw from below; the run's rate covers the rest.
+        qbless = {
+            slot
+            for slot in set(gap)
+            if self.position_counts(self.rosters[slot - 1], self.off_pool[slot - 1])["QB"] == 0
+        }
+        return supply - max(rate * len(gap), len(qbless)) < 1.0
 
     def target_is_legal(self, target: Player, slot: int) -> bool:
         """Whether a surviving plan target belongs to the first viable legal scenario."""
@@ -483,28 +528,34 @@ class Draft:
         candidates = self.opponent_candidates(pick_index, slot)
         assert candidates, "pool exhausted"
         adjustments = self.opponent_position_adjustments(slot)
-        ranked = [
-            (rank * adjustments[player.position], rank, player)
-            for rank, player in enumerate(candidates, start=1)
-        ]
         if not self.noise or self.rng is None or pick_index < self.noise_from:
-            return min(ranked, key=lambda row: (row[0], row[1], row[2].player_id))[2]
+            return min(
+                (
+                    (rank * adjustments[player.position], rank, player)
+                    for rank, player in enumerate(candidates, start=1)
+                ),
+                key=lambda row: (row[0], row[1], row[2].player_id),
+            )[2]
 
         # The investigator measures log2(rank among available) for each real pick.
-        # rank_power calibrates source adherence; the balance-adjusted rank then gives a
-        # nearby player at an unfilled starter position better odds without guaranteeing
-        # the pick. `--noise` scales random variation around that preference.
-        power = self.opponents[slot].rank_power
-        return max(
-            (
-                -power * math.log(preference_rank)
-                - self.noise * math.log(-math.log(self.rng.random())),
-                -source_rank,
-                -player.player_id,
-                player,
-            )
-            for preference_rank, source_rank, player in ranked
-        )[3]
+        # rank_power calibrates source adherence: P(pick) is proportional to the
+        # balance-adjusted rank to the power -rank_power/noise, so a nearby player at an
+        # unfilled starter position gets better odds without a guaranteed pick, and
+        # `noise` scales the random variation around that preference. One inverse-CDF
+        # draw per pick; the adjusted rank factors into a rank table and a position term.
+        q = self.opponents[slot].rank_power / self.noise
+        rank_weight = _rank_weights(q, len(self.players))
+        position_weight = {pos: adj**-q for pos, adj in adjustments.items()}
+        weights = [
+            rank_weight[rank] * position_weight[player.position]
+            for rank, player in enumerate(candidates, start=1)
+        ]
+        u = self.rng.random() * sum(weights)
+        for player, weight in zip(candidates, weights):
+            u -= weight
+            if u < 0.0:
+                return player
+        return candidates[-1]  # rounding left a sliver past the last weight
 
     def run(
         self,
@@ -536,6 +587,7 @@ class Draft:
             self.picks_made += 1
             if pick.position == "QB":
                 self.qb_taken += 1
+                self.qb_left -= 1
                 self.qb_starters_left -= _starts_week1(pick)
             if pick.player_id == until_taken:
                 return self.pick_nos[i]

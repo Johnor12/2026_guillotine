@@ -223,7 +223,7 @@ def opponent_selftest(players: list[Player]) -> list[str]:
     )
     if holder.choose_opponent(0, 1) != bench_qb:
         fails.append("a team holding a QB was stopped from stashing a non-starter")
-    if stash._qb_run_forces(0):
+    if stash._qb_run_forces(0, stash.qb_starters_left):
         fails.append("the QB run forced a pick at the open of the draft")
     run = Draft(
         players, levels, board, opponents=synthetic_opponents(players, board, complete(wrs))
