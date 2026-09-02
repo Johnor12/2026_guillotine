@@ -23,6 +23,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import time
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -52,7 +53,12 @@ TIMEOUT_SECONDS = 30
 
 
 def get_json(url: str, timeout: int = TIMEOUT_SECONDS):
-    request = urllib.request.Request(url, headers={"Accept": "application/json"})
+    # Sleeper's CDN serves cached snapshots up to 5 minutes stale
+    # (s-maxage=15, stale-while-revalidate=300), and different cache entries
+    # can even roll the pick count backwards between refreshes. A unique
+    # query param forces a cache MISS so every fetch comes from origin.
+    bust = f"{'&' if '?' in url else '?'}nocache={time.time_ns()}"
+    request = urllib.request.Request(url + bust, headers={"Accept": "application/json"})
     with urllib.request.urlopen(request, timeout=timeout) as response:
         return json.loads(response.read())
 
@@ -66,7 +72,9 @@ def fetch(draft_id: str, api: str = API, timeout: int = TIMEOUT_SECONDS) -> dict
     """
     draft = get_json(f"{api}/draft/{draft_id}", timeout)
     if not isinstance(draft, dict) or not draft.get("draft_id"):
-        raise ValueError(f"no draft {draft_id} at {api} — check the id in the draft URL")
+        raise ValueError(
+            f"no draft {draft_id} at {api} — check the id in the draft URL"
+        )
 
     picks = get_json(f"{api}/draft/{draft_id}/picks", timeout) or []
     traded = get_json(f"{api}/draft/{draft_id}/traded_picks", timeout) or []
@@ -84,15 +92,25 @@ def fetch(draft_id: str, api: str = API, timeout: int = TIMEOUT_SECONDS) -> dict
     else:
         warning = "draft has no league_id — names will be null"
 
-    return {"draft": draft, "picks": picks, "traded": traded, "users": users, "warning": warning}
+    return {
+        "draft": draft,
+        "picks": picks,
+        "traded": traded,
+        "users": users,
+        "warning": warning,
+    }
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    ap.add_argument("--draft-id", default=DRAFT_ID, help=f"default: {DRAFT_ID} (the league draft)")
-    ap.add_argument("--report", action="store_true", help="print a validation summary to stderr")
+    ap.add_argument(
+        "--draft-id", default=DRAFT_ID, help=f"default: {DRAFT_ID} (the league draft)"
+    )
+    ap.add_argument(
+        "--report", action="store_true", help="print a validation summary to stderr"
+    )
     ap.add_argument(
         "--selftest",
         action="store_true",
@@ -103,7 +121,10 @@ def main(argv: list[str] | None = None) -> int:
     if args.selftest:
         return run_selftest()
 
-    print(f"GET {API}/draft/{args.draft_id} (+picks, traded_picks, league users)", file=sys.stderr)
+    print(
+        f"GET {API}/draft/{args.draft_id} (+picks, traded_picks, league users)",
+        file=sys.stderr,
+    )
     try:
         fetched = fetch(args.draft_id)
     except (urllib.error.URLError, TimeoutError) as exc:
@@ -120,7 +141,10 @@ def main(argv: list[str] | None = None) -> int:
         fatal, notable = pick_number_problems(fetched["picks"], board)
         fatal = board.problems() + fatal
     except (TypeError, ValueError) as exc:
-        print(f"error: draft {args.draft_id} is not shaped as expected: {exc}", file=sys.stderr)
+        print(
+            f"error: draft {args.draft_id} is not shaped as expected: {exc}",
+            file=sys.stderr,
+        )
         return 1
     if fatal:
         for problem in fatal:
@@ -129,7 +153,9 @@ def main(argv: list[str] | None = None) -> int:
     for note in notable:
         print(f"warning: {note}", file=sys.stderr)
     if not board.slot_to_user:
-        print("warning: draft_order is empty — pick owners will be null", file=sys.stderr)
+        print(
+            "warning: draft_order is empty — pick owners will be null", file=sys.stderr
+        )
 
     by_user = index_users(fetched["users"])
     me = resolve_me(MY_USER_ID, board, by_user)
@@ -150,7 +176,9 @@ def main(argv: list[str] | None = None) -> int:
         )
 
     document = build_document(fetched, board, rows, checks, me, API)
-    DRAFT.write_text(json.dumps(document, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    DRAFT.write_text(
+        json.dumps(document, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
 
     clock = document["on_the_clock"]
     mine_next = document["my_next_pick"]
