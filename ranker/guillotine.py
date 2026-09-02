@@ -6,13 +6,13 @@ levels valuation runs on (value.Levels):
 1. Waiver escalation. Each week the two lowest teams are cut and their players hit
    waivers, so the in-season replacement level rises as the season runs. Opponents are
    ranked by projected strength and assumed to be eliminated weakest-first (two per
-   week); the survivors then split every roster cut so far, so a roster's j-th waiver
-   body (WEEK_WIRE_BODIES — more as rosters expand) is the j-th tier of S drops, S the
-   teams still alive. Body by body, the week wire is the better of that floor and the
-   corresponding undrafted body. Early the floor is nothing: thirty survivors chase a
-   dozen drops and the wire is the undrafted tail. Late it is everything: four
-   finalists share twenty-eight eliminated rosters, so cheap drafted depth washes out
-   while drafted stars keep clearing the tiers all season.
+   week); their players join the undrafted tail in one free-agent pool that the
+   survivors split, so a roster's j-th waiver body (WEEK_WIRE_BODIES — more as rosters
+   expand) is the j-th tier of S pooled values, S the teams still alive
+   (value.combine_wire). Early the pool is the undrafted tail shared thirty ways and
+   the wire is close to nothing. Late it is everything: four finalists share
+   twenty-eight eliminated rosters, so cheap drafted depth washes out while drafted
+   stars keep clearing the tiers all season.
 
 2. Elimination bars. GUILLOTINE_SIMS seasons are simulated over the 31 opponents'
    weekly expected lineup values: each opponent gets a persistent projection-error
@@ -38,7 +38,6 @@ convergence loop's cycle detection still sees exact repeats.
 
 from __future__ import annotations
 
-import heapq
 import math
 import random
 
@@ -48,14 +47,12 @@ from .league import (
     REGULAR_WEEKS,
     SCORE_FLOOR_Z,
     TEAM_SEASON_SIGMA,
-    TEAMS,
     WEEK_STARTERS,
-    WEEK_WIRE_BODIES,
     WEEKLY_SIGMA,
     WEEKS,
 )
 from .pool import Player
-from .value import Levels, combine_wire, weekly_team_values, weekly_wire_base
+from .value import Levels, combine_wire, top_values, weekly_team_values, weekly_undrafted
 
 SIGMA_WEEK = tuple(
     WEEKLY_SIGMA * math.sqrt(WEEK_STARTERS[w] / WEEK_STARTERS[0]) for w in range(WEEKS)
@@ -75,44 +72,40 @@ def _cdf(z: float) -> float:
     return 0.5 * (1.0 + math.erf(z / _SQRT2))
 
 
-def _drop_floor(
+def _dropped(
     opponent_rosters: list[list[Player]],
     strength_order: list[int],
 ) -> tuple[tuple[tuple[float, ...], ...], ...]:
-    """Per position, per week: tiered replacement levels a surviving roster claims from
-    every roster eliminated so far, weakest opponents cut first, two per week.
+    """Per position, per week: the best weekly values among every roster eliminated
+    so far, weakest opponents cut first, two per week — the eliminated half of the
+    free-agent pool the survivors split (value.tier_bodies).
 
-    Dropped talent is shared out among the survivors. With S teams alive entering a
-    week (me included), the top S drops at a position are one claim each, the next S
-    the second claim, and so on: a roster's j-th waiver body (WEEK_WIRE_BODIES) is the
-    mean of the j-th tier of S weekly values among the cumulative drops, missing entries
-    counting zero. Early the crowd is large and the drops few, so this sits below the
-    undrafted base it is combined with — a typical survivor gets nothing above that
-    without spending real FAAB. Late, a handful of survivors split twenty-plus
-    eliminated rosters and every finalist fills up with other teams' early-round picks,
-    which is what makes drafted depth worthless by then and drafted stars the only
-    draft-day asset that still matters.
+    Early the crowd is large and the drops few, so a typical survivor gets nothing
+    here without spending real FAAB. Late, a handful of survivors split twenty-plus
+    eliminated rosters and every finalist fills up with other teams' early-round
+    picks, which is what makes drafted depth worthless by then and drafted stars the
+    only draft-day asset that still matters.
     """
-    floor: list[list[tuple[float, ...]]] = [[] for _ in POSITIONS]
-    pos_index = {pos: i for i, pos in enumerate(POSITIONS)}
-    for w in range(WEEKS):
-        # Going into week w+1, cut rounds 1..min(w, 15) have run.
-        rounds_run = min(w, REGULAR_WEEKS)
-        survivors = TEAMS - 2 * rounds_run
-        dropped: list[list[float]] = [[] for _ in POSITIONS]
-        for team in strength_order[: 2 * rounds_run]:
-            for player in opponent_rosters[team]:
-                dropped[pos_index[player.position]].append(player.weekly[w])
-        for i, pos in enumerate(POSITIONS):
-            body_count = WEEK_WIRE_BODIES[pos][w]
-            best = heapq.nlargest(survivors * body_count, dropped[i])
-            floor[i].append(
-                tuple(
-                    sum(best[j * survivors : (j + 1) * survivors]) / survivors
-                    for j in range(body_count)
+    out = []
+    for pos in POSITIONS:
+        col = []
+        for w in range(WEEKS):
+            # Going into week w+1, cut rounds 1..min(w, 15) have run.
+            cut = strength_order[: 2 * min(w, REGULAR_WEEKS)]
+            col.append(
+                top_values(
+                    (
+                        player.weekly[w]
+                        for team in cut
+                        for player in opponent_rosters[team]
+                        if player.position == pos
+                    ),
+                    pos,
+                    w,
                 )
             )
-    return tuple(tuple(col) for col in floor)
+        out.append(tuple(col))
+    return tuple(out)
 
 
 def solve(
@@ -132,9 +125,9 @@ def solve(
         range(len(opponent_rosters)),
         key=lambda i: sum(prev_mus[i][:REGULAR_WEEKS]),
     )
-    floor = _drop_floor(opponent_rosters, strength_order)
-    wire = combine_wire(weekly_wire_base(taken, pos), floor)
-    levels = Levels(weights=prev.weights, wire=wire, drop_floor=floor)
+    dropped = _dropped(opponent_rosters, strength_order)
+    wire = combine_wire(weekly_undrafted(taken, pos), dropped)
+    levels = Levels(weights=prev.weights, wire=wire, dropped=dropped)
 
     opp_mus = [weekly_team_values(r, levels) for r in opponent_rosters]
     my_mu = weekly_team_values(my_roster, levels)
@@ -226,4 +219,4 @@ def solve(
         "bar_mean_by_week": [round(s / draws, 1) for s in bar_sums],
         "championship_bar_mean": round(champ_bar_sum / draws, 1),
     }
-    return Levels(weights=weights, wire=wire, drop_floor=floor), diagnostics
+    return Levels(weights=weights, wire=wire, dropped=dropped), diagnostics

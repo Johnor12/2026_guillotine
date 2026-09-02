@@ -21,7 +21,7 @@ from .league import (
 )
 from .pool import Player
 from .simulation import Draft
-from .value import Levels, starting_positions
+from .value import Levels, starting_positions, tier_bodies
 
 
 def validate(
@@ -158,10 +158,10 @@ def validate(
         check(
             all(
                 v + 1e-9 >= f
-                for bodies, floor_bodies in zip(wire_col, levels.drop_floor[i])
-                for v, f in zip(bodies, floor_bodies)
+                for w, (bodies, dropped) in enumerate(zip(wire_col, levels.dropped[i]))
+                for v, f in zip(bodies, tier_bodies(dropped, k, w))
             ),
-            f"{k} weekly wire dips below its eliminated-roster floor",
+            f"{k} weekly wire dips below what the eliminated rosters alone supply",
         )
     check(
         history["iterations_run"] < MAX_ITERS,

@@ -128,7 +128,10 @@ ROLLOUT_CANDIDATES = 8
 # two-pick policy resumes. Four reaches across both sides of the next snake turn here.
 LOOKAHEAD_PICKS = 4
 # An entirely unfilled dedicated starter group receives a 3x source-rank boost;
-# the boost fades linearly as that position's dedicated starters are filled.
+# the boost fades linearly as that position's dedicated starters are filled. QB gets a
+# scarcity rule on top (simulation.Draft.opponent_candidates): the boost acts on rank
+# among the players left, which is too weak to stop a team punting the one position
+# with exactly 32 week-1 starters for 32 rosters.
 OPPONENT_BALANCE_STRENGTH = 2.0
 # Opponents become increasingly reluctant to add players beyond these comfortable depths.
 # The penalty starts at the 2nd QB/TE and the 4th RB/WR, past what a roster with 8

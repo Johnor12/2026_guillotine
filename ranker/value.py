@@ -18,13 +18,16 @@ log P(winning the week 16-17 final) (see guillotine.py). Weights are normalized 
 to 1, so a roster value reads as guillotine-weighted expected weekly lineup points.
 Scaling never changes any argmax, so the pick policy is unaffected by normalization.
 
-The waiver wire is week-specific: `Levels.wire` holds, per position per week, the body
-a team could sign that week for roughly nothing. It starts at the best player left
-undrafted and rises as eliminated rosters hit waivers (`Levels.drop_floor`, measured by
-guillotine.py). Each in-season add a surviving roster holds contributes one such body
-(league.WEEK_WIRE_BODIES — one per position early, more as the roster expands over
-half-waiver late rosters); a body can fill one lineup job, never several simultaneous
-holes.
+The waiver wire is week-specific: `Levels.wire` holds, per position per week, the
+bodies a team could sign that week for roughly nothing. The free-agent pool is the
+undrafted tail plus every eliminated roster so far (`Levels.dropped`, measured by
+guillotine.py), and it is shared: with S teams alive, the top S bodies at a position
+are one claim each, the next S the second claim, so a survivor's j-th waiver body is
+the mean of the j-th tier. One good free agent is worth a thirty-second of himself in
+week 1, not a starter for all thirty-two rosters. Each in-season add a surviving roster
+holds contributes one such body (league.WEEK_WIRE_BODIES — one per position early, more
+as the roster expands over half-waiver late rosters); a body can fill one lineup job,
+never several simultaneous holes.
 
 This is one objective with one set of units: guillotine-weighted expected weekly lineup
 points. There is no role threshold and no separate bench bonus, and roster value stays
@@ -33,6 +36,8 @@ monotone when a projection improves or a player is added.
 
 from __future__ import annotations
 
+import heapq
+from collections.abc import Iterable
 from dataclasses import dataclass, replace
 from functools import lru_cache
 
@@ -57,10 +62,10 @@ _KEY = lambda q: (-q.points, q.player_id)  # noqa: E731
 WEEK_DEDICATED = {pos: tuple(s[pos] for s in WEEKLY_SHAPES) for pos in POSITIONS}
 WEEK_FLEX = tuple(s["FLEX"] for s in WEEKLY_SHAPES)
 
-# How many undrafted players per position the weekly wire scan reads. Weekly profiles
-# are near-flat, so the per-week best undrafted body always sits near the top of the
-# position's season order; 16 leaves plenty of margin for a bye-heavy week.
-_WIRE_SCAN = 16
+# How many undrafted players per position the weekly wire scan reads. A week's tiers
+# need at most survivors x bodies = 48 values, and weekly profiles are near-flat, so
+# the top of the position's season order holds them; 64 leaves margin for bye weeks.
+_WIRE_SCAN = 64
 
 @dataclass(frozen=True, slots=True)
 class Levels:
@@ -70,14 +75,15 @@ class Levels:
     wire: per POSITIONS-index, per week, the tuple of waiver-body point values a
     surviving roster holds that week (WEEK_WIRE_BODIES bodies, best first — each
     marginal add is a worse player, so the tiers decay).
-    drop_floor: the part of `wire` contributed by eliminated rosters — kept separate
-    so a rollout can re-measure the undrafted part from its own final board and
-    re-apply this floor (`refresh_wire`).
+    dropped: per POSITIONS-index, per week, the eliminated rosters' best weekly values
+    (`pool_size` of them, best first, zero-padded) — kept apart from the undrafted
+    tail so a rollout can re-measure that tail from its own final board and re-pool
+    it with these (`refresh_wire`).
     """
 
     weights: tuple[float, ...]
     wire: tuple[tuple[float, ...], ...]
-    drop_floor: tuple[tuple[float, ...], ...]
+    dropped: tuple[tuple[float, ...], ...]
 
 
 def pos_sorted(players: list[Player]) -> dict[str, list[Player]]:
@@ -449,63 +455,87 @@ def wire_replacement(
     return out
 
 
-def weekly_wire_base(
+def survivors(w: int) -> int:
+    """Teams alive entering week w+1: cut rounds 1..min(w, 15) have run."""
+    return league.TEAMS - 2 * min(w, REGULAR_WEEKS)
+
+
+def pool_size(pos: str, w: int) -> int:
+    """Free agents that can matter in a week: one tier of survivors per waiver body."""
+    return survivors(w) * WEEK_WIRE_BODIES[pos][w]
+
+
+def top_values(values: Iterable[float], pos: str, w: int) -> tuple[float, ...]:
+    """The `pool_size` largest values, best first, zero-padded to that length."""
+    best = heapq.nlargest(pool_size(pos, w), values)
+    best.extend([0.0] * (pool_size(pos, w) - len(best)))
+    return tuple(best)
+
+
+def tier_bodies(values: tuple[float, ...], pos: str, w: int) -> tuple[float, ...]:
+    """A survivor's waiver bodies from a free-agent pool: body j is the mean of the
+    j-th tier of S values, S the teams alive, so the pool is shared rather than
+    handed whole to every roster."""
+    s = survivors(w)
+    best = top_values(values, pos, w)
+    return tuple(
+        sum(best[j * s : (j + 1) * s]) / s for j in range(WEEK_WIRE_BODIES[pos][w])
+    )
+
+
+def weekly_undrafted(
     taken: set[int], pos: dict[str, list[Player]]
 ) -> tuple[tuple[tuple[float, ...], ...], ...]:
-    """Per position, per week: the top undrafted bodies' points that week, one value
-    per waiver body the roster holds (WEEK_WIRE_BODIES), best first.
+    """Per position, per week: the undrafted tail's best weekly points, `pool_size`
+    of them, best first.
 
     Reads the top-_WIRE_SCAN undrafted players by season points — deeper players
-    cannot hold a weekly top spot under near-flat weekly profiles, and the bound
-    keeps rollout playouts cheap.
+    cannot hold a weekly tier under near-flat weekly profiles, and the bound keeps
+    rollout playouts cheap.
     """
     out = []
     for position in POSITIONS:
-        counts = WEEK_WIRE_BODIES[position]
         scanned: list[tuple[float, ...]] = []
-        seen = 0
         for p in pos[position]:
             if p.player_id in taken:
                 continue
             scanned.append(p.weekly)
-            seen += 1
-            if seen == _WIRE_SCAN:
+            if len(scanned) == _WIRE_SCAN:
                 break
-        col = []
-        for w in range(WEEKS):
-            week_points = sorted((weeks[w] for weeks in scanned), reverse=True)
-            need = counts[w]
-            week_points.extend([0.0] * max(0, need - len(week_points)))
-            col.append(tuple(week_points[:need]))
-        out.append(tuple(col))
+        out.append(
+            tuple(
+                top_values((weeks[w] for weeks in scanned), position, w)
+                for w in range(WEEKS)
+            )
+        )
     return tuple(out)
 
 
 def combine_wire(
-    base: tuple[tuple[tuple[float, ...], ...], ...],
-    floor: tuple[tuple[tuple[float, ...], ...], ...],
+    undrafted: tuple[tuple[tuple[float, ...], ...], ...],
+    dropped: tuple[tuple[tuple[float, ...], ...], ...],
 ) -> tuple[tuple[tuple[float, ...], ...], ...]:
-    """Body-by-body: the better of the undrafted tier and the eliminated-roster tier."""
+    """One free-agent pool per position-week — undrafted tail plus eliminated
+    rosters — tiered across the survivors."""
     return tuple(
         tuple(
-            tuple(max(b, f) for b, f in zip(base_bodies, floor_bodies))
-            for base_bodies, floor_bodies in zip(base_col, floor_col)
+            tier_bodies(u + d, position, w)
+            for w, (u, d) in enumerate(zip(undrafted_col, dropped_col))
         )
-        for base_col, floor_col in zip(base, floor)
+        for position, undrafted_col, dropped_col in zip(POSITIONS, undrafted, dropped)
     )
 
 
 def refresh_wire(
     levels: Levels, taken: set[int], pos: dict[str, list[Player]]
 ) -> Levels:
-    """Levels with the undrafted wire re-measured from a specific final board.
+    """Levels with the undrafted tail re-measured from a specific final board.
 
     Rollout playouts end with different players undrafted than the converged draft
-    did; the guillotine drop floor and week weights are slow league-level quantities
+    did; the eliminated rosters and week weights are slow league-level quantities
     and carry over unchanged.
     """
-    base = weekly_wire_base(taken, pos)
-    return replace(levels, wire=combine_wire(base, levels.drop_floor))
+    return replace(levels, wire=combine_wire(weekly_undrafted(taken, pos), levels.dropped))
 
 
 def seed_levels(players: list[Player]) -> Levels:
@@ -526,18 +556,13 @@ def seed_levels(players: list[Player]) -> Levels:
                 caps[slot] -= 1
                 assigned.add(p.player_id)
                 break
-    base = weekly_wire_base(assigned, pos_sorted(players))
     raw = [1.0] * REGULAR_WEEKS + [0.5] * (WEEKS - REGULAR_WEEKS)
     total = sum(raw)
-    zero = tuple(
-        tuple(
-            tuple(0.0 for _ in range(WEEK_WIRE_BODIES[pos][w]))
-            for w in range(WEEKS)
-        )
-        for pos in POSITIONS
+    nothing_dropped = tuple(
+        tuple(top_values((), pos, w) for w in range(WEEKS)) for pos in POSITIONS
     )
     return Levels(
         weights=tuple(w / total for w in raw),
-        wire=base,
-        drop_floor=zero,
+        wire=combine_wire(weekly_undrafted(assigned, pos_sorted(players)), nothing_dropped),
+        dropped=nothing_dropped,
     )

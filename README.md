@@ -80,15 +80,19 @@ per-week projections, and the 17 weekly values are combined by guillotine week w
 each week's weight is the marginal effect of a weekly point on log P(surviving that
 week's cut), measured by simulating the elimination race over the opponents' simulated
 rosters, with the championship weeks entering through log P(winning the final). The
-waiver wire is per week and tiered: the undrafted tail early, then the survivors' equal
-split of every roster eliminated so far, so by the final the wire is other teams'
-first-round picks and drafted depth is worth nothing while drafted stars still clear
-it. Levels and the simulated draft are a fixed point that converges to a limit cycle.
+waiver wire is per week and tiered: one free-agent pool, the undrafted tail plus every
+roster eliminated so far, split equally among the survivors, so in week 1 a lone
+undrafted starter is worth a thirty-second of himself and by the final the wire is
+other teams' first-round picks; drafted depth is worth nothing by then while drafted
+stars still clear it. Levels and the simulated draft are a fixed point that converges
+to a limit cycle.
 My slot alone uses this objective, on DraftSharks projections blended 2:1 with
 Sleeper's so the draft does not build around one model's outliers; each opponent
 follows the external board most associated with its picks (the `cold_start` blend
-until it has any), with roster-balance adjustments, fitted choice noise, and a prior TE
-tilt for the premium that only Sleeper's points list prices, and never sees my
+until it has any), with roster-balance adjustments, fitted choice noise, a prior TE
+tilt for the premium that only Sleeper's points list prices, and QB scarcity sense (a
+team without a quarterback never takes one who does not start week 1, and takes a
+starter once the run leaves none likely to last to its next pick), and never sees my
 projections. The first pending decision
 searches target plans across my next four held picks and plays each plan out to the
 end of the draft. See `rank.py` and the `ranker/` module docstrings for the details.

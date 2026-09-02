@@ -33,7 +33,7 @@ from .opponents import OpponentStrategy
 from .pool import Player
 from .rankings import my_next_picks
 from .simulation import Draft
-from .value import Levels
+from .value import Levels, tier_bodies
 
 
 def team_names(board: Board) -> dict[int, str | None]:
@@ -253,15 +253,19 @@ def build_payload(
         "wire": {
             "note": (
                 "Per position per week, the waiver bodies a surviving roster holds: the "
-                "better of the best undrafted players and the survivors' equal split of "
-                "every eliminated roster's players so far."
+                "survivors' equal split of one free-agent pool, the undrafted tail plus "
+                "every eliminated roster so far. drop_floor is what the eliminated "
+                "rosters alone would supply."
             ),
             "weekly_levels": {
                 k: [[round(v, 1) for v in bodies] for bodies in levels.wire[i]]
                 for i, k in enumerate(POSITIONS)
             },
             "drop_floor": {
-                k: [[round(v, 1) for v in bodies] for bodies in levels.drop_floor[i]]
+                k: [
+                    [round(v, 1) for v in tier_bodies(dropped, k, w)]
+                    for w, dropped in enumerate(levels.dropped[i])
+                ]
                 for i, k in enumerate(POSITIONS)
             },
             "convergence": history,

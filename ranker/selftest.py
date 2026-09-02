@@ -49,6 +49,7 @@ from .value import (
     seed_levels,
     sorted_roster,
     team_value,
+    tier_bodies,
     week_value,
     weekly_team_values,
 )
@@ -89,7 +90,11 @@ def opponent_selftest(players: list[Player]) -> list[str]:
     levels = seed_levels(players)
     # Put the lowest-projected player first on every external board. An opponent must take
     # him; my optimizer must not, demonstrating that candidate generation is separated too.
-    external = sorted(players, key=lambda p: (p.points, p.player_id))
+    # A QB who does not start week 1 is the one thing a QB-less opponent refuses, so
+    # such players sort last.
+    external = sorted(
+        players, key=lambda p: (p.position == "QB" and p.weekly[0] == 0.0, p.points, p.player_id)
+    )
     opponents = synthetic_opponents(players, board, external)
     draft = Draft(players, levels, board, opponents=opponents)
     opponent_take = draft.choose_opponent(0, 1)
@@ -190,10 +195,49 @@ def opponent_selftest(players: list[Player]) -> list[str]:
         if abs(expected_log2_rank(power, len(players)) - loss) > 1e-6:
             fails.append(f"source-adherence calibration missed mean log2 loss {loss}")
 
+    # QB scarcity: a QB-less team skips a QB who does not start week 1 while starters
+    # remain, and once the run leaves no starter likely to survive to its next pick it
+    # takes the best starter on its board however far down he sits.
+    qbs = [p for p in players if p.position == "QB"]
+    bench_qb = next(p for p in qbs if p.weekly[0] == 0.0)
+    starter_qb = next(p for p in qbs if p.weekly[0] > 0.0)
+    board = fresh_board()
+    stash_order = complete([bench_qb, wrs[0], starter_qb])
+    stash = Draft(
+        players, levels, board, opponents=synthetic_opponents(players, board, stash_order)
+    )
+    if stash.choose_opponent(0, 1) != wrs[0]:
+        fails.append("a QB-less opponent drafted a QB who does not start week 1")
+    if stash.opponent_candidates(0, 1)[0] != wrs[0]:
+        fails.append("a QB-less opponent's board still led with a non-starting QB")
+    holder_board = fresh_board()
+    holder_board.rosters[0] = [starter_qb]
+    holder_board.picks_left[0] -= 1
+    holder = Draft(
+        players,
+        levels,
+        holder_board,
+        opponents=synthetic_opponents(players, holder_board, complete([bench_qb])),
+    )
+    if holder.choose_opponent(0, 1) != bench_qb:
+        fails.append("a team holding a QB was stopped from stashing a non-starter")
+    if stash._qb_run_forces(0):
+        fails.append("the QB run forced a pick at the open of the draft")
+    run = Draft(
+        players, levels, board, opponents=synthetic_opponents(players, board, complete(wrs))
+    )
+    run.qb_starters_left = 2  # the run has reached the last starters
+    forced_take = run.choose_opponent(0, 1)
+    if forced_take.position != "QB" or forced_take.weekly[0] == 0.0:
+        fails.append("a QB-less opponent let the last week-1 starters pass to its next pick")
+    if run.choose_opponent(len(run.order) - 2, run.order[-2]).position != "QB":
+        fails.append("a QB-less opponent's last pick was not a quarterback")
+
     print(
         "  opponent strategies: provider order stays personal-value-independent, starter "
-        "needs and excessive depth softly adjust it, owed positions bind, and fitted "
-        "rank noise reproduces source adherence",
+        "needs and excessive depth softly adjust it, owed positions bind, a QB-less team "
+        "skips non-starters and answers the QB run, and fitted rank noise reproduces "
+        "source adherence",
         file=sys.stderr,
     )
     return fails
@@ -372,7 +416,7 @@ def lineup_selftest() -> list[str]:
             weights = tuple(1.0 / WEEKS for _ in range(WEEKS))
         cols = tuple(tuple((wire[pos],) for _ in range(WEEKS)) for pos in POSITIONS)
         zero = tuple(tuple((0.0,) for _ in range(WEEKS)) for _ in POSITIONS)
-        return Levels(weights=tuple(weights), wire=cols, drop_floor=zero)
+        return Levels(weights=tuple(weights), wire=cols, dropped=zero)
 
     # With one QB job: QB1 always supplies his unconditional projection, QB2 is used
     # when QB1 is unavailable, and the unique wire body is used only when both are out.
@@ -812,16 +856,16 @@ def guillotine_selftest(players: list[Player]) -> list[str]:
     )
     for i, k in enumerate(POSITIONS):
         check(
-            all(v == 0.0 for v in solved.drop_floor[i][0]),
-            f"{k} drop floor is nonzero in week 1, before any elimination",
+            all(v == 0.0 for v in solved.dropped[i][0]),
+            f"{k} has eliminated-roster drops in week 1, before any elimination",
         )
         check(
             all(
                 v + 1e-9 >= f
-                for bodies, floor_bodies in zip(solved.wire[i], solved.drop_floor[i])
-                for v, f in zip(bodies, floor_bodies)
+                for w, (bodies, dropped) in enumerate(zip(solved.wire[i], solved.dropped[i]))
+                for v, f in zip(bodies, tier_bodies(dropped, k, w))
             ),
-            f"{k} wire dips below its drop floor",
+            f"{k} wire dips below what the eliminated rosters alone supply",
         )
         check(
             all(
@@ -832,8 +876,8 @@ def guillotine_selftest(players: list[Player]) -> list[str]:
         )
     check(
         any(
-            solved.drop_floor[i][REGULAR_WEEKS - 1][0] > 0.0
-            for i in range(len(POSITIONS))
+            tier_bodies(solved.dropped[i][REGULAR_WEEKS - 1], k, REGULAR_WEEKS - 1)[0] > 0.0
+            for i, k in enumerate(POSITIONS)
         ),
         "28 eliminated rosters raised no position's week-15 replacement level",
     )

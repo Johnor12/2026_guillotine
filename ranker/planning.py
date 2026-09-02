@@ -146,8 +146,8 @@ def _conditioned_seed(kind: str, cand_id: int, sample: int) -> str:
 def _final_roster_value(draft: Draft) -> float:
     """The common end-of-draft objective used by plan screening and noisy rollouts.
 
-    The undrafted part of the weekly wire is re-measured from this playout's own
-    final board; the guillotine drop floor and week weights carry over unchanged —
+    The undrafted tail of the free-agent pool is re-measured from this playout's own
+    final board; the eliminated rosters and week weights carry over unchanged —
     they are league-level quantities the single playout cannot move.
     """
     levels = refresh_wire(draft.levels, draft.taken, draft.pos_lists)

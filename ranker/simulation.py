@@ -60,6 +60,11 @@ class Fenwick:
         return total
 
 
+def _starts_week1(p: Player) -> bool:
+    """Projected to score in week 1 — the depth-chart starter test the opponents use."""
+    return p.weekly[0] > 0.0
+
+
 def survival(better_available: int, gap: int) -> float:
     """P(a player is still there `gap` picks later), given how many rank above him.
 
@@ -157,6 +162,16 @@ class Draft:
         self.noise_from = noise_from
         # My slot never drafts this player (candidate_survival's counterfactual redraws).
         self.my_ban = my_ban
+        # The QB run so far, for the opponents' scarcity rule (`_qb_run_forces`).
+        self.picks_made = board.picks_made
+        self.qb_taken = sum(
+            1 for roster in self.rosters for p in roster if p.position == "QB"
+        ) + sum(1 for off in self.off_pool for row in off if row.get("position") == "QB")
+        self.qb_starters_left = sum(
+            1
+            for p in players
+            if p.position == "QB" and _starts_week1(p) and p.player_id not in self.taken
+        )
 
     def _next_pick_table(self) -> list[int | None]:
         """For each pick index, the slot's following pick index (None if it is their last)."""
@@ -231,11 +246,20 @@ class Draft:
                 eligible = tuple(pos for pos in POSITIONS if owed[pos]) or POSITIONS
         return (eligible, POSITIONS)
 
-    def opponent_candidates(self, slot: int) -> list[Player]:
-        """All legal players, ordered only by this opponent's inferred source board."""
+    def opponent_candidates(self, pick_index: int, slot: int) -> list[Player]:
+        """All legal players, ordered only by this opponent's inferred source board.
+
+        A team still without a quarterback is assumed to be at least this rational
+        about the one position every roster must fill from a supply of 32 week-1
+        starters: it never spends the pick on a QB who does not start week 1 while a
+        starter is on the board, and once the run has left no starter likely to survive
+        to its next pick it takes one now (`_qb_run_forces`). Whether a QB starts week
+        1 is public depth-chart information, not a projection edge.
+        """
         strategy = self.opponents[slot]
         roster = self.rosters[slot - 1]
         off = self.off_pool[slot - 1]
+        candidates: list[Player] = []
         for positions in self._eligibility_scenarios(
             roster, self.picks_left[slot - 1], off
         ):
@@ -246,8 +270,27 @@ class Draft:
                 and self.by_id[player_id].position in positions
             ]
             if candidates:
-                return candidates
-        return []
+                break
+        if self.position_counts(roster, off)["QB"] == 0:
+            starters = [p for p in candidates if p.position == "QB" and _starts_week1(p)]
+            if starters:
+                if self._qb_run_forces(pick_index):
+                    return starters
+                candidates = [
+                    p for p in candidates if p.position != "QB" or _starts_week1(p)
+                ]
+        return candidates
+
+    def _qb_run_forces(self, pick_index: int) -> bool:
+        """Whether, at the rate quarterbacks have gone in this draft, no week-1
+        starter is expected to survive to this slot's next pick. A pseudo-count of 4
+        QBs per 32 picks stands in before the room has shown its rate, so nothing is
+        forced at the open even though the supply exactly matches the 32 teams."""
+        nxt = self.next_pick[pick_index]
+        if nxt is None:
+            return True
+        rate = (self.qb_taken + 4) / (self.picks_made + 32)
+        return self.qb_starters_left - rate * (nxt - pick_index - 1) < 1.0
 
     def target_is_legal(self, target: Player, slot: int) -> bool:
         """Whether a surviving plan target belongs to the first viable legal scenario."""
@@ -414,7 +457,7 @@ class Draft:
 
     def choose_opponent(self, pick_index: int, slot: int) -> Player:
         """Choose from a balance-adjusted source board, without consulting my valuation."""
-        candidates = self.opponent_candidates(slot)
+        candidates = self.opponent_candidates(pick_index, slot)
         assert candidates, "pool exhausted"
         adjustments = self.opponent_position_adjustments(slot)
         ranked = [
@@ -467,6 +510,10 @@ class Draft:
             self.rosters[slot - 1].append(pick)
             self.picks_left[slot - 1] -= 1
             self.pick_of[pick.player_id] = self.pick_nos[i]
+            self.picks_made += 1
+            if pick.position == "QB":
+                self.qb_taken += 1
+                self.qb_starters_left -= _starts_week1(pick)
             if pick.player_id == until_taken:
                 return self.pick_nos[i]
         return None

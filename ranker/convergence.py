@@ -32,7 +32,7 @@ def _average_levels(cycle: list[Levels]) -> Levels:
     weights = tuple(w / total for w in weights)  # keep the sum exactly 1
 
     def mean_bodies(pick) -> tuple:
-        # Body counts per (position, week) are league constants, so the tiers zip.
+        # Body and pool sizes per (position, week) are league constants, so they zip.
         return tuple(
             tuple(
                 tuple(sum(values) / n for values in zip(*bodies_across_cycle))
@@ -44,7 +44,7 @@ def _average_levels(cycle: list[Levels]) -> Levels:
     return Levels(
         weights=weights,
         wire=mean_bodies(lambda levels: levels.wire),
-        drop_floor=mean_bodies(lambda levels: levels.drop_floor),
+        dropped=mean_bodies(lambda levels: levels.dropped),
     )
 
 
