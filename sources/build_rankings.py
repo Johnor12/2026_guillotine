@@ -4,12 +4,17 @@
     uv run sources/build_rankings.py
     uv run sources/build_rankings.py --report
 
-Four boards are parsed from the raw snapshots fetch_rankings.py saved (FantasyCalc,
-KeepTradeCut, FantasyFootballCalculator ADP, FantasyPros ECR). Three more are derived:
-DraftSharks 1QB ADP from pool.json, Sleeper half-PPR ADP from the pool's Sleeper
-projections snapshot, and a consensus board averaging each pool player's rank across
-every other source. The consensus board is also the ranker's opponent fallback: it
-models opponents before they have picked and completes each provider's uncovered tail.
+Eight boards are parsed from the raw snapshots fetch_rankings.py saved: FantasyCalc,
+KeepTradeCut, FantasyFootballCalculator ADP and FantasyPros ECR in their ordinary 1QB
+form, and the superflex/2QB variant of each (KeepTradeCut's sits in the same page).
+Six more are derived: DraftSharks 1QB ADP from pool.json; Sleeper half-PPR ADP,
+Sleeper 2QB ADP and the league-scored projected-points order (the one board that
+prices the TE premium) from the pool's Sleeper projections snapshot; a consensus
+board averaging each pool player's rank across every other source; and the cold-start
+room prior the ranker gives an opponent who has not picked yet: Sleeper's half-PPR
+ADP, the list this league's draft room displays and autopick drafts from, blended
+30% toward the mean of the format-adjusted boards for the savvy minority. The
+consensus board completes each provider's uncovered tail in the ranker.
 
 Every row is resolved onto the pool's Sleeper id (identity.PlayerResolver): by supplied
 id, then normalized name and position, then a conservative last-name/team/first-name-
@@ -80,14 +85,14 @@ def parse_fantasycalc(path: Path) -> list[dict]:
     ]
 
 
-def parse_keeptradecut(path: Path) -> list[dict]:
+def parse_keeptradecut(path: Path, value_set: str = "oneQBValues") -> list[dict]:
+    # KTC's fantasy page carries its 1QB and superflex value sets in one payload (there
+    # is no TE-premium redraft variant); each set is parsed as its own board.
     ranked = []
     for raw in js_json(path.read_text(), "var playersArray ="):
         if raw["position"] not in POSITIONS:
             continue
-        # This league is 1 QB, so KTC's plain oneQBValues board is the closest prior it
-        # publishes (there is no TE-premium redraft variant).
-        values = raw["oneQBValues"]
+        values = raw[value_set]
         ranked.append(
             player(values["rank"], raw["playerName"], raw["position"], raw.get("team"), values.get("value"))
         )
@@ -127,9 +132,17 @@ def parse_fantasypros(path: Path) -> list[dict]:
 
 PARSERS = {
     "fantasycalc": ("FantasyCalc", "fantasycalc.json", parse_fantasycalc),
+    "fantasycalc_sf": ("FantasyCalc SF", "fantasycalc_sf.json", parse_fantasycalc),
     "keeptradecut": ("KeepTradeCut", "keeptradecut.html", parse_keeptradecut),
+    "keeptradecut_sf": (
+        "KeepTradeCut SF",
+        "keeptradecut.html",
+        lambda path: parse_keeptradecut(path, "superflexValues"),
+    ),
     "ffcalculator": ("FF Calculator ADP", "ffcalculator.json", parse_ffcalculator),
+    "ffcalculator_2qb": ("FF Calculator 2QB ADP", "ffcalculator_2qb.json", parse_ffcalculator),
     "fantasypros": ("FantasyPros ECR", "fantasypros.html", parse_fantasypros),
+    "fantasypros_sf": ("FantasyPros SF ECR", "fantasypros_sf.html", parse_fantasypros),
 }
 
 
@@ -148,17 +161,30 @@ def draftsharks_adp(pool: dict) -> list[dict]:
     ]
 
 
-def sleeper_adp(projections: dict) -> list[dict]:
+def sleeper_adp(projections: dict, field: str = "adp") -> list[dict]:
+    """Sleeper's redraft ADP order: ``adp`` is the half-PPR list the draft room shows,
+    ``adp_2qb`` the 2QB-league list."""
     rows = [
         raw
         for raw in projections["players"]
         if raw["position"] in POSITIONS
-        and raw.get("adp") is not None
-        and raw["adp"] < 999.0  # Sleeper's "undrafted" sentinel
+        and raw.get(field) is not None
+        and raw[field] < 999.0  # Sleeper's "undrafted" sentinel
     ]
-    rows.sort(key=lambda raw: (raw["adp"], raw["name"]))
+    rows.sort(key=lambda raw: (raw[field], raw["name"]))
     return [
-        player(rank, raw["name"], raw["position"], raw.get("team"), raw["adp"], raw["sleeper_id"])
+        player(rank, raw["name"], raw["position"], raw.get("team"), raw[field], raw["sleeper_id"])
+        for rank, raw in enumerate(rows, start=1)
+    ]
+
+
+def sleeper_points(projections: dict) -> list[dict]:
+    """League-scored projected points, the sort Sleeper's own league players page shows
+    every manager. The one board that prices the +1.0/rec TE premium."""
+    rows = [raw for raw in projections["players"] if raw["position"] in POSITIONS]
+    rows.sort(key=lambda raw: (-raw["points"], raw.get("adp") or 999.0, raw["name"]))
+    return [
+        player(rank, raw["name"], raw["position"], raw.get("team"), raw["points"], raw["sleeper_id"])
         for rank, raw in enumerate(rows, start=1)
     ]
 
@@ -186,6 +212,63 @@ def consensus(sources: list[dict], pool: dict) -> list[dict]:
             sid,
         )
         for rank, (mean, sid) in enumerate(averaged, start=1)
+    ]
+
+
+# The format-adjusted boards a savvy drafter plausibly finds or approximates: the
+# superflex/2QB variants plus the league-scored points list (the one TE-premium board).
+SAVVY_SOURCE_IDS = (
+    "fantasycalc_sf",
+    "keeptradecut_sf",
+    "ffcalculator_2qb",
+    "fantasypros_sf",
+    "sleeper_2qb",
+    "sleeper_points",
+)
+# Most of this room drafts off the list Sleeper displays (a league mock showed the
+# draft room's numbers matching adp_half_ppr to the decimal, and autopick follows the
+# same list); roughly a 30% minority is expected to find real boards or adjust.
+SAVVY_WEIGHT = 0.3
+
+
+def cold_start_blend(sources: list[dict], pool: dict) -> list[dict]:
+    """Rank-space blend, (1 - w) * Sleeper half-PPR ADP + w * mean savvy-board rank. A
+    player only one side ranks takes that rank alone; a player neither ranks is left
+    to the ranker's consensus tail completion."""
+    by_id = {source["id"]: source for source in sources}
+    default_ranks = {
+        row["sleeper_id"]: row["rank"]
+        for row in by_id["sleeper_adp"]["players"]
+        if row["sleeper_id"] is not None
+    }
+    savvy_ranks: dict[str, list[int]] = {}
+    for source_id in SAVVY_SOURCE_IDS:
+        for row in by_id[source_id]["players"]:
+            if row["sleeper_id"] is not None:
+                savvy_ranks.setdefault(row["sleeper_id"], []).append(row["rank"])
+    pool_by_id = {str(row["sleeper_id"]): row for row in pool["players"]}
+    scored = []
+    for sleeper_id in pool_by_id:
+        default = default_ranks.get(sleeper_id)
+        savvy = statistics.fmean(savvy_ranks[sleeper_id]) if sleeper_id in savvy_ranks else None
+        if default is None and savvy is None:
+            continue
+        if default is None or savvy is None:
+            score = default if savvy is None else savvy
+        else:
+            score = (1 - SAVVY_WEIGHT) * default + SAVVY_WEIGHT * savvy
+        scored.append((score, sleeper_id))
+    scored.sort(key=lambda item: (item[0], pool_by_id[item[1]]["name"]))
+    return [
+        player(
+            rank,
+            pool_by_id[sid]["name"],
+            pool_by_id[sid]["position"],
+            pool_by_id[sid].get("team"),
+            round(score, 2),
+            sid,
+        )
+        for rank, (score, sid) in enumerate(scored, start=1)
     ]
 
 
@@ -279,15 +362,28 @@ def main(argv: list[str] | None = None) -> int:
         source("draftsharks_adp", "DraftSharks ADP", "1QB half-PPR ADP from pool.json", None, resolved(draftsharks_adp(pool)))
     )
     projections = json.loads(SLEEPER_PROJECTIONS.read_text())
-    sources.append(
-        source(
+    for source_id, name, fmt, rows in (
+        (
             "sleeper_adp",
             "Sleeper ADP",
             "half-PPR redraft ADP from the pool's Sleeper projections snapshot",
-            projections.get("fetched_at"),
-            resolved(sleeper_adp(projections)),
-        )
-    )
+            sleeper_adp(projections),
+        ),
+        (
+            "sleeper_2qb",
+            "Sleeper 2QB ADP",
+            "2QB redraft ADP from the same snapshot",
+            sleeper_adp(projections, "adp_2qb"),
+        ),
+        (
+            "sleeper_points",
+            "Sleeper League Points",
+            "league-scored projected points (0.5 PPR, +1.0/rec TE premium): the sort "
+            "Sleeper's league players page shows",
+            sleeper_points(projections),
+        ),
+    ):
+        sources.append(source(source_id, name, fmt, projections.get("fetched_at"), resolved(rows)))
     if failures:
         print("ranking normalization failed:", file=sys.stderr)
         for failure in failures:
@@ -302,6 +398,17 @@ def main(argv: list[str] | None = None) -> int:
             f"mean provider rank across the other {len(sources)} sources",
             None,
             consensus(sources, pool),
+        )
+    )
+    # After consensus, so the blend never feeds back into the average.
+    sources.append(
+        source(
+            "cold_start",
+            "Cold-Start Room Prior",
+            f"{1 - SAVVY_WEIGHT:.0%} Sleeper half-PPR ADP + {SAVVY_WEIGHT:.0%} mean rank of "
+            "the format-adjusted boards",
+            None,
+            cold_start_blend(sources, pool),
         )
     )
     payload = {

@@ -134,20 +134,23 @@ OPPONENT_BALANCE_STRENGTH = 2.0
 # The penalty starts at the 2nd QB/TE and the 4th RB/WR, past what a roster with 8
 # offensive spots ordinarily carries, so it only prices the extremes. The targets sum
 # to the 8 roster spots: they describe a realizable roster, and QB urgency is priced by
-# OPPONENT_POSITION_TILT below, not by loosening this profile. My slot never uses this.
+# the superflex boards in the opponents' cold-start blend, not by loosening this
+# profile. My slot never uses this.
 OPPONENT_DEPTH_TARGETS = {"QB": 1, "RB": 3, "WR": 3, "TE": 1}
 OPPONENT_DEPTH_PENALTY = 2.0
 # Flat source-rank multiplier per position; < 1 pulls the position up an opponent's
-# board. Every available source board is a 1QB, no-TE-premium board, and this league is
-# neither. 32 teams and the week-14 superflex make QBs far scarcer than any board
-# prices: at 1.0 the simulated room leaves starting QBs on the board into round 7,
-# which nobody believes; 0.2 moves the 32nd starting QB off the board around round
-# 7 -> 5. The +1.0/rec TE premium lifts a 70-catch TE by ~4 points a week, which puts
-# TE2 above WR1 in this scoring and makes TE2-TE9 first-to-third-round players on my
-# board; a room that is blind to that hands me four of them, so 0.6 assumes the room
-# half sees it. Both are priors, not fits (the league has no completed picks yet).
-# Refit with evaluate_opponents.py once real picks exist.
-OPPONENT_POSITION_TILT: dict[str, float] = {"QB": 0.2, "TE": 0.6}
+# board. QB scarcity (32 teams plus the week-14 superflex) is priced by boards, not a
+# tilt: an unfitted opponent drafts off the cold_start blend and a fitted one adopts a
+# superflex/2QB board when its picks say so, and that room already clears the 32nd
+# starting QB around round 7 with ~8 QBs gone by the end of round 2. A QB tilt on top
+# of those boards double-counts (0.2 pulled 14 QBs into the first two rounds). The
+# +1.0/rec TE premium is still a tilt: only Sleeper's league-scored points board
+# prices it, a sliver of the blend, while the premium lifts a 70-catch TE by ~4
+# points a week, puts TE2 above WR1 in this scoring and makes TE2-TE9
+# first-to-third-round players on my board; a room blind to that hands me four of
+# them, so 0.6 assumes the room half sees it. A prior, not a fit (no completed picks
+# yet). Refit with evaluate_opponents.py once real picks exist.
+OPPONENT_POSITION_TILT: dict[str, float] = {"TE": 0.6}
 # Multiplier around each opponent's fitted source adherence: 1 reproduces the observed
 # mean log-rank loss before roster-balance adjustments, while 0 removes random variation.
 NOISE = 1.0

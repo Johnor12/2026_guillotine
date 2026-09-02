@@ -1,42 +1,70 @@
 {
-  "generated_at": "2026-09-01T20:08:30+00:00",
+  "generated_at": "2026-09-01T23:43:04+00:00",
   "draft": {
     "draft_id": "1397662421937565696",
-    "draft_fetched_at": "2026-09-01T20:08:30+00:00",
+    "draft_fetched_at": "2026-09-01T23:43:04+00:00",
     "draft_started_at": "2026-09-02T20:00:00+00:00",
     "picks_analyzed": 0
   },
   "ranking_snapshot": {
-    "generated_at": "2026-09-01T00:18:33+00:00",
-    "source_count": 7,
+    "generated_at": "2026-09-01T23:42:19+00:00",
+    "source_count": 14,
     "sources": [
       {
         "id": "fantasycalc",
         "name": "FantasyCalc",
         "format": "10-team redraft, 1 QB, 0.5 PPR",
-        "fetched_at": "2026-09-01T00:18:30+00:00",
-        "player_count": 195
+        "fetched_at": "2026-09-01T12:22:49+00:00",
+        "player_count": 199
+      },
+      {
+        "id": "fantasycalc_sf",
+        "name": "FantasyCalc SF",
+        "format": "14-team redraft, superflex, 0.5 PPR",
+        "fetched_at": "2026-09-01T12:22:49+00:00",
+        "player_count": 199
       },
       {
         "id": "keeptradecut",
         "name": "KeepTradeCut",
         "format": "redraft 1QB (KTC fantasy rankings); no TE premium",
-        "fetched_at": "2026-09-01T00:18:30+00:00",
+        "fetched_at": "2026-09-01T12:22:49+00:00",
+        "player_count": 300
+      },
+      {
+        "id": "keeptradecut_sf",
+        "name": "KeepTradeCut SF",
+        "format": "redraft superflex (KTC fantasy rankings); no TE premium",
+        "fetched_at": "2026-09-01T12:22:49+00:00",
         "player_count": 300
       },
       {
         "id": "ffcalculator",
         "name": "FF Calculator ADP",
         "format": "10-team half-PPR mock-draft ADP",
-        "fetched_at": "2026-09-01T00:18:30+00:00",
-        "player_count": 193
+        "fetched_at": "2026-09-01T12:22:49+00:00",
+        "player_count": 192
+      },
+      {
+        "id": "ffcalculator_2qb",
+        "name": "FF Calculator 2QB ADP",
+        "format": "14-team 2QB mock-draft ADP",
+        "fetched_at": "2026-09-01T12:22:49+00:00",
+        "player_count": 208
       },
       {
         "id": "fantasypros",
         "name": "FantasyPros ECR",
         "format": "redraft half-PPR expert consensus",
-        "fetched_at": "2026-09-01T00:18:30+00:00",
+        "fetched_at": "2026-09-01T12:22:49+00:00",
         "player_count": 867
+      },
+      {
+        "id": "fantasypros_sf",
+        "name": "FantasyPros SF ECR",
+        "format": "redraft half-PPR superflex expert consensus",
+        "fetched_at": "2026-09-01T12:22:49+00:00",
+        "player_count": 946
       },
       {
         "id": "draftsharks_adp",
@@ -48,14 +76,35 @@
       {
         "id": "sleeper_adp",
         "name": "Sleeper ADP",
-        "format": "half-PPR redraft ADP from the pool pipeline's Sleeper projections",
-        "fetched_at": "2026-09-01T00:14:47+00:00",
-        "player_count": 464
+        "format": "half-PPR redraft ADP from the pool's Sleeper projections snapshot",
+        "fetched_at": "2026-09-01T23:38:44+00:00",
+        "player_count": 465
+      },
+      {
+        "id": "sleeper_2qb",
+        "name": "Sleeper 2QB ADP",
+        "format": "2QB redraft ADP from the same snapshot",
+        "fetched_at": "2026-09-01T23:38:44+00:00",
+        "player_count": 340
+      },
+      {
+        "id": "sleeper_points",
+        "name": "Sleeper League Points",
+        "format": "league-scored projected points (0.5 PPR, +1.0/rec TE premium): the sort Sleeper's league players page shows",
+        "fetched_at": "2026-09-01T23:38:44+00:00",
+        "player_count": 498
       },
       {
         "id": "consensus",
         "name": "Consensus Average",
-        "format": "mean provider rank across the other 6 sources",
+        "format": "mean provider rank across the other 12 sources",
+        "fetched_at": null,
+        "player_count": 370
+      },
+      {
+        "id": "cold_start",
+        "name": "Cold-Start Room Prior",
+        "format": "70% Sleeper half-PPR ADP + 30% mean rank of the format-adjusted boards",
         "fetched_at": null,
         "player_count": 370
       }

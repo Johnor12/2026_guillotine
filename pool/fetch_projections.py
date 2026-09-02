@@ -8,9 +8,11 @@ product the league players page uses), so the -2 pass INT, the +1.0 TE reception
 premium and 6-point return TDs are all applied:
 
     data/sleeper_projections.json  Sleeper/Rotowire season projections: the top 500
-                                   QB/RB/WR/TE by projected points, with half-PPR ADP
-                                   (999.0 is Sleeper's "undrafted" sentinel). Gates pool
-                                   membership and supplies the sleeper_id join key.
+                                   QB/RB/WR/TE by projected points, with half-PPR and
+                                   2QB ADP (999.0 is Sleeper's "undrafted" sentinel; the
+                                   2QB list feeds sources/' QB-scarce opponent boards).
+                                   Gates pool membership and supplies the sleeper_id
+                                   join key.
     data/weekly_projections.json   DraftSharks per-week stat projections for weeks 1-18,
                                    from the weekly-rankings page's public load-rows
                                    endpoint. A player absent from a week has no game that
@@ -108,6 +110,7 @@ def fetch_sleeper(scoring: dict, season: str) -> None:
                 "team": row["team"],
                 "points": round(points, 2),
                 "adp": stats.get("adp_half_ppr"),
+                "adp_2qb": stats.get("adp_2qb"),
             }
         )
     if len(players) < TOP_N:

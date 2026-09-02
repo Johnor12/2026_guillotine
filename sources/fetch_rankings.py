@@ -5,8 +5,8 @@
 
 The raw responses land in data/raw/ (gitignored) and are parsed by build_rankings.py,
 so a provider parser can be fixed without downloading a newer board and losing the
-snapshot that existed during the draft. All four must succeed; a failed fetch leaves
-the existing snapshots intact.
+snapshot that existed during the draft. All must succeed; a failed fetch leaves the
+existing snapshots intact.
 """
 
 from __future__ import annotations
@@ -25,9 +25,11 @@ TIMEOUT_SECONDS = 30
 USER_AGENT = "redraft-data-source-investigator/0.1"
 
 # The league is a 32-team, 1 QB, 0.5 PPR TE-premium guillotine, a format no provider
-# publishes. These standard-format redraft boards stand in as opponents' ranking priors
-# (drafters carry ordinary redraft rankings into any format); the exact format requested
-# from each source is carried into boards.json.
+# publishes. Ordinary 1QB redraft boards stand in for drafters who carry their usual
+# rankings into any format; the superflex/2QB variant of each provider stands in for
+# drafters pricing this room's QB scarcity (32 starters wanted from ~32 NFL jobs, plus
+# the week-14 superflex). The exact format requested from each source is carried into
+# boards.json.
 SOURCES = {
     "fantasycalc": {
         "name": "FantasyCalc",
@@ -37,6 +39,16 @@ SOURCES = {
         ),
         "file": "fantasycalc.json",
         "format": "10-team redraft, 1 QB, 0.5 PPR",
+    },
+    "fantasycalc_sf": {
+        "name": "FantasyCalc SF",
+        # 14 teams is the deepest room FantasyCalc's calculator offers.
+        "url": (
+            "https://api.fantasycalc.com/values/current?"
+            "isDynasty=false&numQbs=2&numTeams=14&ppr=0.5&includeAdp=true"
+        ),
+        "file": "fantasycalc_sf.json",
+        "format": "14-team redraft, superflex, 0.5 PPR",
     },
     "keeptradecut": {
         "name": "KeepTradeCut",
@@ -50,11 +62,34 @@ SOURCES = {
         "file": "ffcalculator.json",
         "format": "10-team half-PPR mock-draft ADP",
     },
+    "ffcalculator_2qb": {
+        "name": "FF Calculator 2QB ADP",
+        # 14 teams is the deepest room FF Calculator runs 2QB mocks for.
+        "url": "https://fantasyfootballcalculator.com/api/v1/adp/2qb?teams=14&year=2026",
+        "file": "ffcalculator_2qb.json",
+        "format": "14-team 2QB mock-draft ADP",
+    },
     "fantasypros": {
         "name": "FantasyPros ECR",
         "url": "https://www.fantasypros.com/nfl/rankings/half-point-ppr-cheatsheets.php",
         "file": "fantasypros.html",
         "format": "redraft half-PPR expert consensus",
+    },
+    "fantasypros_sf": {
+        "name": "FantasyPros SF ECR",
+        "url": "https://www.fantasypros.com/nfl/rankings/half-point-ppr-superflex-cheatsheets.php",
+        "file": "fantasypros_sf.html",
+        "format": "redraft half-PPR superflex expert consensus",
+    },
+}
+
+# Boards parsed out of another source's snapshot: one download, a second metadata entry
+# so build_rankings.py can label the board.
+DERIVED_FROM_SNAPSHOT = {
+    "keeptradecut_sf": {
+        "base": "keeptradecut",
+        "name": "KeepTradeCut SF",
+        "format": "redraft superflex (KTC fantasy rankings); no TE premium",
     },
 }
 
@@ -95,6 +130,13 @@ def main() -> int:
         for failure in failures:
             print(f"  - {failure}", file=sys.stderr)
         return 1
+
+    for source_id, spec in DERIVED_FROM_SNAPSHOT.items():
+        metadata["sources"][source_id] = {
+            **metadata["sources"][spec["base"]],
+            "name": spec["name"],
+            "format": spec["format"],
+        }
 
     RAW.mkdir(parents=True, exist_ok=True)
     for source_id, body in downloads.items():

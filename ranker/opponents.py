@@ -3,10 +3,13 @@
 Each opponent uses the provider board that best fits their picks in
 ``data_source_matches.json``. Provider rows join the pool by the Sleeper id the source
 build already resolved against this same pool; a row it could not resolve is a player
-the pool does not carry. A provider's uncovered tail follows the consensus board (the
-mean rank across every other source), which also serves as the cold-start source before
-an opponent has picked, so every mandatory pick remains possible without ever falling
-back to this ranker's projections or board.
+the pool does not carry. Before an opponent has picked, they follow the source build's
+``cold_start`` board: Sleeper's half-PPR ADP, the list this league's draft room
+displays (a league mock matched ``adp_half_ppr`` to the decimal) and autopick drafts
+from, blended 30% toward the format-adjusted boards for the savvy minority. A
+provider's uncovered tail follows the consensus board (the mean rank across every
+other source), so every mandatory pick remains possible without ever falling back to
+this ranker's projections or board.
 """
 
 from __future__ import annotations
@@ -19,6 +22,7 @@ from pathlib import Path
 from .board import Board
 from .pool import Player
 
+COLD_START_SOURCE_ID = "cold_start"
 COLD_START_LOG2_LOSS = 1.5
 # An owner whose 1-2 observed picks happen to sit exactly on a source board gets a
 # fitted loss near 0, which calibrates to a near-deterministic policy (replayed picks
@@ -152,7 +156,7 @@ def build_opponent_strategies(
         owner = owner_matches.get(roster_id)
         if owner is None:
             inferred = {
-                "source_id": fallback["id"],
+                "source_id": COLD_START_SOURCE_ID,
                 "fit_score": 0.0,
                 "mean_log2_loss": COLD_START_LOG2_LOSS,
             }

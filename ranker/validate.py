@@ -116,7 +116,7 @@ def validate(
     gains = [r["lineup_gain"] for r in rows]
     check(gains == sorted(gains, reverse=True), "rows are not sorted by lineup gain descending")
     source_ids = {strategy.source_id for strategy in draft.opponents.values()}
-    # Before any opponent has picked, all of them share the consensus cold-start board.
+    # Before any opponent has picked, all of them share the cold-start board.
     if any(board.rosters[slot - 1] for slot in draft.opponents):
         check(len(source_ids) >= 2, f"opponents use only {len(source_ids)} distinct source board(s)")
     check(
