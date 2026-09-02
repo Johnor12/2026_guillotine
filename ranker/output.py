@@ -3,6 +3,8 @@ docstrings and README.md; the payload carries the numbers plus one-line pointers
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 from . import league
 from .board import Board
 from .league import (
@@ -36,7 +38,7 @@ from .opponents import OpponentStrategy
 from .pool import Player
 from .rankings import my_next_picks
 from .simulation import Draft
-from .value import Levels, tier_bodies
+from .value import Levels, team_value, tier_bodies
 
 
 def team_names(board: Board) -> dict[int, str | None]:
@@ -87,18 +89,26 @@ def draft_block(board: Board) -> dict | None:
     return block
 
 
-def example_rosters(draft: Draft, board: Board) -> list[dict]:
+def example_rosters(draft: Draft, board: Board, levels: Levels) -> list[dict]:
     """Every team's final roster from the deterministic draft: the live board's made
     picks first (the board does not keep their pick numbers), then the simulated picks
     with the pick they were taken at. Each entry carries what the dashboard needs, since
-    `rankings` only lists undrafted players."""
+    `rankings` only lists undrafted players.
+
+    `value` is the roster's guillotine-weighted expected weekly lineup points, the
+    objective my picks maximize; each player's `lineup_value` is his marginal share of
+    it. Opponents are priced at the league wire and my roster under my FAAB policy,
+    the same split the elimination model uses."""
     names = team_names(board)
     out: list[dict] = []
     for slot in range(1, league.TEAMS + 1):
         roster, off = draft.rosters[slot - 1], draft.off_pool[slot - 1]
+        priced = levels if slot == board.my_slot else replace(levels, wire=levels.league_wire)
+        value = team_value(roster, priced)
         picks: list[dict] = []
         for p in roster:
             pick_no = draft.pick_of.get(p.player_id)
+            without = [q for q in roster if q is not p]
             picks.append(
                 {
                     "pick": pick_label(pick_no) if pick_no else None,
@@ -111,6 +121,7 @@ def example_rosters(draft: Draft, board: Board) -> list[dict]:
                     "bye_week": p.bye_week,
                     "is_rookie": p.is_rookie,
                     "points": p.points,
+                    "lineup_value": round(value - team_value(without, priced), 1),
                     "off_pool": False,
                 }
             )
@@ -126,6 +137,7 @@ def example_rosters(draft: Draft, board: Board) -> list[dict]:
                 "bye_week": None,
                 "is_rookie": None,
                 "points": None,
+                "lineup_value": None,
                 "off_pool": True,
             }
             for o in off
@@ -137,6 +149,7 @@ def example_rosters(draft: Draft, board: Board) -> list[dict]:
                 "is_mine": slot == board.my_slot,
                 "players": len(roster) + len(off),
                 "positions": _position_counts(roster, off),
+                "value": round(value, 1),
                 "picks": picks,
             }
         )
@@ -192,9 +205,15 @@ def build_payload(
             "note": (
                 "Full final rosters from the single deterministic draft at the converged "
                 "levels, the same draft sim_pick reports. Made picks are facts from the "
-                "live board; every pending pick is the model drafting."
+                "live board; every pending pick is the model drafting. value is the "
+                "roster's guillotine-weighted expected weekly lineup points (opponents "
+                "at the league wire, mine under my FAAB policy); each player's "
+                "lineup_value is his marginal share of it. wire_floor is an empty "
+                "roster's value at the league wire, the part of every value that "
+                "waiver bodies supply; the dashboard shows values above it."
             ),
-            "rosters": example_rosters(draft, board),
+            "wire_floor": round(team_value([], replace(levels, wire=levels.league_wire)), 1),
+            "rosters": example_rosters(draft, board, levels),
         },
         "my_next_picks": {
             "note": (

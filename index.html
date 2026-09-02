@@ -125,7 +125,7 @@
 
   /* Projected rosters */
   .outlook-summary {
-    display: grid; grid-template-columns: repeat(2, minmax(160px, 1fr)); gap: 1px;
+    display: grid; grid-template-columns: repeat(3, minmax(160px, 1fr)); gap: 1px;
     overflow: hidden; margin-bottom: 12px; padding: 0;
   }
   .outlook-metric { padding: 12px 14px; border-right: 1px solid var(--grid); }
@@ -151,8 +151,7 @@
   .roster-player { min-width: 0; }
   .roster-player .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .roster-player .meta { color: var(--muted); font-size: 10.5px; white-space: nowrap; }
-  .roster-row .projection { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
-  .roster-row .projection.starts { color: var(--ink); font-weight: 700; }
+  .roster-row .projection { text-align: right; color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; }
   .roster-row .trend { text-align: right; font-variant-numeric: tabular-nums; }
 
   /* Best available */
@@ -273,13 +272,13 @@
 
     <section id="leagueOutlook">
       <h2>Other projected teams</h2>
-      <p class="hint">The same deterministic draft path and period-specific optimal lineups. Expand a team for its full projected roster.</p>
+      <p class="hint">The same deterministic draft path, each roster priced by the elimination model. Expand a team for its full projected roster.</p>
       <div class="table-wrap">
         <table class="league-table">
           <thead><tr>
             <th>Team</th>
             <th>Roster</th>
-            <th class="num">Projected starters</th>
+            <th class="num" title="Weighted expected weekly lineup points above the wire floor">Guillotine value</th>
           </tr></thead>
           <tbody id="leagueBody"></tbody>
         </table>
@@ -312,6 +311,10 @@ const fmt = value => value == null ? "—" : Number(value).toLocaleString("en-US
 const signed = value => value == null ? "—" : `${value > 0 ? "+" : ""}${fmt(value)}`;
 const pct = value => value == null ? "—" : `${Math.round(value * 100)}%`;
 const trendClass = value => value > 0 ? "positive" : value < 0 ? "negative" : "dim";
+// Roster values are shown above the league-wire floor: an empty roster's value, the
+// same constant for every roster and candidate, so the differences are unchanged.
+let wireFloor = 0;
+const overFloor = value => value == null ? null : value - wireFloor;
 
 /* The live board may include traded picks; the league's original slot sequence does not. */
 const remainingPickOrder = d => d.draft?.my_remaining_picks || d.league.my_picks;
@@ -334,35 +337,6 @@ function pAvailAt(row, pickLabel, myPickOrder) {
   return null;
 }
 
-/* This mirrors ranker.value.starting_positions for raw projected starter totals. */
-const STARTING_SLOTS = { QB: 1, RB: 2, WR: 2, TE: 1, FLEX: 2 };
-const SLOT_CHAIN = {
-  QB: ["QB"], RB: ["RB", "FLEX"],
-  WR: ["WR", "FLEX"], TE: ["TE", "FLEX"],
-};
-
-function projectedLineup(players, field) {
-  const caps = { ...STARTING_SLOTS };
-  const eligible = players.filter(player => player[field] != null)
-    .sort((a, b) => b[field] - a[field] || (a.player_id ?? 0) - (b.player_id ?? 0));
-  const starters = new Set();
-  let points = 0;
-  for (const player of eligible) {
-    for (const slot of SLOT_CHAIN[player.position] || []) {
-      if (!caps[slot]) continue;
-      caps[slot]--;
-      starters.add(player.player_id);
-      points += player[field];
-      break;
-    }
-  }
-  return { starters, points };
-}
-
-function teamOutlook(roster) {
-  return { lineup: projectedLineup(roster.picks, "points") };
-}
-
 function metric(label, value, meta, className = "") {
   return h("div", { class: "outlook-metric" },
     h("div", { class: "label" }, label),
@@ -370,24 +344,24 @@ function metric(label, value, meta, className = "") {
     h("div", { class: "meta" }, meta));
 }
 
-function rosterCards(roster, outlook) {
+function rosterCards(roster) {
   return ["QB", "RB", "WR", "TE"].map(position => {
     const players = roster.picks.filter(player => player.position === position);
     return h("div", { class: "card pos-card" },
       h("h3", {}, h("span", { class: `chip pos ${position}` }, position),
         h("span", { class: "count" }, `${players.length} rostered`)),
       h("div", { class: "roster-cols" },
-        h("span", {}, "Player"), h("span", {}, "Points")),
+        h("span", {}, "Player"), h("span", {}, "Lineup value")),
       ...players.map(player => {
-        const starts = outlook.lineup.starters.has(player.player_id);
         const pick = player.is_made ? "owned" : player.pick;
         return h("div", { class: "roster-row" },
           h("div", { class: "roster-player" },
             h("div", { class: "name", title: player.name }, player.name,
               player.is_rookie ? [" ", h("span", { class: "chip rookie" }, "R")] : null),
             h("div", { class: "meta" },
-              [pick, player.nfl_team, player.bye_week == null ? null : `bye ${player.bye_week}`].filter(Boolean).join(" · "))),
-          h("span", { class: `projection${starts ? " starts" : ""}`, title: starts ? "Projected starter" : "Projected bench" }, fmt(player.points)));
+              [pick, player.nfl_team, player.bye_week == null ? null : `bye ${player.bye_week}`,
+                player.points == null ? null : `${fmt(player.points)} pts`].filter(Boolean).join(" · "))),
+          h("span", { class: "projection", title: "Marginal guillotine-weighted lineup value on this roster" }, fmt(player.lineup_value)));
       }));
   });
 }
@@ -468,7 +442,7 @@ function renderNextPicks(d, byId) {
       h("td", { class: "num score-main" }, fmt(candidate.score)),
       h("td", {}, chanceCell(candidate, stats, pick, d)),
       hasRollout ? h("td", { class: "num" },
-        h("div", {}, fmt(candidate.rollout_ev)),
+        h("div", {}, fmt(overFloor(candidate.rollout_ev))),
         h("div", { class: "cell-note" }, rolloutNote),
         planNote ? h("div", { class: "cell-note" }, planNote) : null) : null);
   });
@@ -490,24 +464,24 @@ function renderNextPicks(d, byId) {
           h("th", { class: "num", title: "Expected value of your best option at the following pick" }, "Next-pick option"),
           h("th", { class: "num", title: "Ordinary-policy diagnostic; this does not rank the table" }, "Two-pick total"),
           h("th", {}, "Chance to reach"),
-          hasRollout ? h("th", { class: "num", title: "Mean final-roster value; the table is sorted highest first" }, "Final roster EV ↓") : null)),
+          hasRollout ? h("th", { class: "num", title: "Mean final-roster value above the wire floor; the table is sorted highest first" }, "Final roster EV ↓") : null)),
         h("tbody", {}, ...rows)))));
 }
 
 function renderMyRoster(d) {
   const mine = d.example_draft.rosters.find(roster => roster.is_mine);
   if (!mine) return;
-  const outlook = teamOutlook(mine);
   document.getElementById("rosterTitle").textContent = `Your projected final team · ${mine.team}`;
   document.getElementById("myOutlook").replaceChildren(
-    metric("Projected starters", fmt(outlook.lineup.points), "opening 7-starter optimal lineup"),
+    metric("Guillotine value", fmt(overFloor(mine.value)), "weekly lineup points above the wire floor"),
+    metric("Wire floor", fmt(wireFloor), "an empty roster's weekly points at the league wire"),
     metric("Roster", `${mine.players} players`, "8 drafted spots"));
   const starts = Object.entries(d.league.starting_slots).map(([slot, count]) => `${count}${slot}`).join(" · ");
   document.getElementById("rosterMeta").textContent =
     `${mine.players} players · starts ${starts}`;
-  document.getElementById("rosterGrid").replaceChildren(...rosterCards(mine, outlook));
+  document.getElementById("rosterGrid").replaceChildren(...rosterCards(mine));
   document.getElementById("rosterNote").textContent =
-    "Points is the weeks-1-17 projection total in this league's scoring (byes and known absences excluded by the weekly shape). The starter total is the best legal opening lineup from those raw totals; it excludes bench points and does not include the per-week shapes, guillotine week weights, or availability model the ranker prices with.";
+    "Guillotine value is what the draft maximizes: each week's expected optimal legal lineup under that week's starting shape, availability, and waiver fallbacks, combined across weeks 1-17 by the converged guillotine week weights. Every roster is shown above the wire floor, an empty roster's value at the league wire, since waiver bodies fill any slot the drafted players leave open; the floor is the same constant for every roster, so the differences between them are unchanged. A player's lineup value is how much the roster's guillotine value drops without him, so depth behind a starter is worth its call-up odds rather than nothing. Pts is the raw weeks-1-17 projection in this league's scoring.";
 }
 
 function renderBoard(d, state) {
@@ -564,23 +538,23 @@ function renderFilters(state, rerender) {
 }
 
 function renderLeagueOutlook(d) {
-  const entries = d.example_draft.rosters.map(roster => ({ roster, outlook: teamOutlook(roster) }));
-  document.getElementById("leagueBody").replaceChildren(...entries.map(({ roster, outlook }) => {
+  const rosters = d.example_draft.rosters;
+  document.getElementById("leagueBody").replaceChildren(...rosters.map(roster => {
     const positions = ["QB", "RB", "WR", "TE"].map(position => `${position} ${roster.positions[position] || 0}`).join(" · ");
     return h("tr", { class: roster.is_mine ? "mine" : "" },
       h("td", {}, h("span", { class: "team-name" }, roster.team || `Slot ${roster.draft_slot}`),
         h("span", { class: "team-slot" }, `slot ${roster.draft_slot}${roster.is_mine ? " · you" : ""}`)),
       h("td", {}, positions),
-      h("td", { class: "num" }, fmt(outlook.lineup.points)));
+      h("td", { class: "num" }, fmt(overFloor(roster.value))));
   }));
 
-  document.getElementById("teamDetails").replaceChildren(...entries
-    .filter(({ roster }) => !roster.is_mine)
-    .map(({ roster, outlook }) => h("details", { class: "team" },
+  document.getElementById("teamDetails").replaceChildren(...rosters
+    .filter(roster => !roster.is_mine)
+    .map(roster => h("details", { class: "team" },
       h("summary", {}, roster.team || `Slot ${roster.draft_slot}`,
         h("span", { class: "summary-stats" },
-          `Starters ${fmt(outlook.lineup.points)}`)),
-      h("div", { class: "roster-grid" }, ...rosterCards(roster, outlook)))));
+          `Value ${fmt(overFloor(roster.value))}`)),
+      h("div", { class: "roster-grid" }, ...rosterCards(roster)))));
 }
 
 (async () => {
@@ -611,6 +585,7 @@ function renderLeagueOutlook(d) {
     `${d.draft.league_name} · ${d.league.teams}-team · 1 QB · 0.5 PPR + TE prem · ${asOf}`;
 
   const byId = new Map(d.rankings.map(row => [row.player_id, row]));
+  wireFloor = d.example_draft.wire_floor;
   const state = { position: "ALL", rookies: false, all: false };
   const rerenderBoard = () => { renderFilters(state, rerenderBoard); renderBoard(d, state); };
 

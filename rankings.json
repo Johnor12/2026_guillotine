@@ -423,7 +423,8 @@
     ]
   },
   "example_draft": {
-    "note": "Full final rosters from the single deterministic draft at the converged levels, the same draft sim_pick reports. Made picks are facts from the live board; every pending pick is the model drafting.",
+    "note": "Full final rosters from the single deterministic draft at the converged levels, the same draft sim_pick reports. Made picks are facts from the live board; every pending pick is the model drafting. value is the roster's guillotine-weighted expected weekly lineup points (opponents at the league wire, mine under my FAAB policy); each player's lineup_value is his marginal share of it. wire_floor is an empty roster's value at the league wire, the part of every value that waiver bodies supply; the dashboard shows values above it.",
+    "wire_floor": 121.1,
     "rosters": [
       {
         "draft_slot": 1,
@@ -436,6 +437,7 @@
           "WR": 2,
           "TE": 1
         },
+        "value": 141.9,
         "picks": [
           {
             "pick": "1.01",
@@ -448,6 +450,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 304.16,
+            "lineup_value": 9.9,
             "off_pool": false
           },
           {
@@ -461,6 +464,7 @@
             "bye_week": 5,
             "is_rookie": false,
             "points": 281.77,
+            "lineup_value": 1.9,
             "off_pool": false
           },
           {
@@ -474,6 +478,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 151.68,
+            "lineup_value": 1.9,
             "off_pool": false
           },
           {
@@ -487,6 +492,7 @@
             "bye_week": 13,
             "is_rookie": false,
             "points": 181.52,
+            "lineup_value": 2.5,
             "off_pool": false
           },
           {
@@ -500,6 +506,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 101.66,
+            "lineup_value": 0.3,
             "off_pool": false
           },
           {
@@ -513,6 +520,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 93.44,
+            "lineup_value": 0.2,
             "off_pool": false
           },
           {
@@ -526,6 +534,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 59.57,
+            "lineup_value": 0.1,
             "off_pool": false
           },
           {
@@ -539,6 +548,7 @@
             "bye_week": 14,
             "is_rookie": false,
             "points": 52.96,
+            "lineup_value": 0.0,
             "off_pool": false
           }
         ]
@@ -554,6 +564,7 @@
           "WR": 2,
           "TE": 1
         },
+        "value": 142.3,
         "picks": [
           {
             "pick": "1.02",
@@ -566,6 +577,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 295.04,
+            "lineup_value": 9.2,
             "off_pool": false
           },
           {
@@ -579,6 +591,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 172.16,
+            "lineup_value": 2.8,
             "off_pool": false
           },
           {
@@ -592,6 +605,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 86.56,
+            "lineup_value": 0.9,
             "off_pool": false
           },
           {
@@ -605,6 +619,7 @@
             "bye_week": 9,
             "is_rookie": false,
             "points": 152.96,
+            "lineup_value": 1.6,
             "off_pool": false
           },
           {
@@ -618,6 +633,7 @@
             "bye_week": 9,
             "is_rookie": false,
             "points": 144.96,
+            "lineup_value": 1.1,
             "off_pool": false
           },
           {
@@ -631,6 +647,7 @@
             "bye_week": 9,
             "is_rookie": false,
             "points": 216.48,
+            "lineup_value": 1.1,
             "off_pool": false
           },
           {
@@ -644,6 +661,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 56.42,
+            "lineup_value": 0.2,
             "off_pool": false
           },
           {
@@ -657,6 +675,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 43.36,
+            "lineup_value": 0.0,
             "off_pool": false
           }
         ]
@@ -672,6 +691,7 @@
           "WR": 2,
           "TE": 1
         },
+        "value": 141.4,
         "picks": [
           {
             "pick": "1.03",
@@ -684,6 +704,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 259.2,
+            "lineup_value": 6.7,
             "off_pool": false
           },
           {
@@ -697,6 +718,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 221.37,
+            "lineup_value": 4.2,
             "off_pool": false
           },
           {
@@ -710,6 +732,7 @@
             "bye_week": 9,
             "is_rookie": false,
             "points": 152.32,
+            "lineup_value": 1.6,
             "off_pool": false
           },
           {
@@ -723,6 +746,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 152.32,
+            "lineup_value": 1.5,
             "off_pool": false
           },
           {
@@ -736,6 +760,7 @@
             "bye_week": 13,
             "is_rookie": false,
             "points": 209.55,
+            "lineup_value": 1.2,
             "off_pool": false
           },
           {
@@ -749,6 +774,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 89.46,
+            "lineup_value": 0.3,
             "off_pool": false
           },
           {
@@ -762,6 +788,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 42.88,
+            "lineup_value": 0.0,
             "off_pool": false
           },
           {
@@ -775,6 +802,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 55.77,
+            "lineup_value": 0.0,
             "off_pool": false
           }
         ]
@@ -790,6 +818,7 @@
           "WR": 3,
           "TE": 1
         },
+        "value": 140.8,
         "picks": [
           {
             "pick": "1.04",
@@ -802,6 +831,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 268.95,
+            "lineup_value": 7.4,
             "off_pool": false
           },
           {
@@ -815,6 +845,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 179.86,
+            "lineup_value": 2.8,
             "off_pool": false
           },
           {
@@ -828,6 +859,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 179.74,
+            "lineup_value": 2.1,
             "off_pool": false
           },
           {
@@ -841,6 +873,7 @@
             "bye_week": 5,
             "is_rookie": false,
             "points": 134.19,
+            "lineup_value": 1.4,
             "off_pool": false
           },
           {
@@ -854,6 +887,7 @@
             "bye_week": 13,
             "is_rookie": true,
             "points": 87.36,
+            "lineup_value": 0.2,
             "off_pool": false
           },
           {
@@ -867,6 +901,7 @@
             "bye_week": 14,
             "is_rookie": false,
             "points": 185.53,
+            "lineup_value": 1.3,
             "off_pool": false
           },
           {
@@ -880,6 +915,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 48.69,
+            "lineup_value": 0.0,
             "off_pool": false
           },
           {
@@ -893,6 +929,7 @@
             "bye_week": 7,
             "is_rookie": true,
             "points": 52.39,
+            "lineup_value": 0.0,
             "off_pool": false
           }
         ]
@@ -908,6 +945,7 @@
           "WR": 2,
           "TE": 2
         },
+        "value": 142.8,
         "picks": [
           {
             "pick": "1.05",
@@ -920,6 +958,7 @@
             "bye_week": 13,
             "is_rookie": false,
             "points": 295.78,
+            "lineup_value": 8.6,
             "off_pool": false
           },
           {
@@ -933,6 +972,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 208.16,
+            "lineup_value": 3.4,
             "off_pool": false
           },
           {
@@ -946,6 +986,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 274.6,
+            "lineup_value": 2.0,
             "off_pool": false
           },
           {
@@ -959,6 +1000,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 159.38,
+            "lineup_value": 2.2,
             "off_pool": false
           },
           {
@@ -972,6 +1014,7 @@
             "bye_week": 14,
             "is_rookie": false,
             "points": 87.47,
+            "lineup_value": 0.1,
             "off_pool": false
           },
           {
@@ -985,6 +1028,7 @@
             "bye_week": 9,
             "is_rookie": false,
             "points": 117.28,
+            "lineup_value": 0.7,
             "off_pool": false
           },
           {
@@ -998,6 +1042,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 53.55,
+            "lineup_value": 0.0,
             "off_pool": false
           },
           {
@@ -1011,6 +1056,7 @@
             "bye_week": null,
             "is_rookie": false,
             "points": 71.06,
+            "lineup_value": 0.1,
             "off_pool": false
           }
         ]
@@ -1026,6 +1072,7 @@
           "WR": 3,
           "TE": 1
         },
+        "value": 140.3,
         "picks": [
           {
             "pick": "1.06",
@@ -1038,6 +1085,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 271.19,
+            "lineup_value": 7.4,
             "off_pool": false
           },
           {
@@ -1051,6 +1099,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 291.5,
+            "lineup_value": 2.0,
             "off_pool": false
           },
           {
@@ -1064,6 +1113,7 @@
             "bye_week": 14,
             "is_rookie": false,
             "points": 190.68,
+            "lineup_value": 2.9,
             "off_pool": false
           },
           {
@@ -1077,6 +1127,7 @@
             "bye_week": 10,
             "is_rookie": true,
             "points": 133.18,
+            "lineup_value": 0.9,
             "off_pool": false
           },
           {
@@ -1090,6 +1141,7 @@
             "bye_week": 13,
             "is_rookie": false,
             "points": 105.6,
+            "lineup_value": 0.4,
             "off_pool": false
           },
           {
@@ -1103,6 +1155,7 @@
             "bye_week": 13,
             "is_rookie": false,
             "points": 112.09,
+            "lineup_value": 0.5,
             "off_pool": false
           },
           {
@@ -1116,6 +1169,7 @@
             "bye_week": 14,
             "is_rookie": false,
             "points": 51.36,
+            "lineup_value": 0.0,
             "off_pool": false
           },
           {
@@ -1129,6 +1183,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 48.79,
+            "lineup_value": 0.0,
             "off_pool": false
           }
         ]
@@ -1144,6 +1199,7 @@
           "WR": 4,
           "TE": 2
         },
+        "value": 138.8,
         "picks": [
           {
             "pick": "1.07",
@@ -1156,6 +1212,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 350.88,
+            "lineup_value": 5.3,
             "off_pool": false
           },
           {
@@ -1169,6 +1226,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 181.63,
+            "lineup_value": 2.7,
             "off_pool": false
           },
           {
@@ -1182,6 +1240,7 @@
             "bye_week": 9,
             "is_rookie": false,
             "points": 159.0,
+            "lineup_value": 1.6,
             "off_pool": false
           },
           {
@@ -1195,6 +1254,7 @@
             "bye_week": 13,
             "is_rookie": false,
             "points": 137.05,
+            "lineup_value": 1.3,
             "off_pool": false
           },
           {
@@ -1208,6 +1268,7 @@
             "bye_week": 11,
             "is_rookie": true,
             "points": 112.51,
+            "lineup_value": 0.4,
             "off_pool": false
           },
           {
@@ -1221,6 +1282,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 135.36,
+            "lineup_value": 0.9,
             "off_pool": false
           },
           {
@@ -1234,6 +1296,7 @@
             "bye_week": 7,
             "is_rookie": true,
             "points": 55.29,
+            "lineup_value": 0.0,
             "off_pool": false
           },
           {
@@ -1247,6 +1310,7 @@
             "bye_week": 6,
             "is_rookie": true,
             "points": 46.83,
+            "lineup_value": 0.0,
             "off_pool": false
           }
         ]
@@ -1262,6 +1326,7 @@
           "WR": 3,
           "TE": 2
         },
+        "value": 140.7,
         "picks": [
           {
             "pick": "1.08",
@@ -1274,6 +1339,7 @@
             "bye_week": 13,
             "is_rookie": false,
             "points": 260.48,
+            "lineup_value": 7.4,
             "off_pool": false
           },
           {
@@ -1287,6 +1353,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 181.92,
+            "lineup_value": 2.4,
             "off_pool": false
           },
           {
@@ -1300,6 +1367,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 266.88,
+            "lineup_value": 1.9,
             "off_pool": false
           },
           {
@@ -1313,6 +1381,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 141.56,
+            "lineup_value": 1.1,
             "off_pool": false
           },
           {
@@ -1326,6 +1395,7 @@
             "bye_week": 13,
             "is_rookie": true,
             "points": 144.76,
+            "lineup_value": 1.5,
             "off_pool": false
           },
           {
@@ -1339,6 +1409,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 71.37,
+            "lineup_value": 0.3,
             "off_pool": false
           },
           {
@@ -1352,6 +1423,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 65.22,
+            "lineup_value": 0.3,
             "off_pool": false
           },
           {
@@ -1365,6 +1437,7 @@
             "bye_week": 6,
             "is_rookie": true,
             "points": 37.76,
+            "lineup_value": 0.0,
             "off_pool": false
           }
         ]
@@ -1380,6 +1453,7 @@
           "WR": 2,
           "TE": 1
         },
+        "value": 140.4,
         "picks": [
           {
             "pick": "1.09",
@@ -1392,6 +1466,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 242.88,
+            "lineup_value": 5.8,
             "off_pool": false
           },
           {
@@ -1405,6 +1480,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 214.04,
+            "lineup_value": 4.3,
             "off_pool": false
           },
           {
@@ -1418,6 +1494,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 172.12,
+            "lineup_value": 2.4,
             "off_pool": false
           },
           {
@@ -1431,6 +1508,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 244.0,
+            "lineup_value": 1.5,
             "off_pool": false
           },
           {
@@ -1444,6 +1522,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 86.56,
+            "lineup_value": 0.1,
             "off_pool": false
           },
           {
@@ -1457,6 +1536,7 @@
             "bye_week": null,
             "is_rookie": false,
             "points": 102.86,
+            "lineup_value": 0.5,
             "off_pool": false
           },
           {
@@ -1470,6 +1550,7 @@
             "bye_week": 13,
             "is_rookie": false,
             "points": 67.63,
+            "lineup_value": 0.0,
             "off_pool": false
           },
           {
@@ -1483,6 +1564,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 68.96,
+            "lineup_value": 0.0,
             "off_pool": false
           }
         ]
@@ -1498,6 +1580,7 @@
           "WR": 3,
           "TE": 1
         },
+        "value": 140.1,
         "picks": [
           {
             "pick": "1.10",
@@ -1510,6 +1593,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 256.64,
+            "lineup_value": 6.9,
             "off_pool": false
           },
           {
@@ -1523,6 +1607,7 @@
             "bye_week": 13,
             "is_rookie": false,
             "points": 184.9,
+            "lineup_value": 2.6,
             "off_pool": false
           },
           {
@@ -1536,6 +1621,7 @@
             "bye_week": 9,
             "is_rookie": false,
             "points": 162.08,
+            "lineup_value": 1.9,
             "off_pool": false
           },
           {
@@ -1549,6 +1635,7 @@
             "bye_week": 14,
             "is_rookie": false,
             "points": 136.41,
+            "lineup_value": 1.1,
             "off_pool": false
           },
           {
@@ -1562,6 +1649,7 @@
             "bye_week": 13,
             "is_rookie": true,
             "points": 90.87,
+            "lineup_value": 0.1,
             "off_pool": false
           },
           {
@@ -1575,6 +1663,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 84.66,
+            "lineup_value": 0.9,
             "off_pool": false
           },
           {
@@ -1588,6 +1677,7 @@
             "bye_week": 9,
             "is_rookie": false,
             "points": 93.6,
+            "lineup_value": 0.1,
             "off_pool": false
           },
           {
@@ -1601,6 +1691,7 @@
             "bye_week": 11,
             "is_rookie": true,
             "points": 38.07,
+            "lineup_value": 0.0,
             "off_pool": false
           }
         ]
@@ -1616,6 +1707,7 @@
           "WR": 2,
           "TE": 3
         },
+        "value": 138.7,
         "picks": [
           {
             "pick": "1.11",
@@ -1628,6 +1720,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 238.08,
+            "lineup_value": 5.6,
             "off_pool": false
           },
           {
@@ -1641,6 +1734,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 183.68,
+            "lineup_value": 2.7,
             "off_pool": false
           },
           {
@@ -1654,6 +1748,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 293.11,
+            "lineup_value": 0.9,
             "off_pool": false
           },
           {
@@ -1667,6 +1762,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 268.92,
+            "lineup_value": 0.6,
             "off_pool": false
           },
           {
@@ -1680,6 +1776,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 121.76,
+            "lineup_value": 1.0,
             "off_pool": false
           },
           {
@@ -1693,6 +1790,7 @@
             "bye_week": 9,
             "is_rookie": false,
             "points": 143.52,
+            "lineup_value": 1.3,
             "off_pool": false
           },
           {
@@ -1706,6 +1804,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 75.24,
+            "lineup_value": 0.0,
             "off_pool": false
           },
           {
@@ -1719,6 +1818,7 @@
             "bye_week": 13,
             "is_rookie": false,
             "points": 93.84,
+            "lineup_value": 0.2,
             "off_pool": false
           }
         ]
@@ -1734,6 +1834,7 @@
           "WR": 2,
           "TE": 2
         },
+        "value": 137.4,
         "picks": [
           {
             "pick": "1.12",
@@ -1746,6 +1847,7 @@
             "bye_week": 13,
             "is_rookie": false,
             "points": 316.96,
+            "lineup_value": 3.9,
             "off_pool": false
           },
           {
@@ -1759,6 +1861,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 195.26,
+            "lineup_value": 3.4,
             "off_pool": false
           },
           {
@@ -1772,6 +1875,7 @@
             "bye_week": 9,
             "is_rookie": true,
             "points": 152.09,
+            "lineup_value": 1.9,
             "off_pool": false
           },
           {
@@ -1785,6 +1889,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 137.01,
+            "lineup_value": 1.2,
             "off_pool": false
           },
           {
@@ -1798,6 +1903,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 153.28,
+            "lineup_value": 1.6,
             "off_pool": false
           },
           {
@@ -1811,6 +1917,7 @@
             "bye_week": 10,
             "is_rookie": true,
             "points": 66.87,
+            "lineup_value": 0.0,
             "off_pool": false
           },
           {
@@ -1824,6 +1931,7 @@
             "bye_week": 6,
             "is_rookie": true,
             "points": 70.53,
+            "lineup_value": 0.3,
             "off_pool": false
           },
           {
@@ -1837,6 +1945,7 @@
             "bye_week": null,
             "is_rookie": false,
             "points": 42.04,
+            "lineup_value": 0.0,
             "off_pool": false
           }
         ]
@@ -1852,6 +1961,7 @@
           "WR": 3,
           "TE": 2
         },
+        "value": 142.1,
         "picks": [
           {
             "pick": "1.13",
@@ -1864,6 +1974,7 @@
             "bye_week": 14,
             "is_rookie": false,
             "points": 286.53,
+            "lineup_value": 7.5,
             "off_pool": false
           },
           {
@@ -1877,6 +1988,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 185.0,
+            "lineup_value": 2.3,
             "off_pool": false
           },
           {
@@ -1890,6 +2002,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 168.64,
+            "lineup_value": 1.7,
             "off_pool": false
           },
           {
@@ -1903,6 +2016,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 145.21,
+            "lineup_value": 1.0,
             "off_pool": false
           },
           {
@@ -1916,6 +2030,7 @@
             "bye_week": 9,
             "is_rookie": false,
             "points": 232.96,
+            "lineup_value": 1.3,
             "off_pool": false
           },
           {
@@ -1929,6 +2044,7 @@
             "bye_week": 13,
             "is_rookie": true,
             "points": 101.6,
+            "lineup_value": 0.6,
             "off_pool": false
           },
           {
@@ -1942,6 +2058,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 73.75,
+            "lineup_value": 0.0,
             "off_pool": false
           },
           {
@@ -1955,6 +2072,7 @@
             "bye_week": null,
             "is_rookie": false,
             "points": 118.72,
+            "lineup_value": 0.2,
             "off_pool": false
           }
         ]
@@ -1970,6 +2088,7 @@
           "WR": 3,
           "TE": 2
         },
+        "value": 138.7,
         "picks": [
           {
             "pick": "1.14",
@@ -1982,6 +2101,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 234.72,
+            "lineup_value": 5.5,
             "off_pool": false
           },
           {
@@ -1995,6 +2115,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 300.48,
+            "lineup_value": 2.3,
             "off_pool": false
           },
           {
@@ -2008,6 +2129,7 @@
             "bye_week": 14,
             "is_rookie": false,
             "points": 154.68,
+            "lineup_value": 1.8,
             "off_pool": false
           },
           {
@@ -2021,6 +2143,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 130.88,
+            "lineup_value": 0.8,
             "off_pool": false
           },
           {
@@ -2034,6 +2157,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 130.88,
+            "lineup_value": 0.9,
             "off_pool": false
           },
           {
@@ -2047,6 +2171,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 152.43,
+            "lineup_value": 1.2,
             "off_pool": false
           },
           {
@@ -2060,6 +2185,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 59.45,
+            "lineup_value": 0.0,
             "off_pool": false
           },
           {
@@ -2073,6 +2199,7 @@
             "bye_week": 9,
             "is_rookie": false,
             "points": 51.84,
+            "lineup_value": 0.0,
             "off_pool": false
           }
         ]
@@ -2088,6 +2215,7 @@
           "WR": 3,
           "TE": 1
         },
+        "value": 139.8,
         "picks": [
           {
             "pick": "1.15",
@@ -2100,6 +2228,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 230.96,
+            "lineup_value": 5.4,
             "off_pool": false
           },
           {
@@ -2113,6 +2242,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 176.39,
+            "lineup_value": 2.1,
             "off_pool": false
           },
           {
@@ -2126,6 +2256,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 154.24,
+            "lineup_value": 1.7,
             "off_pool": false
           },
           {
@@ -2139,6 +2270,7 @@
             "bye_week": 5,
             "is_rookie": false,
             "points": 146.08,
+            "lineup_value": 1.4,
             "off_pool": false
           },
           {
@@ -2152,6 +2284,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 176.61,
+            "lineup_value": 1.7,
             "off_pool": false
           },
           {
@@ -2165,6 +2298,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 100.73,
+            "lineup_value": 1.3,
             "off_pool": false
           },
           {
@@ -2178,6 +2312,7 @@
             "bye_week": 10,
             "is_rookie": true,
             "points": 64.15,
+            "lineup_value": 0.0,
             "off_pool": false
           },
           {
@@ -2191,6 +2326,7 @@
             "bye_week": 6,
             "is_rookie": true,
             "points": 33.82,
+            "lineup_value": 0.0,
             "off_pool": false
           }
         ]
@@ -2206,6 +2342,7 @@
           "WR": 4,
           "TE": 1
         },
+        "value": 139.3,
         "picks": [
           {
             "pick": "1.16",
@@ -2218,6 +2355,7 @@
             "bye_week": 14,
             "is_rookie": false,
             "points": 230.21,
+            "lineup_value": 4.8,
             "off_pool": false
           },
           {
@@ -2231,6 +2369,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 195.93,
+            "lineup_value": 2.9,
             "off_pool": false
           },
           {
@@ -2244,6 +2383,7 @@
             "bye_week": 11,
             "is_rookie": true,
             "points": 161.89,
+            "lineup_value": 1.8,
             "off_pool": false
           },
           {
@@ -2257,6 +2397,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 148.86,
+            "lineup_value": 1.1,
             "off_pool": false
           },
           {
@@ -2270,6 +2411,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 164.16,
+            "lineup_value": 1.5,
             "off_pool": false
           },
           {
@@ -2283,6 +2425,7 @@
             "bye_week": 13,
             "is_rookie": false,
             "points": 46.8,
+            "lineup_value": 0.2,
             "off_pool": false
           },
           {
@@ -2296,6 +2439,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 73.6,
+            "lineup_value": 0.0,
             "off_pool": false
           },
           {
@@ -2309,6 +2453,7 @@
             "bye_week": 13,
             "is_rookie": true,
             "points": 53.74,
+            "lineup_value": 0.0,
             "off_pool": false
           }
         ]
@@ -2324,6 +2469,7 @@
           "WR": 4,
           "TE": 1
         },
+        "value": 140.0,
         "picks": [
           {
             "pick": "1.17",
@@ -2336,6 +2482,7 @@
             "bye_week": 13,
             "is_rookie": false,
             "points": 240.52,
+            "lineup_value": 5.9,
             "off_pool": false
           },
           {
@@ -2349,6 +2496,7 @@
             "bye_week": 13,
             "is_rookie": false,
             "points": 192.8,
+            "lineup_value": 2.8,
             "off_pool": false
           },
           {
@@ -2362,6 +2510,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 186.24,
+            "lineup_value": 2.2,
             "off_pool": false
           },
           {
@@ -2375,6 +2524,7 @@
             "bye_week": 9,
             "is_rookie": false,
             "points": 146.36,
+            "lineup_value": 1.2,
             "off_pool": false
           },
           {
@@ -2388,6 +2538,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 108.8,
+            "lineup_value": 0.2,
             "off_pool": false
           },
           {
@@ -2401,6 +2552,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 100.45,
+            "lineup_value": 0.2,
             "off_pool": false
           },
           {
@@ -2414,6 +2566,7 @@
             "bye_week": null,
             "is_rookie": false,
             "points": 50.45,
+            "lineup_value": 0.1,
             "off_pool": false
           },
           {
@@ -2427,6 +2580,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 136.7,
+            "lineup_value": 0.3,
             "off_pool": false
           }
         ]
@@ -2442,6 +2596,7 @@
           "WR": 2,
           "TE": 2
         },
+        "value": 138.3,
         "picks": [
           {
             "pick": "1.18",
@@ -2454,6 +2609,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 226.4,
+            "lineup_value": 5.3,
             "off_pool": false
           },
           {
@@ -2467,6 +2623,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 190.72,
+            "lineup_value": 3.3,
             "off_pool": false
           },
           {
@@ -2480,6 +2637,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 278.88,
+            "lineup_value": 1.4,
             "off_pool": false
           },
           {
@@ -2493,6 +2651,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 177.8,
+            "lineup_value": 2.3,
             "off_pool": false
           },
           {
@@ -2506,6 +2665,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 117.6,
+            "lineup_value": 0.8,
             "off_pool": false
           },
           {
@@ -2519,6 +2679,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 74.19,
+            "lineup_value": 0.2,
             "off_pool": false
           },
           {
@@ -2532,6 +2693,7 @@
             "bye_week": 13,
             "is_rookie": false,
             "points": 57.27,
+            "lineup_value": 0.0,
             "off_pool": false
           },
           {
@@ -2545,6 +2707,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 43.18,
+            "lineup_value": 0.0,
             "off_pool": false
           }
         ]
@@ -2560,6 +2723,7 @@
           "WR": 3,
           "TE": 2
         },
+        "value": 139.8,
         "picks": [
           {
             "pick": "1.19",
@@ -2572,6 +2736,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 224.16,
+            "lineup_value": 5.1,
             "off_pool": false
           },
           {
@@ -2585,6 +2750,7 @@
             "bye_week": 5,
             "is_rookie": false,
             "points": 177.6,
+            "lineup_value": 2.5,
             "off_pool": false
           },
           {
@@ -2598,6 +2764,7 @@
             "bye_week": 5,
             "is_rookie": false,
             "points": 207.51,
+            "lineup_value": 3.7,
             "off_pool": false
           },
           {
@@ -2611,6 +2778,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 258.56,
+            "lineup_value": 0.5,
             "off_pool": false
           },
           {
@@ -2624,6 +2792,7 @@
             "bye_week": 13,
             "is_rookie": true,
             "points": 185.64,
+            "lineup_value": 0.5,
             "off_pool": false
           },
           {
@@ -2637,6 +2806,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 114.18,
+            "lineup_value": 0.5,
             "off_pool": false
           },
           {
@@ -2650,6 +2820,7 @@
             "bye_week": 9,
             "is_rookie": true,
             "points": 84.88,
+            "lineup_value": 0.1,
             "off_pool": false
           },
           {
@@ -2663,6 +2834,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 82.93,
+            "lineup_value": 0.1,
             "off_pool": false
           }
         ]
@@ -2678,6 +2850,7 @@
           "WR": 2,
           "TE": 4
         },
+        "value": 142.9,
         "picks": [
           {
             "pick": "1.20",
@@ -2690,6 +2863,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 263.95,
+            "lineup_value": 6.0,
             "off_pool": false
           },
           {
@@ -2703,6 +2877,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 223.36,
+            "lineup_value": 3.4,
             "off_pool": false
           },
           {
@@ -2716,6 +2891,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 182.04,
+            "lineup_value": 3.3,
             "off_pool": false
           },
           {
@@ -2729,6 +2905,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 183.84,
+            "lineup_value": 1.8,
             "off_pool": false
           },
           {
@@ -2742,6 +2919,7 @@
             "bye_week": 13,
             "is_rookie": false,
             "points": 241.64,
+            "lineup_value": 3.6,
             "off_pool": false
           },
           {
@@ -2755,6 +2933,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 92.66,
+            "lineup_value": 1.1,
             "off_pool": false
           },
           {
@@ -2768,6 +2947,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 123.84,
+            "lineup_value": 0.4,
             "off_pool": false
           },
           {
@@ -2781,6 +2961,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 94.88,
+            "lineup_value": 0.6,
             "off_pool": false
           }
         ]
@@ -2796,6 +2977,7 @@
           "WR": 2,
           "TE": 1
         },
+        "value": 137.5,
         "picks": [
           {
             "pick": "1.21",
@@ -2808,6 +2990,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 219.7,
+            "lineup_value": 4.6,
             "off_pool": false
           },
           {
@@ -2821,6 +3004,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 176.64,
+            "lineup_value": 2.4,
             "off_pool": false
           },
           {
@@ -2834,6 +3018,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 161.6,
+            "lineup_value": 2.0,
             "off_pool": false
           },
           {
@@ -2847,6 +3032,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 171.84,
+            "lineup_value": 2.3,
             "off_pool": false
           },
           {
@@ -2860,6 +3046,7 @@
             "bye_week": 5,
             "is_rookie": false,
             "points": 226.4,
+            "lineup_value": 1.1,
             "off_pool": false
           },
           {
@@ -2873,6 +3060,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 56.16,
+            "lineup_value": 0.0,
             "off_pool": false
           },
           {
@@ -2886,6 +3074,7 @@
             "bye_week": 8,
             "is_rookie": true,
             "points": 49.44,
+            "lineup_value": 0.0,
             "off_pool": false
           },
           {
@@ -2899,6 +3088,7 @@
             "bye_week": 9,
             "is_rookie": false,
             "points": 33.04,
+            "lineup_value": 0.0,
             "off_pool": false
           }
         ]
@@ -2914,6 +3104,7 @@
           "WR": 3,
           "TE": 1
         },
+        "value": 139.7,
         "picks": [
           {
             "pick": "1.22",
@@ -2926,6 +3117,7 @@
             "bye_week": 13,
             "is_rookie": false,
             "points": 211.39,
+            "lineup_value": 6.1,
             "off_pool": false
           },
           {
@@ -2939,6 +3131,7 @@
             "bye_week": 14,
             "is_rookie": false,
             "points": 297.76,
+            "lineup_value": 2.6,
             "off_pool": false
           },
           {
@@ -2952,6 +3145,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 157.57,
+            "lineup_value": 1.7,
             "off_pool": false
           },
           {
@@ -2965,6 +3159,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 146.08,
+            "lineup_value": 1.1,
             "off_pool": false
           },
           {
@@ -2978,6 +3173,7 @@
             "bye_week": 5,
             "is_rookie": false,
             "points": 122.08,
+            "lineup_value": 0.6,
             "off_pool": false
           },
           {
@@ -2991,6 +3187,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 127.26,
+            "lineup_value": 0.5,
             "off_pool": false
           },
           {
@@ -3004,6 +3201,7 @@
             "bye_week": 9,
             "is_rookie": true,
             "points": 55.51,
+            "lineup_value": 0.0,
             "off_pool": false
           },
           {
@@ -3017,6 +3215,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 87.64,
+            "lineup_value": 0.1,
             "off_pool": false
           }
         ]
@@ -3032,6 +3231,7 @@
           "WR": 4,
           "TE": 1
         },
+        "value": 138.1,
         "picks": [
           {
             "pick": "1.23",
@@ -3044,6 +3244,7 @@
             "bye_week": 5,
             "is_rookie": false,
             "points": 235.35,
+            "lineup_value": 6.0,
             "off_pool": false
           },
           {
@@ -3057,6 +3258,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 296.8,
+            "lineup_value": 2.1,
             "off_pool": false
           },
           {
@@ -3070,6 +3272,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 158.24,
+            "lineup_value": 1.5,
             "off_pool": false
           },
           {
@@ -3083,6 +3286,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 129.44,
+            "lineup_value": 0.9,
             "off_pool": false
           },
           {
@@ -3096,6 +3300,7 @@
             "bye_week": 8,
             "is_rookie": true,
             "points": 113.63,
+            "lineup_value": 0.3,
             "off_pool": false
           },
           {
@@ -3109,6 +3314,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 102.27,
+            "lineup_value": 0.2,
             "off_pool": false
           },
           {
@@ -3122,6 +3328,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 79.41,
+            "lineup_value": 0.0,
             "off_pool": false
           },
           {
@@ -3135,6 +3342,7 @@
             "bye_week": 9,
             "is_rookie": false,
             "points": 109.76,
+            "lineup_value": 0.3,
             "off_pool": false
           }
         ]
@@ -3150,6 +3358,7 @@
           "WR": 3,
           "TE": 2
         },
+        "value": 136.5,
         "picks": [
           {
             "pick": "1.24",
@@ -3162,6 +3371,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 312.96,
+            "lineup_value": 3.6,
             "off_pool": false
           },
           {
@@ -3175,6 +3385,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 188.04,
+            "lineup_value": 2.6,
             "off_pool": false
           },
           {
@@ -3188,6 +3399,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 166.46,
+            "lineup_value": 1.8,
             "off_pool": false
           },
           {
@@ -3201,6 +3413,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 135.68,
+            "lineup_value": 1.1,
             "off_pool": false
           },
           {
@@ -3214,6 +3427,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 128.44,
+            "lineup_value": 0.9,
             "off_pool": false
           },
           {
@@ -3227,6 +3441,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 81.76,
+            "lineup_value": 0.1,
             "off_pool": false
           },
           {
@@ -3240,6 +3455,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 108.48,
+            "lineup_value": 0.5,
             "off_pool": false
           },
           {
@@ -3253,6 +3469,7 @@
             "bye_week": 5,
             "is_rookie": false,
             "points": 43.52,
+            "lineup_value": 0.0,
             "off_pool": false
           }
         ]
@@ -3268,6 +3485,7 @@
           "WR": 3,
           "TE": 2
         },
+        "value": 138.8,
         "picks": [
           {
             "pick": "1.25",
@@ -3280,6 +3498,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 214.4,
+            "lineup_value": 3.8,
             "off_pool": false
           },
           {
@@ -3293,6 +3512,7 @@
             "bye_week": 5,
             "is_rookie": false,
             "points": 198.28,
+            "lineup_value": 3.7,
             "off_pool": false
           },
           {
@@ -3306,6 +3526,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 273.92,
+            "lineup_value": 2.0,
             "off_pool": false
           },
           {
@@ -3319,6 +3540,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 174.69,
+            "lineup_value": 2.3,
             "off_pool": false
           },
           {
@@ -3332,6 +3554,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 144.56,
+            "lineup_value": 1.9,
             "off_pool": false
           },
           {
@@ -3345,6 +3568,7 @@
             "bye_week": 5,
             "is_rookie": true,
             "points": 68.18,
+            "lineup_value": 0.1,
             "off_pool": false
           },
           {
@@ -3358,6 +3582,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 49.16,
+            "lineup_value": 0.0,
             "off_pool": false
           },
           {
@@ -3371,6 +3596,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 59.51,
+            "lineup_value": 0.0,
             "off_pool": false
           }
         ]
@@ -3386,6 +3612,7 @@
           "WR": 4,
           "TE": 2
         },
+        "value": 138.8,
         "picks": [
           {
             "pick": "1.26",
@@ -3398,6 +3625,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 209.98,
+            "lineup_value": 3.7,
             "off_pool": false
           },
           {
@@ -3411,6 +3639,7 @@
             "bye_week": 14,
             "is_rookie": false,
             "points": 207.2,
+            "lineup_value": 4.3,
             "off_pool": false
           },
           {
@@ -3424,6 +3653,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 287.2,
+            "lineup_value": 2.2,
             "off_pool": false
           },
           {
@@ -3437,6 +3667,7 @@
             "bye_week": 13,
             "is_rookie": false,
             "points": 141.36,
+            "lineup_value": 1.3,
             "off_pool": false
           },
           {
@@ -3450,6 +3681,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 137.6,
+            "lineup_value": 1.1,
             "off_pool": false
           },
           {
@@ -3463,6 +3695,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 86.16,
+            "lineup_value": 0.1,
             "off_pool": false
           },
           {
@@ -3476,6 +3709,7 @@
             "bye_week": 11,
             "is_rookie": true,
             "points": 77.53,
+            "lineup_value": 0.0,
             "off_pool": false
           },
           {
@@ -3489,6 +3723,7 @@
             "bye_week": 5,
             "is_rookie": false,
             "points": 40.48,
+            "lineup_value": 0.0,
             "off_pool": false
           }
         ]
@@ -3504,6 +3739,7 @@
           "WR": 4,
           "TE": 1
         },
+        "value": 137.0,
         "picks": [
           {
             "pick": "1.27",
@@ -3516,6 +3752,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 308.16,
+            "lineup_value": 2.7,
             "off_pool": false
           },
           {
@@ -3529,6 +3766,7 @@
             "bye_week": 13,
             "is_rookie": false,
             "points": 206.62,
+            "lineup_value": 4.4,
             "off_pool": false
           },
           {
@@ -3542,6 +3780,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 172.74,
+            "lineup_value": 2.2,
             "off_pool": false
           },
           {
@@ -3555,6 +3794,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 133.84,
+            "lineup_value": 1.1,
             "off_pool": false
           },
           {
@@ -3568,6 +3808,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 128.56,
+            "lineup_value": 0.8,
             "off_pool": false
           },
           {
@@ -3581,6 +3822,7 @@
             "bye_week": 8,
             "is_rookie": true,
             "points": 85.36,
+            "lineup_value": 0.1,
             "off_pool": false
           },
           {
@@ -3594,6 +3836,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 69.44,
+            "lineup_value": 0.0,
             "off_pool": false
           },
           {
@@ -3607,6 +3850,7 @@
             "bye_week": 8,
             "is_rookie": true,
             "points": 44.2,
+            "lineup_value": 0.0,
             "off_pool": false
           }
         ]
@@ -3622,6 +3866,7 @@
           "WR": 4,
           "TE": 1
         },
+        "value": 136.6,
         "picks": [
           {
             "pick": "1.28",
@@ -3634,6 +3879,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 209.6,
+            "lineup_value": 3.9,
             "off_pool": false
           },
           {
@@ -3647,6 +3893,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 298.52,
+            "lineup_value": 2.7,
             "off_pool": false
           },
           {
@@ -3660,6 +3907,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 174.72,
+            "lineup_value": 2.3,
             "off_pool": false
           },
           {
@@ -3673,6 +3921,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 124.8,
+            "lineup_value": 0.9,
             "off_pool": false
           },
           {
@@ -3686,6 +3935,7 @@
             "bye_week": 8,
             "is_rookie": true,
             "points": 103.84,
+            "lineup_value": 0.8,
             "off_pool": false
           },
           {
@@ -3699,6 +3949,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 72.98,
+            "lineup_value": 0.0,
             "off_pool": false
           },
           {
@@ -3712,6 +3963,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 89.92,
+            "lineup_value": 0.1,
             "off_pool": false
           },
           {
@@ -3725,6 +3977,7 @@
             "bye_week": 10,
             "is_rookie": true,
             "points": 42.22,
+            "lineup_value": 0.0,
             "off_pool": false
           }
         ]
@@ -3740,6 +3993,7 @@
           "WR": 4,
           "TE": 2
         },
+        "value": 138.5,
         "picks": [
           {
             "pick": "1.29",
@@ -3752,6 +4006,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 307.52,
+            "lineup_value": 3.2,
             "off_pool": false
           },
           {
@@ -3765,6 +4020,7 @@
             "bye_week": 14,
             "is_rookie": true,
             "points": 199.83,
+            "lineup_value": 4.0,
             "off_pool": false
           },
           {
@@ -3778,6 +4034,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 170.89,
+            "lineup_value": 1.8,
             "off_pool": false
           },
           {
@@ -3791,6 +4048,7 @@
             "bye_week": 9,
             "is_rookie": false,
             "points": 132.64,
+            "lineup_value": 0.8,
             "off_pool": false
           },
           {
@@ -3804,6 +4062,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 176.5,
+            "lineup_value": 1.7,
             "off_pool": false
           },
           {
@@ -3817,6 +4076,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 95.33,
+            "lineup_value": 0.0,
             "off_pool": false
           },
           {
@@ -3830,6 +4090,7 @@
             "bye_week": 13,
             "is_rookie": false,
             "points": 100.07,
+            "lineup_value": 0.1,
             "off_pool": false
           },
           {
@@ -3843,6 +4104,7 @@
             "bye_week": 10,
             "is_rookie": false,
             "points": 80.78,
+            "lineup_value": 0.0,
             "off_pool": false
           }
         ]
@@ -3858,6 +4120,7 @@
           "WR": 4,
           "TE": 2
         },
+        "value": 139.9,
         "picks": [
           {
             "pick": "1.30",
@@ -3870,6 +4133,7 @@
             "bye_week": 14,
             "is_rookie": false,
             "points": 206.22,
+            "lineup_value": 3.3,
             "off_pool": false
           },
           {
@@ -3883,6 +4147,7 @@
             "bye_week": 13,
             "is_rookie": false,
             "points": 248.53,
+            "lineup_value": 5.6,
             "off_pool": false
           },
           {
@@ -3896,6 +4161,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 297.79,
+            "lineup_value": 2.3,
             "off_pool": false
           },
           {
@@ -3909,6 +4175,7 @@
             "bye_week": null,
             "is_rookie": false,
             "points": 136.32,
+            "lineup_value": 0.7,
             "off_pool": false
           },
           {
@@ -3922,6 +4189,7 @@
             "bye_week": 5,
             "is_rookie": false,
             "points": 140.22,
+            "lineup_value": 1.0,
             "off_pool": false
           },
           {
@@ -3935,6 +4203,7 @@
             "bye_week": 5,
             "is_rookie": true,
             "points": 63.91,
+            "lineup_value": 0.0,
             "off_pool": false
           },
           {
@@ -3948,6 +4217,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 84.0,
+            "lineup_value": 0.1,
             "off_pool": false
           },
           {
@@ -3961,6 +4231,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 54.56,
+            "lineup_value": 0.0,
             "off_pool": false
           }
         ]
@@ -3976,6 +4247,7 @@
           "WR": 4,
           "TE": 2
         },
+        "value": 137.5,
         "picks": [
           {
             "pick": "1.31",
@@ -3988,6 +4260,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 307.52,
+            "lineup_value": 2.7,
             "off_pool": false
           },
           {
@@ -4001,6 +4274,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 197.24,
+            "lineup_value": 2.6,
             "off_pool": false
           },
           {
@@ -4014,6 +4288,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 201.21,
+            "lineup_value": 4.0,
             "off_pool": false
           },
           {
@@ -4027,6 +4302,7 @@
             "bye_week": 11,
             "is_rookie": true,
             "points": 135.83,
+            "lineup_value": 1.2,
             "off_pool": false
           },
           {
@@ -4040,6 +4316,7 @@
             "bye_week": 6,
             "is_rookie": false,
             "points": 118.07,
+            "lineup_value": 0.8,
             "off_pool": false
           },
           {
@@ -4053,6 +4330,7 @@
             "bye_week": 6,
             "is_rookie": true,
             "points": 84.69,
+            "lineup_value": 0.1,
             "off_pool": false
           },
           {
@@ -4066,6 +4344,7 @@
             "bye_week": 14,
             "is_rookie": false,
             "points": 91.15,
+            "lineup_value": 0.2,
             "off_pool": false
           },
           {
@@ -4079,6 +4358,7 @@
             "bye_week": 7,
             "is_rookie": true,
             "points": 38.59,
+            "lineup_value": 0.0,
             "off_pool": false
           }
         ]
@@ -4094,6 +4374,7 @@
           "WR": 4,
           "TE": 2
         },
+        "value": 137.9,
         "picks": [
           {
             "pick": "1.32",
@@ -4106,6 +4387,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 185.61,
+            "lineup_value": 2.9,
             "off_pool": false
           },
           {
@@ -4119,6 +4401,7 @@
             "bye_week": 11,
             "is_rookie": false,
             "points": 202.08,
+            "lineup_value": 3.9,
             "off_pool": false
           },
           {
@@ -4132,6 +4415,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 177.18,
+            "lineup_value": 1.9,
             "off_pool": false
           },
           {
@@ -4145,6 +4429,7 @@
             "bye_week": 8,
             "is_rookie": false,
             "points": 246.08,
+            "lineup_value": 1.4,
             "off_pool": false
           },
           {
@@ -4158,6 +4443,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 143.84,
+            "lineup_value": 1.1,
             "off_pool": false
           },
           {
@@ -4171,6 +4457,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 90.56,
+            "lineup_value": 0.1,
             "off_pool": false
           },
           {
@@ -4184,6 +4471,7 @@
             "bye_week": 10,
             "is_rookie": true,
             "points": 81.35,
+            "lineup_value": 0.1,
             "off_pool": false
           },
           {
@@ -4197,6 +4485,7 @@
             "bye_week": 7,
             "is_rookie": false,
             "points": 94.56,
+            "lineup_value": 0.1,
             "off_pool": false
           }
         ]
