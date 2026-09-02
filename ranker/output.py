@@ -7,6 +7,8 @@ from . import league
 from .board import Board
 from .league import (
     CANDIDATE_SURVIVAL_FLOOR,
+    FAAB_HOLD_WEEKS,
+    FAAB_SPEND_WEEK,
     FIRST_PICK_PER_POS,
     GUILLOTINE_SIMS,
     LOOKAHEAD_PICKS,
@@ -252,13 +254,21 @@ def build_payload(
         },
         "wire": {
             "note": (
-                "Per position per week, the waiver bodies a surviving roster holds: the "
-                "survivors' equal split of one free-agent pool, the undrafted tail plus "
-                "every eliminated roster so far. drop_floor is what the eliminated "
-                "rosters alone would supply."
+                "Per position per week, the waiver bodies a surviving roster holds. "
+                "league_levels is the survivors' equal split of one free-agent pool, the "
+                "undrafted tail plus every eliminated roster so far, and prices the "
+                "opponents and the elimination bars. weekly_levels is the same pool "
+                "under my FAAB policy and prices my roster: the undrafted tail alone "
+                f"through week {FAAB_HOLD_WEEKS}, the equal split until week "
+                f"{FAAB_SPEND_WEEK}, the top half of every tier from then on. "
+                "drop_floor is what the eliminated rosters alone would supply."
             ),
             "weekly_levels": {
                 k: [[round(v, 1) for v in bodies] for bodies in levels.wire[i]]
+                for i, k in enumerate(POSITIONS)
+            },
+            "league_levels": {
+                k: [[round(v, 1) for v in bodies] for bodies in levels.league_wire[i]]
                 for i, k in enumerate(POSITIONS)
             },
             "drop_floor": {

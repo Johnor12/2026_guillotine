@@ -147,21 +147,23 @@ def validate(
         pool_max = max(
             (max(p.weekly) for p in players if p.position == k), default=0.0
         )
-        wire_col = levels.wire[i]
-        check(
-            len(wire_col) == WEEKS
-            and all(
-                0.0 <= v <= pool_max + 1e-6 for bodies in wire_col for v in bodies
-            ),
-            f"{k} weekly wire outside the pool's weekly range [0, {pool_max:.1f}]",
-        )
+        for label, wire_col in (("my", levels.wire[i]), ("league", levels.league_wire[i])):
+            check(
+                len(wire_col) == WEEKS
+                and all(
+                    0.0 <= v <= pool_max + 1e-6 for bodies in wire_col for v in bodies
+                ),
+                f"{k} {label} weekly wire outside the pool's weekly range [0, {pool_max:.1f}]",
+            )
         check(
             all(
                 v + 1e-9 >= f
-                for w, (bodies, dropped) in enumerate(zip(wire_col, levels.dropped[i]))
+                for w, (bodies, dropped) in enumerate(
+                    zip(levels.league_wire[i], levels.dropped[i])
+                )
                 for v, f in zip(bodies, tier_bodies(dropped, k, w))
             ),
-            f"{k} weekly wire dips below what the eliminated rosters alone supply",
+            f"{k} league wire dips below what the eliminated rosters alone supply",
         )
     check(
         history["iterations_run"] < MAX_ITERS,

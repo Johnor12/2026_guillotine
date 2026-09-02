@@ -12,7 +12,9 @@ levels valuation runs on (value.Levels):
    (value.combine_wire). Early the pool is the undrafted tail shared thirty ways and
    the wire is close to nothing. Late it is everything: four finalists share
    twenty-eight eliminated rosters, so cheap drafted depth washes out while drafted
-   stars keep clearing the tiers all season.
+   stars keep clearing the tiers all season. That split is the league wire, which
+   prices the opponents and hence the bars below; my roster is priced against the
+   same pool under my FAAB policy (value.my_wire).
 
 2. Elimination bars. GUILLOTINE_SIMS seasons are simulated over the 31 opponents'
    weekly expected lineup values: each opponent gets a persistent projection-error
@@ -40,6 +42,7 @@ from __future__ import annotations
 
 import math
 import random
+from dataclasses import replace
 
 from .league import (
     GUILLOTINE_SIMS,
@@ -52,7 +55,14 @@ from .league import (
     WEEKS,
 )
 from .pool import Player
-from .value import Levels, combine_wire, top_values, weekly_team_values, weekly_undrafted
+from .value import (
+    Levels,
+    combine_wire,
+    my_wire,
+    top_values,
+    weekly_team_values,
+    weekly_undrafted,
+)
 
 SIGMA_WEEK = tuple(
     WEEKLY_SIGMA * math.sqrt(WEEK_STARTERS[w] / WEEK_STARTERS[0]) for w in range(WEEKS)
@@ -119,17 +129,23 @@ def solve(
     """One draft outcome -> the levels to value the next iteration with, plus
     diagnostics for my roster at those levels. Deterministic given its inputs."""
     # Strength order for the deterministic waiver escalation uses the previous
-    # iteration's levels; the escalated wire then prices everyone's weekly values.
-    prev_mus = [weekly_team_values(r, prev) for r in opponent_rosters]
+    # iteration's league wire; the escalated wire then prices everyone's weekly
+    # values — opponents at the equal split, my roster under my FAAB policy.
+    prev_league = replace(prev, wire=prev.league_wire)
+    prev_mus = [weekly_team_values(r, prev_league) for r in opponent_rosters]
     strength_order = sorted(
         range(len(opponent_rosters)),
         key=lambda i: sum(prev_mus[i][:REGULAR_WEEKS]),
     )
     dropped = _dropped(opponent_rosters, strength_order)
-    wire = combine_wire(weekly_undrafted(taken, pos), dropped)
-    levels = Levels(weights=prev.weights, wire=wire, dropped=dropped)
+    undrafted = weekly_undrafted(taken, pos)
+    league_wire = combine_wire(undrafted, dropped)
+    wire = my_wire(undrafted, dropped)
+    levels = Levels(weights=prev.weights, wire=wire, league_wire=league_wire, dropped=dropped)
 
-    opp_mus = [weekly_team_values(r, levels) for r in opponent_rosters]
+    opp_mus = [
+        weekly_team_values(r, replace(levels, wire=league_wire)) for r in opponent_rosters
+    ]
     my_mu = weekly_team_values(my_roster, levels)
     champ_mu = my_mu[REGULAR_WEEKS] + my_mu[REGULAR_WEEKS + 1]
 
@@ -219,4 +235,7 @@ def solve(
         "bar_mean_by_week": [round(s / draws, 1) for s in bar_sums],
         "championship_bar_mean": round(champ_bar_sum / draws, 1),
     }
-    return Levels(weights=weights, wire=wire, dropped=dropped), diagnostics
+    return (
+        Levels(weights=weights, wire=wire, league_wire=league_wire, dropped=dropped),
+        diagnostics,
+    )

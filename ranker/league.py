@@ -93,6 +93,18 @@ SLOT_CHAIN = {
 # in-week unavailability (injury, inactive, benching).
 UNAVAILABLE_RATE = {"QB": 0.05, "RB": 0.15, "WR": 0.08, "TE": 0.06}
 
+# --- my FAAB policy ---------------------------------------------------------------
+# Only my roster's valuation sees this; opponents and the elimination bars keep the
+# survivors' equal split of the free-agent pool (a team that loses a starter spends to
+# replace him). I hold the budget through the bye gauntlet, so my early waiver bodies
+# are the undrafted tail alone — a drafted hole in those weeks costs its full points
+# rather than a free claim on the eliminated rosters. Weeks 9-12 I spend like everyone
+# else on the lineup expansion. From week 13 the saved budget puts my claims in the
+# top half of every tier. Both halves are one policy: pricing early holes without
+# crediting the endgame would only make the draft over-cover byes.
+FAAB_HOLD_WEEKS = 8
+FAAB_SPEND_WEEK = 13
+
 # --- guillotine model knobs -------------------------------------------------------
 # SD of one team's weekly score around its expected lineup value at the 7-starter
 # base shape, idiosyncratic component only: a league-wide scoring swing (weather

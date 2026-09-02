@@ -20,7 +20,9 @@ each week is an *outcome* of how the league drafts and who gets eliminated, so t
 weekly wire (the undrafted tail early, then the survivors' split of every eliminated
 roster, which by the final is other teams' first-round picks) is measured from the
 converged draft and feeds valuation as tiered waiver bodies per position per week
-(`ranker/value.py`). `draft.json`, the live board, is the
+(`ranker/value.py`); the opponents and the bars see the survivors' equal split, my
+roster sees the same pool under my FAAB policy (`ranker/league.py`, FAAB_HOLD_WEEKS).
+`draft.json`, the live board, is the
 simulation's starting state, not a filter (`ranker/board.py`). Only my slot uses the
 projection-based roster objective. Every opponent uses the external provider board most
 associated with its prior picks, loaded from the source investigator; unfilled dedicated

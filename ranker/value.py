@@ -29,6 +29,12 @@ holds contributes one such body (league.WEEK_WIRE_BODIES — one per position ea
 as the roster expands over half-waiver late rosters); a body can fill one lineup job,
 never several simultaneous holes.
 
+That equal split is the league wire (`Levels.league_wire`): it values the opponents and
+so sets the elimination bars. My own roster is valued against `Levels.wire`, the same
+pool under my FAAB policy (league.FAAB_HOLD_WEEKS / FAAB_SPEND_WEEK): the undrafted
+tail alone while I hold the budget, the equal split through the lineup expansion, and
+the top half of every tier once the saved budget is spent.
+
 This is one objective with one set of units: guillotine-weighted expected weekly lineup
 points. There is no role threshold and no separate bench bonus, and roster value stays
 monotone when a projection improves or a player is added.
@@ -72,9 +78,11 @@ class Levels:
     """The converged league levels a roster is valued against.
 
     weights: guillotine week weights, length WEEKS, normalized to sum to 1.
-    wire: per POSITIONS-index, per week, the tuple of waiver-body point values a
-    surviving roster holds that week (WEEK_WIRE_BODIES bodies, best first — each
-    marginal add is a worse player, so the tiers decay).
+    wire: per POSITIONS-index, per week, the tuple of waiver-body point values my
+    roster holds that week under my FAAB policy (WEEK_WIRE_BODIES bodies, best first —
+    each marginal add is a worse player, so the tiers decay).
+    league_wire: the same, as the survivors' equal split of the pool — what an
+    opponent holds, and so what the elimination bars are measured against.
     dropped: per POSITIONS-index, per week, the eliminated rosters' best weekly values
     (`pool_size` of them, best first, zero-padded) — kept apart from the undrafted
     tail so a rollout can re-measure that tail from its own final board and re-pool
@@ -83,6 +91,7 @@ class Levels:
 
     weights: tuple[float, ...]
     wire: tuple[tuple[float, ...], ...]
+    league_wire: tuple[tuple[float, ...], ...]
     dropped: tuple[tuple[float, ...], ...]
 
 
@@ -472,14 +481,18 @@ def top_values(values: Iterable[float], pos: str, w: int) -> tuple[float, ...]:
     return tuple(best)
 
 
-def tier_bodies(values: tuple[float, ...], pos: str, w: int) -> tuple[float, ...]:
+def tier_bodies(
+    values: tuple[float, ...], pos: str, w: int, share: float = 1.0
+) -> tuple[float, ...]:
     """A survivor's waiver bodies from a free-agent pool: body j is the mean of the
     j-th tier of S values, S the teams alive, so the pool is shared rather than
-    handed whole to every roster."""
+    handed whole to every roster. `share` < 1 reads the mean of only the best
+    fraction of each tier — the claims a bigger budget wins."""
     s = survivors(w)
     best = top_values(values, pos, w)
+    n = max(1, round(s * share))
     return tuple(
-        sum(best[j * s : (j + 1) * s]) / s for j in range(WEEK_WIRE_BODIES[pos][w])
+        sum(best[j * s : j * s + n]) / n for j in range(WEEK_WIRE_BODIES[pos][w])
     )
 
 
@@ -516,10 +529,34 @@ def combine_wire(
     dropped: tuple[tuple[tuple[float, ...], ...], ...],
 ) -> tuple[tuple[tuple[float, ...], ...], ...]:
     """One free-agent pool per position-week — undrafted tail plus eliminated
-    rosters — tiered across the survivors."""
+    rosters — tiered across the survivors: the league wire."""
     return tuple(
         tuple(
             tier_bodies(u + d, position, w)
+            for w, (u, d) in enumerate(zip(undrafted_col, dropped_col))
+        )
+        for position, undrafted_col, dropped_col in zip(POSITIONS, undrafted, dropped)
+    )
+
+
+def my_wire(
+    undrafted: tuple[tuple[tuple[float, ...], ...], ...],
+    dropped: tuple[tuple[tuple[float, ...], ...], ...],
+) -> tuple[tuple[float, ...], ...]:
+    """The same pool under my FAAB policy: no claims on the eliminated rosters while
+    I hold the budget, the equal split through the lineup expansion, the top half of
+    every tier once the saved budget is spent (league.FAAB_HOLD_WEEKS/FAAB_SPEND_WEEK)."""
+
+    def bodies(u, d, position, w):
+        if w < league.FAAB_HOLD_WEEKS:
+            return tier_bodies(u, position, w)
+        if w < league.FAAB_SPEND_WEEK - 1:
+            return tier_bodies(u + d, position, w)
+        return tier_bodies(u + d, position, w, share=0.5)
+
+    return tuple(
+        tuple(
+            bodies(u, d, position, w)
             for w, (u, d) in enumerate(zip(undrafted_col, dropped_col))
         )
         for position, undrafted_col, dropped_col in zip(POSITIONS, undrafted, dropped)
@@ -533,9 +570,10 @@ def refresh_wire(
 
     Rollout playouts end with different players undrafted than the converged draft
     did; the eliminated rosters and week weights are slow league-level quantities
-    and carry over unchanged.
+    and carry over unchanged. Only my wire is refreshed: the league wire prices
+    opponents, whom a playout never values.
     """
-    return replace(levels, wire=combine_wire(weekly_undrafted(taken, pos), levels.dropped))
+    return replace(levels, wire=my_wire(weekly_undrafted(taken, pos), levels.dropped))
 
 
 def seed_levels(players: list[Player]) -> Levels:
@@ -561,8 +599,10 @@ def seed_levels(players: list[Player]) -> Levels:
     nothing_dropped = tuple(
         tuple(top_values((), pos, w) for w in range(WEEKS)) for pos in POSITIONS
     )
+    undrafted = weekly_undrafted(assigned, pos_sorted(players))
     return Levels(
         weights=tuple(w / total for w in raw),
-        wire=combine_wire(weekly_undrafted(assigned, pos_sorted(players)), nothing_dropped),
+        wire=my_wire(undrafted, nothing_dropped),
+        league_wire=combine_wire(undrafted, nothing_dropped),
         dropped=nothing_dropped,
     )

@@ -84,8 +84,12 @@ waiver wire is per week and tiered: one free-agent pool, the undrafted tail plus
 roster eliminated so far, split equally among the survivors, so in week 1 a lone
 undrafted starter is worth a thirty-second of himself and by the final the wire is
 other teams' first-round picks; drafted depth is worth nothing by then while drafted
-stars still clear it. Levels and the simulated draft are a fixed point that converges
-to a limit cycle.
+stars still clear it. That equal split prices the opponents and so the elimination
+bars; my own roster is priced under my FAAB policy, since the draft should not assume
+free claims I do not intend to make: the undrafted tail alone through week 8 while I
+hold the budget, the equal split through the week 9-12 lineup expansion, and the top
+half of every tier from week 13 once the saved budget is spent. Levels and the
+simulated draft are a fixed point that converges to a limit cycle.
 My slot alone uses this objective, on DraftSharks projections blended 2:1 with
 Sleeper's so the draft does not build around one model's outliers; each opponent
 follows the external board most associated with its picks (the `cold_start` blend

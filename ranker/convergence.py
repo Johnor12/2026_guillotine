@@ -44,6 +44,7 @@ def _average_levels(cycle: list[Levels]) -> Levels:
     return Levels(
         weights=weights,
         wire=mean_bodies(lambda levels: levels.wire),
+        league_wire=mean_bodies(lambda levels: levels.league_wire),
         dropped=mean_bodies(lambda levels: levels.dropped),
     )
 

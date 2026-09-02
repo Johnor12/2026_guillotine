@@ -16,6 +16,8 @@ from . import guillotine, league
 from .board import fresh_board, load_board
 from .league import (
     DEDICATED_SLOTS,
+    FAAB_HOLD_WEEKS,
+    FAAB_SPEND_WEEK,
     FIRST_PICK_PER_POS,
     MY_SLOT,
     OPPONENT_DEPTH_TARGETS,
@@ -416,7 +418,7 @@ def lineup_selftest() -> list[str]:
             weights = tuple(1.0 / WEEKS for _ in range(WEEKS))
         cols = tuple(tuple((wire[pos],) for _ in range(WEEKS)) for pos in POSITIONS)
         zero = tuple(tuple((0.0,) for _ in range(WEEKS)) for _ in POSITIONS)
-        return Levels(weights=tuple(weights), wire=cols, dropped=zero)
+        return Levels(weights=tuple(weights), wire=cols, league_wire=cols, dropped=zero)
 
     # With one QB job: QB1 always supplies his unconditional projection, QB2 is used
     # when QB1 is unavailable, and the unique wire body is used only when both are out.
@@ -862,17 +864,45 @@ def guillotine_selftest(players: list[Player]) -> list[str]:
         check(
             all(
                 v + 1e-9 >= f
-                for w, (bodies, dropped) in enumerate(zip(solved.wire[i], solved.dropped[i]))
+                for w, (bodies, dropped) in enumerate(
+                    zip(solved.league_wire[i], solved.dropped[i])
+                )
                 for v, f in zip(bodies, tier_bodies(dropped, k, w))
             ),
-            f"{k} wire dips below what the eliminated rosters alone supply",
+            f"{k} league wire dips below what the eliminated rosters alone supply",
+        )
+        for label, wire in (("my", solved.wire[i]), ("league", solved.league_wire[i])):
+            check(
+                all(
+                    all(hi + 1e-9 >= lo for hi, lo in zip(bodies, bodies[1:]))
+                    for bodies in wire
+                ),
+                f"{k} {label} wire tiers are not decaying (a later add beat an earlier one)",
+            )
+        # My FAAB policy: no claims on the eliminated rosters while holding, the
+        # league split while spending on the expansion, a bigger share after.
+        check(
+            all(
+                mine <= theirs + 1e-9
+                for w in range(FAAB_HOLD_WEEKS)
+                for mine, theirs in zip(solved.wire[i][w], solved.league_wire[i][w])
+            ),
+            f"{k} my wire exceeds the league wire during the FAAB hold",
         )
         check(
             all(
-                all(hi + 1e-9 >= lo for hi, lo in zip(bodies, bodies[1:]))
-                for bodies in solved.wire[i]
+                solved.wire[i][w] == solved.league_wire[i][w]
+                for w in range(FAAB_HOLD_WEEKS, FAAB_SPEND_WEEK - 1)
             ),
-            f"{k} wire tiers are not decaying (a later add beat an earlier one)",
+            f"{k} my wire differs from the league wire in the spend-like-everyone weeks",
+        )
+        check(
+            all(
+                mine + 1e-9 >= theirs
+                for w in range(FAAB_SPEND_WEEK - 1, WEEKS)
+                for mine, theirs in zip(solved.wire[i][w], solved.league_wire[i][w])
+            ),
+            f"{k} my wire falls below the league wire after the saved budget is spent",
         )
     check(
         any(
