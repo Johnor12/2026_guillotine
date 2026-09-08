@@ -89,7 +89,9 @@ def draft_block(board: Board) -> dict | None:
     return block
 
 
-def example_rosters(draft: Draft, board: Board, levels: Levels) -> list[dict]:
+def example_rosters(
+    draft: Draft, board: Board, levels: Levels, p_title_by_slot: list[float]
+) -> list[dict]:
     """Every team's final roster from the deterministic draft: the live board's made
     picks first (the board does not keep their pick numbers), then the simulated picks
     with the pick they were taken at. Each entry carries what the dashboard needs, since
@@ -150,6 +152,7 @@ def example_rosters(draft: Draft, board: Board, levels: Levels) -> list[dict]:
                 "players": len(roster) + len(off),
                 "positions": _position_counts(roster, off),
                 "value": round(value, 1),
+                "p_title": round(p_title_by_slot[slot - 1], 4),
                 "picks": picks,
             }
         )
@@ -208,12 +211,14 @@ def build_payload(
                 "live board; every pending pick is the model drafting. value is the "
                 "roster's guillotine-weighted expected weekly lineup points (opponents "
                 "at the league wire, mine under my FAAB policy); each player's "
-                "lineup_value is his marginal share of it. wire_floor is an empty "
+                "lineup_value is his marginal share of it. p_title is the roster's title "
+                "odds from a full elimination race over all 32 rosters "
+                "(guillotine.title_odds). wire_floor is an empty "
                 "roster's value at the league wire, the part of every value that "
                 "waiver bodies supply; the dashboard shows values above it."
             ),
             "wire_floor": round(team_value([], replace(levels, wire=levels.league_wire)), 1),
-            "rosters": example_rosters(draft, board, levels),
+            "rosters": example_rosters(draft, board, levels, guillotine["p_title_by_slot"]),
         },
         "my_next_picks": {
             "note": (

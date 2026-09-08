@@ -239,3 +239,35 @@ def solve(
         Levels(weights=weights, wire=wire, league_wire=league_wire, dropped=dropped),
         diagnostics,
     )
+
+
+TITLE_RACE_SIMS = 8192
+
+
+def title_odds(mus: list[tuple[float, ...]], seed: int) -> list[float]:
+    """Every team's P(title) from a full elimination race: the same noise model as
+    solve(), but all teams compete and the last two play the week 16-17 final. One
+    seeded run on the final draft; solve()'s conditional estimate stays the objective,
+    this is the dashboard's league-wide view."""
+    rng = random.Random(seed)
+    titles = [0] * len(mus)
+    for _ in range(TITLE_RACE_SIMS):
+        bias = [rng.gauss(0.0, TEAM_SEASON_SIGMA) for _ in mus]
+        alive = list(range(len(mus)))
+        for w in range(REGULAR_WEEKS):
+            sigma = SIGMA_WEEK[w]
+            deviation_floor = SCORE_FLOOR_Z * math.hypot(TEAM_SEASON_SIGMA, sigma)
+            scored = sorted(
+                (mus[i][w] + max(bias[i] + rng.gauss(0.0, sigma), deviation_floor), i)
+                for i in alive
+            )
+            alive = [i for _, i in scored[2:]]
+        champion = max(
+            alive,
+            key=lambda i: mus[i][REGULAR_WEEKS]
+            + mus[i][REGULAR_WEEKS + 1]
+            + 2.0 * bias[i]
+            + rng.gauss(0.0, SIGMA_CHAMP),
+        )
+        titles[champion] += 1
+    return [t / TITLE_RACE_SIMS for t in titles]

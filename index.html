@@ -125,7 +125,7 @@
 
   /* Projected rosters */
   .outlook-summary {
-    display: grid; grid-template-columns: repeat(3, minmax(160px, 1fr)); gap: 1px;
+    display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 1px;
     overflow: hidden; margin-bottom: 12px; padding: 0;
   }
   .outlook-metric { padding: 12px 14px; border-right: 1px solid var(--grid); }
@@ -272,13 +272,14 @@
 
     <section id="leagueOutlook">
       <h2>Other projected teams</h2>
-      <p class="hint">The same deterministic draft path, each roster priced by the elimination model. Expand a team for its full projected roster.</p>
+      <p class="hint">The same deterministic draft path, each roster priced by the elimination model; title chance is each roster's share of simulated seasons won. Expand a team for its full projected roster.</p>
       <div class="table-wrap">
         <table class="league-table">
           <thead><tr>
             <th>Team</th>
             <th>Roster</th>
             <th class="num" title="Weighted expected weekly lineup points above the wire floor">Guillotine value</th>
+            <th class="num" title="Share of simulated seasons this roster wins the league">Title chance</th>
           </tr></thead>
           <tbody id="leagueBody"></tbody>
         </table>
@@ -310,6 +311,7 @@ function h(tag, attrs, ...children) {
 const fmt = value => value == null ? "—" : Number(value).toLocaleString("en-US", { maximumFractionDigits: 1 });
 const signed = value => value == null ? "—" : `${value > 0 ? "+" : ""}${fmt(value)}`;
 const pct = value => value == null ? "—" : `${Math.round(value * 100)}%`;
+const pct1 = value => value == null ? "—" : `${(value * 100).toFixed(1)}%`;
 const trendClass = value => value > 0 ? "positive" : value < 0 ? "negative" : "dim";
 // Roster values are shown above the league-wire floor: an empty roster's value, the
 // same constant for every roster and candidate, so the differences are unchanged.
@@ -472,7 +474,9 @@ function renderMyRoster(d) {
   const mine = d.example_draft.rosters.find(roster => roster.is_mine);
   if (!mine) return;
   document.getElementById("rosterTitle").textContent = `Your projected final team · ${mine.team}`;
+  const g = d.guillotine.diagnostics;
   document.getElementById("myOutlook").replaceChildren(
+    metric("Title chance", pct1(mine.p_title), `reach final ${pct1(g.p_reach_final)} · win it ${pct1(g.p_win_final)} · even odds ${pct1(1 / d.league.teams)}`, "positive"),
     metric("Guillotine value", fmt(overFloor(mine.value)), "weekly lineup points above the wire floor"),
     metric("Wire floor", fmt(wireFloor), "an empty roster's weekly points at the league wire"),
     metric("Roster", `${mine.players} players`, "8 drafted spots"));
@@ -545,7 +549,8 @@ function renderLeagueOutlook(d) {
       h("td", {}, h("span", { class: "team-name" }, roster.team || `Slot ${roster.draft_slot}`),
         h("span", { class: "team-slot" }, `slot ${roster.draft_slot}${roster.is_mine ? " · you" : ""}`)),
       h("td", {}, positions),
-      h("td", { class: "num" }, fmt(overFloor(roster.value))));
+      h("td", { class: "num" }, fmt(overFloor(roster.value))),
+      h("td", { class: "num" }, pct1(roster.p_title)));
   }));
 
   document.getElementById("teamDetails").replaceChildren(...rosters
@@ -553,7 +558,7 @@ function renderLeagueOutlook(d) {
     .map(roster => h("details", { class: "team" },
       h("summary", {}, roster.team || `Slot ${roster.draft_slot}`,
         h("span", { class: "summary-stats" },
-          `Value ${fmt(overFloor(roster.value))}`)),
+          `Value ${fmt(overFloor(roster.value))} · title ${pct1(roster.p_title)}`)),
       h("div", { class: "roster-grid" }, ...rosterCards(roster)))));
 }
 
@@ -600,7 +605,8 @@ function renderLeagueOutlook(d) {
   });
   document.getElementById("footer").replaceChildren(
     `Projection input: ${d.value_input} · ${d.monte_carlo.sims} availability simulations · ${d.my_next_picks.option_sims} short option redraws · ${d.my_next_picks.rollout_sims} full-draft rollouts per four-pick plan · `,
-    h("a", { href: "sources/" }, "data source investigator"));
+    h("a", { href: "sources/" }, "data source investigator"), " · ",
+    h("a", { href: "season.html" }, "season desk"));
   document.getElementById("app").hidden = false;
 })();
 </script>

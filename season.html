@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Season desk</title>
+<style>
+  :root {
+    color-scheme: light;
+    --page: #f7f7f4;
+    --surface: #ffffff;
+    --surface-2: #f1f3f5;
+    --ink: #111210;
+    --ink-2: #555751;
+    --muted: #858780;
+    --grid: #e3e4df;
+    --border: rgba(17, 18, 16, .12);
+    --accent: #1769cf;
+    --accent-soft: #e7f0fc;
+    --good: #087f5b;
+    --bad: #c2412d;
+    --series-1: #2a78d6;
+    --series-2: #eb6834;
+    --pos-QB: #2775d7;
+    --pos-RB: #df5b2b;
+    --pos-WR: #16966a;
+    --pos-TE: #c48300;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --page: #0e0f0d;
+      --surface: #191a18;
+      --surface-2: #242522;
+      --ink: #f7f8f4;
+      --ink-2: #c2c5bd;
+      --muted: #8f9289;
+      --grid: #30322e;
+      --border: rgba(255, 255, 255, .12);
+      --accent: #5799ec;
+      --accent-soft: #172c47;
+      --good: #45c79a;
+      --bad: #ef856f;
+      --series-1: #3987e5;
+      --series-2: #d95926;
+      --pos-QB: #5799ec;
+      --pos-RB: #e57348;
+      --pos-WR: #3eb78d;
+      --pos-TE: #dfa927;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--ink);
+    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { max-width: 1280px; margin: 0 auto; padding: 22px 20px 64px; }
+
+  .top { display: flex; gap: 18px; align-items: flex-start; margin-bottom: 14px; }
+  .top h1 { font-size: 22px; line-height: 1.2; font-weight: 700; margin: 0; }
+  .sub { color: var(--ink-2); font-size: 12.5px; margin: 4px 0 0; }
+  .nav { margin-left: auto; font-size: 12.5px; }
+  .nav a { color: var(--ink-2); }
+
+  .card, .table-wrap, .strip { background: var(--surface); border: 1px solid var(--border); border-radius: 11px; }
+  .strip {
+    display: flex; align-items: center; gap: 9px 18px; flex-wrap: wrap;
+    padding: 10px 13px; color: var(--ink-2); font-size: 12.5px;
+  }
+  .strip strong { color: var(--ink); font-size: 13.5px; }
+
+  section { margin-top: 30px; }
+  section > h2 { font-size: 17px; line-height: 1.25; font-weight: 700; margin: 0 0 4px; }
+  section > .hint { color: var(--muted); font-size: 12.5px; margin: 0 0 12px; max-width: 100ch; }
+
+  .tiles { display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 1px; overflow: hidden; margin-bottom: 12px; padding: 0; }
+  .tile { padding: 12px 14px; border-right: 1px solid var(--grid); }
+  .tile:last-child { border-right: 0; }
+  .tile .label { color: var(--muted); font-size: 11.5px; }
+  .tile .value { margin-top: 2px; font-size: 19px; font-weight: 700; }
+  .tile .meta { color: var(--muted); font-size: 11.5px; }
+
+  .table-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; }
+  thead th {
+    text-align: left; font-size: 11.5px; line-height: 1.25; font-weight: 650; color: var(--muted);
+    padding: 9px 10px; border-bottom: 1px solid var(--grid); white-space: nowrap;
+  }
+  tbody td { padding: 8px 10px; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: color-mix(in srgb, var(--ink) 3%, transparent); }
+  tbody tr.mine td { background: var(--accent-soft); }
+  tbody tr.dim td { color: var(--muted); }
+  tbody tr.bench td { color: var(--ink-2); }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .positive { color: var(--good); }
+  .negative { color: var(--bad); }
+  .pname { font-weight: 650; }
+  .team { color: var(--muted); font-size: 11.5px; margin-left: 5px; }
+  .cell-note { margin-top: 2px; color: var(--muted); font-size: 11.5px; white-space: normal; line-height: 1.25; }
+  .bid { font-weight: 700; font-size: 15px; }
+
+  .chip {
+    display: inline-block; font-size: 10.5px; line-height: 1.45; font-weight: 700;
+    padding: 1px 6px; border-radius: 999px; vertical-align: 1px;
+  }
+  .chip.pos { color: var(--ink); }
+  .chip.pos.QB { background: color-mix(in srgb, var(--pos-QB) 18%, var(--surface)); }
+  .chip.pos.RB { background: color-mix(in srgb, var(--pos-RB) 18%, var(--surface)); }
+  .chip.pos.WR { background: color-mix(in srgb, var(--pos-WR) 18%, var(--surface)); }
+  .chip.pos.TE { background: color-mix(in srgb, var(--pos-TE) 18%, var(--surface)); }
+  .chip.pos.FLEX { background: var(--surface-2); }
+  .chip.inj { border: 1px solid var(--bad); color: var(--bad); }
+  .chip.out { background: var(--bad); color: #fff; }
+  .chip.move { background: var(--accent); color: #fff; }
+
+  .meter-cell { display: inline-flex; align-items: center; gap: 7px; }
+  .meter { width: 52px; height: 7px; border-radius: 5px; background: var(--surface-2); overflow: hidden; }
+  .meter > i { display: block; height: 100%; background: var(--accent); }
+  .meter.bad > i { background: var(--bad); }
+  .meter-cell .pct { width: 36px; text-align: right; font-size: 12px; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .policy { padding: 12px 14px; font-size: 12.5px; color: var(--ink-2); }
+  .policy h3 { margin: 0 0 6px; font-size: 12.5px; color: var(--muted); font-weight: 650; }
+  .policy table { width: auto; }
+  .policy td, .policy th { padding: 3px 10px 3px 0; border: 0; }
+
+  details.note { margin-top: 9px; color: var(--ink-2); font-size: 12px; }
+  details.note summary { cursor: pointer; color: var(--muted); }
+  details.note p { max-width: 100ch; margin: 7px 0 0; }
+  details.team { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; margin-top: 8px; }
+  details.team > summary { cursor: pointer; padding: 10px 12px; font-weight: 650; }
+  details.team > summary .summary-stats { color: var(--muted); font-weight: 450; margin-left: 8px; }
+  details.team .roster { padding: 0 12px 10px; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; }
+  details.team .roster span.pts { color: var(--muted); }
+
+  /* Chart */
+  .chart { padding: 12px 14px 8px; }
+  .chart-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 4px; }
+  .chart-head h3 { margin: 0; font-size: 13px; font-weight: 650; }
+  .legend { display: flex; gap: 14px; color: var(--ink-2); font-size: 12px; }
+  .legend i { display: inline-block; width: 14px; height: 2px; vertical-align: middle; margin-right: 6px; }
+  .chart svg { width: 100%; height: 260px; display: block; }
+  .chart .axis text { fill: var(--muted); font-size: 11px; }
+  .chart .axis line { stroke: var(--grid); }
+  .chart .tip {
+    position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 7px; padding: 6px 9px; font-size: 12px; color: var(--ink); box-shadow: 0 2px 8px rgba(0,0,0,.12);
+    display: none;
+  }
+  .chart-wrap { position: relative; }
+
+  #error { display: none; padding: 16px; margin-top: 20px; }
+  #error code { background: var(--surface-2); padding: 2px 5px; border-radius: 4px; }
+  footer { margin-top: 38px; color: var(--muted); font-size: 11.5px; }
+  footer a { color: inherit; }
+
+  @media (max-width: 900px) { .two { grid-template-columns: 1fr; } }
+  @media (max-width: 680px) {
+    main { padding: 16px 12px 48px; }
+    .tiles { grid-template-columns: repeat(2, 1fr); }
+    .tile:nth-child(2) { border-right: 0; }
+    .tile:nth-child(-n+2) { border-bottom: 1px solid var(--grid); }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <div>
+      <h1>Season desk</h1>
+      <p class="sub" id="subline">Loading season.json…</p>
+    </div>
+    <nav class="nav"><a href="./">draft board</a> · <a href="sources/">sources</a></nav>
+  </header>
+
+  <div class="strip" id="strip"><strong id="stripWeek">Loading…</strong><span id="stripAlive"></span><span id="stripFaab"></span><span id="stripWaivers"></span></div>
+
+  <div class="card" id="error">
+    <strong>Couldn't load <code>season.json</code>!</strong>
+    <p>Run <code>uv run refresh_season.py</code>, then serve the repository root: <code>uv run serve.py</code> → <code>http://127.0.0.1:8123/season.html</code>.</p>
+  </div>
+
+  <div id="app" hidden>
+    <section id="week">
+      <h2 id="weekTitle">This week</h2>
+      <p class="hint">Cut chance is the share of simulated seasons where this roster posts one of the two lowest scores this week. The bar is the second-lowest opposing score the model expects; beat it and you survive.</p>
+      <div class="card tiles" id="tiles"></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Slot</th><th>Player</th><th class="num">This week</th><th class="num" title="Mean projected points per week over the remaining weeks">Rest of season / wk</th><th>Status</th>
+          </tr></thead>
+          <tbody id="lineupBody"></tbody>
+        </table>
+      </div>
+      <p class="sub" id="lineupNote"></p>
+    </section>
+
+    <section id="claims">
+      <h2 id="claimsTitle">Waiver claims</h2>
+      <p class="hint" id="claimsHint"></p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Player</th>
+            <th class="num">This week</th>
+            <th class="num">ROS / wk</th>
+            <th>Drop</th>
+            <th class="num" title="The bid that maximizes your title odds">Bid</th>
+            <th class="num" title="Chance that bid wins, from the simulated room">Wins</th>
+            <th class="num" title="Title odds at that bid, relative to standing pat (± one standard error of the free-pickup value)">Title odds</th>
+            <th class="num" title="Title odds if he cost nothing">If free</th>
+            <th class="num" title="The most he is worth paying: the bid where winning no longer beats standing pat">Ceiling</th>
+            <th title="What the simulated room pays: median and 90th percentile winning bid, and how often anyone claims him">Market</th>
+          </tr></thead>
+          <tbody id="claimsBody"></tbody>
+        </table>
+      </div>
+      <div class="two" style="margin-top:12px">
+        <div class="card policy" id="policyCard"></div>
+        <div class="card policy" id="budgetCard"></div>
+      </div>
+      <details class="note"><summary>How bids are chosen</summary><p id="claimsNote"></p></details>
+    </section>
+
+    <section id="outlook">
+      <h2>Season outlook</h2>
+      <p class="hint">The elimination bar the model expects each week against your current roster's projected lineup with no further moves. The band is the bar's 10th–90th percentile. Survival odds assume you keep adding players under the better FAAB policy.</p>
+      <div class="card chart chart-wrap" id="chart"></div>
+    </section>
+
+    <section id="league">
+      <h2>League</h2>
+      <p class="hint">Every roster from the full 32-team race: cut chance this week, chance to reach the final, title chance, FAAB left, the model's expected spend this week, and expected budget entering weeks 9 and 13 among seasons where the team is still alive.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Team</th>
+            <th class="num" title="Projected optimal lineup this week">Proj</th>
+            <th>Cut this week</th>
+            <th class="num">Final</th>
+            <th class="num">Title</th>
+            <th class="num">FAAB</th>
+            <th class="num" title="Expected FAAB spent this week">Spend now</th>
+            <th class="num" title="Expected budget entering week 9, if alive">Wk 9</th>
+            <th class="num" title="Expected budget entering week 13, if alive">Wk 13</th>
+          </tr></thead>
+          <tbody id="leagueBody"></tbody>
+        </table>
+      </div>
+      <div id="teamDetails"></div>
+    </section>
+
+    <section id="market">
+      <h2>Waiver market</h2>
+      <p class="hint">What the room has actually paid so far, next to what the model expects it to pay this week. When these disagree, the claim constants in <code>ranker/league.py</code> are the thing to move.</p>
+      <div class="two">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Wk</th><th>Team</th><th>Move</th><th class="num">Bid</th><th>Result</th></tr></thead>
+            <tbody id="observedBody"></tbody>
+          </table>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Simulated claim this week</th><th class="num" title="Share of simulated seasons where some opponent takes him this week">Taken</th><th class="num">Mean bid</th><th class="num">Max bid</th></tr></thead>
+            <tbody id="simulatedBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <footer id="footer"></footer>
+  </div>
+</main>
+
+<script>
+"use strict";
+
+function h(tag, attrs, ...children) {
+  const el = document.createElement(tag);
+  for (const [key, value] of Object.entries(attrs || {})) {
+    if (key === "class") el.className = value;
+    else if (key.startsWith("on")) el.addEventListener(key.slice(2), value);
+    else el.setAttribute(key, value);
+  }
+  for (const child of children.flat(Infinity)) {
+    if (child == null) continue;
+    el.append(child.nodeType ? child : document.createTextNode(child));
+  }
+  return el;
+}
+const svg = (tag, attrs, ...children) => {
+  const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const [key, value] of Object.entries(attrs || {})) el.setAttribute(key, value);
+  for (const child of children.flat(Infinity)) if (child != null) el.append(child.nodeType ? child : document.createTextNode(child));
+  return el;
+};
+
+const fmt = value => value == null ? "—" : Number(value).toLocaleString("en-US", { maximumFractionDigits: 1 });
+const pct = value => value == null ? "—" : `${Math.round(value * 100)}%`;
+const pct1 = value => value == null ? "—" : `${(value * 100).toFixed(1)}%`;
+const money = value => value == null ? "—" : `$${Math.round(value)}`;
+const rel = value => value == null ? "—" : `${value > 0.05 ? "+" : ""}${fmt(Math.abs(value) < 0.05 ? 0 : value)}%`;
+const relClass = value => value > 0.05 ? "positive" : value < -0.05 ? "negative" : "";
+
+function tile(label, value, meta, className = "") {
+  return h("div", { class: "tile" },
+    h("div", { class: "label" }, label),
+    h("div", { class: `value ${className}`.trim() }, value),
+    h("div", { class: "meta" }, meta));
+}
+function meter(value, bad = false) {
+  return h("span", { class: "meter-cell" },
+    h("span", { class: `meter${bad ? " bad" : ""}` }, h("i", { style: `width:${Math.round(Math.min(1, value) * 100)}%` })),
+    h("span", { class: "pct" }, pct1(value)));
+}
+function status(player) {
+  if (!player || !player.injury_status) return h("span", { class: "team" }, player?.source === "sleeper" ? "Sleeper proj only" : "");
+  const out = /^(Out|IR|PUP|Sus|Doubtful|NA)/i.test(player.injury_status);
+  return h("span", { class: `chip ${out ? "out" : "inj"}` }, player.injury_status);
+}
+function playerCell(p, extraChips) {
+  return h("td", {}, h("span", { class: "pname" }, p.name || "(empty)"), " ",
+    p.position ? h("span", { class: `chip pos ${p.position}` }, p.position) : null,
+    p.team ? h("span", { class: "team" }, p.team) : null, extraChips);
+}
+
+function renderWeek(d) {
+  const me = d.me;
+  document.getElementById("weekTitle").textContent = `Week ${d.week} · ${me.name}`;
+  const cutClass = me.p_cut_now > 0.1 ? "negative" : me.p_cut_now < 0.03 ? "positive" : "";
+  document.getElementById("tiles").replaceChildren(
+    tile("Cut this week", pct1(me.p_cut_now), `bar ${fmt(me.bar_now.mean)} · 90th pct ${fmt(me.bar_now.p90)}`, cutClass),
+    tile("Projected lineup", fmt(me.lineup.total), me.lineup.current_matches ? "matches your Sleeper lineup" : `Sleeper lineup set to ${fmt(me.lineup.current_total)}`),
+    tile("Title chance", pct1(me.p_title), `#${me.rank_by_title} of ${d.teams.length} · reach final ${pct1(me.p_reach_final)} · even odds ${pct1(1 / d.alive)}`),
+    tile("FAAB left", money(me.faab_left), `${d.alive} of ${d.teams.length} alive · roster ${d.claims.roster_size} spots`));
+  const starters = new Set(me.lineup.slots.map(s => s.player_id).filter(Boolean));
+  const starting = new Set(me.lineup.start);
+  const rows = me.lineup.slots.map(s => h("tr", {},
+    h("td", {}, h("span", { class: `chip pos ${s.slot}` }, s.slot)),
+    playerCell(s, starting.has(s.name) ? [" ", h("span", { class: "chip move" }, "START")] : null),
+    h("td", { class: "num" }, fmt(s.points)),
+    h("td", { class: "num" }, fmt(s.ros_per_week)),
+    h("td", {}, status(s))));
+  const sitting = new Set(me.lineup.sit);
+  rows.push(...me.lineup.bench.map(p => h("tr", { class: "bench" },
+    h("td", {}, h("span", { class: "team" }, "bench")),
+    playerCell(p, sitting.has(p.name) ? [" ", h("span", { class: "chip move" }, "SIT")] : null),
+    h("td", { class: "num" }, fmt(p.points)),
+    h("td", { class: "num" }, fmt(p.ros_per_week)),
+    h("td", {}, status(p)))));
+  document.getElementById("lineupBody").replaceChildren(...rows);
+  const note = [];
+  if (me.lineup.start.length) note.push(`Start ${me.lineup.start.join(", ")}; sit ${me.lineup.sit.join(", ")}.`);
+  if (me.lineup.unvalued.length) note.push(`${me.lineup.unvalued.length} rostered player(s) have no projection anywhere and are ignored.`);
+  document.getElementById("lineupNote").textContent = note.join(" ");
+}
+
+function renderClaims(d) {
+  const c = d.claims;
+  document.getElementById("claimsTitle").textContent = c.pending ? `Waiver claims for week ${d.week}` : `Free agents · week ${d.week}`;
+  document.getElementById("claimsHint").textContent = c.pending
+    ? `Claims have not processed yet. Each bid maximizes your title odds against what the simulated room pays; odds are relative to standing pat with $${c.budget}. Sleeper resolves claims highest bid first, so submit them in this order.`
+    : (d.week === 1
+      ? "Week 1 is open free agency: every add is $0 and first come, so the table ranks pickups by what they do to your title odds. Claims with bids begin after the week-1 cuts."
+      : "This week's claims have already processed; anyone below is a free pickup right now, ranked by what he does to your title odds.");
+  const rows = c.candidates.slice(0, 20).map(x => {
+    const worth = x.title_at_optimal > 0.05 || x.title_if_free > 0.05;
+    const market = x.clearing.p50 == null ? (c.pending ? "uncontested" : "—")
+      : `$${x.clearing.p50} · p90 $${x.clearing.p90} · claimed ${pct(x.clearing.p_claimed)}`;
+    return h("tr", { class: worth ? "" : "dim" },
+      playerCell(x, x.injury_status ? [" ", status(x)] : null),
+      h("td", { class: "num" }, h("div", {}, fmt(x.points_this_week)), h("div", { class: "cell-note" }, x.gain_this_week > 0 ? `lineup +${fmt(x.gain_this_week)}` : "bench")),
+      h("td", { class: "num" }, fmt(x.ros_per_week)),
+      h("td", {}, x.drop ? [x.drop.name, h("div", { class: "cell-note" }, `${x.drop.position} · ${fmt(x.drop.ros_per_week)}/wk`)] : "open spot"),
+      h("td", { class: "num" }, h("span", { class: "bid" }, c.pending ? money(x.optimal_bid) : "free")),
+      h("td", { class: "num" }, pct(x.p_win_at_optimal)),
+      h("td", { class: `num ${relClass(x.title_at_optimal)}` }, rel(x.title_at_optimal), h("div", { class: "cell-note" }, `± ${fmt(x.title_if_free_se)}`)),
+      h("td", { class: `num ${relClass(x.title_if_free)}` }, rel(x.title_if_free)),
+      h("td", { class: "num" }, c.pending ? money(x.break_even_bid) : "—"),
+      h("td", {}, market, x.curve.length > 1 ? h("div", { class: "cell-note" }, x.curve.filter((_, i) => i % 4 === 0).map(pt => `$${pt.bid}: ${pct(pt.p_win)} → ${rel(pt.title)}`).join(" · ")) : null));
+  });
+  document.getElementById("claimsBody").replaceChildren(...rows);
+
+  const policyNames = { room: "bid like the room", hold: `hold until week ${d.model.faab_hold_weeks + 1}, spend from ${d.model.faab_spend_week}` };
+  const full = pol => c.baseline[pol].find(r => r.budget === c.budget) || c.baseline[pol][c.baseline[pol].length - 1];
+  document.getElementById("policyCard").replaceChildren(
+    h("h3", {}, "FAAB policy check"),
+    h("table", {}, h("tbody", {}, ...Object.keys(c.baseline).map(pol => h("tr", {},
+      h("td", {}, policyNames[pol] || pol, pol === c.policy ? " (used)" : ""),
+      h("td", { class: "num" }, `title ${pct1(full(pol).p_title)}`),
+      h("td", { class: "num" }, `final ${pct1(full(pol).p_reach_final)}`),
+      h("td", { class: `num ${relClass(full(pol).relative)}` }, rel(full(pol).relative)))))),
+    h("p", { style: "margin:8px 0 0" }, `Your future claims are replayed under the better rule. The replay's own title figure (${pct1(c.base.p_title)}) runs below the full race's (${pct1(c.race_title)}) because opponents keep the players it takes from them, so everything here is relative.`));
+  const room = c.baseline[c.policy];
+  document.getElementById("budgetCard").replaceChildren(
+    h("h3", {}, "What budget is worth"),
+    room.length > 1
+      ? h("table", {}, h("tbody", {}, ...room.slice().reverse().map(r => h("tr", {},
+          h("td", {}, `$${r.budget} left`),
+          h("td", { class: `num ${relClass(r.relative)}` }, rel(r.relative))))))
+      : h("p", { style: "margin:0" }, "Priced once claims are pending: your title odds at each remaining budget, if you stood pat this week."));
+  document.getElementById("claimsNote").textContent =
+    `Each free agent is added to your roster (dropping your weakest rest-of-season player when the roster is full) and replayed through ${d.model.race_sims} recorded seasons of the other ${d.teams.length - 1} teams at several remaining budgets. The chance a bid wins is how often it beats what the same player cleared for in those seasons this week. The bid shown maximizes P(win) × odds if you win at that price + P(lose) × odds if you stand pat. The ceiling is the most he is worth at all. The room's claims follow league.py's rule: a share of remaining budget rising with the player's lineup gain, tempered early in the season, with noise; each team claims its ${d.model.claims_per_team} best gains and unclaimed players go as free pickups.`;
+}
+
+function renderChart(d) {
+  const out = d.me.outlook.filter(o => o.bar_mean != null);
+  const bars = d.market.bars_by_week;
+  const W = 900, H = 260, L = 44, R = 70, T = 16, B = 34;
+  const weeks = out.map(o => o.week);
+  const ys = [...out.map(o => o.my_points), ...bars.map(b => b.p90), ...bars.map(b => b.p10)];
+  const yMax = Math.ceil(Math.max(...ys) / 20) * 20, yMin = 0;
+  const x = w => L + (w - weeks[0]) / Math.max(1, weeks[weeks.length - 1] - weeks[0]) * (W - L - R);
+  const y = v => T + (1 - (v - yMin) / (yMax - yMin)) * (H - T - B);
+  const path = pts => pts.map((p, i) => `${i ? "L" : "M"}${x(p[0]).toFixed(1)},${y(p[1]).toFixed(1)}`).join(" ");
+  const band = `${path(bars.map(b => [b.week, b.p90]))} ${bars.slice().reverse().map(b => `L${x(b.week).toFixed(1)},${y(b.p10).toFixed(1)}`).join(" ")} Z`;
+  const gridVals = []; for (let v = 0; v <= yMax; v += 40) gridVals.push(v);
+  const chart = svg("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Elimination bar and my projected points by week" },
+    svg("g", { class: "axis" },
+      ...gridVals.map(v => svg("g", {}, svg("line", { x1: L, x2: W - R, y1: y(v), y2: y(v) }), svg("text", { x: L - 8, y: y(v) + 4, "text-anchor": "end" }, v))),
+      ...weeks.map(w => svg("text", { x: x(w), y: H - 10, "text-anchor": "middle" }, w === weeks[0] ? `wk ${w}` : w))),
+    svg("path", { d: band, fill: "var(--series-1)", opacity: "0.12" }),
+    svg("path", { d: path(bars.map(b => [b.week, b.mean])), fill: "none", stroke: "var(--series-1)", "stroke-width": 2, "stroke-linejoin": "round" }),
+    svg("path", { d: path(out.map(o => [o.week, o.my_points])), fill: "none", stroke: "var(--series-2)", "stroke-width": 2, "stroke-linejoin": "round" }),
+    svg("text", { x: W - R + 8, y: y(bars[bars.length - 1].mean) + 4, fill: "var(--ink-2)", "font-size": 11 }, "bar"),
+    svg("text", { x: W - R + 8, y: y(out[out.length - 1].my_points) + 4, fill: "var(--ink-2)", "font-size": 11 }, "you"));
+  const tip = h("div", { class: "tip" });
+  const cross = svg("line", { y1: T, y2: H - B, stroke: "var(--muted)", "stroke-dasharray": "3 3", style: "display:none" });
+  chart.append(cross);
+  chart.addEventListener("mousemove", event => {
+    const box = chart.getBoundingClientRect();
+    const px = (event.clientX - box.left) / box.width * W;
+    let best = out[0];
+    for (const o of out) if (Math.abs(x(o.week) - px) < Math.abs(x(best.week) - px)) best = o;
+    const bar = bars.find(b => b.week === best.week);
+    cross.setAttribute("x1", x(best.week)); cross.setAttribute("x2", x(best.week)); cross.style.display = "";
+    tip.style.display = "block";
+    tip.style.left = `${Math.min(event.clientX - box.left + 14, box.width - 190)}px`;
+    tip.style.top = `${event.clientY - box.top + 12}px`;
+    tip.replaceChildren(h("div", {}, h("strong", {}, `Week ${best.week}`)),
+      h("div", {}, `You ${fmt(best.my_points)} · bar ${fmt(bar.mean)} (${fmt(bar.p10)}–${fmt(bar.p90)})`),
+      h("div", {}, `Alive after this week ${pct(best.p_alive)} · budget ${money(best.budget)}`));
+  });
+  chart.addEventListener("mouseleave", () => { tip.style.display = "none"; cross.style.display = "none"; });
+  document.getElementById("chart").replaceChildren(
+    h("div", { class: "chart-head" }, h("h3", {}, "Elimination bar vs your projected lineup"),
+      h("div", { class: "legend" },
+        h("span", {}, h("i", { style: "background:var(--series-1)" }), "bar (mean, 10–90%)"),
+        h("span", {}, h("i", { style: "background:var(--series-2)" }), "you, current roster"))),
+    chart, tip,
+    h("p", { class: "sub" }, `Championship bar (weeks 16–17 combined) ${fmt(d.market.champion_bar_mean)}. Survival: ` +
+      out.filter((_, i) => i % 2 === 0).map(o => `wk ${o.week} ${pct(o.p_alive)}`).join(" · ")));
+}
+
+function renderLeague(d) {
+  const teams = d.teams.slice().sort((a, b) => (b.alive - a.alive) || (b.p_title - a.p_title));
+  document.getElementById("leagueBody").replaceChildren(...teams.map(t => h("tr", { class: t.is_mine ? "mine" : t.alive ? "" : "dim" },
+    h("td", {}, h("span", { class: "pname" }, t.name), h("span", { class: "team" }, t.alive ? (t.username || "") : "eliminated")),
+    h("td", { class: "num" }, fmt(t.projected_now)),
+    h("td", {}, t.alive ? meter(t.p_cut_now, t.p_cut_now > 0.1) : "—"),
+    h("td", { class: "num" }, pct1(t.p_reach_final)),
+    h("td", { class: "num" }, pct1(t.p_title)),
+    h("td", { class: "num" }, money(t.faab_left)),
+    h("td", { class: "num" }, t.alive ? money(t.spend_now) : "—"),
+    h("td", { class: "num" }, money(t.budget_entering_week9)),
+    h("td", { class: "num" }, money(t.budget_entering_week13)))));
+  document.getElementById("teamDetails").replaceChildren(...teams.filter(t => t.alive).map(t => h("details", { class: "team" },
+    h("summary", {}, t.name, h("span", { class: "summary-stats" }, `proj ${fmt(t.projected_now)} · title ${pct1(t.p_title)} · ${t.roster_size} players`)),
+    h("div", { class: "roster" }, ...t.players.map(p => h("span", {}, h("span", { class: `chip pos ${p.position}` }, p.position), " ", p.name, " ", h("span", { class: "pts" }, `${fmt(p.points)} · ${fmt(p.ros_per_week)}/wk`)))))));
+}
+
+function renderMarket(d) {
+  const observed = d.market.observed.slice(0, 40);
+  document.getElementById("observedBody").replaceChildren(...(observed.length ? observed.map(o => h("tr", { class: o.status === "complete" ? "" : "dim" },
+    h("td", {}, o.week),
+    h("td", {}, o.team || "—"),
+    h("td", {}, [o.adds.length ? `+ ${o.adds.join(", ")}` : null, o.drops.length ? `− ${o.drops.join(", ")}` : null].filter(Boolean).join("  ")),
+    h("td", { class: "num" }, o.type === "waiver" ? money(o.bid) : "free"),
+    h("td", {}, o.status, o.note ? h("div", { class: "cell-note" }, o.note) : null))) : [h("tr", {}, h("td", { colspan: 5 }, "No moves yet."))]));
+  const sim = d.market.simulated_claims_now.slice(0, 20);
+  document.getElementById("simulatedBody").replaceChildren(...(sim.length ? sim.map(s => h("tr", {},
+    h("td", {}, h("span", { class: "pname" }, s.name), " ", h("span", { class: `chip pos ${s.position}` }, s.position)),
+    h("td", { class: "num" }, pct(s.p_taken)),
+    h("td", { class: "num" }, money(s.mean_bid)),
+    h("td", { class: "num" }, money(s.max_bid)))) : [h("tr", {}, h("td", { colspan: 4 }, d.week === 1 ? "Week 1 adds are free; the market opens after the first cuts." : "No auction pending this week."))]));
+}
+
+(async () => {
+  let d;
+  try {
+    const response = await fetch("season.json", { cache: "no-store" });
+    if (!response.ok) throw new Error(response.status);
+    d = await response.json();
+  } catch (error) {
+    document.getElementById("subline").textContent = "";
+    document.getElementById("strip").style.display = "none";
+    document.getElementById("error").style.display = "block";
+    return;
+  }
+  const asOf = new Date(d.fetched_at).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  document.getElementById("subline").textContent = `${d.league_name} · ${d.teams.length}-team guillotine · 0.5 PPR + TE prem · state ${asOf}`;
+  document.getElementById("stripWeek").textContent = `Week ${d.week}`;
+  document.getElementById("stripAlive").textContent = `${d.alive} teams alive`;
+  document.getElementById("stripFaab").textContent = `${d.me.name} · $${d.me.faab_left} FAAB`;
+  document.getElementById("stripWaivers").textContent = d.claims.pending ? "claims pending" : (d.week === 1 ? "free agency" : "claims processed");
+  renderWeek(d);
+  renderClaims(d);
+  renderChart(d);
+  renderLeague(d);
+  renderMarket(d);
+  const m = d.model;
+  document.getElementById("footer").replaceChildren(
+    `${d.value_input} · ${m.race_sims} simulated seasons · weekly sigma ${m.weekly_sigma}, team sigma ${m.team_season_sigma} · claim rule: full budget at +${m.claim_full_budget_gain} pts/wk (exponent ${m.claim_gain_exponent}), conservation ${m.claim_conservation_floor} → 1 by week ${m.claim_conservation_full_week}, noise ${m.claim_noise_sigma}, ${m.claims_per_team} claims per team over ${m.claim_candidates} free agents · `,
+    d.validation.ok ? "validation ok" : `${d.validation.problems.length} validation problem(s): ${d.validation.problems.join("; ")}`);
+  document.getElementById("app").hidden = false;
+})();
+</script>
+</body>
+</html>

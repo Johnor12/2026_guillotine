@@ -213,3 +213,38 @@ def pick_label(pick_no: int) -> str:
 
 def picks_for_slot(slot: int, order: list[int]) -> list[int]:
     return [i + 1 for i, s in enumerate(order) if s == slot]
+
+
+# --- in-season --------------------------------------------------------------------
+# The bench grows with the starting lineup, one spot at each expansion (weeks 7, 9, 12,
+# 14), from 1 to 5: rosters run 8 spots in week 1 to 16 from week 14. The two reserve
+# (IR) spots sit outside these counts. The league states the endpoints; the intermediate
+# steps are an assumption, and season.py checks the current week's shape against the
+# roster_positions Sleeper reports.
+def _bench(week: int) -> int:
+    return 1 + (week >= 7) + (week >= 9) + (week >= 12) + (week >= 14)
+
+
+WEEK_ROSTER_SIZE = tuple(WEEK_STARTERS[w] + _bench(w + 1) for w in range(WEEKS))
+FAAB_BUDGET = 1000
+
+# --- waiver market model (ranker/race.py) --------------------------------------------
+# A team's claim on a free agent is a share of its remaining budget: the player's
+# rest-of-season lineup gain per week over the starter he displaces, relative to the gain
+# that warrants the whole budget and raised to CLAIM_GAIN_EXPONENT so a marginal upgrade
+# clears for pocket change while a stud clears for most of a budget, times a
+# conservation factor that ramps from CLAIM_CONSERVATION_FLOOR in week 1 to 1 by
+# CLAIM_CONSERVATION_FULL_WEEK (budget is spent more freely as the season shortens), times
+# lognormal noise. Week 1 is free agency, so every week-1 claim is $0. Each team claims
+# its top CLAIMS_PER_TEAM players by gain; claims resolve highest bid first, as Sleeper
+# processes them, and whatever clears unclaimed is a free pickup. A prior, not a fit:
+# season.py --report compares the model's clearing prices with the bids the room
+# actually paid, which is the cue to move these.
+CLAIM_FULL_BUDGET_GAIN = 12.0
+CLAIM_GAIN_EXPONENT = 2.0
+CLAIM_CONSERVATION_FLOOR = 0.5
+CLAIM_CONSERVATION_FULL_WEEK = 13
+CLAIM_NOISE_SIGMA = 0.35
+CLAIMS_PER_TEAM = 3
+CLAIM_CANDIDATES = 80  # free agents in play each week, by rest-of-season points
+RACE_SIMS = 2048

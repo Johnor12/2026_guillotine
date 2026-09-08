@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import sys
+from dataclasses import replace
 
 from . import guillotine
 from .board import Board
@@ -10,7 +11,7 @@ from .league import MAX_ITERS, POSITIONS, REGULAR_WEEKS, SEED, WEEKS
 from .opponents import OpponentStrategy
 from .pool import Player
 from .simulation import Draft
-from .value import Levels, pos_sorted, seed_levels, wire_replacement
+from .value import Levels, pos_sorted, seed_levels, weekly_team_values, wire_replacement
 
 # Guillotine weight mass in each report band: the early no-bench weeks, the bye
 # gauntlet, the expanded-roster run-in, and the two championship weeks.
@@ -151,8 +152,17 @@ def converge(
         for slot, roster in enumerate(draft.rosters, start=1)
         if slot != board.my_slot
     ]
-    _, diagnostics = guillotine.solve(
+    final_levels, diagnostics = guillotine.solve(
         my_roster, opponent_rosters, draft.taken, pos, levels, SEED
+    )
+    # League-wide title odds for the dashboard, priced the same way as the bars.
+    league_priced = replace(final_levels, wire=final_levels.league_wire)
+    diagnostics["p_title_by_slot"] = guillotine.title_odds(
+        [
+            weekly_team_values(roster, final_levels if slot == board.my_slot else league_priced)
+            for slot, roster in enumerate(draft.rosters, start=1)
+        ],
+        SEED,
     )
     diagnostics["post_draft_wire_season_points"] = {
         k: round(v, 1) for k, v in wire_replacement(draft.taken, pos).items()

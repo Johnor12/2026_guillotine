@@ -21,7 +21,9 @@ premium and 6-point return TDs are all applied:
                                    absent: a small optimistic bias, largest for QBs.
 
 Refetch when projections should move (injury news, depth-chart changes), then rebuild
-the pool. Neither file is touched by the live-draft refresh loop.
+the pool. Neither file is touched by the live-draft refresh loop. In season only the
+weeks still to play are fetched (from Sleeper's current NFL week); earlier weeks keep
+what the existing file holds, since nothing reads them any more.
 """
 
 from __future__ import annotations
@@ -47,6 +49,7 @@ TOP_N = 500
 WEEKS = range(1, 19)
 
 LEAGUE_URL = f"https://api.sleeper.app/v1/league/{LEAGUE_ID}"
+STATE_URL = "https://api.sleeper.app/v1/state/nfl"
 SEASON_URL = (
     "https://api.sleeper.com/projections/nfl/{season}?season_type=regular&"
     + "&".join(f"position[]={p}" for p in POSITIONS)
@@ -210,9 +213,16 @@ def score(values: dict[str, str | None], position: str, scoring: dict) -> float:
     return round(points, 2)
 
 
-def fetch_weekly(scoring: dict, season: str) -> None:
+def fetch_weekly(scoring: dict, season: str, first_week: int) -> None:
     players: dict[int, dict] = {}
+    if first_week > 1 and WEEKLY_PROJECTIONS.exists():
+        for old in json.loads(WEEKLY_PROJECTIONS.read_text())["players"]:
+            kept = {w: v for w, v in old["weeks"].items() if int(w) < first_week}
+            if kept:
+                players[old["player_id"]] = {**old, "weeks": kept}
     for week in WEEKS:
+        if week < first_week:
+            continue
         rows = fetch_week(week)
         for row in rows:
             player = players.setdefault(
@@ -254,8 +264,10 @@ def fetch_weekly(scoring: dict, season: str) -> None:
 def main() -> int:
     league = fetch_json(LEAGUE_URL)
     scoring, season = league["scoring_settings"], league["season"]
+    state = fetch_json(STATE_URL)
+    first_week = int(state["week"]) if state.get("season") == season else 1
     fetch_sleeper(scoring, season)
-    fetch_weekly(scoring, season)
+    fetch_weekly(scoring, season, first_week)
     return 0
 
 
