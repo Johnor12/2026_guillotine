@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import math
 import multiprocessing
-import os
 import random
 from collections.abc import Sequence
 
@@ -24,6 +23,7 @@ from .opponents import OpponentStrategy
 from .pool import Player
 from .simulation import Draft
 from .value import Levels, refresh_wire, sorted_roster, team_value
+from .workers import worker_count
 
 
 def broaden_first_pick(
@@ -102,18 +102,6 @@ def _init_worker(
         baselines={},
         probes={},
     )
-
-
-def _worker_pool_size() -> int:
-    # Every CPU the process may run on: a rerank is the only real load on this host
-    # and the worker count changes elapsed time, never the seeded results.
-    # sched_getaffinity is Linux-only; on Windows fall back to the raw CPU count.
-    cpus = (
-        len(os.sched_getaffinity(0))
-        if hasattr(os, "sched_getaffinity")
-        else os.cpu_count()
-    )
-    return max(1, cpus or 1)
 
 
 def _target_map(plan: Sequence[int]) -> dict[int, Player]:
@@ -300,7 +288,7 @@ def monte_carlo(
     """
     picks: dict[int, list[tuple[int, bool]]] = {p.player_id: [] for p in players}
     with multiprocessing.Pool(
-        _worker_pool_size(),
+        worker_count(),
         initializer=_init_worker,
         initargs=(players, board, levels, noise, seed, opponents, None),
     ) as pool:
@@ -349,7 +337,7 @@ def candidate_survival(
         return {}
     tasks = [(cand.player_id, s) for cand in candidates for s in range(sims)]
     with multiprocessing.Pool(
-        _worker_pool_size(),
+        worker_count(),
         initializer=_init_worker,
         initargs=(players, board, levels, noise, seed, opponents, None),
     ) as pool:
@@ -469,7 +457,7 @@ def four_pick_lookahead(
 
     all_plans = [plan for plans in proposed.values() for plan in plans]
     with multiprocessing.Pool(
-        _worker_pool_size(),
+        worker_count(),
         initializer=_init_worker,
         initargs=(players, board, levels, noise, seed, opponents, first_index),
     ) as pool:
@@ -548,7 +536,7 @@ def option_redraw(
 
     tasks = [(cand.player_id, s) for s in range(sims) for cand in candidates]
     with multiprocessing.Pool(
-        _worker_pool_size(),
+        worker_count(),
         initializer=_init_worker,
         initargs=(players, board, levels, noise, seed, opponents, i_my),
     ) as pool:
@@ -723,7 +711,7 @@ def rollout(
     }
     tasks = [(cand.player_id, s) for s in range(sims) for cand in candidates]
     with multiprocessing.Pool(
-        _worker_pool_size(),
+        worker_count(),
         initializer=_init_worker,
         initargs=(players, board, levels, noise, seed, opponents, i_my, plans),
     ) as pool:

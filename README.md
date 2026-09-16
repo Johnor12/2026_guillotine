@@ -36,6 +36,33 @@ uv run <script>
 
 Every script anchors its paths to its own location, so commands work from anywhere.
 
+## CPU limits
+
+Draft and season simulation pools use at most **six worker processes**, limited
+further by CPU affinity when available (`ranker/workers.py`). Simulation counts,
+candidate searches, and seeded results are unchanged; runs take longer instead of
+using every CPU. This is a limit per process pool, so run one pipeline at a time.
+
+On this Windows/WSL desktop, `C:\Users\johnm\.wslconfig` also sets a limit for the
+whole WSL 2 VM, shared across its distributions:
+
+```ini
+[wsl2]
+processors=6
+```
+
+That file lives outside the repository. The limit takes effect after WSL shuts down
+and restarts. Save work in WSL, run `wsl --shutdown` from **Windows PowerShell**, then
+reopen the terminal; `nproc` should report `6`. Even programs that request more
+workers must share those six virtual CPUs. This does not limit native Windows
+programs. See [Microsoft's WSL configuration reference](https://learn.microsoft.com/en-us/windows/wsl/wsl-config).
+
+These limits reduce load; they do not repair a machine that abruptly powers off
+under load. The September 15 shutdown logged Kernel-Power event 41 with no bugcheck
+code, which does not establish the cause. Check CPU cooling, power supply, and any
+overclock/undervolt settings before trying sustained full-load tests; see
+[AMD's stability troubleshooting](https://www.amd.com/en/resources/support-articles/faqs/PIBRMATS2.html).
+
 ## Data flow
 
 ```text
@@ -145,15 +172,30 @@ the room's observed bids beside the simulated ones so they can be refit as weeks
 
 ## Workflows
 
-Refresh the season desk (Tuesday or Wednesday before claims process for the week's
-bids; after lineups lock for the week's cut odds). No manual input:
+Refresh projections and league information, compute this week's FAAB bids, and
+optimize the lineup. Run before the week's waiver deadline, and again before games
+start to update the lineup. No manual input:
 
 ```bash
-uv run refresh_season.py --report
+uv run refresh_season.py
 ```
 
 It refetches projections (DraftSharks weekly for the weeks still to play, Sleeper
-season), fetches the league state, and runs the season model, about a minute in all.
+season), fetches the league state (including Sleeper weekly projections), and runs
+the season model. The NFL week comes from Sleeper. Each stage must succeed before
+the next starts; a failure exits nonzero without printing recommendations from an
+older run.
+
+The terminal summary shows the remaining budget, recommended bids and drops, and
+the optimal lineup with start/sit changes. Bids are evaluated individually, so treat
+them as alternatives. After this week's waivers process, recommendations are free
+pickups. Enter the recommended claims and lineup on Sleeper yourself. Add `--report`
+for detailed model diagnostics and league odds.
+
+Results are saved to `league.json` and `season.json`; `uv run serve.py` displays them
+at http://127.0.0.1:8123/season.html. The season model reads refreshed weekly
+projections directly and uses the existing `pool.json` only to join player IDs, so
+this workflow does not need a pool rebuild or a new hand-saved DraftSharks page.
 
 Refresh the live board and recommendations between picks (Sleeper's draft API is
 real-time, so this is the whole live loop):

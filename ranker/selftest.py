@@ -1,6 +1,6 @@
 """Offline checks for the states the live files cannot currently reach.
 
-Four suites: the weekly lineup solver against brute force over every in-season
+Checks include the shared worker limit, the weekly lineup solver against every in-season
 starting shape, the guillotine level map (bars, week weights, waiver escalation),
 source-based opponent behavior, and the board loader against synthetic draft.json
 boards — a traded pick, a selection outside the pool, a resumed partial board, and six
@@ -55,6 +55,29 @@ from .value import (
     week_value,
     weekly_team_values,
 )
+
+
+def worker_selftest() -> list[str]:
+    """CPU-heavy jobs stay bounded on Linux and Windows without starting workers."""
+    from types import SimpleNamespace
+    from unittest.mock import patch
+
+    from . import workers
+
+    fails = []
+    for label, platform, expected in (
+        ("16 CPUs", SimpleNamespace(sched_getaffinity=lambda _: set(range(16))), 6),
+        ("single-CPU affinity", SimpleNamespace(sched_getaffinity=lambda _: {3}), 1),
+        ("Windows 16 CPUs", SimpleNamespace(cpu_count=lambda: 16), 6),
+        ("Windows 1 CPU", SimpleNamespace(cpu_count=lambda: 1), 1),
+        ("unknown CPU count", SimpleNamespace(cpu_count=lambda: None), 1),
+    ):
+        with patch.object(workers, "os", platform):
+            actual = workers.worker_count()
+        if actual != expected:
+            fails.append(f"workers: {label} selected {actual}, expected {expected}")
+    print("  workers: six-worker cap, CPU affinity, Windows fallback", file=sys.stderr)
+    return fails
 
 
 def synthetic_opponents(
@@ -943,7 +966,8 @@ def selftest(players: list[Player]) -> int:
     OPPONENT_POSITION_TILT.clear()
     try:
         fails = (
-            lineup_selftest()
+            worker_selftest()
+            + lineup_selftest()
             + guillotine_selftest(players)
             + opponent_selftest(players)
             + planning_selftest(players)

@@ -2,7 +2,7 @@
  "source": "https://api.sleeper.com/projections/nfl/2026?season_type=regular&position[]=QB&position[]=RB&position[]=WR&position[]=TE",
  "league_id": "1397662420398247936",
  "season": "2026",
- "fetched_at": "2026-09-03T13:17:55+00:00",
+ "fetched_at": "2026-09-16T01:28:22+00:00",
  "players": [
   {
    "sleeper_id": "4984",
@@ -10,8 +10,8 @@
    "position": "QB",
    "team": "BUF",
    "points": 351.5,
-   "adp": 20.3,
-   "adp_2qb": 3.0
+   "adp": 20.5,
+   "adp_2qb": 3.8
   },
   {
    "sleeper_id": "4881",
@@ -19,8 +19,8 @@
    "position": "QB",
    "team": "BAL",
    "points": 318.0,
-   "adp": 34.7,
-   "adp_2qb": 8.6
+   "adp": 34.2,
+   "adp_2qb": 8.9
   },
   {
    "sleeper_id": "11564",
@@ -28,17 +28,8 @@
    "position": "QB",
    "team": "NE",
    "points": 309.76,
-   "adp": 51.0,
-   "adp_2qb": 12.9
-  },
-  {
-   "sleeper_id": "11604",
-   "name": "Brock Bowers",
-   "position": "TE",
-   "team": "LV",
-   "points": 304.5,
-   "adp": 23.6,
-   "adp_2qb": 21.9
+   "adp": 51.5,
+   "adp_2qb": 12.1
   },
   {
    "sleeper_id": "6904",
@@ -46,8 +37,8 @@
    "position": "QB",
    "team": "PHI",
    "points": 302.54,
-   "adp": 61.8,
-   "adp_2qb": 28.7
+   "adp": 61.9,
+   "adp_2qb": 26.2
   },
   {
    "sleeper_id": "9221",
@@ -55,8 +46,8 @@
    "position": "RB",
    "team": "DET",
    "points": 299.9,
-   "adp": 1.5,
-   "adp_2qb": 1.5
+   "adp": 1.1,
+   "adp_2qb": 1.0
   },
   {
    "sleeper_id": "11566",
@@ -64,8 +55,8 @@
    "position": "QB",
    "team": "WAS",
    "points": 299.72,
-   "adp": 69.9,
-   "adp_2qb": 19.1
+   "adp": 71.0,
+   "adp_2qb": 20.8
   },
   {
    "sleeper_id": "6770",
@@ -73,8 +64,8 @@
    "position": "QB",
    "team": "CIN",
    "points": 296.12,
-   "adp": 53.9,
-   "adp_2qb": 14.2
+   "adp": 53.8,
+   "adp_2qb": 14.1
   },
   {
    "sleeper_id": "9509",
@@ -83,7 +74,7 @@
    "team": "ATL",
    "points": 292.9,
    "adp": 2.2,
-   "adp_2qb": 2.6
+   "adp_2qb": 2.1
   },
   {
    "sleeper_id": "7523",
@@ -91,8 +82,8 @@
    "position": "QB",
    "team": "JAX",
    "points": 291.42,
-   "adp": 98.2,
-   "adp_2qb": 40.7
+   "adp": 97.2,
+   "adp_2qb": 40.2
   },
   {
    "sleeper_id": "3294",
@@ -100,7 +91,7 @@
    "position": "QB",
    "team": "DAL",
    "points": 290.88,
-   "adp": 86.1,
+   "adp": 86.3,
    "adp_2qb": 35.5
   },
   {
@@ -109,8 +100,8 @@
    "position": "QB",
    "team": "SF",
    "points": 290.2,
-   "adp": 125.4,
-   "adp_2qb": 55.7
+   "adp": 128.6,
+   "adp_2qb": 55.0
   },
   {
    "sleeper_id": "11560",
@@ -118,8 +109,8 @@
    "position": "QB",
    "team": "CHI",
    "points": 289.34,
-   "adp": 74.2,
-   "adp_2qb": 26.7
+   "adp": 74.4,
+   "adp_2qb": 28.1
   },
   {
    "sleeper_id": "6797",
@@ -127,8 +118,8 @@
    "position": "QB",
    "team": "LAC",
    "points": 285.48,
-   "adp": 80.2,
-   "adp_2qb": 32.9
+   "adp": 79.3,
+   "adp_2qb": 32.8
   },
   {
    "sleeper_id": "12508",
@@ -136,8 +127,8 @@
    "position": "QB",
    "team": "NYG",
    "points": 284.54,
-   "adp": 104.6,
-   "adp_2qb": 42.7
+   "adp": 111.1,
+   "adp_2qb": 46.8
   },
   {
    "sleeper_id": "11563",
@@ -145,8 +136,8 @@
    "position": "QB",
    "team": "DEN",
    "points": 283.72,
-   "adp": 118.3,
-   "adp_2qb": 48.8
+   "adp": 119.2,
+   "adp_2qb": 48.3
   },
   {
    "sleeper_id": "8130",
@@ -154,8 +145,8 @@
    "position": "TE",
    "team": "ARI",
    "points": 282.9,
-   "adp": 26.5,
-   "adp_2qb": 20.8
+   "adp": 26.0,
+   "adp_2qb": 25.3
   },
   {
    "sleeper_id": "4046",
@@ -163,8 +154,8 @@
    "position": "QB",
    "team": "KC",
    "points": 274.68,
-   "adp": 115.0,
-   "adp_2qb": 43.3
+   "adp": 116.8,
+   "adp_2qb": 44.3
   },
   {
    "sleeper_id": "3163",
@@ -172,8 +163,8 @@
    "position": "QB",
    "team": "DET",
    "points": 273.46,
-   "adp": 143.5,
-   "adp_2qb": 61.3
+   "adp": 142.4,
+   "adp_2qb": 62.2
   },
   {
    "sleeper_id": "5849",
@@ -181,8 +172,17 @@
    "position": "QB",
    "team": "MIN",
    "points": 273.06,
-   "adp": 149.2,
-   "adp_2qb": 83.6
+   "adp": 150.4,
+   "adp_2qb": 80.6
+  },
+  {
+   "sleeper_id": "11604",
+   "name": "Brock Bowers",
+   "position": "TE",
+   "team": "LV",
+   "points": 272.5,
+   "adp": 23.5,
+   "adp_2qb": 22.6
   },
   {
    "sleeper_id": "421",
@@ -190,8 +190,8 @@
    "position": "QB",
    "team": "LAR",
    "points": 269.22,
-   "adp": 106.9,
-   "adp_2qb": 60.8
+   "adp": 105.4,
+   "adp_2qb": 59.4
   },
   {
    "sleeper_id": "6804",
@@ -199,8 +199,8 @@
    "position": "QB",
    "team": "GB",
    "points": 268.52,
-   "adp": 164.8,
-   "adp_2qb": 71.2
+   "adp": 164.9,
+   "adp_2qb": 70.5
   },
   {
    "sleeper_id": "4892",
@@ -208,8 +208,8 @@
    "position": "QB",
    "team": "TB",
    "points": 261.88,
-   "adp": 155.6,
-   "adp_2qb": 73.3
+   "adp": 163.5,
+   "adp_2qb": 73.1
   },
   {
    "sleeper_id": "8161",
@@ -217,8 +217,8 @@
    "position": "QB",
    "team": "MIA",
    "points": 261.12,
-   "adp": 191.3,
-   "adp_2qb": 103.8
+   "adp": 201.0,
+   "adp_2qb": 104.9
   },
   {
    "sleeper_id": "9493",
@@ -226,8 +226,8 @@
    "position": "WR",
    "team": "LAR",
    "points": 259.0,
-   "adp": 6.9,
-   "adp_2qb": 5.8
+   "adp": 6.1,
+   "adp_2qb": 5.7
   },
   {
    "sleeper_id": "12545",
@@ -235,8 +235,8 @@
    "position": "QB",
    "team": "NO",
    "points": 258.94,
-   "adp": 188.3,
-   "adp_2qb": 87.8
+   "adp": 184.5,
+   "adp_2qb": 88.9
   },
   {
    "sleeper_id": "12517",
@@ -244,8 +244,8 @@
    "position": "TE",
    "team": "CHI",
    "points": 257.4,
-   "adp": 43.7,
-   "adp_2qb": 39.9
+   "adp": 43.0,
+   "adp_2qb": 39.7
   },
   {
    "sleeper_id": "7564",
@@ -253,8 +253,8 @@
    "position": "WR",
    "team": "CIN",
    "points": 256.6,
-   "adp": 3.5,
-   "adp_2qb": 4.5
+   "adp": 3.8,
+   "adp_2qb": 4.6
   },
   {
    "sleeper_id": "4034",
@@ -263,7 +263,7 @@
    "team": "SF",
    "points": 256.0,
    "adp": 4.8,
-   "adp_2qb": 7.0
+   "adp_2qb": 7.9
   },
   {
    "sleeper_id": "6813",
@@ -271,8 +271,8 @@
    "position": "RB",
    "team": "IND",
    "points": 254.3,
-   "adp": 5.4,
-   "adp_2qb": 8.4
+   "adp": 5.9,
+   "adp_2qb": 8.5
   },
   {
    "sleeper_id": "4943",
@@ -280,8 +280,8 @@
    "position": "QB",
    "team": "SEA",
    "points": 250.74,
-   "adp": 185.4,
-   "adp_2qb": 86.6
+   "adp": 177.0,
+   "adp_2qb": 86.1
   },
   {
    "sleeper_id": "8138",
@@ -289,8 +289,8 @@
    "position": "RB",
    "team": "BUF",
    "points": 245.3,
-   "adp": 9.0,
-   "adp_2qb": 11.6
+   "adp": 8.7,
+   "adp_2qb": 11.4
   },
   {
    "sleeper_id": "12518",
@@ -299,7 +299,7 @@
    "team": "IND",
    "points": 242.6,
    "adp": 50.3,
-   "adp_2qb": 51.1
+   "adp_2qb": 51.3
   },
   {
    "sleeper_id": "3198",
@@ -307,8 +307,8 @@
    "position": "RB",
    "team": "BAL",
    "points": 238.4,
-   "adp": 15.2,
-   "adp_2qb": 29.6
+   "adp": 14.5,
+   "adp_2qb": 26.8
   },
   {
    "sleeper_id": "9758",
@@ -316,8 +316,8 @@
    "position": "QB",
    "team": "HOU",
    "points": 235.82,
-   "adp": 209.5,
-   "adp_2qb": 98.9
+   "adp": 206.7,
+   "adp_2qb": 98.6
   },
   {
    "sleeper_id": "9488",
@@ -325,8 +325,8 @@
    "position": "WR",
    "team": "SEA",
    "points": 235.1,
-   "adp": 8.4,
-   "adp_2qb": 6.6
+   "adp": 8.1,
+   "adp_2qb": 6.2
   },
   {
    "sleeper_id": "10859",
@@ -334,8 +334,8 @@
    "position": "TE",
    "team": "DET",
    "points": 234.5,
-   "adp": 64.5,
-   "adp_2qb": 67.5
+   "adp": 62.5,
+   "adp_2qb": 67.9
   },
   {
    "sleeper_id": "9226",
@@ -343,8 +343,17 @@
    "position": "RB",
    "team": "MIA",
    "points": 229.9,
-   "adp": 13.9,
-   "adp_2qb": 16.0
+   "adp": 13.4,
+   "adp_2qb": 17.6
+  },
+  {
+   "sleeper_id": "12527",
+   "name": "Ashton Jeanty",
+   "position": "RB",
+   "team": "LV",
+   "points": 228.7,
+   "adp": 17.9,
+   "adp_2qb": 17.1
   },
   {
    "sleeper_id": "4866",
@@ -352,8 +361,8 @@
    "position": "RB",
    "team": "PHI",
    "points": 228.2,
-   "adp": 10.2,
-   "adp_2qb": 17.5
+   "adp": 10.9,
+   "adp_2qb": 16.9
   },
   {
    "sleeper_id": "7547",
@@ -361,8 +370,8 @@
    "position": "WR",
    "team": "DET",
    "points": 227.5,
-   "adp": 7.0,
-   "adp_2qb": 10.7
+   "adp": 7.2,
+   "adp_2qb": 10.0
   },
   {
    "sleeper_id": "9224",
@@ -370,8 +379,8 @@
    "position": "RB",
    "team": "CIN",
    "points": 226.7,
-   "adp": 17.8,
-   "adp_2qb": 25.0
+   "adp": 16.9,
+   "adp_2qb": 24.2
   },
   {
    "sleeper_id": "8151",
@@ -379,8 +388,8 @@
    "position": "RB",
    "team": "KC",
    "points": 225.5,
-   "adp": 17.8,
-   "adp_2qb": 22.2
+   "adp": 17.6,
+   "adp_2qb": 19.8
   },
   {
    "sleeper_id": "9228",
@@ -389,7 +398,7 @@
    "team": "CAR",
    "points": 224.58,
    "adp": 234.6,
-   "adp_2qb": 123.9
+   "adp_2qb": 124.4
   },
   {
    "sleeper_id": "6786",
@@ -397,8 +406,8 @@
    "position": "WR",
    "team": "DAL",
    "points": 222.5,
-   "adp": 11.9,
-   "adp_2qb": 13.0
+   "adp": 11.7,
+   "adp_2qb": 13.7
   },
   {
    "sleeper_id": "7569",
@@ -407,7 +416,7 @@
    "team": "HOU",
    "points": 220.0,
    "adp": 22.5,
-   "adp_2qb": 30.3
+   "adp_2qb": 30.8
   },
   {
    "sleeper_id": "12507",
@@ -415,8 +424,8 @@
    "position": "RB",
    "team": "LAC",
    "points": 218.9,
-   "adp": 16.3,
-   "adp_2qb": 23.8
+   "adp": 15.7,
+   "adp_2qb": 21.5
   },
   {
    "sleeper_id": "12506",
@@ -424,8 +433,8 @@
    "position": "TE",
    "team": "CLE",
    "points": 217.4,
-   "adp": 76.4,
-   "adp_2qb": 76.2
+   "adp": 77.2,
+   "adp_2qb": 78.5
   },
   {
    "sleeper_id": "12522",
@@ -433,8 +442,8 @@
    "position": "QB",
    "team": "TEN",
    "points": 214.84,
-   "adp": 230.2,
-   "adp_2qb": 107.9
+   "adp": 228.1,
+   "adp_2qb": 113.2
   },
   {
    "sleeper_id": "5870",
@@ -442,17 +451,8 @@
    "position": "QB",
    "team": "IND",
    "points": 212.54,
-   "adp": 220.1,
-   "adp_2qb": 111.6
-  },
-  {
-   "sleeper_id": "12527",
-   "name": "Ashton Jeanty",
-   "position": "RB",
-   "team": "LV",
-   "points": 211.4,
-   "adp": 14.9,
-   "adp_2qb": 17.4
+   "adp": 219.9,
+   "adp_2qb": 112.8
   },
   {
    "sleeper_id": "1373",
@@ -461,7 +461,7 @@
    "team": "NYJ",
    "points": 208.48,
    "adp": 257.0,
-   "adp_2qb": 170.7
+   "adp_2qb": 167.9
   },
   {
    "sleeper_id": "9484",
@@ -469,17 +469,8 @@
    "position": "TE",
    "team": "GB",
    "points": 207.9,
-   "adp": 66.4,
-   "adp_2qb": 75.8
-  },
-  {
-   "sleeper_id": "5859",
-   "name": "A.J. Brown",
-   "position": "WR",
-   "team": "NE",
-   "points": 207.7,
-   "adp": 19.5,
-   "adp_2qb": 24.0
+   "adp": 66.0,
+   "adp_2qb": 75.9
   },
   {
    "sleeper_id": "1466",
@@ -487,8 +478,8 @@
    "position": "TE",
    "team": "KC",
    "points": 206.4,
-   "adp": 93.7,
-   "adp_2qb": 94.1
+   "adp": 96.3,
+   "adp_2qb": 94.6
   },
   {
    "sleeper_id": "8137",
@@ -496,8 +487,8 @@
    "position": "WR",
    "team": "DAL",
    "points": 205.7,
-   "adp": 25.6,
-   "adp_2qb": 31.1
+   "adp": 25.3,
+   "adp_2qb": 31.4
   },
   {
    "sleeper_id": "6794",
@@ -505,8 +496,8 @@
    "position": "WR",
    "team": "MIN",
    "points": 205.4,
-   "adp": 12.2,
-   "adp_2qb": 15.1
+   "adp": 12.3,
+   "adp_2qb": 15.8
   },
   {
    "sleeper_id": "8112",
@@ -515,7 +506,7 @@
    "team": "ATL",
    "points": 205.2,
    "adp": 21.1,
-   "adp_2qb": 26.1
+   "adp_2qb": 29.2
   },
   {
    "sleeper_id": "7553",
@@ -523,8 +514,8 @@
    "position": "TE",
    "team": "ATL",
    "points": 204.6,
-   "adp": 71.7,
-   "adp_2qb": 78.5
+   "adp": 71.2,
+   "adp_2qb": 80.4
   },
   {
    "sleeper_id": "13269",
@@ -532,8 +523,8 @@
    "position": "QB",
    "team": "LV",
    "points": 201.16,
-   "adp": 204.2,
-   "adp_2qb": 119.8
+   "adp": 210.7,
+   "adp_2qb": 143.4
   },
   {
    "sleeper_id": "4217",
@@ -541,8 +532,8 @@
    "position": "TE",
    "team": "SF",
    "points": 200.3,
-   "adp": 84.7,
-   "adp_2qb": 96.2
+   "adp": 83.9,
+   "adp_2qb": 95.6
   },
   {
    "sleeper_id": "10236",
@@ -550,7 +541,7 @@
    "position": "TE",
    "team": "BUF",
    "points": 196.6,
-   "adp": 91.5,
+   "adp": 94.9,
    "adp_2qb": 93.3
   },
   {
@@ -559,8 +550,8 @@
    "position": "WR",
    "team": "NO",
    "points": 194.9,
-   "adp": 30.9,
-   "adp_2qb": 35.1
+   "adp": 29.0,
+   "adp_2qb": 36.0
   },
   {
    "sleeper_id": "8110",
@@ -568,8 +559,8 @@
    "position": "TE",
    "team": "DAL",
    "points": 194.8,
-   "adp": 113.7,
-   "adp_2qb": 106.8
+   "adp": 116.8,
+   "adp_2qb": 106.3
   },
   {
    "sleeper_id": "11632",
@@ -577,8 +568,8 @@
    "position": "WR",
    "team": "NYG",
    "points": 193.7,
-   "adp": 28.5,
-   "adp_2qb": 34.6
+   "adp": 28.8,
+   "adp_2qb": 33.1
   },
   {
    "sleeper_id": "7588",
@@ -586,8 +577,8 @@
    "position": "RB",
    "team": "DAL",
    "points": 193.0,
-   "adp": 32.1,
-   "adp_2qb": 46.1
+   "adp": 30.6,
+   "adp_2qb": 41.4
   },
   {
    "sleeper_id": "8155",
@@ -595,8 +586,8 @@
    "position": "RB",
    "team": "NYJ",
    "points": 192.5,
-   "adp": 31.8,
-   "adp_2qb": 41.4
+   "adp": 32.9,
+   "adp_2qb": 42.8
   },
   {
    "sleeper_id": "5012",
@@ -604,8 +595,8 @@
    "position": "TE",
    "team": "BAL",
    "points": 192.5,
-   "adp": 122.9,
-   "adp_2qb": 116.4
+   "adp": 124.4,
+   "adp_2qb": 116.2
   },
   {
    "sleeper_id": "9480",
@@ -613,8 +604,8 @@
    "position": "TE",
    "team": "JAX",
    "points": 192.5,
-   "adp": 170.3,
-   "adp_2qb": 148.2
+   "adp": 166.4,
+   "adp_2qb": 147.4
   },
   {
    "sleeper_id": "8150",
@@ -623,7 +614,7 @@
    "team": "LAR",
    "points": 192.0,
    "adp": 24.3,
-   "adp_2qb": 38.6
+   "adp_2qb": 37.9
   },
   {
    "sleeper_id": "5892",
@@ -631,8 +622,8 @@
    "position": "RB",
    "team": "HOU",
    "points": 190.1,
-   "adp": 44.0,
-   "adp_2qb": 65.1
+   "adp": 42.8,
+   "adp_2qb": 63.0
   },
   {
    "sleeper_id": "7543",
@@ -640,8 +631,8 @@
    "position": "RB",
    "team": "NO",
    "points": 189.7,
-   "adp": 40.2,
-   "adp_2qb": 58.1
+   "adp": 37.6,
+   "adp_2qb": 53.6
   },
   {
    "sleeper_id": "6790",
@@ -649,8 +640,8 @@
    "position": "RB",
    "team": "CHI",
    "points": 189.5,
-   "adp": 48.7,
-   "adp_2qb": 62.6
+   "adp": 44.3,
+   "adp_2qb": 61.4
   },
   {
    "sleeper_id": "7525",
@@ -658,8 +649,8 @@
    "position": "WR",
    "team": "PHI",
    "points": 189.2,
-   "adp": 33.2,
-   "adp_2qb": 49.4
+   "adp": 33.3,
+   "adp_2qb": 43.3
   },
   {
    "sleeper_id": "13287",
@@ -667,8 +658,8 @@
    "position": "RB",
    "team": "ARI",
    "points": 188.3,
-   "adp": 26.3,
-   "adp_2qb": 33.3
+   "adp": 26.5,
+   "adp_2qb": 34.1
   },
   {
    "sleeper_id": "8131",
@@ -677,7 +668,7 @@
    "team": "NYG",
    "points": 188.3,
    "adp": 108.0,
-   "adp_2qb": 110.6
+   "adp_2qb": 107.7
   },
   {
    "sleeper_id": "5844",
@@ -685,8 +676,8 @@
    "position": "TE",
    "team": "MIN",
    "points": 188.0,
-   "adp": 184.8,
-   "adp_2qb": 157.3
+   "adp": 179.6,
+   "adp_2qb": 170.0
   },
   {
    "sleeper_id": "11635",
@@ -694,8 +685,8 @@
    "position": "WR",
    "team": "LAC",
    "points": 187.7,
-   "adp": 35.2,
-   "adp_2qb": 52.2
+   "adp": 35.8,
+   "adp_2qb": 50.2
   },
   {
    "sleeper_id": "9997",
@@ -703,8 +694,8 @@
    "position": "WR",
    "team": "BAL",
    "points": 187.7,
-   "adp": 42.8,
-   "adp_2qb": 50.2
+   "adp": 40.3,
+   "adp_2qb": 49.9
   },
   {
    "sleeper_id": "2216",
@@ -712,8 +703,8 @@
    "position": "WR",
    "team": "SF",
    "points": 187.2,
-   "adp": 62.1,
-   "adp_2qb": 77.3
+   "adp": 62.9,
+   "adp_2qb": 77.2
   },
   {
    "sleeper_id": "6801",
@@ -721,8 +712,8 @@
    "position": "WR",
    "team": "CIN",
    "points": 186.9,
-   "adp": 39.5,
-   "adp_2qb": 47.1
+   "adp": 39.1,
+   "adp_2qb": 47.2
   },
   {
    "sleeper_id": "12514",
@@ -730,8 +721,8 @@
    "position": "WR",
    "team": "TB",
    "points": 185.5,
-   "adp": 41.3,
-   "adp_2qb": 57.0
+   "adp": 41.0,
+   "adp_2qb": 58.5
   },
   {
    "sleeper_id": "10229",
@@ -739,8 +730,8 @@
    "position": "WR",
    "team": "KC",
    "points": 185.3,
-   "adp": 29.2,
-   "adp_2qb": 37.1
+   "adp": 31.5,
+   "adp_2qb": 38.3
   },
   {
    "sleeper_id": "12526",
@@ -748,8 +739,8 @@
    "position": "WR",
    "team": "CAR",
    "points": 184.5,
-   "adp": 35.8,
-   "adp_2qb": 44.2
+   "adp": 38.2,
+   "adp_2qb": 44.1
   },
   {
    "sleeper_id": "8146",
@@ -757,8 +748,8 @@
    "position": "WR",
    "team": "NYJ",
    "points": 183.4,
-   "adp": 44.9,
-   "adp_2qb": 56.2
+   "adp": 46.8,
+   "adp_2qb": 56.3
   },
   {
    "sleeper_id": "5001",
@@ -766,8 +757,8 @@
    "position": "TE",
    "team": "HOU",
    "points": 182.9,
-   "adp": 207.0,
-   "adp_2qb": 177.0
+   "adp": 205.9,
+   "adp_2qb": 175.7
   },
   {
    "sleeper_id": "7526",
@@ -775,8 +766,8 @@
    "position": "WR",
    "team": "DEN",
    "points": 182.5,
-   "adp": 46.6,
-   "adp_2qb": 59.5
+   "adp": 44.0,
+   "adp_2qb": 57.4
   },
   {
    "sleeper_id": "3214",
@@ -784,8 +775,8 @@
    "position": "TE",
    "team": "NE",
    "points": 182.5,
-   "adp": 148.5,
-   "adp_2qb": 131.6
+   "adp": 148.8,
+   "adp_2qb": 131.9
   },
   {
    "sleeper_id": "12481",
@@ -793,8 +784,8 @@
    "position": "RB",
    "team": "NYG",
    "points": 180.2,
-   "adp": 37.5,
-   "adp_2qb": 53.7
+   "adp": 35.5,
+   "adp_2qb": 52.9
   },
   {
    "sleeper_id": "12512",
@@ -802,8 +793,8 @@
    "position": "RB",
    "team": "CLE",
    "points": 180.0,
-   "adp": 49.4,
-   "adp_2qb": 66.3
+   "adp": 48.0,
+   "adp_2qb": 65.5
   },
   {
    "sleeper_id": "11584",
@@ -811,8 +802,8 @@
    "position": "RB",
    "team": "TB",
    "points": 179.3,
-   "adp": 47.3,
-   "adp_2qb": 53.9
+   "adp": 47.9,
+   "adp_2qb": 53.6
   },
   {
    "sleeper_id": "5927",
@@ -820,8 +811,8 @@
    "position": "WR",
    "team": "WAS",
    "points": 176.8,
-   "adp": 53.7,
-   "adp_2qb": 69.8
+   "adp": 56.1,
+   "adp_2qb": 69.4
   },
   {
    "sleeper_id": "9487",
@@ -829,8 +820,8 @@
    "position": "WR",
    "team": "JAX",
    "points": 176.4,
-   "adp": 70.0,
-   "adp_2qb": 85.8
+   "adp": 68.2,
+   "adp_2qb": 83.6
   },
   {
    "sleeper_id": "8148",
@@ -838,8 +829,8 @@
    "position": "WR",
    "team": "DET",
    "points": 176.2,
-   "adp": 58.2,
-   "adp_2qb": 71.5
+   "adp": 57.2,
+   "adp_2qb": 71.3
   },
   {
    "sleeper_id": "8167",
@@ -847,8 +838,8 @@
    "position": "WR",
    "team": "GB",
    "points": 176.1,
-   "adp": 65.9,
-   "adp_2qb": 80.7
+   "adp": 65.6,
+   "adp_2qb": 82.2
   },
   {
    "sleeper_id": "8210",
@@ -856,8 +847,8 @@
    "position": "TE",
    "team": "WAS",
    "points": 174.6,
-   "adp": 192.1,
-   "adp_2qb": 178.4
+   "adp": 187.2,
+   "adp_2qb": 178.7
   },
   {
    "sleeper_id": "11620",
@@ -865,8 +856,8 @@
    "position": "WR",
    "team": "CHI",
    "points": 173.9,
-   "adp": 62.7,
-   "adp_2qb": 79.7
+   "adp": 64.2,
+   "adp_2qb": 79.1
   },
   {
    "sleeper_id": "12519",
@@ -875,7 +866,7 @@
    "team": "CHI",
    "points": 173.0,
    "adp": 60.6,
-   "adp_2qb": 64.9
+   "adp_2qb": 66.1
   },
   {
    "sleeper_id": "11603",
@@ -883,8 +874,8 @@
    "position": "TE",
    "team": "SEA",
    "points": 171.4,
-   "adp": 196.2,
-   "adp_2qb": 184.9
+   "adp": 211.0,
+   "adp_2qb": 195.8
   },
   {
    "sleeper_id": "96",
@@ -893,7 +884,7 @@
    "team": "PIT",
    "points": 170.0,
    "adp": 235.5,
-   "adp_2qb": 145.3
+   "adp_2qb": 146.5
   },
   {
    "sleeper_id": "12493",
@@ -901,8 +892,8 @@
    "position": "TE",
    "team": "LAC",
    "points": 169.8,
-   "adp": 172.4,
-   "adp_2qb": 147.3
+   "adp": 188.9,
+   "adp_2qb": 152.6
   },
   {
    "sleeper_id": "7002",
@@ -910,8 +901,8 @@
    "position": "TE",
    "team": "NO",
    "points": 168.9,
-   "adp": 161.6,
-   "adp_2qb": 152.8
+   "adp": 161.5,
+   "adp_2qb": 150.6
   },
   {
    "sleeper_id": "11631",
@@ -919,8 +910,8 @@
    "position": "WR",
    "team": "JAX",
    "points": 164.4,
-   "adp": 75.3,
-   "adp_2qb": 89.4
+   "adp": 75.7,
+   "adp_2qb": 89.9
   },
   {
    "sleeper_id": "10222",
@@ -928,8 +919,8 @@
    "position": "WR",
    "team": "GB",
    "points": 162.6,
-   "adp": 101.3,
-   "adp_2qb": 115.5
+   "adp": 98.4,
+   "adp_2qb": 110.6
   },
   {
    "sleeper_id": "5022",
@@ -937,8 +928,8 @@
    "position": "TE",
    "team": "PHI",
    "points": 162.5,
-   "adp": 124.4,
-   "adp_2qb": 120.1
+   "adp": 127.4,
+   "adp_2qb": 119.9
   },
   {
    "sleeper_id": "2133",
@@ -946,8 +937,8 @@
    "position": "WR",
    "team": "LAR",
    "points": 161.0,
-   "adp": 55.8,
-   "adp_2qb": 62.2
+   "adp": 55.9,
+   "adp_2qb": 64.5
   },
   {
    "sleeper_id": "13286",
@@ -955,8 +946,8 @@
    "position": "RB",
    "team": "SEA",
    "points": 160.5,
-   "adp": 57.4,
-   "adp_2qb": 82.9
+   "adp": 53.6,
+   "adp_2qb": 76.0
   },
   {
    "sleeper_id": "12490",
@@ -964,8 +955,8 @@
    "position": "RB",
    "team": "JAX",
    "points": 158.8,
-   "adp": 59.4,
-   "adp_2qb": 74.3
+   "adp": 58.4,
+   "adp_2qb": 74.9
   },
   {
    "sleeper_id": "12502",
@@ -974,7 +965,7 @@
    "team": "TEN",
    "points": 158.8,
    "adp": 244.1,
-   "adp_2qb": 215.0
+   "adp_2qb": 224.8
   },
   {
    "sleeper_id": "11628",
@@ -982,8 +973,8 @@
    "position": "WR",
    "team": "ARI",
    "points": 155.2,
-   "adp": 73.9,
-   "adp_2qb": 89.6
+   "adp": 73.3,
+   "adp_2qb": 87.5
   },
   {
    "sleeper_id": "7611",
@@ -991,8 +982,8 @@
    "position": "RB",
    "team": "NE",
    "points": 154.5,
-   "adp": 71.6,
-   "adp_2qb": 92.5
+   "adp": 69.8,
+   "adp_2qb": 89.1
   },
   {
    "sleeper_id": "7600",
@@ -1001,7 +992,7 @@
    "team": "PIT",
    "points": 153.9,
    "adp": 230.3,
-   "adp_2qb": 229.5
+   "adp_2qb": 224.3
   },
   {
    "sleeper_id": "12529",
@@ -1009,8 +1000,8 @@
    "position": "RB",
    "team": "NE",
    "points": 153.5,
-   "adp": 56.9,
-   "adp_2qb": 68.9
+   "adp": 59.1,
+   "adp_2qb": 71.6
   },
   {
    "sleeper_id": "3257",
@@ -1019,7 +1010,7 @@
    "team": "ARI",
    "points": 153.0,
    "adp": 251.2,
-   "adp_2qb": 149.2
+   "adp_2qb": 166.6
   },
   {
    "sleeper_id": "8228",
@@ -1027,8 +1018,8 @@
    "position": "RB",
    "team": "PIT",
    "points": 152.6,
-   "adp": 67.5,
-   "adp_2qb": 84.7
+   "adp": 67.7,
+   "adp_2qb": 85.7
   },
   {
    "sleeper_id": "5846",
@@ -1036,8 +1027,8 @@
    "position": "WR",
    "team": "PIT",
    "points": 152.3,
-   "adp": 77.0,
-   "adp_2qb": 91.8
+   "adp": 78.1,
+   "adp_2qb": 92.5
   },
   {
    "sleeper_id": "8142",
@@ -1045,8 +1036,8 @@
    "position": "WR",
    "team": "IND",
    "points": 150.9,
-   "adp": 94.0,
-   "adp_2qb": 113.1
+   "adp": 93.1,
+   "adp_2qb": 109.2
   },
   {
    "sleeper_id": "8111",
@@ -1055,7 +1046,7 @@
    "team": "TB",
    "points": 148.8,
    "adp": 246.0,
-   "adp_2qb": 232.5
+   "adp_2qb": 229.3
   },
   {
    "sleeper_id": "4983",
@@ -1063,8 +1054,8 @@
    "position": "WR",
    "team": "BUF",
    "points": 147.5,
-   "adp": 52.9,
-   "adp_2qb": 70.9
+   "adp": 49.5,
+   "adp_2qb": 68.9
   },
   {
    "sleeper_id": "6806",
@@ -1072,8 +1063,8 @@
    "position": "RB",
    "team": "DEN",
    "points": 147.2,
-   "adp": 85.1,
-   "adp_2qb": 105.4
+   "adp": 84.0,
+   "adp_2qb": 102.5
   },
   {
    "sleeper_id": "5967",
@@ -1081,8 +1072,8 @@
    "position": "RB",
    "team": "TEN",
    "points": 146.1,
-   "adp": 78.1,
-   "adp_2qb": 97.6
+   "adp": 76.6,
+   "adp_2qb": 97.4
   },
   {
    "sleeper_id": "2505",
@@ -1091,7 +1082,7 @@
    "team": "CAR",
    "points": 146.1,
    "adp": 680.2,
-   "adp_2qb": 228.8
+   "adp_2qb": 223.8
   },
   {
    "sleeper_id": "13279",
@@ -1099,8 +1090,8 @@
    "position": "WR",
    "team": "TEN",
    "points": 144.8,
-   "adp": 68.1,
-   "adp_2qb": 80.0
+   "adp": 70.8,
+   "adp_2qb": 84.9
   },
   {
    "sleeper_id": "5045",
@@ -1108,8 +1099,8 @@
    "position": "WR",
    "team": "DEN",
    "points": 144.8,
-   "adp": 80.2,
-   "adp_2qb": 95.7
+   "adp": 81.0,
+   "adp_2qb": 96.4
   },
   {
    "sleeper_id": "8408",
@@ -1117,8 +1108,8 @@
    "position": "RB",
    "team": "MIN",
    "points": 143.7,
-   "adp": 95.2,
-   "adp_2qb": 118.5
+   "adp": 91.2,
+   "adp_2qb": 116.4
   },
   {
    "sleeper_id": "12534",
@@ -1126,8 +1117,8 @@
    "position": "RB",
    "team": "CHI",
    "points": 143.1,
-   "adp": 96.6,
-   "adp_2qb": 114.2
+   "adp": 100.8,
+   "adp_2qb": 115.1
   },
   {
    "sleeper_id": "7021",
@@ -1135,8 +1126,8 @@
    "position": "RB",
    "team": "PIT",
    "points": 142.1,
-   "adp": 83.2,
-   "adp_2qb": 100.7
+   "adp": 82.1,
+   "adp_2qb": 98.1
   },
   {
    "sleeper_id": "9756",
@@ -1144,8 +1135,8 @@
    "position": "WR",
    "team": "MIN",
    "points": 141.7,
-   "adp": 100.4,
-   "adp_2qb": 116.3
+   "adp": 102.3,
+   "adp_2qb": 114.9
   },
   {
    "sleeper_id": "12501",
@@ -1153,8 +1144,17 @@
    "position": "WR",
    "team": "GB",
    "points": 141.0,
-   "adp": 119.7,
-   "adp_2qb": 133.5
+   "adp": 118.8,
+   "adp_2qb": 130.4
+  },
+  {
+   "sleeper_id": "5859",
+   "name": "A.J. Brown",
+   "position": "WR",
+   "team": "NE",
+   "points": 140.0,
+   "adp": 19.2,
+   "adp_2qb": 23.6
   },
   {
    "sleeper_id": "4037",
@@ -1162,8 +1162,8 @@
    "position": "WR",
    "team": "TB",
    "points": 139.6,
-   "adp": 90.0,
-   "adp_2qb": 102.7
+   "adp": 88.7,
+   "adp_2qb": 101.5
   },
   {
    "sleeper_id": "13294",
@@ -1171,8 +1171,8 @@
    "position": "WR",
    "team": "PHI",
    "points": 138.5,
-   "adp": 88.6,
-   "adp_2qb": 104.2
+   "adp": 89.7,
+   "adp_2qb": 105.3
   },
   {
    "sleeper_id": "11583",
@@ -1180,8 +1180,8 @@
    "position": "RB",
    "team": "CAR",
    "points": 137.9,
-   "adp": 87.0,
-   "adp_2qb": 109.4
+   "adp": 87.8,
+   "adp_2qb": 107.4
   },
   {
    "sleeper_id": "9500",
@@ -1189,8 +1189,8 @@
    "position": "WR",
    "team": "IND",
    "points": 137.3,
-   "adp": 112.2,
-   "adp_2qb": 125.4
+   "adp": 114.6,
+   "adp_2qb": 125.2
   },
   {
    "sleeper_id": "5947",
@@ -1198,8 +1198,8 @@
    "position": "WR",
    "team": "JAX",
    "points": 137.3,
-   "adp": 132.5,
-   "adp_2qb": 130.4
+   "adp": 134.2,
+   "adp_2qb": 133.9
   },
   {
    "sleeper_id": "11581",
@@ -1207,8 +1207,8 @@
    "position": "RB",
    "team": "GB",
    "points": 137.0,
-   "adp": 136.4,
-   "adp_2qb": 163.8
+   "adp": 98.3,
+   "adp_2qb": 142.6
   },
   {
    "sleeper_id": "7594",
@@ -1216,8 +1216,8 @@
    "position": "RB",
    "team": "CAR",
    "points": 136.9,
-   "adp": 79.3,
-   "adp_2qb": 101.4
+   "adp": 80.1,
+   "adp_2qb": 103.1
   },
   {
    "sleeper_id": "10232",
@@ -1225,8 +1225,8 @@
    "position": "WR",
    "team": "ARI",
    "points": 136.5,
-   "adp": 89.4,
-   "adp_2qb": 98.6
+   "adp": 89.6,
+   "adp_2qb": 100.9
   },
   {
    "sleeper_id": "6819",
@@ -1234,8 +1234,8 @@
    "position": "WR",
    "team": "PIT",
    "points": 136.4,
-   "adp": 103.4,
-   "adp_2qb": 121.9
+   "adp": 107.3,
+   "adp_2qb": 120.6
   },
   {
    "sleeper_id": "11646",
@@ -1243,8 +1243,8 @@
    "position": "WR",
    "team": "CAR",
    "points": 135.9,
-   "adp": 145.5,
-   "adp_2qb": 152.7
+   "adp": 143.8,
+   "adp_2qb": 152.0
   },
   {
    "sleeper_id": "8126",
@@ -1252,8 +1252,8 @@
    "position": "WR",
    "team": "TEN",
    "points": 135.2,
-   "adp": 120.6,
-   "adp_2qb": 129.6
+   "adp": 123.6,
+   "adp_2qb": 129.8
   },
   {
    "sleeper_id": "8134",
@@ -1261,8 +1261,8 @@
    "position": "WR",
    "team": "BUF",
    "points": 135.2,
-   "adp": 152.6,
-   "adp_2qb": 151.6
+   "adp": 151.6,
+   "adp_2qb": 154.5
   },
   {
    "sleeper_id": "11559",
@@ -1271,7 +1271,7 @@
    "team": "ATL",
    "points": 135.16,
    "adp": 694.7,
-   "adp_2qb": 206.5
+   "adp_2qb": 206.7
   },
   {
    "sleeper_id": "9754",
@@ -1279,8 +1279,8 @@
    "position": "WR",
    "team": "LAC",
    "points": 134.9,
-   "adp": 102.6,
-   "adp_2qb": 125.1
+   "adp": 103.4,
+   "adp_2qb": 121.4
   },
   {
    "sleeper_id": "8172",
@@ -1289,7 +1289,7 @@
    "team": "MIA",
    "points": 134.4,
    "adp": 242.8,
-   "adp_2qb": 231.3
+   "adp_2qb": 228.3
   },
   {
    "sleeper_id": "11624",
@@ -1297,8 +1297,8 @@
    "position": "WR",
    "team": "KC",
    "points": 134.0,
-   "adp": 127.4,
-   "adp_2qb": 134.4
+   "adp": 129.4,
+   "adp_2qb": 134.9
   },
   {
    "sleeper_id": "8121",
@@ -1306,8 +1306,8 @@
    "position": "WR",
    "team": "NE",
    "points": 132.7,
-   "adp": 128.4,
-   "adp_2qb": 136.2
+   "adp": 130.3,
+   "adp_2qb": 134.3
   },
   {
    "sleeper_id": "7567",
@@ -1315,8 +1315,17 @@
    "position": "RB",
    "team": "TB",
    "points": 128.8,
-   "adp": 107.4,
-   "adp_2qb": 124.7
+   "adp": 106.9,
+   "adp_2qb": 122.7
+  },
+  {
+   "sleeper_id": "5850",
+   "name": "Josh Jacobs",
+   "position": "RB",
+   "team": "GB",
+   "points": 127.9,
+   "adp": 52.1,
+   "adp_2qb": 60.2
   },
   {
    "sleeper_id": "11586",
@@ -1324,8 +1333,8 @@
    "position": "RB",
    "team": "LAR",
    "points": 127.8,
-   "adp": 92.3,
-   "adp_2qb": 112.2
+   "adp": 92.7,
+   "adp_2qb": 111.5
   },
   {
    "sleeper_id": "5872",
@@ -1333,8 +1342,8 @@
    "position": "WR",
    "team": "SF",
    "points": 127.7,
-   "adp": 131.2,
-   "adp_2qb": 137.0
+   "adp": 133.3,
+   "adp_2qb": 136.4
   },
   {
    "sleeper_id": "13298",
@@ -1342,8 +1351,8 @@
    "position": "WR",
    "team": "CLE",
    "points": 127.4,
-   "adp": 111.9,
-   "adp_2qb": 128.1
+   "adp": 110.9,
+   "adp_2qb": 127.6
   },
   {
    "sleeper_id": "4993",
@@ -1352,7 +1361,7 @@
    "team": "CIN",
    "points": 125.9,
    "adp": 659.6,
-   "adp_2qb": 251.1
+   "adp_2qb": 260.3
   },
   {
    "sleeper_id": "12489",
@@ -1360,8 +1369,8 @@
    "position": "RB",
    "team": "DEN",
    "points": 125.6,
-   "adp": 82.4,
-   "adp_2qb": 88.3
+   "adp": 85.7,
+   "adp_2qb": 91.9
   },
   {
    "sleeper_id": "2449",
@@ -1369,8 +1378,8 @@
    "position": "WR",
    "team": "WAS",
    "points": 125.3,
-   "adp": 110.8,
-   "adp_2qb": 122.2
+   "adp": 109.2,
+   "adp_2qb": 118.8
   },
   {
    "sleeper_id": "10219",
@@ -1378,8 +1387,8 @@
    "position": "RB",
    "team": "JAX",
    "points": 125.0,
-   "adp": 125.8,
-   "adp_2qb": 150.1
+   "adp": 126.0,
+   "adp_2qb": 151.5
   },
   {
    "sleeper_id": "13330",
@@ -1387,8 +1396,8 @@
    "position": "TE",
    "team": "NYJ",
    "points": 120.2,
-   "adp": 193.7,
-   "adp_2qb": 176.5
+   "adp": 192.2,
+   "adp_2qb": 177.0
   },
   {
    "sleeper_id": "4199",
@@ -1396,8 +1405,8 @@
    "position": "RB",
    "team": "MIN",
    "points": 120.1,
-   "adp": 116.9,
-   "adp_2qb": 134.6
+   "adp": 115.2,
+   "adp_2qb": 132.9
   },
   {
    "sleeper_id": "12533",
@@ -1405,8 +1414,8 @@
    "position": "RB",
    "team": "WAS",
    "points": 118.4,
-   "adp": 98.1,
-   "adp_2qb": 127.7
+   "adp": 101.0,
+   "adp_2qb": 125.8
   },
   {
    "sleeper_id": "12487",
@@ -1414,8 +1423,8 @@
    "position": "TE",
    "team": "LAR",
    "points": 117.8,
-   "adp": 206.2,
-   "adp_2qb": 205.4
+   "adp": 202.7,
+   "adp_2qb": 202.1
   },
   {
    "sleeper_id": "12498",
@@ -1424,7 +1433,7 @@
    "team": "NYJ",
    "points": 116.4,
    "adp": 667.6,
-   "adp_2qb": 257.0
+   "adp_2qb": 269.1
   },
   {
    "sleeper_id": "8676",
@@ -1432,8 +1441,8 @@
    "position": "WR",
    "team": "SEA",
    "points": 115.6,
-   "adp": 150.8,
-   "adp_2qb": 155.8
+   "adp": 149.2,
+   "adp_2qb": 156.1
   },
   {
    "sleeper_id": "8136",
@@ -1441,8 +1450,8 @@
    "position": "RB",
    "team": "WAS",
    "points": 111.1,
-   "adp": 123.1,
-   "adp_2qb": 138.6
+   "adp": 125.9,
+   "adp_2qb": 137.3
   },
   {
    "sleeper_id": "13346",
@@ -1450,8 +1459,8 @@
    "position": "WR",
    "team": "CLE",
    "points": 108.2,
-   "adp": 170.2,
-   "adp_2qb": 179.2
+   "adp": 169.5,
+   "adp_2qb": 179.0
   },
   {
    "sleeper_id": "8180",
@@ -1459,8 +1468,8 @@
    "position": "WR",
    "team": "LV",
    "points": 107.6,
-   "adp": 167.1,
-   "adp_2qb": 179.7
+   "adp": 170.5,
+   "adp_2qb": 181.9
   },
   {
    "sleeper_id": "11610",
@@ -1468,8 +1477,8 @@
    "position": "WR",
    "team": "MIA",
    "points": 107.3,
-   "adp": 179.5,
-   "adp_2qb": 201.4
+   "adp": 178.6,
+   "adp_2qb": 197.2
   },
   {
    "sleeper_id": "13417",
@@ -1477,8 +1486,8 @@
    "position": "WR",
    "team": "SF",
    "points": 105.4,
-   "adp": 116.4,
-   "adp_2qb": 132.0
+   "adp": 112.6,
+   "adp_2qb": 128.6
   },
   {
    "sleeper_id": "11618",
@@ -1486,8 +1495,8 @@
    "position": "WR",
    "team": "TB",
    "points": 105.4,
-   "adp": 210.7,
-   "adp_2qb": 214.0
+   "adp": 213.0,
+   "adp_2qb": 213.4
   },
   {
    "sleeper_id": "9504",
@@ -1495,8 +1504,8 @@
    "position": "WR",
    "team": "HOU",
    "points": 104.7,
-   "adp": 177.3,
-   "adp_2qb": 204.2
+   "adp": 175.5,
+   "adp_2qb": 199.5
   },
   {
    "sleeper_id": "13276",
@@ -1504,8 +1513,8 @@
    "position": "WR",
    "team": "NYJ",
    "points": 104.6,
-   "adp": 197.5,
-   "adp_2qb": 187.1
+   "adp": 195.0,
+   "adp_2qb": 208.7
   },
   {
    "sleeper_id": "10213",
@@ -1513,8 +1522,8 @@
    "position": "WR",
    "team": "LV",
    "points": 102.9,
-   "adp": 181.5,
-   "adp_2qb": 203.6
+   "adp": 182.6,
+   "adp_2qb": 204.9
   },
   {
    "sleeper_id": "9479",
@@ -1523,7 +1532,7 @@
    "team": "PIT",
    "points": 101.6,
    "adp": 674.8,
-   "adp_2qb": 281.9
+   "adp_2qb": 276.6
   },
   {
    "sleeper_id": "11655",
@@ -1531,8 +1540,8 @@
    "position": "RB",
    "team": "NYG",
    "points": 100.8,
-   "adp": 152.1,
-   "adp_2qb": 160.3
+   "adp": 152.9,
+   "adp_2qb": 182.6
   },
   {
    "sleeper_id": "6783",
@@ -1540,8 +1549,8 @@
    "position": "WR",
    "team": "CLE",
    "points": 98.1,
-   "adp": 211.6,
-   "adp_2qb": 217.4
+   "adp": 212.5,
+   "adp_2qb": 217.8
   },
   {
    "sleeper_id": "9482",
@@ -1550,7 +1559,7 @@
    "team": "LV",
    "points": 97.8,
    "adp": 695.9,
-   "adp_2qb": 284.6
+   "adp_2qb": 280.2
   },
   {
    "sleeper_id": "11783",
@@ -1559,7 +1568,7 @@
    "team": "DAL",
    "points": 97.7,
    "adp": 231.7,
-   "adp_2qb": 238.0
+   "adp_2qb": 237.3
   },
   {
    "sleeper_id": "9508",
@@ -1567,8 +1576,8 @@
    "position": "RB",
    "team": "TEN",
    "points": 97.1,
-   "adp": 168.6,
-   "adp_2qb": 181.6
+   "adp": 168.0,
+   "adp_2qb": 179.7
   },
   {
    "sleeper_id": "13349",
@@ -1577,7 +1586,7 @@
    "team": "PHI",
    "points": 96.9,
    "adp": 248.9,
-   "adp_2qb": 251.2
+   "adp_2qb": 249.3
   },
   {
    "sleeper_id": "6826",
@@ -1595,7 +1604,7 @@
    "team": "CLE",
    "points": 96.06,
    "adp": 655.5,
-   "adp_2qb": 202.4
+   "adp_2qb": 203.0
   },
   {
    "sleeper_id": "12509",
@@ -1603,7 +1612,7 @@
    "position": "WR",
    "team": "LAC",
    "points": 93.4,
-   "adp": 229.3,
+   "adp": 228.2,
    "adp_2qb": 242.6
   },
   {
@@ -1613,7 +1622,7 @@
    "team": "NYG",
    "points": 92.5,
    "adp": 262.8,
-   "adp_2qb": 292.8
+   "adp_2qb": 290.0
   },
   {
    "sleeper_id": "12524",
@@ -1622,7 +1631,7 @@
    "team": "CLE",
    "points": 92.12,
    "adp": 682.2,
-   "adp_2qb": 211.9
+   "adp_2qb": 211.7
   },
   {
    "sleeper_id": "6865",
@@ -1631,7 +1640,7 @@
    "team": "LAR",
    "points": 90.8,
    "adp": 261.8,
-   "adp_2qb": 255.0
+   "adp_2qb": 265.1
   },
   {
    "sleeper_id": "13281",
@@ -1639,8 +1648,8 @@
    "position": "WR",
    "team": "NO",
    "points": 90.5,
-   "adp": 109.7,
-   "adp_2qb": 107.7
+   "adp": 120.1,
+   "adp_2qb": 123.1
   },
   {
    "sleeper_id": "5906",
@@ -1658,7 +1667,7 @@
    "team": "NO",
    "points": 89.6,
    "adp": 680.1,
-   "adp_2qb": 239.3
+   "adp_2qb": 236.2
   },
   {
    "sleeper_id": "13305",
@@ -1666,8 +1675,8 @@
    "position": "RB",
    "team": "LV",
    "points": 89.5,
-   "adp": 137.0,
-   "adp_2qb": 146.7
+   "adp": 122.4,
+   "adp_2qb": 148.5
   },
   {
    "sleeper_id": "9511",
@@ -1675,8 +1684,8 @@
    "position": "RB",
    "team": "LAC",
    "points": 87.9,
-   "adp": 165.7,
-   "adp_2qb": 183.8
+   "adp": 167.8,
+   "adp_2qb": 183.9
   },
   {
    "sleeper_id": "13293",
@@ -1684,8 +1693,8 @@
    "position": "WR",
    "team": "BAL",
    "points": 87.4,
-   "adp": 143.4,
-   "adp_2qb": 175.0
+   "adp": 147.7,
+   "adp_2qb": 159.7
   },
   {
    "sleeper_id": "6768",
@@ -1694,7 +1703,7 @@
    "team": "ATL",
    "points": 86.96,
    "adp": 258.4,
-   "adp_2qb": 197.8
+   "adp_2qb": 196.6
   },
   {
    "sleeper_id": "12521",
@@ -1703,7 +1712,7 @@
    "team": "SEA",
    "points": 86.7,
    "adp": 667.7,
-   "adp_2qb": 276.1
+   "adp_2qb": 278.3
   },
   {
    "sleeper_id": "13285",
@@ -1711,8 +1720,8 @@
    "position": "WR",
    "team": "NYG",
    "points": 86.2,
-   "adp": 199.2,
-   "adp_2qb": 209.0
+   "adp": 200.3,
+   "adp_2qb": 206.4
   },
   {
    "sleeper_id": "7049",
@@ -1720,8 +1729,8 @@
    "position": "WR",
    "team": "MIN",
    "points": 86.2,
-   "adp": 213.1,
-   "adp_2qb": 213.2
+   "adp": 231.5,
+   "adp_2qb": 215.9
   },
   {
    "sleeper_id": "4066",
@@ -1730,7 +1739,7 @@
    "team": "DEN",
    "points": 86.2,
    "adp": 699.6,
-   "adp_2qb": 244.9
+   "adp_2qb": 260.2
   },
   {
    "sleeper_id": "8698",
@@ -1739,7 +1748,7 @@
    "team": "SF",
    "points": 85.8,
    "adp": 253.0,
-   "adp_2qb": 256.8
+   "adp_2qb": 266.0
   },
   {
    "sleeper_id": "1479",
@@ -1747,8 +1756,8 @@
    "position": "WR",
    "team": "IND",
    "points": 84.8,
-   "adp": 178.3,
-   "adp_2qb": 197.6
+   "adp": 179.5,
+   "adp_2qb": 200.5
   },
   {
    "sleeper_id": "7571",
@@ -1757,7 +1766,7 @@
    "team": "BAL",
    "points": 84.3,
    "adp": 700.9,
-   "adp_2qb": 273.9
+   "adp_2qb": 268.4
   },
   {
    "sleeper_id": "13274",
@@ -1766,7 +1775,7 @@
    "team": "PIT",
    "points": 80.9,
    "adp": 241.4,
-   "adp_2qb": 245.1
+   "adp_2qb": 244.9
   },
   {
    "sleeper_id": "11625",
@@ -1774,17 +1783,8 @@
    "position": "WR",
    "team": "NYJ",
    "points": 80.8,
-   "adp": 223.2,
-   "adp_2qb": 237.4
-  },
-  {
-   "sleeper_id": "5850",
-   "name": "Josh Jacobs",
-   "position": "RB",
-   "team": "GB",
-   "points": 80.2,
-   "adp": 38.7,
-   "adp_2qb": 44.6
+   "adp": 221.3,
+   "adp_2qb": 235.1
   },
   {
    "sleeper_id": "13317",
@@ -1793,16 +1793,16 @@
    "team": "TB",
    "points": 79.9,
    "adp": 239.6,
-   "adp_2qb": 254.9
+   "adp_2qb": 263.2
   },
   {
    "sleeper_id": "12530",
    "name": "Travis Hunter",
-   "position": "WR",
+   "position": "DB",
    "team": "JAX",
    "points": 79.1,
-   "adp": 188.3,
-   "adp_2qb": 185.1
+   "adp": 193.9,
+   "adp_2qb": 186.9
   },
   {
    "sleeper_id": "12492",
@@ -1810,8 +1810,8 @@
    "position": "WR",
    "team": "DEN",
    "points": 78.9,
-   "adp": 226.5,
-   "adp_2qb": 240.5
+   "adp": 224.5,
+   "adp_2qb": 240.8
   },
   {
    "sleeper_id": "13296",
@@ -1819,8 +1819,8 @@
    "position": "WR",
    "team": "MIA",
    "points": 77.8,
-   "adp": 201.5,
-   "adp_2qb": 196.5
+   "adp": 203.3,
+   "adp_2qb": 194.3
   },
   {
    "sleeper_id": "13413",
@@ -1828,8 +1828,8 @@
    "position": "WR",
    "team": "KC",
    "points": 77.5,
-   "adp": 182.0,
-   "adp_2qb": 200.2
+   "adp": 183.8,
+   "adp_2qb": 201.2
   },
   {
    "sleeper_id": "12469",
@@ -1837,8 +1837,8 @@
    "position": "RB",
    "team": "CLE",
    "points": 77.2,
-   "adp": 195.1,
-   "adp_2qb": 208.2
+   "adp": 191.9,
+   "adp_2qb": 209.6
   },
   {
    "sleeper_id": "3321",
@@ -1846,8 +1846,8 @@
    "position": "WR",
    "team": null,
    "points": 77.2,
-   "adp": 232.9,
-   "adp_2qb": 248.2
+   "adp": 226.4,
+   "adp_2qb": 246.5
   },
   {
    "sleeper_id": "12497",
@@ -1856,7 +1856,7 @@
    "team": "SEA",
    "points": 76.5,
    "adp": 260.2,
-   "adp_2qb": 287.7
+   "adp_2qb": 286.2
   },
   {
    "sleeper_id": "10226",
@@ -1873,8 +1873,8 @@
    "position": "RB",
    "team": "HOU",
    "points": 74.3,
-   "adp": 141.9,
-   "adp_2qb": 154.3
+   "adp": 134.2,
+   "adp_2qb": 155.4
   },
   {
    "sleeper_id": "13434",
@@ -1891,7 +1891,7 @@
    "position": "WR",
    "team": "DET",
    "points": 73.1,
-   "adp": 235.0,
+   "adp": 229.5,
    "adp_2qb": 241.7
   },
   {
@@ -1900,8 +1900,8 @@
    "position": "RB",
    "team": "ARI",
    "points": 72.7,
-   "adp": 130.9,
-   "adp_2qb": 139.6
+   "adp": 131.5,
+   "adp_2qb": 138.8
   },
   {
    "sleeper_id": "11637",
@@ -1910,7 +1910,7 @@
    "team": "BUF",
    "points": 71.3,
    "adp": 242.2,
-   "adp_2qb": 274.1
+   "adp_2qb": 273.8
   },
   {
    "sleeper_id": "7828",
@@ -1927,8 +1927,8 @@
    "position": "WR",
    "team": "SEA",
    "points": 70.4,
-   "adp": 203.7,
-   "adp_2qb": 233.1
+   "adp": 206.8,
+   "adp_2qb": 226.0
   },
   {
    "sleeper_id": "12540",
@@ -1937,7 +1937,7 @@
    "team": "TEN",
    "points": 70.4,
    "adp": 657.8,
-   "adp_2qb": 285.2
+   "adp_2qb": 282.7
   },
   {
    "sleeper_id": "4033",
@@ -1945,14 +1945,14 @@
    "position": "TE",
    "team": "LAC",
    "points": 69.5,
-   "adp": 224.6,
-   "adp_2qb": 218.6
+   "adp": 223.3,
+   "adp_2qb": 230.0
   },
   {
    "sleeper_id": "13400",
    "name": "Justin Joly",
    "position": "TE",
-   "team": null,
+   "team": "MIA",
    "points": 69.5,
    "adp": 683.8,
    "adp_2qb": 300.8
@@ -1973,7 +1973,16 @@
    "team": "HOU",
    "points": 69.2,
    "adp": 664.2,
-   "adp_2qb": 269.9
+   "adp_2qb": 271.2
+  },
+  {
+   "sleeper_id": "13414",
+   "name": "Kaelon Black",
+   "position": "RB",
+   "team": "SF",
+   "points": 67.2,
+   "adp": 161.9,
+   "adp_2qb": 191.7
   },
   {
    "sleeper_id": "13278",
@@ -2000,7 +2009,7 @@
    "team": "TEN",
    "points": 63.8,
    "adp": 250.7,
-   "adp_2qb": 259.2
+   "adp_2qb": 269.8
   },
   {
    "sleeper_id": "13282",
@@ -2017,8 +2026,8 @@
    "position": "WR",
    "team": "ATL",
    "points": 63.5,
-   "adp": 231.0,
-   "adp_2qb": 220.1
+   "adp": 229.3,
+   "adp_2qb": 238.4
   },
   {
    "sleeper_id": "8154",
@@ -2026,23 +2035,14 @@
    "position": "RB",
    "team": "ATL",
    "points": 63.4,
-   "adp": 174.1,
-   "adp_2qb": 159.8
-  },
-  {
-   "sleeper_id": "8800",
-   "name": "Malik Davis",
-   "position": "RB",
-   "team": "DAL",
-   "points": 63.4,
-   "adp": 629.7,
-   "adp_2qb": 999.0
+   "adp": 170.5,
+   "adp_2qb": 160.3
   },
   {
    "sleeper_id": "6149",
    "name": "Darius Slayton",
    "position": "WR",
-   "team": "NYG",
+   "team": null,
    "points": 63.3,
    "adp": 668.0,
    "adp_2qb": 299.8
@@ -2054,7 +2054,7 @@
    "team": "LV",
    "points": 62.9,
    "adp": 676.7,
-   "adp_2qb": 287.6
+   "adp_2qb": 284.8
   },
   {
    "sleeper_id": "4147",
@@ -2063,7 +2063,7 @@
    "team": "CIN",
    "points": 62.8,
    "adp": 629.6,
-   "adp_2qb": 269.1
+   "adp_2qb": 264.9
   },
   {
    "sleeper_id": "4454",
@@ -2080,8 +2080,8 @@
    "position": "RB",
    "team": "SEA",
    "points": 61.7,
-   "adp": 142.7,
-   "adp_2qb": 156.8
+   "adp": 143.1,
+   "adp_2qb": 157.5
   },
   {
    "sleeper_id": "9225",
@@ -2089,8 +2089,8 @@
    "position": "RB",
    "team": "PHI",
    "points": 61.2,
-   "adp": 163.0,
-   "adp_2qb": 186.5
+   "adp": 152.5,
+   "adp_2qb": 185.7
   },
   {
    "sleeper_id": "13301",
@@ -2099,7 +2099,7 @@
    "team": "WAS",
    "points": 61.2,
    "adp": 238.2,
-   "adp_2qb": 246.4
+   "adp_2qb": 248.1
   },
   {
    "sleeper_id": "8917",
@@ -2117,7 +2117,7 @@
    "team": "NYG",
    "points": 60.9,
    "adp": 259.3,
-   "adp_2qb": 291.6
+   "adp_2qb": 287.2
   },
   {
    "sleeper_id": "6271",
@@ -2134,8 +2134,17 @@
    "position": "RB",
    "team": "BUF",
    "points": 60.6,
-   "adp": 205.6,
-   "adp_2qb": 236.7
+   "adp": 208.6,
+   "adp_2qb": 233.4
+  },
+  {
+   "sleeper_id": "3286",
+   "name": "Demarcus Robinson",
+   "position": "WR",
+   "team": "SF",
+   "points": 59.9,
+   "adp": 679.0,
+   "adp_2qb": 999.0
   },
   {
    "sleeper_id": "13337",
@@ -2143,8 +2152,8 @@
    "position": "RB",
    "team": "KC",
    "points": 59.2,
-   "adp": 183.3,
-   "adp_2qb": 206.7
+   "adp": 176.8,
+   "adp_2qb": 205.9
   },
   {
    "sleeper_id": "13345",
@@ -2152,8 +2161,8 @@
    "position": "RB",
    "team": "DEN",
    "points": 58.9,
-   "adp": 147.9,
-   "adp_2qb": 158.6
+   "adp": 145.8,
+   "adp_2qb": 158.9
   },
   {
    "sleeper_id": "8119",
@@ -2170,8 +2179,8 @@
    "position": "RB",
    "team": "TEN",
    "points": 57.7,
-   "adp": 212.4,
-   "adp_2qb": 219.9
+   "adp": 214.0,
+   "adp_2qb": 233.6
   },
   {
    "sleeper_id": "9486",
@@ -2179,8 +2188,8 @@
    "position": "WR",
    "team": "PHI",
    "points": 57.4,
-   "adp": 202.8,
-   "adp_2qb": 212.1
+   "adp": 204.3,
+   "adp_2qb": 210.8
   },
   {
    "sleeper_id": "9494",
@@ -2197,8 +2206,8 @@
    "position": "RB",
    "team": "BAL",
    "points": 55.7,
-   "adp": 218.2,
-   "adp_2qb": 247.8
+   "adp": 220.3,
+   "adp_2qb": 239.9
   },
   {
    "sleeper_id": "5848",
@@ -2215,17 +2224,8 @@
    "position": "WR",
    "team": "MIA",
    "points": 54.7,
-   "adp": 215.3,
-   "adp_2qb": 233.3
-  },
-  {
-   "sleeper_id": "12467",
-   "name": "Jordan James",
-   "position": "RB",
-   "team": "SF",
-   "points": 54.2,
-   "adp": 222.0,
-   "adp_2qb": 272.2
+   "adp": 197.9,
+   "adp_2qb": 221.1
   },
   {
    "sleeper_id": "11627",
@@ -2234,7 +2234,7 @@
    "team": "DEN",
    "points": 54.1,
    "adp": 263.6,
-   "adp_2qb": 286.7
+   "adp_2qb": 284.1
   },
   {
    "sleeper_id": "11626",
@@ -2260,8 +2260,8 @@
    "position": "RB",
    "team": "NO",
    "points": 53.0,
-   "adp": 159.5,
-   "adp_2qb": 182.1
+   "adp": 165.2,
+   "adp_2qb": 184.1
   },
   {
    "sleeper_id": "11647",
@@ -2269,8 +2269,8 @@
    "position": "RB",
    "team": "LAC",
    "points": 53.0,
-   "adp": 228.2,
-   "adp_2qb": 242.9
+   "adp": 227.2,
+   "adp_2qb": 245.3
   },
   {
    "sleeper_id": "13402",
@@ -2279,7 +2279,7 @@
    "team": "BUF",
    "points": 52.6,
    "adp": 691.0,
-   "adp_2qb": 278.0
+   "adp_2qb": 267.8
   },
   {
    "sleeper_id": "8188",
@@ -2297,7 +2297,7 @@
    "team": "PHI",
    "points": 52.1,
    "adp": 233.1,
-   "adp_2qb": 249.1
+   "adp_2qb": 274.0
   },
   {
    "sleeper_id": "13533",
@@ -2323,8 +2323,8 @@
    "position": "RB",
    "team": "ARI",
    "points": 51.7,
-   "adp": 227.5,
-   "adp_2qb": 222.0
+   "adp": 224.4,
+   "adp_2qb": 242.7
   },
   {
    "sleeper_id": "11435",
@@ -2333,7 +2333,7 @@
    "team": "SEA",
    "points": 51.0,
    "adp": 265.7,
-   "adp_2qb": 293.8
+   "adp_2qb": 293.0
   },
   {
    "sleeper_id": "13272",
@@ -2342,7 +2342,7 @@
    "team": "ARI",
    "points": 50.92,
    "adp": 692.7,
-   "adp_2qb": 235.0
+   "adp_2qb": 232.3
   },
   {
    "sleeper_id": "10231",
@@ -2360,7 +2360,7 @@
    "team": "BAL",
    "points": 50.4,
    "adp": 695.8,
-   "adp_2qb": 290.5
+   "adp_2qb": 287.4
   },
   {
    "sleeper_id": "13329",
@@ -2370,6 +2370,15 @@
    "points": 50.1,
    "adp": 543.5,
    "adp_2qb": 999.0
+  },
+  {
+   "sleeper_id": "11199",
+   "name": "Emari Demercado",
+   "position": "RB",
+   "team": "DAL",
+   "points": 49.5,
+   "adp": 678.5,
+   "adp_2qb": 313.4
   },
   {
    "sleeper_id": "11370",
@@ -2395,8 +2404,8 @@
    "position": "RB",
    "team": "DET",
    "points": 48.6,
-   "adp": 176.8,
-   "adp_2qb": 188.2
+   "adp": 194.9,
+   "adp_2qb": 214.8
   },
   {
    "sleeper_id": "8225",
@@ -2414,7 +2423,7 @@
    "team": "TB",
    "points": 48.5,
    "adp": 249.2,
-   "adp_2qb": 260.4
+   "adp_2qb": 283.1
   },
   {
    "sleeper_id": "13319",
@@ -2449,8 +2458,8 @@
    "position": "RB",
    "team": "NYJ",
    "points": 47.2,
-   "adp": 186.6,
-   "adp_2qb": 215.5
+   "adp": 186.0,
+   "adp_2qb": 212.1
   },
   {
    "sleeper_id": "13411",
@@ -2477,7 +2486,7 @@
    "team": "TEN",
    "points": 46.7,
    "adp": 699.1,
-   "adp_2qb": 294.3
+   "adp_2qb": 293.3
   },
   {
    "sleeper_id": "8127",
@@ -2521,8 +2530,8 @@
    "position": "WR",
    "team": "HOU",
    "points": 43.4,
-   "adp": 194.2,
-   "adp_2qb": 210.4
+   "adp": 190.5,
+   "adp_2qb": 215.5
   },
   {
    "sleeper_id": "4144",
@@ -2530,7 +2539,7 @@
    "position": "TE",
    "team": "GB",
    "points": 43.4,
-   "adp": 661.4,
+   "adp": 695.2,
    "adp_2qb": 999.0
   },
   {
@@ -2540,7 +2549,7 @@
    "team": "WAS",
    "points": 41.9,
    "adp": 233.6,
-   "adp_2qb": 253.9
+   "adp_2qb": 250.1
   },
   {
    "sleeper_id": "6803",
@@ -2557,8 +2566,8 @@
    "position": "RB",
    "team": "MIA",
    "points": 41.1,
-   "adp": 225.0,
-   "adp_2qb": 275.7
+   "adp": 222.6,
+   "adp_2qb": 272.5
   },
   {
    "sleeper_id": "13401",
@@ -2579,15 +2588,6 @@
    "adp_2qb": 999.0
   },
   {
-   "sleeper_id": "11599",
-   "name": "Cade Stover",
-   "position": "TE",
-   "team": "HOU",
-   "points": 40.2,
-   "adp": 592.7,
-   "adp_2qb": 999.0
-  },
-  {
    "sleeper_id": "3202",
    "name": "Austin Hooper",
    "position": "TE",
@@ -2597,13 +2597,22 @@
    "adp_2qb": 999.0
   },
   {
+   "sleeper_id": "11599",
+   "name": "Cade Stover",
+   "position": "TE",
+   "team": "HOU",
+   "points": 40.2,
+   "adp": 682.7,
+   "adp_2qb": 999.0
+  },
+  {
    "sleeper_id": "13421",
    "name": "Eli Raridon",
    "position": "TE",
    "team": "NE",
    "points": 40.0,
    "adp": 695.1,
-   "adp_2qb": 283.2
+   "adp_2qb": 279.2
   },
   {
    "sleeper_id": "3271",
@@ -2622,15 +2631,6 @@
    "points": 39.8,
    "adp": 999.0,
    "adp_2qb": 999.0
-  },
-  {
-   "sleeper_id": "13414",
-   "name": "Kaelon Black",
-   "position": "RB",
-   "team": "SF",
-   "points": 39.3,
-   "adp": 161.2,
-   "adp_2qb": 194.1
   },
   {
    "sleeper_id": "8147",
@@ -2665,7 +2665,7 @@
    "position": "TE",
    "team": "WAS",
    "points": 38.3,
-   "adp": 620.3,
+   "adp": 659.5,
    "adp_2qb": 999.0
   },
   {
@@ -2687,19 +2687,19 @@
    "adp_2qb": 999.0
   },
   {
-   "sleeper_id": "13357",
-   "name": "Lance Mason",
-   "position": "TE",
-   "team": null,
-   "points": 38.1,
-   "adp": 999.0,
-   "adp_2qb": 999.0
-  },
-  {
    "sleeper_id": "13422",
    "name": "Jaren Kanak",
    "position": "TE",
    "team": "TEN",
+   "points": 38.1,
+   "adp": 677.5,
+   "adp_2qb": 999.0
+  },
+  {
+   "sleeper_id": "13357",
+   "name": "Lance Mason",
+   "position": "TE",
+   "team": null,
    "points": 38.1,
    "adp": 999.0,
    "adp_2qb": 999.0
@@ -2756,7 +2756,7 @@
    "team": "LV",
    "points": 36.16,
    "adp": 685.6,
-   "adp_2qb": 199.4
+   "adp_2qb": 192.9
   },
   {
    "sleeper_id": "13307",
@@ -2773,7 +2773,7 @@
    "position": "TE",
    "team": "DAL",
    "points": 35.4,
-   "adp": 999.0,
+   "adp": 633.5,
    "adp_2qb": 999.0
   },
   {
@@ -2828,7 +2828,7 @@
    "team": "IND",
    "points": 32.8,
    "adp": 692.6,
-   "adp_2qb": 268.4
+   "adp_2qb": 259.6
   },
   {
    "sleeper_id": "7891",
@@ -2846,7 +2846,7 @@
    "team": "KC",
    "points": 32.72,
    "adp": 683.5,
-   "adp_2qb": 277.4
+   "adp_2qb": 275.9
   },
   {
    "sleeper_id": "11570",
@@ -2912,24 +2912,6 @@
    "adp_2qb": 999.0
   },
   {
-   "sleeper_id": "3286",
-   "name": "Demarcus Robinson",
-   "position": "WR",
-   "team": "SF",
-   "points": 31.1,
-   "adp": 679.0,
-   "adp_2qb": 999.0
-  },
-  {
-   "sleeper_id": "11199",
-   "name": "Emari Demercado",
-   "position": "RB",
-   "team": "DAL",
-   "points": 30.8,
-   "adp": 678.5,
-   "adp_2qb": 313.4
-  },
-  {
    "sleeper_id": "12641",
    "name": "Jaylin Lane",
    "position": "WR",
@@ -2971,8 +2953,8 @@
    "position": "RB",
    "team": "GB",
    "points": 29.5,
-   "adp": 638.1,
-   "adp_2qb": 267.2
+   "adp": 196.6,
+   "adp_2qb": 257.6
   },
   {
    "sleeper_id": "12670",
@@ -2981,6 +2963,15 @@
    "team": "LAC",
    "points": 29.0,
    "adp": 647.5,
+   "adp_2qb": 999.0
+  },
+  {
+   "sleeper_id": "9227",
+   "name": "Israel Abanikanda",
+   "position": "RB",
+   "team": "DAL",
+   "points": 28.8,
+   "adp": 678.7,
    "adp_2qb": 999.0
   },
   {
@@ -3005,7 +2996,7 @@
    "sleeper_id": "12476",
    "name": "Devin Neal",
    "position": "RB",
-   "team": "NO",
+   "team": null,
    "points": 28.4,
    "adp": 685.9,
    "adp_2qb": 319.5
@@ -3036,6 +3027,15 @@
    "points": 27.7,
    "adp": 617.2,
    "adp_2qb": 999.0
+  },
+  {
+   "sleeper_id": "12467",
+   "name": "Jordan James",
+   "position": "RB",
+   "team": "SF",
+   "points": 27.4,
+   "adp": 221.9,
+   "adp_2qb": 278.2
   },
   {
    "sleeper_id": "12505",
@@ -3160,7 +3160,7 @@
    "position": "QB",
    "team": null,
    "points": 25.18,
-   "adp": 674.1,
+   "adp": 691.7,
    "adp_2qb": 654.8
   },
   {
@@ -3179,7 +3179,7 @@
    "team": "SF",
    "points": 24.72,
    "adp": 685.8,
-   "adp_2qb": 282.1
+   "adp_2qb": 281.8
   },
   {
    "sleeper_id": "13309",
@@ -3242,7 +3242,7 @@
    "team": "NYG",
    "points": 23.8,
    "adp": 657.2,
-   "adp_2qb": 227.8
+   "adp_2qb": 222.4
   },
   {
    "sleeper_id": "2197",
@@ -3259,8 +3259,8 @@
    "position": "RB",
    "team": "DET",
    "points": 23.5,
-   "adp": 492.8,
-   "adp_2qb": 417.7
+   "adp": 677.3,
+   "adp_2qb": 657.0
   },
   {
    "sleeper_id": "12455",
@@ -3296,7 +3296,7 @@
    "team": "SEA",
    "points": 23.2,
    "adp": 700.0,
-   "adp_2qb": 271.3
+   "adp_2qb": 262.6
   },
   {
    "sleeper_id": "2078",
@@ -3305,7 +3305,7 @@
    "team": "NYG",
    "points": 23.0,
    "adp": 690.4,
-   "adp_2qb": 266.1
+   "adp_2qb": 258.8
   },
   {
    "sleeper_id": "5086",
@@ -3332,7 +3332,7 @@
    "team": "MIN",
    "points": 22.8,
    "adp": 243.6,
-   "adp_2qb": 258.1
+   "adp_2qb": 278.0
   },
   {
    "sleeper_id": "2374",
@@ -3341,7 +3341,7 @@
    "team": null,
    "points": 22.8,
    "adp": 699.0,
-   "adp_2qb": 586.8
+   "adp_2qb": 489.3
   },
   {
    "sleeper_id": "4098",
@@ -3376,8 +3376,8 @@
    "position": "WR",
    "team": null,
    "points": 22.0,
-   "adp": 535.0,
-   "adp_2qb": 683.0
+   "adp": 461.0,
+   "adp_2qb": 659.5
   },
   {
    "sleeper_id": "13303",
@@ -3475,7 +3475,7 @@
    "position": "TE",
    "team": "CAR",
    "points": 19.7,
-   "adp": 626.3,
+   "adp": 681.3,
    "adp_2qb": 999.0
   },
   {
@@ -3493,7 +3493,7 @@
    "position": "TE",
    "team": "ARI",
    "points": 19.4,
-   "adp": 999.0,
+   "adp": 640.5,
    "adp_2qb": 661.5
   },
   {
@@ -3530,12 +3530,12 @@
    "team": "GB",
    "points": 17.3,
    "adp": 685.2,
-   "adp_2qb": 999.0
+   "adp_2qb": 662.7
   },
   {
    "sleeper_id": "8181",
    "name": "Connor Heyward",
-   "position": "TE",
+   "position": "RB",
    "team": "LV",
    "points": 16.7,
    "adp": 612.2,
@@ -3575,7 +3575,7 @@
    "team": "MIN",
    "points": 12.62,
    "adp": 653.9,
-   "adp_2qb": 278.6
+   "adp_2qb": 277.4
   },
   {
    "sleeper_id": "13275",
@@ -3584,7 +3584,7 @@
    "team": "LAR",
    "points": 12.62,
    "adp": 673.1,
-   "adp_2qb": 250.5
+   "adp_2qb": 247.5
   },
   {
    "sleeper_id": "7842",
@@ -3628,8 +3628,8 @@
    "position": "TE",
    "team": "PIT",
    "points": 12.1,
-   "adp": 640.4,
-   "adp_2qb": 544.8
+   "adp": 698.4,
+   "adp_2qb": 677.8
   },
   {
    "sleeper_id": "827",
@@ -3655,7 +3655,7 @@
    "position": "TE",
    "team": "NYJ",
    "points": 11.8,
-   "adp": 576.0,
+   "adp": 662.0,
    "adp_2qb": 598.0
   },
   {
@@ -3790,7 +3790,7 @@
    "position": "QB",
    "team": null,
    "points": 11.32,
-   "adp": 597.0,
+   "adp": 683.5,
    "adp_2qb": 674.2
   },
   {
@@ -3844,7 +3844,7 @@
    "position": "QB",
    "team": "CLE",
    "points": 10.86,
-   "adp": 522.0,
+   "adp": 604.0,
    "adp_2qb": 999.0
   },
   {
@@ -3889,7 +3889,7 @@
    "position": "QB",
    "team": "CIN",
    "points": 10.34,
-   "adp": 999.0,
+   "adp": 629.0,
    "adp_2qb": 999.0
   },
   {
@@ -3899,7 +3899,7 @@
    "team": "TB",
    "points": 10.1,
    "adp": 620.5,
-   "adp_2qb": 326.8
+   "adp_2qb": 485.2
   },
   {
    "sleeper_id": "8249",
@@ -3911,13 +3911,22 @@
    "adp_2qb": 999.0
   },
   {
+   "sleeper_id": "7536",
+   "name": "Quintin Morris",
+   "position": "TE",
+   "team": "JAX",
+   "points": 10.0,
+   "adp": 452.0,
+   "adp_2qb": 363.1
+  },
+  {
    "sleeper_id": "7075",
    "name": "Charlie Woerner",
    "position": "TE",
    "team": "ATL",
    "points": 10.0,
    "adp": 611.5,
-   "adp_2qb": 304.0
+   "adp_2qb": 525.0
   },
   {
    "sleeper_id": "2749",
@@ -3925,8 +3934,8 @@
    "position": "RB",
    "team": null,
    "points": 10.0,
-   "adp": 635.0,
-   "adp_2qb": 999.0
+   "adp": 620.8,
+   "adp_2qb": 683.9
   },
   {
    "sleeper_id": "13429",
@@ -3936,15 +3945,6 @@
    "points": 10.0,
    "adp": 699.0,
    "adp_2qb": 643.8
-  },
-  {
-   "sleeper_id": "7536",
-   "name": "Quintin Morris",
-   "position": "TE",
-   "team": "JAX",
-   "points": 10.0,
-   "adp": 999.0,
-   "adp_2qb": 999.0
   },
   {
    "sleeper_id": "11574",
@@ -3961,7 +3961,7 @@
    "position": "RB",
    "team": "KC",
    "points": 9.7,
-   "adp": 548.0,
+   "adp": 634.2,
    "adp_2qb": 680.0
   },
   {
@@ -3970,7 +3970,7 @@
    "position": "TE",
    "team": null,
    "points": 9.5,
-   "adp": 999.0,
+   "adp": 677.0,
    "adp_2qb": 999.0
   },
   {
@@ -3980,7 +3980,7 @@
    "team": null,
    "points": 9.5,
    "adp": 999.0,
-   "adp_2qb": 999.0
+   "adp_2qb": 553.4
   },
   {
    "sleeper_id": "8885",
@@ -3998,7 +3998,7 @@
    "team": "ATL",
    "points": 9.3,
    "adp": 551.0,
-   "adp_2qb": 512.3
+   "adp_2qb": 662.3
   },
   {
    "sleeper_id": "11820",
@@ -4006,7 +4006,7 @@
    "position": "TE",
    "team": "TB",
    "points": 9.3,
-   "adp": 999.0,
+   "adp": 653.3,
    "adp_2qb": 999.0
   },
   {
@@ -4019,10 +4019,19 @@
    "adp_2qb": 999.0
   },
   {
+   "sleeper_id": "12171",
+   "name": "British Brooks",
+   "position": "RB",
+   "team": "HOU",
+   "points": 8.6,
+   "adp": 668.9,
+   "adp_2qb": 677.5
+  },
+  {
    "sleeper_id": "11569",
    "name": "Jarquez Hunter",
    "position": "RB",
-   "team": null,
+   "team": "MIA",
    "points": 8.6,
    "adp": 698.4,
    "adp_2qb": 250.6
@@ -4033,7 +4042,7 @@
    "position": "RB",
    "team": null,
    "points": 8.3,
-   "adp": 614.0,
+   "adp": 595.1,
    "adp_2qb": 999.0
   },
   {
@@ -4042,7 +4051,7 @@
    "position": "TE",
    "team": "HOU",
    "points": 8.1,
-   "adp": 999.0,
+   "adp": 665.4,
    "adp_2qb": 999.0
   },
   {
@@ -4051,7 +4060,7 @@
    "position": "RB",
    "team": "WAS",
    "points": 7.9,
-   "adp": 557.0,
+   "adp": 641.0,
    "adp_2qb": 999.0
   },
   {
@@ -4091,6 +4100,24 @@
    "adp_2qb": 668.2
   },
   {
+   "sleeper_id": "4234",
+   "name": "Noah Brown",
+   "position": "WR",
+   "team": null,
+   "points": 7.3,
+   "adp": 422.0,
+   "adp_2qb": 674.3
+  },
+  {
+   "sleeper_id": "5409",
+   "name": "Tanner Hudson",
+   "position": "TE",
+   "team": "CIN",
+   "points": 7.3,
+   "adp": 598.3,
+   "adp_2qb": 999.0
+  },
+  {
    "sleeper_id": "11650",
    "name": "Luke McCaffrey",
    "position": "WR",
@@ -4100,31 +4127,13 @@
    "adp_2qb": 999.0
   },
   {
-   "sleeper_id": "5409",
-   "name": "Tanner Hudson",
+   "sleeper_id": "8583",
+   "name": "Stone Smartt",
    "position": "TE",
-   "team": "CIN",
-   "points": 7.3,
-   "adp": 632.1,
-   "adp_2qb": 999.0
-  },
-  {
-   "sleeper_id": "4234",
-   "name": "Noah Brown",
-   "position": "WR",
-   "team": null,
-   "points": 7.3,
-   "adp": 999.0,
-   "adp_2qb": 674.3
-  },
-  {
-   "sleeper_id": "4189",
-   "name": "Eric Saubert",
-   "position": "TE",
-   "team": "SEA",
+   "team": "NO",
    "points": 7.2,
-   "adp": 538.5,
-   "adp_2qb": 525.3
+   "adp": 599.5,
+   "adp_2qb": 999.0
   },
   {
    "sleeper_id": "11433",
@@ -4133,7 +4142,7 @@
    "team": "DEN",
    "points": 7.2,
    "adp": 651.7,
-   "adp_2qb": 471.4
+   "adp_2qb": 661.4
   },
   {
    "sleeper_id": "4718",
@@ -4145,19 +4154,19 @@
    "adp_2qb": 622.1
   },
   {
+   "sleeper_id": "4189",
+   "name": "Eric Saubert",
+   "position": "TE",
+   "team": "SEA",
+   "points": 7.2,
+   "adp": 690.7,
+   "adp_2qb": 678.1
+  },
+  {
    "sleeper_id": "6920",
    "name": "Isaiah Hodgins",
    "position": "WR",
    "team": null,
-   "points": 7.2,
-   "adp": 999.0,
-   "adp_2qb": 999.0
-  },
-  {
-   "sleeper_id": "8583",
-   "name": "Stone Smartt",
-   "position": "TE",
-   "team": "NO",
    "points": 7.2,
    "adp": 999.0,
    "adp_2qb": 999.0
@@ -4172,21 +4181,21 @@
    "adp_2qb": 999.0
   },
   {
-   "sleeper_id": "8489",
-   "name": "Drew Ogletree",
-   "position": "TE",
-   "team": "IND",
-   "points": 6.9,
-   "adp": 494.0,
-   "adp_2qb": 999.0
-  },
-  {
    "sleeper_id": "12860",
    "name": "Theo Wease",
    "position": "WR",
    "team": "LAC",
    "points": 6.9,
    "adp": 665.5,
+   "adp_2qb": 999.0
+  },
+  {
+   "sleeper_id": "8489",
+   "name": "Drew Ogletree",
+   "position": "TE",
+   "team": "IND",
+   "points": 6.9,
+   "adp": 698.3,
    "adp_2qb": 999.0
   },
   {
@@ -4204,8 +4213,8 @@
    "position": "RB",
    "team": "CHI",
    "points": 6.6,
-   "adp": 670.7,
-   "adp_2qb": 999.0
+   "adp": 680.9,
+   "adp_2qb": 695.5
   },
   {
    "sleeper_id": "11510",
@@ -4241,7 +4250,7 @@
    "team": "LV",
    "points": 6.5,
    "adp": 999.0,
-   "adp_2qb": 551.3
+   "adp_2qb": 609.3
   },
   {
    "sleeper_id": "8208",
@@ -4249,7 +4258,16 @@
    "position": "RB",
    "team": "DEN",
    "points": 6.4,
-   "adp": 474.5,
+   "adp": 660.7,
+   "adp_2qb": 999.0
+  },
+  {
+   "sleeper_id": "4992",
+   "name": "Dante Pettis",
+   "position": "WR",
+   "team": null,
+   "points": 5.8,
+   "adp": 524.0,
    "adp_2qb": 999.0
   },
   {
@@ -4258,23 +4276,14 @@
    "position": "WR",
    "team": "CLE",
    "points": 5.8,
-   "adp": 564.2,
-   "adp_2qb": 508.0
-  },
-  {
-   "sleeper_id": "4992",
-   "name": "Dante Pettis",
-   "position": "WR",
-   "team": null,
-   "points": 5.8,
-   "adp": 999.0,
-   "adp_2qb": 999.0
+   "adp": 657.7,
+   "adp_2qb": 675.6
   },
   {
    "sleeper_id": "12738",
    "name": "Phil Mafah",
    "position": "RB",
-   "team": null,
+   "team": "NYG",
    "points": 5.7,
    "adp": 665.1,
    "adp_2qb": 999.0
@@ -4294,7 +4303,7 @@
    "position": "WR",
    "team": null,
    "points": 5.6,
-   "adp": 437.0,
+   "adp": 558.0,
    "adp_2qb": 999.0
   },
   {
@@ -4303,7 +4312,7 @@
    "position": "RB",
    "team": "LAR",
    "points": 5.6,
-   "adp": 494.8,
+   "adp": 617.3,
    "adp_2qb": 697.2
   },
   {
@@ -4328,9 +4337,9 @@
    "sleeper_id": "6853",
    "name": "Van Jefferson",
    "position": "WR",
-   "team": null,
+   "team": "WAS",
    "points": 5.3,
-   "adp": 524.6,
+   "adp": 633.6,
    "adp_2qb": 999.0
   },
   {
@@ -4355,7 +4364,7 @@
    "sleeper_id": "13410",
    "name": "Chase Roberts",
    "position": "WR",
-   "team": "LV",
+   "team": null,
    "points": 5.1,
    "adp": 673.3,
    "adp_2qb": 999.0
@@ -4367,7 +4376,7 @@
    "team": "CIN",
    "points": 5.1,
    "adp": 696.8,
-   "adp_2qb": 455.8
+   "adp_2qb": 631.4
   },
   {
    "sleeper_id": "10444",
@@ -4388,13 +4397,22 @@
    "adp_2qb": 606.1
   },
   {
-   "sleeper_id": "4171",
-   "name": "Josh Reynolds",
-   "position": "WR",
-   "team": null,
+   "sleeper_id": "10210",
+   "name": "Cameron Latu",
+   "position": "TE",
+   "team": "NE",
    "points": 5.0,
-   "adp": 410.0,
-   "adp_2qb": 999.0
+   "adp": 373.1,
+   "adp_2qb": 682.7
+  },
+  {
+   "sleeper_id": "7602",
+   "name": "Kylen Granson",
+   "position": "TE",
+   "team": "TEN",
+   "points": 5.0,
+   "adp": 535.0,
+   "adp_2qb": 680.4
   },
   {
    "sleeper_id": "4995",
@@ -4406,6 +4424,15 @@
    "adp_2qb": 999.0
   },
   {
+   "sleeper_id": "13121",
+   "name": "Ben Yurosek",
+   "position": "TE",
+   "team": "MIN",
+   "points": 5.0,
+   "adp": 640.8,
+   "adp_2qb": 623.1
+  },
+  {
    "sleeper_id": "11034",
    "name": "Jalen Brooks",
    "position": "WR",
@@ -4415,22 +4442,13 @@
    "adp_2qb": 695.7
   },
   {
-   "sleeper_id": "10210",
-   "name": "Cameron Latu",
-   "position": "TE",
-   "team": "NE",
+   "sleeper_id": "4171",
+   "name": "Josh Reynolds",
+   "position": "WR",
+   "team": null,
    "points": 5.0,
-   "adp": 666.7,
-   "adp_2qb": 682.7
-  },
-  {
-   "sleeper_id": "13121",
-   "name": "Ben Yurosek",
-   "position": "TE",
-   "team": "MIN",
-   "points": 5.0,
-   "adp": 999.0,
-   "adp_2qb": 521.1
+   "adp": 700.3,
+   "adp_2qb": 999.0
   },
   {
    "sleeper_id": "6850",
@@ -4439,7 +4457,7 @@
    "team": null,
    "points": 5.0,
    "adp": 999.0,
-   "adp_2qb": 392.0
+   "adp_2qb": 416.0
   },
   {
    "sleeper_id": "6960",
@@ -4449,15 +4467,6 @@
    "points": 5.0,
    "adp": 999.0,
    "adp_2qb": 551.4
-  },
-  {
-   "sleeper_id": "7602",
-   "name": "Kylen Granson",
-   "position": "TE",
-   "team": "TEN",
-   "points": 5.0,
-   "adp": 999.0,
-   "adp_2qb": 429.4
   },
   {
    "sleeper_id": "8200",
@@ -4475,7 +4484,16 @@
    "team": null,
    "points": 4.9,
    "adp": 676.5,
-   "adp_2qb": 647.9
+   "adp_2qb": 687.1
+  },
+  {
+   "sleeper_id": "13277",
+   "name": "CJ Donaldson",
+   "position": "RB",
+   "team": "NO",
+   "points": 4.7,
+   "adp": 680.3,
+   "adp_2qb": 999.0
   },
   {
    "sleeper_id": "8254",
@@ -4484,24 +4502,6 @@
    "team": "TEN",
    "points": 4.6,
    "adp": 650.8,
-   "adp_2qb": 999.0
-  },
-  {
-   "sleeper_id": "9757",
-   "name": "Kendre Miller",
-   "position": "RB",
-   "team": "NO",
-   "points": 4.6,
-   "adp": 677.9,
-   "adp_2qb": 287.3
-  },
-  {
-   "sleeper_id": "11299",
-   "name": "Zavier Scott",
-   "position": "RB",
-   "team": "CHI",
-   "points": 4.6,
-   "adp": 691.0,
    "adp_2qb": 999.0
   }
  ]

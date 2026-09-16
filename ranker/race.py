@@ -33,7 +33,6 @@ from __future__ import annotations
 import heapq
 import math
 import multiprocessing
-import os
 import random
 from dataclasses import dataclass
 
@@ -55,6 +54,7 @@ from .league import (
     WEEKS,
 )
 from .season import POS_CODE, SeasonState, lineup_points, thresholds
+from .workers import worker_count
 
 
 @dataclass(slots=True)
@@ -387,14 +387,10 @@ def _replay_task(task: tuple[tuple[int, ...], int, str]) -> dict:
     return replay(_RECORDS, _INPUTS, list(roster), budget, policy)
 
 
-def _workers() -> int:
-    return max(1, min(16, os.cpu_count() or 1))
-
-
 def run_races(inputs: RaceInputs, sims: int, seed: int) -> tuple[list[dict], list[dict]]:
     """(records excluding me, records of the full 32-team race), `sims` seasons each."""
     tasks = [(seed + s, True) for s in range(sims)] + [(seed + s, False) for s in range(sims)]
-    with multiprocessing.Pool(_workers(), initializer=_init, initargs=(inputs, None)) as pool:
+    with multiprocessing.Pool(worker_count(), initializer=_init, initargs=(inputs, None)) as pool:
         out = pool.map(_simulate_task, tasks, chunksize=32)
     return out[:sims], out[sims:]
 
@@ -403,5 +399,5 @@ def run_replays(
     inputs: RaceInputs, records: list[dict], variants: list[tuple[tuple[int, ...], int, str]]
 ) -> list[dict]:
     """One replay per (roster, budget, policy) variant, in parallel."""
-    with multiprocessing.Pool(_workers(), initializer=_init, initargs=(inputs, records)) as pool:
+    with multiprocessing.Pool(worker_count(), initializer=_init, initargs=(inputs, records)) as pool:
         return pool.map(_replay_task, variants, chunksize=1)
