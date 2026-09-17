@@ -228,23 +228,14 @@ def _bench(week: int) -> int:
 WEEK_ROSTER_SIZE = tuple(WEEK_STARTERS[w] + _bench(w + 1) for w in range(WEEKS))
 FAAB_BUDGET = 1000
 
-# --- waiver market model (ranker/race.py) --------------------------------------------
-# A team's claim on a free agent is a share of its remaining budget: the player's
-# rest-of-season lineup gain per week over the starter he displaces, relative to the gain
-# that warrants the whole budget and raised to CLAIM_GAIN_EXPONENT so a marginal upgrade
-# clears for pocket change while a stud clears for most of a budget, times a
-# conservation factor that ramps from CLAIM_CONSERVATION_FLOOR in week 1 to 1 by
-# CLAIM_CONSERVATION_FULL_WEEK (budget is spent more freely as the season shortens), times
-# lognormal noise. Week 1 is free agency, so every week-1 claim is $0. Each team claims
-# its top CLAIMS_PER_TEAM players by gain; claims resolve highest bid first, as Sleeper
-# processes them, and whatever clears unclaimed is a free pickup. A prior, not a fit:
-# season.py --report compares the model's clearing prices with the bids the room
-# actually paid, which is the cue to move these.
+# --- legacy bidding baselines, retained for evaluate_waivers.py --------------------
 CLAIM_FULL_BUDGET_GAIN = 12.0
 CLAIM_GAIN_EXPONENT = 2.0
 CLAIM_CONSERVATION_FLOOR = 0.5
 CLAIM_CONSERVATION_FULL_WEEK = 13
 CLAIM_NOISE_SIGMA = 0.35
+
+# Current bidding logic and guide assumptions live in ranker/waivers.py.
 CLAIMS_PER_TEAM = 3
 CLAIM_CANDIDATES = 80  # free agents in play each week, by rest-of-season points
 RACE_SIMS = 2048

@@ -110,6 +110,10 @@ season.py ───────────────────────�
   position, team, injury status), and Sleeper's weekly projections in league scoring for
   the current week through week 17. A roster the commissioner has emptied after week 1
   is an eliminated team (Sleeper has no guillotine flag).
+  Transactions retain Sleeper's submission `leg`, ID and processing timestamp;
+  `week` follows processing time relative to Sleeper's season-start date. Wednesday
+  claims may remain under the previous submission leg. Both successful and failed
+  bids are retained; pending claims do not establish that waivers have processed.
 - `season.json`: this week's optimal lineup and the moves it implies, the optimal FAAB
   bid on each free agent worth a look, every team's chance of being cut this week, of
   reaching the final and of the title, its expected spend and budget path, the
@@ -154,21 +158,50 @@ end of the draft. See `rank.py` and the `ranker/` module docstrings for the deta
 The season desk runs an agent-based race from the live state (`ranker/race.py`). The
 value input is per week: DraftSharks' weekly projection blended 2:1 with Sleeper's for
 the same week, Sleeper alone for anyone outside the draft pool (`ranker/season.py`).
-Each simulated week every alive team fields its greedy optimal lineup (exact for this
-slot chain) under the draft model's noise, the two lowest are cut and their players hit
-the wire, and before the next games the survivors bid FAAB: each team prices the top
-free agents by their lineup gain over the starter they would displace and claims its
-best few at a share of its remaining budget, convex in that gain, tempered early in the
-season, with noise; claims resolve highest bid first and whatever clears unclaimed is a
-free pickup (`ranker/league.py`, `CLAIM_*`). Week 1 is free agency. Run without me the
-race records the elimination bars and the market I face, and my roster variants are
-replayed through those records in closed form (`ranker/claims.py`): for each free agent,
-the bid that maximizes P(win at that price) x title odds with him at that budget +
-P(lose) x title odds standing pat, with the room's clearing prices from the same
-seasons. Both of my FAAB policies (hold the budget until week 9, or bid like the room)
-are replayed and the better one governs my future claims. Run with all 32 the race is
-every team's cut, final and title odds. The claim constants are a prior; the desk shows
-the room's observed bids beside the simulated ones so they can be refit as weeks pass.
+Each simulated week every alive team fields its optimal lineup under the draft model's
+noise, the two lowest are cut, and their players hit the wire. `ranker/waivers.py`
+prices acquisitions from [Paul Charchian's guillotine FAAB guide](https://www.fantasylife.com/articles/guillotine-leagues/guillotine-league-fantasy-football-waiver-wire-guide-for-week-2):
+early elite players about 15–20% of the starting budget, ordinary starters 2.5–5%,
+and depth 0.1–1%. This is an 18-team guide, not a fitted rule for our 32-team format.
+Our adaptation uses league-scored positional ranks (elite anchors QB4/RB6/WR6/TE3,
+then an inverse-square price curve), four weeks of projected lineup improvement
+weighted 1/.75/.5/.25, and projected cut risk. Drop choices protect lineup value over
+that same horizon. The dollar allowance scales with remaining budget divided by
+remaining weeks; there is no week-9 spending switch. Terminal-week improvements can
+use all remaining money because it has no value after the championship.
+
+Opponents learn separate participation probabilities and bid multipliers from their
+submitted bids, including losses. Duplicate team/player/week claims use the latest
+submission; a winner's roster and budget are rolled back before measuring his need.
+Bid multipliers are shrunk toward the room and the published prior, with persistent
+manager uncertainty and bid noise. A manager with no bids remains uncertain, and his
+participation probability rises toward the end of the season. This reactivation curve
+is an assumption, not something one auction can estimate. Earlier bids use current
+projections as a proxy for historical player value. Manager estimates and held-out
+bid-size errors are published in `season.json` under `market`.
+
+Our future policy submits offers for every improving candidate within a team-specific
+ceiling, including early bargains. Total paid spending in an auction is limited to its
+largest individual ceiling. Claims naming the same drop are alternatives; open spots,
+remaining cash and redundant upgrades are checked as claims resolve. Opponents choose
+their best few targets with preference noise. Active managers can also make a free
+pickup after claims. Week 1 is free agency.
+
+The race excluding us records opponent markets and cut bars. Our roster/budget
+variants are replayed through those same seasons to choose this week's best modeled
+bid within the guide ceiling (`ranker/claims.py`). Winning and losing outcomes are
+evaluated per recorded season, preserving their connection to future opportunity.
+These are individual alternatives, not an optimized simultaneous claim portfolio.
+Replay title odds are approximate: opponents retain players taken by our replay.
+Championship weeks are scored with the roster held in each week; a Week 17 pickup
+cannot improve Week 16 retroactively.
+The full race includes our new policy when reporting league odds. The old `room` and
+`hold` replay policies remain only as evaluation baselines; the draft model's separate
+FAAB assumptions are unchanged.
+
+Sleeper documents its [suggested bid ranges](https://support.sleeper.com/en/articles/12111984-suggested-faab-bids),
+but its [public API](https://docs.sleeper.com/) does not document an endpoint for them.
+The model does not depend on those suggestions or on future-week guide publications.
 
 ## Workflows
 
@@ -238,10 +271,23 @@ uv run rank.py --selftest
 uv run draft/fetch_draft.py --selftest
 uv run sources/investigate.py --selftest
 uv run evaluate_opponents.py   # replays every completed opponent pick through the model
+uv run python -m unittest ranker.waiver_selftest
+uv run evaluate_waivers.py > season/bidding_evaluation.json
 ```
 
 Before and after changing the opponent model, compare `evaluate_opponents.py`'s replay
 accuracy.
+
+`evaluate_waivers.py` holds out every bid on a player before predicting that player's
+positive submitted bids. It compares the original bidding formula, the guide prior,
+and fitted manager behavior using mean absolute log error. It also compares our new
+policy with the old room/hold policies on 2,048 paired opponent seasons using a
+separate seed, then repeats with every opponent active. The report includes paired
+confidence intervals and budget paths. One observed auction cannot establish future
+activity accuracy or validate absolute championship probabilities.
+It also reconstructs the current week's pre-auction rosters and exercises paid claim
+pricing with the learned model. That counterfactual uses observed bids and current
+projections, so it is a diagnostic rather than an ex-ante backtest.
 
 ## Dashboards
 

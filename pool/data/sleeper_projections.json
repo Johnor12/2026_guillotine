@@ -2,7 +2,7 @@
  "source": "https://api.sleeper.com/projections/nfl/2026?season_type=regular&position[]=QB&position[]=RB&position[]=WR&position[]=TE",
  "league_id": "1397662420398247936",
  "season": "2026",
- "fetched_at": "2026-09-16T01:28:22+00:00",
+ "fetched_at": "2026-09-16T01:31:28+00:00",
  "players": [
   {
    "sleeper_id": "4984",

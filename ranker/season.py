@@ -192,7 +192,8 @@ def load_season(pool_path: Path, weekly_path: Path, league_path: Path) -> Season
 
     transactions = league["transactions"]
     waivers_ran = week == 1 or any(
-        tx["type"] == "waiver" and tx["week"] == week for tx in transactions
+        tx["type"] == "waiver" and tx["week"] == week and tx["status"] in ("complete", "failed")
+        for tx in transactions
     )
     return SeasonState(
         week=week,

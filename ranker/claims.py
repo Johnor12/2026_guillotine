@@ -3,14 +3,12 @@
 Lineup: the greedy optimum on this week's projections (season.lineup), compared with
 the starters Sleeper currently has set for me.
 
-Claims: for each free agent worth a look, the bid that maximizes my title odds. A
-variant of my roster (him added, the weakest rest-of-season body dropped if the roster
-is full) and budget (his price paid) is replayed through the recorded opponent race
-(race.replay) at a grid of prices; the chance a bid wins comes from what the same free
-agent cleared for in those races this week. The expected title odds of bidding b are
-P(win | b) * V(roster + him, budget - b) + (1 - P(win | b)) * V(roster, budget), and
-the recommendation is the b that maximizes it. Odds are reported relative to standing
-pat, since the replay is pessimistic in level (see race.py) but paired across variants.
+Claims: choose the best modeled bid within the guide-based, roster-specific ceiling.
+Roster variants use four-week lineup value for drops and replay the same opponent
+seasons at several budgets. A record contributes the acquired roster's title value
+if the bid wins that auction, and standing pat otherwise. This preserves dependence
+between prices and future opportunities. Odds are relative to standing pat; replay
+levels are approximate because opponents retain players acquired by our variant.
 """
 
 from __future__ import annotations
@@ -19,7 +17,7 @@ import heapq
 import statistics
 
 from .league import CLAIM_CANDIDATES, WEEK_ROSTER_SIZE
-from .race import POLICIES, RaceInputs, _add_player, run_replays
+from .race import POLICIES, RaceInputs, apply_offer, cut_risk, run_replays
 from .season import SeasonState, lineup
 
 BUDGET_STEPS = (0, 25, 50, 100, 200, 400, 700)
@@ -102,6 +100,10 @@ def claims(
         CANDIDATES_BY_WEEK, inputs.free_agents, key=lambda i: (points[i], -i)
     )
     candidates = list(dict.fromkeys(by_ros + by_week))
+    extra = inputs.capacity_extra[state.me]
+    risk = cut_risk(inputs, roster, w, statistics.fmean(r["forecast_bars"][w] for r in records))
+    offers = {o.player: o for o in inputs.bidding.offers(roster, candidates, budget, w, extra, risk)}
+    candidates = [j for j in candidates if j in offers]
     auction = records[0]["auctions"][w] if records else None
     outcomes: dict[int, list[int]] = {j: [] for j in candidates}
     if auction is not None:
@@ -113,9 +115,7 @@ def claims(
                 outcomes[j].append(seen.get(j, -1))
     pending = auction is not None
 
-    # Replays: the baseline under both FAAB policies at every budget level picks the
-    # policy my future self follows (the better one); then each candidate at the
-    # prices he might cost, under that policy.
+    # Price cash under the same continuation strategy that buys today's player.
     budgets = sorted({max(0, budget - step) for step in BUDGET_STEPS} | {0, budget}) if pending else [budget]
     baseline_runs = run_replays(
         inputs, records, [(roster, b, pol) for pol in POLICIES for b in budgets]
@@ -128,12 +128,12 @@ def claims(
     base = baseline[policy][-1][1]
     v0 = base["p_title"]
 
-    extra = inputs.capacity_extra[state.me]
     variant_rosters: dict[int, tuple[int, ...]] = {}
     drops: dict[int, int | None] = {}
     for j in candidates:
         mine = list(roster)
-        drops[j] = _add_player(mine, j, w, ros_w, extra)
+        drops[j] = offers[j].drop
+        apply_offer(mine, offers[j])
         variant_rosters[j] = tuple(mine)
     # Every candidate at the full budget (his value as a free pickup), then the price
     # grid only for the ones worth paying for: a player who does not help for free
@@ -141,20 +141,27 @@ def claims(
     free_runs = run_replays(inputs, records, [(variant_rosters[j], budget, policy) for j in candidates])
     free_value = dict(zip(candidates, free_runs))
     paid = [j for j in sorted(candidates, key=lambda j: -free_value[j]["p_title"]) if free_value[j]["p_title"] > v0][:PRICED_CANDIDATES]
-    priced_budgets = [b for b in budgets if b != budget]
-    paid_runs = run_replays(
-        inputs, records, [(variant_rosters[j], b, policy) for j in paid for b in priced_budgets]
-    )
+    # Keep the original interpolation knots bracketing legal bids; prices above the
+    # ceiling cannot affect any recommendation or reported break-even value.
+    priced_budgets = {}
+    for j in paid:
+        lower = max(b for b in budgets if b <= budget - int(offers[j].ceiling)) if pending else budget
+        priced_budgets[j] = [b for b in budgets if lower <= b < budget]
+    tasks = [(j, b) for j in paid for b in priced_budgets[j]]
+    paid_runs = dict(zip(tasks, run_replays(
+        inputs, records, [(variant_rosters[j], b, policy) for j, b in tasks]
+    )))
     per_candidate: dict[int, list[tuple[int, float]]] = {}
-    for k, j in enumerate(candidates):
+    record_grids = {}
+    for j in candidates:
         grid = [(budget, free_value[j]["p_title"])]
         if j in paid:
-            i = paid.index(j)
-            grid += [
-                (b, run["p_title"])
-                for b, run in zip(priced_budgets, paid_runs[i * len(priced_budgets) : (i + 1) * len(priced_budgets)])
-            ]
+            grid += [(b, paid_runs[j, b]["p_title"]) for b in priced_budgets[j]]
         per_candidate[j] = sorted(grid)
+        runs = [(budget, free_value[j]["title_by_record"])]
+        if j in paid:
+            runs += [(b, paid_runs[j, b]["title_by_record"]) for b in priced_budgets[j]]
+        record_grids[j] = sorted(runs)
 
     def paired_se(runs: dict) -> float:
         """Standard error of the relative title change against standing pat."""
@@ -182,16 +189,23 @@ def claims(
         grid = per_candidate[j]
         value_at = lambda b: _interpolate(grid, b)  # noqa: E731
         outs = outcomes[j]
-        bids = sorted({0, 1, *(o + 1 for o in outs if 0 <= o < budget)} & set(range(budget + 1))) if pending else [0]
+        ceiling = int(offers[j].ceiling)
+        bids = sorted({0, 1, ceiling, *(o + 1 for o in outs if 0 <= o < ceiling)} & set(range(ceiling + 1))) if pending and j in paid else [0]
         curve = []
         best = None
         for b in bids:
             p_win = _win_probability(outs, b) if pending else 1.0
-            ev = p_win * value_at(budget - b) + (1.0 - p_win) * v0
+            if pending:
+                values = _record_values(record_grids[j], budget - b)
+                # Price and future opportunity come from the same simulated season.
+                ev = statistics.fmean(v if (o == -1 if b == 0 else o < b) else base_v
+                                      for o, v, base_v in zip(outs, values, base["title_by_record"]))
+            else:
+                ev = value_at(budget)
             curve.append((b, p_win, ev))
             if best is None or ev > best[0] + 1e-12:
                 best = (ev, b, p_win)
-        break_even = max((b for b in range(0, budget + 1, 5) if value_at(budget - b) >= v0), default=0)
+        break_even = max((b for b in range(ceiling + 1) if value_at(budget - b) >= v0), default=0) if j in paid else 0
         claimed = [o for o in outs if o >= 0]
         this_week_total, _ = lineup(list(variant_rosters[j]), points, positions, w)
         drop = drops[j]
@@ -203,6 +217,8 @@ def claims(
                 "title_if_free": _relative(value_at(budget), v0),
                 "title_if_free_se": round(paired_se(free_value[j]), 1),
                 "optimal_bid": best[1],
+                "bid_ceiling": ceiling,
+                "planning_gain": round(offers[j].gain, 2),
                 "p_win_at_optimal": round(best[2], 3),
                 "title_at_optimal": _relative(best[0], v0),
                 "break_even_bid": break_even,
@@ -253,6 +269,14 @@ def claims(
 def _relative(value: float, base: float) -> float:
     """Title odds relative to standing pat, as a percentage change."""
     return round((value / base - 1.0) * 100, 1) if base > 0 else 0.0
+
+
+def _record_values(grid, budget):
+    for (b0, v0), (b1, v1) in zip(grid, grid[1:]):
+        if b0 <= budget <= b1:
+            weight = (budget - b0) / (b1 - b0)
+            return [a + weight * (b - a) for a, b in zip(v0, v1)]
+    return grid[0][1] if budget < grid[0][0] else grid[-1][1]
 
 
 def _quantile(values: list[int], q: float) -> float:

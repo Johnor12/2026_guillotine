@@ -211,7 +211,7 @@
             <th class="num">This week</th>
             <th class="num">ROS / wk</th>
             <th>Drop</th>
-            <th class="num" title="The bid that maximizes your title odds">Bid</th>
+            <th class="num" title="Best modeled bid within your roster-specific ceiling">Bid</th>
             <th class="num" title="Chance that bid wins, from the simulated room">Wins</th>
             <th class="num" title="Title odds at that bid, relative to standing pat (± one standard error of the free-pickup value)">Title odds</th>
             <th class="num" title="Title odds if he cost nothing">If free</th>
@@ -258,7 +258,8 @@
 
     <section id="market">
       <h2>Waiver market</h2>
-      <p class="hint">What the room has actually paid so far, next to what the model expects it to pay this week. When these disagree, the claim constants in <code>ranker/league.py</code> are the thing to move.</p>
+      <p class="hint">Winning and losing bids inform manager activity and spending estimates. Quiet managers can return later; one auction leaves considerable uncertainty.</p>
+      <p class="hint" id="calibrationNote"></p>
       <div class="two">
         <div class="table-wrap">
           <table>
@@ -366,7 +367,7 @@ function renderClaims(d) {
   const c = d.claims;
   document.getElementById("claimsTitle").textContent = c.pending ? `Waiver claims for week ${d.week}` : `Free agents · week ${d.week}`;
   document.getElementById("claimsHint").textContent = c.pending
-    ? `Claims have not processed yet. Each bid maximizes your title odds against what the simulated room pays; odds are relative to standing pat with $${c.budget}. Sleeper resolves claims highest bid first, so submit them in this order.`
+    ? `Claims have not processed yet. Each bid maximizes modeled title odds within your roster-specific ceiling; odds are relative to standing pat with $${c.budget}. Treat these bids as alternatives.`
     : (d.week === 1
       ? "Week 1 is open free agency: every add is $0 and first come, so the table ranks pickups by what they do to your title odds. Claims with bids begin after the week-1 cuts."
       : "This week's claims have already processed; anyone below is a free pickup right now, ranked by what he does to your title odds.");
@@ -388,16 +389,16 @@ function renderClaims(d) {
   });
   document.getElementById("claimsBody").replaceChildren(...rows);
 
-  const policyNames = { room: "bid like the room", hold: `hold until week ${d.model.faab_hold_weeks + 1}, spend from ${d.model.faab_spend_week}` };
+  const policyNames = { value: "value-based bidding every week" };
   const full = pol => c.baseline[pol].find(r => r.budget === c.budget) || c.baseline[pol][c.baseline[pol].length - 1];
   document.getElementById("policyCard").replaceChildren(
-    h("h3", {}, "FAAB policy check"),
+    h("h3", {}, "Future bidding policy"),
     h("table", {}, h("tbody", {}, ...Object.keys(c.baseline).map(pol => h("tr", {},
       h("td", {}, policyNames[pol] || pol, pol === c.policy ? " (used)" : ""),
       h("td", { class: "num" }, `title ${pct1(full(pol).p_title)}`),
       h("td", { class: "num" }, `final ${pct1(full(pol).p_reach_final)}`),
       h("td", { class: `num ${relClass(full(pol).relative)}` }, rel(full(pol).relative)))))),
-    h("p", { style: "margin:8px 0 0" }, `Your future claims are replayed under the better rule. The replay's own title figure (${pct1(c.base.p_title)}) runs below the full race's (${pct1(c.race_title)}) because opponents keep the players it takes from them, so everything here is relative.`));
+    h("p", { style: "margin:8px 0 0" }, `Future claims use the same guide-based ceilings and look ahead for roster needs. The replay's title figure (${pct1(c.base.p_title)}) runs below the full race's (${pct1(c.race_title)}) because opponents keep the players it takes from them, so everything here is relative.`));
   const room = c.baseline[c.policy];
   document.getElementById("budgetCard").replaceChildren(
     h("h3", {}, "What budget is worth"),
@@ -407,7 +408,7 @@ function renderClaims(d) {
           h("td", { class: `num ${relClass(r.relative)}` }, rel(r.relative))))))
       : h("p", { style: "margin:0" }, "Priced once claims are pending: your title odds at each remaining budget, if you stood pat this week."));
   document.getElementById("claimsNote").textContent =
-    `Each free agent is added to your roster (dropping your weakest rest-of-season player when the roster is full) and replayed through ${d.model.race_sims} recorded seasons of the other ${d.teams.length - 1} teams at several remaining budgets. The chance a bid wins is how often it beats what the same player cleared for in those seasons this week. The bid shown maximizes P(win) × odds if you win at that price + P(lose) × odds if you stand pat. The ceiling is the most he is worth at all. The room's claims follow league.py's rule: a share of remaining budget rising with the player's lineup gain, tempered early in the season, with noise; each team claims its ${d.model.claims_per_team} best gains and unclaimed players go as free pickups.`;
+    `Each candidate is evaluated for ${d.model.bid_lookahead_weeks} weeks of lineup improvement, including byes and lineup expansions. Guide-based ceilings adjust for your needs, cut risk, remaining budget and remaining weeks. Your variants are replayed through ${d.model.race_sims} opponent seasons; each auction's winning or losing result uses that same season's future opportunities. The ceiling combines the guide limit and modeled break-even value. Claims are alternatives, not a combined spending plan. Opponents' participation and bid sizes learn from submitted bids, including losses.`;
 }
 
 function renderChart(d) {
@@ -477,6 +478,10 @@ function renderLeague(d) {
 }
 
 function renderMarket(d) {
+  const fit = d.market.calibration;
+  document.getElementById("calibrationNote").textContent = fit.positive_bids_tested
+    ? `${fit.submitted_bids} distinct opponent bids across ${fit.bid_weeks} auction week(s). Held-out player bid-size error (lower is better): original ${fit.legacy_log_mae}, guide ${fit.prior_log_mae}, fitted ${fit.fitted_log_mae}. This tests submitted amounts; future participation remains uncertain.`
+    : "No resolved bids yet: opponent behavior follows the guide prior.";
   const observed = d.market.observed.slice(0, 40);
   document.getElementById("observedBody").replaceChildren(...(observed.length ? observed.map(o => h("tr", { class: o.status === "complete" ? "" : "dim" },
     h("td", {}, o.week),
@@ -517,7 +522,7 @@ function renderMarket(d) {
   renderMarket(d);
   const m = d.model;
   document.getElementById("footer").replaceChildren(
-    `${d.value_input} · ${m.race_sims} simulated seasons · weekly sigma ${m.weekly_sigma}, team sigma ${m.team_season_sigma} · claim rule: full budget at +${m.claim_full_budget_gain} pts/wk (exponent ${m.claim_gain_exponent}), conservation ${m.claim_conservation_floor} → 1 by week ${m.claim_conservation_full_week}, noise ${m.claim_noise_sigma}, ${m.claims_per_team} claims per team over ${m.claim_candidates} free agents · `,
+    `${d.value_input} · ${m.race_sims} simulated seasons · ${m.bid_lookahead_weeks}-week roster planning with learned opponent bidding tendencies · `,
     d.validation.ok ? "validation ok" : `${d.validation.problems.length} validation problem(s): ${d.validation.problems.join("; ")}`);
   document.getElementById("app").hidden = false;
 })();

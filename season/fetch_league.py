@@ -56,6 +56,10 @@ def score(stats: dict, scoring: dict) -> float:
     return round(sum(scoring[k] * v for k, v in stats.items() if k in scoring and v), 2)
 
 
+def processing_week(processed: dt.datetime, season_start: dt.date) -> int:
+    return max(1, 1 + (processed.date() - season_start).days // 7)
+
+
 def main() -> int:
     state = get_json(f"{API}/state/nfl")
     league = get_json(f"{API}/league/{LEAGUE_ID}")
@@ -99,13 +103,18 @@ def main() -> int:
         raise SystemExit(f"error: user {MY_USER_ID} owns {sum(t['is_mine'] for t in teams)} rosters")
 
     transactions = []
+    season_start = dt.date.fromisoformat(state["season_start_date"])
     for leg in range(1, week + 1):
         for tx in get_json(f"{API}/league/{LEAGUE_ID}/transactions/{leg}") or []:
             if tx.get("type") not in ("waiver", "free_agent"):
                 continue
+            processed = dt.datetime.fromtimestamp(tx["status_updated"] / 1000, dt.timezone.utc)
             transactions.append(
                 {
-                    "week": leg,
+                    "transaction_id": tx["transaction_id"],
+                    # Sleeper can retain the submission leg after Wednesday processing.
+                    "week": processing_week(processed, season_start),
+                    "leg": leg,
                     "type": tx["type"],
                     "status": tx.get("status"),
                     "roster_id": (tx.get("roster_ids") or [None])[0],
@@ -116,6 +125,7 @@ def main() -> int:
                     "created": dt.datetime.fromtimestamp(
                         tx["created"] / 1000, dt.timezone.utc
                     ).isoformat(timespec="seconds"),
+                    "processed_at": processed.isoformat(timespec="seconds"),
                 }
             )
     transactions.sort(key=lambda t: t["created"])

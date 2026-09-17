@@ -8,10 +8,10 @@ The value input is per-week: DraftSharks' weekly projection blended 2:1 with Sle
 for the same week (ranker/season.py). The engine is an agent-based race
 (ranker/race.py): every alive team fields its optimal lineup each week under the
 draft model's noise, the bottom two are cut, their players hit the wire, and the
-survivors bid FAAB from their remaining budgets under league.py's claim rule. Run once
+survivors bid under guide-based ceilings and learned tendencies (ranker/waivers.py). Run once
 without me it is the market and the elimination bars I face, which price my roster
 variants (ranker/claims.py: this week's lineup, and for each free agent the bid that
-maximizes my title odds against what he clears for); run with all 32 it is every
+maximizes modeled title odds within our ceiling); run with all 32 it is every
 team's chance of being cut this week, of reaching the final, and of the title, along
 with its expected spend and budget path.
 
@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import statistics
 import sys
 import time
@@ -32,6 +33,7 @@ from ranker.claims import claims, my_lineup
 from ranker.league import RACE_SIMS, REGULAR_WEEKS, SEED, WEEKS
 from ranker.race import race_inputs, run_races
 from ranker.season import lineup_points, load_season
+from ranker.waivers import BID_SIGMA, GUIDE_URL, LOOKAHEAD
 
 REPO_ROOT = Path(__file__).resolve().parent
 POOL = REPO_ROOT / "pool.json"
@@ -138,6 +140,13 @@ def market(state, inputs, excluded: list[dict], full: list[dict]) -> dict:
         key=lambda r: (-r["mean_bid"], -r["p_taken"]),
     )[:40]
     return {
+        "calibration": inputs.market_fit,
+        "managers": [
+            {"roster_id": t.roster_id, "name": t.name, "activity": round(m.activity, 3),
+             "bid_multiplier": round(math.exp(m.log_scale), 2),
+             "bid_weeks": m.bid_weeks, "bids": m.bids}
+            for t, m in zip(state.teams, inputs.managers) if not t.is_mine
+        ],
         "bars_by_week": [
             {
                 "week": w + 1,
@@ -169,7 +178,7 @@ def report(payload: dict) -> None:
         print(f"  {s['slot']:<5} {s.get('name') or '(empty)':<24} {s.get('points', 0):>5}", file=sys.stderr)
     if lu["start"] or lu["sit"]:
         print(f"  start {lu['start']}, sit {lu['sit']}", file=sys.stderr)
-    print("FAAB policy check (title odds relative to standing pat):", file=sys.stderr)
+    print("Budget value under the future bidding policy (relative to standing pat):", file=sys.stderr)
     for pol, rows in payload["claims"]["baseline"].items():
         print("  " + pol + ": " + ", ".join(f"${r['budget']} {r['relative']:+.0f}%" for r in rows), file=sys.stderr)
     print(f"claims ({'pending' if payload['claims']['pending'] else 'not pending: free agents only'}):", file=sys.stderr)
@@ -190,6 +199,11 @@ def report(payload: dict) -> None:
             file=sys.stderr,
         )
     observed = [o for o in payload["market"]["observed"] if o["type"] == "waiver"][:8]
+    fit = payload["market"]["calibration"]
+    if fit["positive_bids_tested"]:
+        print(f"bid-size validation: {fit['submitted_bids']} opponent bids, {fit['bid_weeks']} auction week(s); "
+              f"held-out log MAE: original {fit['legacy_log_mae']}, guide {fit['prior_log_mae']}, fitted {fit['fitted_log_mae']}",
+              file=sys.stderr)
     if observed:
         print("observed waiver claims (latest):", file=sys.stderr)
         for o in observed:
@@ -263,18 +277,15 @@ def main(argv: list[str] | None = None) -> int:
         "teams": teams,
         "market": market(state, inputs, excluded, full),
         "model": {
+            "bid_guide": GUIDE_URL,
+            "bid_lookahead_weeks": len(LOOKAHEAD),
+            "bid_policy": "value",
             "race_sims": RACE_SIMS,
             "weekly_sigma": league.WEEKLY_SIGMA,
             "team_season_sigma": league.TEAM_SEASON_SIGMA,
-            "claim_full_budget_gain": league.CLAIM_FULL_BUDGET_GAIN,
-            "claim_gain_exponent": league.CLAIM_GAIN_EXPONENT,
-            "claim_conservation_floor": league.CLAIM_CONSERVATION_FLOOR,
-            "claim_conservation_full_week": league.CLAIM_CONSERVATION_FULL_WEEK,
-            "claim_noise_sigma": league.CLAIM_NOISE_SIGMA,
+            "bid_noise_sigma": BID_SIGMA,
             "claims_per_team": league.CLAIMS_PER_TEAM,
             "claim_candidates": league.CLAIM_CANDIDATES,
-            "faab_hold_weeks": league.FAAB_HOLD_WEEKS,
-            "faab_spend_week": league.FAAB_SPEND_WEEK,
             "roster_size_by_week": list(league.WEEK_ROSTER_SIZE),
         },
         "validation": {"problems": state.problems, "ok": not state.problems},
