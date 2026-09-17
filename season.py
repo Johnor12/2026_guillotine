@@ -21,6 +21,7 @@ Python stdlib only. Deterministic: the race is seeded.
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import json
 import math
 import statistics
@@ -31,9 +32,9 @@ from pathlib import Path
 from ranker import league
 from ranker.claims import claims, my_lineup
 from ranker.league import RACE_SIMS, REGULAR_WEEKS, SEED, WEEKS
-from ranker.race import race_inputs, run_races
+from ranker.race import race_inputs, run_race
 from ranker.season import lineup_points, load_season
-from ranker.waivers import BID_SIGMA, GUIDE_URL, LOOKAHEAD
+from ranker.waivers import BID_SIGMA, GUIDE_URL, SAVING_PLANS
 
 REPO_ROOT = Path(__file__).resolve().parent
 POOL = REPO_ROOT / "pool.json"
@@ -50,18 +51,18 @@ def league_odds(state, inputs, records: list[dict]) -> list[dict]:
     for i, team in enumerate(state.teams):
         cuts = [r["cut_week"][i] for r in records]
         alive_by_week = [
-            sum(1 for c in cuts if c is None or c > w) / n for w in range(w0, REGULAR_WEEKS)
+            sum(1 for c in cuts if team.alive and (c is None or c > w)) / n
+            for w in range(w0, REGULAR_WEEKS)
         ]
 
         def budget_entering(week: int) -> float | None:
             w = week - 1
-            if w < w0:
+            if w < w0 or not team.alive:
                 return None
             alive = [r["budget_path"][w - w0][i] for r in records if r["cut_week"][i] is None or r["cut_week"][i] >= w]
             return round(statistics.fmean(alive)) if alive else None
 
-        spend_now = statistics.fmean(inputs.budgets[i] - r["budget_path"][0][i] for r in records)
-        won_now = [b for r in records for j, t, b in r["claims"][w0] if t == i]
+        spend_now = statistics.fmean(inputs.budgets[i] - r["budget_after_claims"][0][i] for r in records)
         out.append(
             {
                 "roster_id": team.roster_id,
@@ -74,9 +75,9 @@ def league_odds(state, inputs, records: list[dict]) -> list[dict]:
                 "points_this_week": round(team.points_this_week, 1),
                 "roster_size": len(team.roster) + len(team.unknown),
                 "projected_now": round(lineup_points(team.roster, inputs.weekly[w0], inputs.positions, w0), 1) if team.alive else None,
-                "p_cut_now": round(sum(1 for c in cuts if c == w0) / n, 4),
+                "p_cut_now": round(sum(1 for c in cuts if team.alive and c == w0) / n, 4),
                 "p_alive_by_week": [round(x, 4) for x in alive_by_week],
-                "p_reach_final": round(sum(1 for c in cuts if c is None) / n, 4),
+                "p_reach_final": round(sum(1 for c in cuts if team.alive and c is None) / n, 4),
                 "p_title": round(sum(1 for r in records if r["champion"] == i) / n, 4),
                 "spend_now": round(spend_now),
                 "p_claim_now": round(sum(1 for r in records if any(t == i for _, t, _ in r["claims"][w0])) / n, 3),
@@ -102,7 +103,7 @@ def market(state, inputs, excluded: list[dict], full: list[dict]) -> dict:
             r["budget_path"][k][i]
             for r in full
             for i in range(len(state.teams))
-            if r["cut_week"][i] is None or r["cut_week"][i] >= w
+            if state.teams[i].alive and (r["cut_week"][i] is None or r["cut_week"][i] >= w)
         ]
         budget_by_week.append(round(statistics.fmean(alive)) if alive else None)
     names = {p.sleeper_id: p.name for p in state.players}
@@ -145,7 +146,7 @@ def market(state, inputs, excluded: list[dict], full: list[dict]) -> dict:
             {"roster_id": t.roster_id, "name": t.name, "activity": round(m.activity, 3),
              "bid_multiplier": round(math.exp(m.log_scale), 2),
              "bid_weeks": m.bid_weeks, "bids": m.bids}
-            for t, m in zip(state.teams, inputs.managers) if not t.is_mine
+            for t, m in zip(state.teams, inputs.managers) if t.alive and not t.is_mine
         ],
         "bars_by_week": [
             {
@@ -218,15 +219,21 @@ def main(argv: list[str] | None = None) -> int:
     state = load_season(POOL, WEEKLY, LEAGUE)
     inputs = race_inputs(state)
     t0 = time.perf_counter()
-    excluded, full = run_races(inputs, RACE_SIMS, SEED)
+    excluded = run_race(inputs, RACE_SIMS, SEED, exclude_me=True)
     if args.report:
-        print(f"[races {time.perf_counter() - t0:.1f}s]", file=sys.stderr)
+        print(f"[opponent races {time.perf_counter() - t0:.1f}s]", file=sys.stderr)
     t0 = time.perf_counter()
-    teams = league_odds(state, inputs, full)
-    mine = next(t for t in teams if t["is_mine"])
-    decisions = claims(state, inputs, excluded, mine["p_title"])
+    decisions = claims(state, inputs, excluded, 0.0)
     if args.report:
         print(f"[claims {time.perf_counter() - t0:.1f}s]", file=sys.stderr)
+    inputs = dataclasses.replace(inputs, policy=decisions["policy"])
+    t0 = time.perf_counter()
+    full = run_race(inputs, RACE_SIMS, SEED, exclude_me=False)
+    teams = league_odds(state, inputs, full)
+    mine = next(t for t in teams if t["is_mine"])
+    decisions["race_title"] = mine["p_title"]
+    if args.report:
+        print(f"[full races {time.perf_counter() - t0:.1f}s]", file=sys.stderr)
     w0 = inputs.week0
     bars_now = sorted(r["bars"][w0] for r in excluded)
     n = len(bars_now)
@@ -278,8 +285,13 @@ def main(argv: list[str] | None = None) -> int:
         "market": market(state, inputs, excluded, full),
         "model": {
             "bid_guide": GUIDE_URL,
-            "bid_lookahead_weeks": len(LOOKAHEAD),
-            "bid_policy": "value",
+            "bid_lookahead_weeks": WEEKS - w0,
+            "bid_policy": decisions["policy"],
+            "opponent_saving_plans": {
+                policy: {"probability": 1 / len(SAVING_PLANS),
+                         "reserve_fraction_entering_week": {str(w + 1): share for w, share in anchors}}
+                for policy, anchors in SAVING_PLANS.items()
+            },
             "race_sims": RACE_SIMS,
             "weekly_sigma": league.WEEKLY_SIGMA,
             "team_season_sigma": league.TEAM_SEASON_SIGMA,

@@ -236,7 +236,7 @@
 
     <section id="league">
       <h2>League</h2>
-      <p class="hint">Every roster from the full 32-team race: cut chance this week, chance to reach the final, title chance, FAAB left, the model's expected spend this week, and expected budget entering weeks 9 and 13 among seasons where the team is still alive.</p>
+      <p class="hint">Every roster from the full race: cut chance this week, chance to reach the final, title chance, FAAB left, expected additional spend this week, and budget before weeks 9 and 13 claims, conditional on still being alive. Eliminated teams have no future budget estimates.</p>
       <div class="table-wrap">
         <table>
           <thead><tr>
@@ -389,7 +389,7 @@ function renderClaims(d) {
   });
   document.getElementById("claimsBody").replaceChildren(...rows);
 
-  const policyNames = { value: "value-based bidding every week" };
+  const policyNames = { value: "No reserve", balanced: "Balanced saving", patient: "Patient saving" };
   const full = pol => c.baseline[pol].find(r => r.budget === c.budget) || c.baseline[pol][c.baseline[pol].length - 1];
   document.getElementById("policyCard").replaceChildren(
     h("h3", {}, "Future bidding policy"),
@@ -398,7 +398,7 @@ function renderClaims(d) {
       h("td", { class: "num" }, `title ${pct1(full(pol).p_title)}`),
       h("td", { class: "num" }, `final ${pct1(full(pol).p_reach_final)}`),
       h("td", { class: `num ${relClass(full(pol).relative)}` }, rel(full(pol).relative)))))),
-    h("p", { style: "margin:8px 0 0" }, `Future claims use the same guide-based ceilings and look ahead for roster needs. The replay's title figure (${pct1(c.base.p_title)}) runs below the full race's (${pct1(c.race_title)}) because opponents keep the players it takes from them, so everything here is relative.`));
+    h("p", { style: "margin:8px 0 0" }, `Your saving plan is chosen by comparing outcomes through Week 17. Opponents keep sampled spending habits, with observed bid tendencies and noise. Replay title odds (${pct1(c.base.p_title)}) are approximate because opponents retain players your replay acquires; the full race reports ${pct1(c.race_title)}.`));
   const room = c.baseline[c.policy];
   document.getElementById("budgetCard").replaceChildren(
     h("h3", {}, "What budget is worth"),
@@ -408,7 +408,7 @@ function renderClaims(d) {
           h("td", { class: `num ${relClass(r.relative)}` }, rel(r.relative))))))
       : h("p", { style: "margin:0" }, "Priced once claims are pending: your title odds at each remaining budget, if you stood pat this week."));
   document.getElementById("claimsNote").textContent =
-    `Each candidate is evaluated for ${d.model.bid_lookahead_weeks} weeks of lineup improvement, including byes and lineup expansions. Guide-based ceilings adjust for your needs, cut risk, remaining budget and remaining weeks. Your variants are replayed through ${d.model.race_sims} opponent seasons; each auction's winning or losing result uses that same season's future opportunities. The ceiling combines the guide limit and modeled break-even value. Claims are alternatives, not a combined spending plan. Opponents' participation and bid sizes learn from submitted bids, including losses.`;
+    `Acquisitions and drops consider all ${d.model.bid_lookahead_weeks} remaining weeks through Week 17, including byes and superflex. Each roster and cash variant compares spending and saving plans across ${d.model.race_sims} opponent seasons. Winning and losing outcomes retain their connection to that season's future opportunities. This compares continuation plans, not every possible future decision. The ceiling combines the guide limit and modeled break-even value. Claims are alternatives, not a combined spending plan. Opponents mix spending and saving habits; participation and bid sizes learn from submitted bids, including losses.`;
 }
 
 function renderChart(d) {
@@ -447,7 +447,7 @@ function renderChart(d) {
     tip.style.top = `${event.clientY - box.top + 12}px`;
     tip.replaceChildren(h("div", {}, h("strong", {}, `Week ${best.week}`)),
       h("div", {}, `You ${fmt(best.my_points)} · bar ${fmt(bar.mean)} (${fmt(bar.p10)}–${fmt(bar.p90)})`),
-      h("div", {}, `Alive after this week ${pct(best.p_alive)} · budget ${money(best.budget)}`));
+      h("div", {}, `Alive after this week ${pct(best.p_alive)} · budget entering week ${money(best.budget)}`));
   });
   chart.addEventListener("mouseleave", () => { tip.style.display = "none"; cross.style.display = "none"; });
   document.getElementById("chart").replaceChildren(

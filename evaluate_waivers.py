@@ -19,7 +19,7 @@ import sys
 from pathlib import Path
 
 from ranker.league import RACE_SIMS, SEED
-from ranker.race import race_inputs, run_races, run_replays
+from ranker.race import POLICIES, race_inputs, run_race, run_replays
 from ranker.season import load_season
 from ranker.claims import claims
 
@@ -44,7 +44,7 @@ def counterfactual(state):
                                  transactions=[t for t in state.transactions if t["week"] < state.week])
     inputs = dataclasses.replace(race_inputs(before), managers=race_inputs(state).managers)
     print(f"simulating pre-auction reconstruction: {RACE_SIMS} seasons", file=sys.stderr, flush=True)
-    records, _ = run_races(inputs, RACE_SIMS, SEED + 200_000)
+    records = run_race(inputs, RACE_SIMS, SEED + 200_000, exclude_me=True)
     decisions = claims(before, inputs, records, 0.0)
     assert decisions["pending"]
     assert all(0 <= c["optimal_bid"] <= c["bid_ceiling"] <= decisions["budget"] for c in decisions["candidates"])
@@ -55,14 +55,16 @@ def counterfactual(state):
 
 
 def compare(inputs, records, roster, budget):
-    policies = ("value", "room", "hold")
+    policies = (*POLICIES, "room", "hold")
     runs = run_replays(inputs, records, [(tuple(roster), budget, p) for p in policies])
     output = {}
     for policy, run in zip(policies, runs):
         path = run["budget_by_week"]
         output[policy] = {"p_title": run["p_title"], "p_reach_final": run["p_reach_final"],
-                          "budget_by_week": [{"week": inputs.week0 + k + 1, "budget": round(b)} for k, b in enumerate(path)],
-                          "mean_week9_spend": round(path[7 - inputs.week0] - path[8 - inputs.week0]) if inputs.week0 < 8 else None}
+                          "budget_by_week": [{"week": inputs.week0 + k + 1, "budget": round(b) if b is not None else None}
+                                             for k, b in enumerate(path)],
+                          "mean_week9_spend": round(path[8 - inputs.week0] - run["budget_after_claims"][8 - inputs.week0])
+                          if inputs.week0 <= 8 and path[8 - inputs.week0] is not None else None}
     for policy, run in zip(policies[1:], runs[1:]):
         differences = [a - b for a, b in zip(runs[0]["title_by_record"], run["title_by_record"])]
         delta = statistics.fmean(differences)
@@ -81,7 +83,7 @@ def main():
         if name == "all_opponents_active":
             inputs = dataclasses.replace(inputs, managers=[dataclasses.replace(m, activity=1.0) for m in inputs.managers])
         print(f"simulating {name}: {RACE_SIMS} seasons", file=sys.stderr, flush=True)
-        records, _ = run_races(inputs, RACE_SIMS, SEED + 100_000)
+        records = run_race(inputs, RACE_SIMS, SEED + 100_000, exclude_me=True)
         result["scenarios"][name] = compare(inputs, records, state.my_team.roster, state.my_team.faab_left)
     result["limitations"] = ["Only one observed auction; no temporal backtest or validated reactivation rate.",
                               "Bid-size validation holds out all bids on a player; current projections proxy historical values.",

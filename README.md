@@ -118,6 +118,11 @@ season.py ───────────────────────�
   bid on each free agent worth a look, every team's chance of being cut this week, of
   reaching the final and of the title, its expected spend and budget path, the
   elimination bar by week, and the observed versus simulated waiver market.
+  Budget paths show cash entering each week, before that week's claims, conditional
+  on surviving to that week. The current week's opening cash adds back completed
+  claims to the live balance. Post-claim cash is recorded separately. Already
+  eliminated teams have zero survival odds and no future budget estimates, and are
+  excluded from league averages.
 
 `sleeper_id` is the cross-process player key; `roster_id` and `draft_slot` connect
 opponent source matches to the live board.
@@ -164,11 +169,13 @@ prices acquisitions from [Paul Charchian's guillotine FAAB guide](https://www.fa
 early elite players about 15–20% of the starting budget, ordinary starters 2.5–5%,
 and depth 0.1–1%. This is an 18-team guide, not a fitted rule for our 32-team format.
 Our adaptation uses league-scored positional ranks (elite anchors QB4/RB6/WR6/TE3,
-then an inverse-square price curve), four weeks of projected lineup improvement
-weighted 1/.75/.5/.25, and projected cut risk. Drop choices protect lineup value over
-that same horizon. The dollar allowance scales with remaining budget divided by
-remaining weeks; there is no week-9 spending switch. Terminal-week improvements can
-use all remaining money because it has no value after the championship.
+then an inverse-square price curve), mean projected lineup improvement across
+**every remaining week through Week 17**, and projected cut risk. Drop choices
+protect lineup value over that same horizon, including distant byes and superflex.
+This roster-value calculation holds the roster fixed; the subsequent season replay
+models its future acquisitions and drops. The guide ceiling scales with remaining
+cash and weeks, but a separate saving plan limits total auction spending.
+Terminal-week improvements can use all remaining money.
 
 Opponents learn separate participation probabilities and bid multipliers from their
 submitted bids, including losses. Duplicate team/player/week claims use the latest
@@ -180,24 +187,42 @@ is an assumption, not something one auction can estimate. Earlier bids use curre
 projections as a proxy for historical player value. Manager estimates and held-out
 bid-size errors are published in `season.json` under `market`.
 
+Opponent saving habits are a uniform prior over three persistent season-long plans:
+no reserve, balanced saving, and patient saving. The balanced plan targets 75% of
+cash entering Week 9, 25% entering Week 13, and 20% entering Week 14, informed by
+[Charchian's month-by-month guidance](https://www.fantasylife.com/articles/guillotine-leagues/how-to-manage-your-faab-in-guillotine-league-fantasy-football).
+The patient plan targets 85%, 55%, and 50%, respectively, to preserve buying power
+for late chopped rosters and superflex. Targets interpolate between milestones and
+rescale to the manager's live remaining cash; unused allowances carry forward.
+Reserves relax as projected cut risk rises from 25% to 50%, and reach zero after
+Week 17. Bid multipliers and noise cannot exceed the resulting auction allowance.
+These habits and their equal prior weights are assumptions, not inferred from one
+auction or optimized for opponents. Participation, target noise and observed bid
+tendencies still distinguish managers.
+
 Our future policy submits offers for every improving candidate within a team-specific
-ceiling, including early bargains. Total paid spending in an auction is limited to its
-largest individual ceiling. Claims naming the same drop are alternatives; open spots,
-remaining cash and redundant upgrades are checked as claims resolve. Opponents choose
-their best few targets with preference noise. Active managers can also make a free
-pickup after claims. Week 1 is free agency.
+ceiling and saving allowance, including early bargains. Total paid spending in an
+auction is also limited to its largest individual bid. Claims naming the same drop
+are alternatives; open spots, remaining cash and redundant upgrades are checked as
+claims resolve. Opponents choose their best few targets with preference noise.
+Active managers can also make a free pickup after claims. Week 1 is free agency.
 
 The race excluding us records opponent markets and cut bars. Our roster/budget
 variants are replayed through those same seasons to choose this week's best modeled
-bid within the guide ceiling (`ranker/claims.py`). Winning and losing outcomes are
-evaluated per recorded season, preserving their connection to future opportunity.
+bid within the guide ceiling (`ranker/claims.py`). For our team only, each roster and
+cash variant compares all three future spending/saving plans through the championship.
+One plan is chosen by its average outcome across seasons, never separately using a
+record's future prices or scores. This searches a small family of continuation
+strategies, not every possible sequence of future auction decisions.
+Winning and losing outcomes are evaluated per recorded season, preserving their
+connection to future opportunity.
 These are individual alternatives, not an optimized simultaneous claim portfolio.
 Replay title odds are approximate: opponents retain players taken by our replay.
 Championship weeks are scored with the roster held in each week; a Week 17 pickup
 cannot improve Week 16 retroactively.
-The full race includes our new policy when reporting league odds. The old `room` and
-`hold` replay policies remain only as evaluation baselines; the draft model's separate
-FAAB assumptions are unchanged.
+The full race uses our selected baseline saving plan when reporting league odds.
+The old `room` and `hold` replay policies remain only as evaluation baselines; the
+draft model's separate FAAB assumptions are unchanged.
 
 Sleeper documents its [suggested bid ranges](https://support.sleeper.com/en/articles/12111984-suggested-faab-bids),
 but its [public API](https://docs.sleeper.com/) does not document an endpoint for them.
@@ -275,16 +300,18 @@ uv run python -m unittest ranker.waiver_selftest
 uv run evaluate_waivers.py > season/bidding_evaluation.json
 ```
 
-Before and after changing the opponent model, compare `evaluate_opponents.py`'s replay
-accuracy.
+Before and after changing the draft opponent model, compare
+`evaluate_opponents.py`'s replay accuracy.
 
 `evaluate_waivers.py` holds out every bid on a player before predicting that player's
 positive submitted bids. It compares the original bidding formula, the guide prior,
-and fitted manager behavior using mean absolute log error. It also compares our new
-policy with the old room/hold policies on 2,048 paired opponent seasons using a
-separate seed, then repeats with every opponent active. The report includes paired
-confidence intervals and budget paths. One observed auction cannot establish future
-activity accuracy or validate absolute championship probabilities.
+and fitted manager behavior using mean absolute log error. It also compares the
+no-reserve, balanced, and patient plans with the old room/hold policies on 2,048
+paired opponent seasons using a separate seed, then repeats with every opponent
+active. The report includes paired
+confidence intervals and opening budget paths conditional on survival. One observed
+auction cannot establish future activity or saving habits, or validate absolute
+championship probabilities.
 It also reconstructs the current week's pre-auction rosters and exercises paid claim
 pricing with the learned model. That counterfactual uses observed bids and current
 projections, so it is a diagnostic rather than an ex-ante backtest.

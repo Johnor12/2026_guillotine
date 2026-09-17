@@ -4,10 +4,10 @@ Lineup: the greedy optimum on this week's projections (season.lineup), compared 
 the starters Sleeper currently has set for me.
 
 Claims: choose the best modeled bid within the guide-based, roster-specific ceiling.
-Roster variants use four-week lineup value for drops and replay the same opponent
-seasons at several budgets. A record contributes the acquired roster's title value
-if the bid wins that auction, and standing pat otherwise. This preserves dependence
-between prices and future opportunities. Odds are relative to standing pat; replay
+Roster variants use all remaining weeks for drops and replay the same opponent
+seasons at several budgets under spending and saving plans. A record contributes the
+acquired roster's title value if the bid wins, and standing pat otherwise. This keeps
+the dependence between prices and future opportunities. Odds are relative to standing pat; replay
 levels are approximate because opponents retain players acquired by our variant.
 """
 
@@ -81,6 +81,14 @@ def _interpolate(grid: list[tuple[int, float]], budget: int) -> float:
     return grid[0][1] if budget < grid[0][0] else grid[-1][1]
 
 
+def best_replays(inputs, records, variants):
+    """Choose a continuation plan by its mean outcome, never by a future record."""
+    runs = run_replays(inputs, records, [(roster, budget, policy)
+                                        for roster, budget in variants for policy in POLICIES])
+    return [max(runs[k:k + len(POLICIES)], key=lambda run: run["p_title"])
+            for k in range(0, len(runs), len(POLICIES))]
+
+
 def claims(
     state: SeasonState, inputs: RaceInputs, records: list[dict], race_title: float
 ) -> dict:
@@ -115,7 +123,7 @@ def claims(
                 outcomes[j].append(seen.get(j, -1))
     pending = auction is not None
 
-    # Price cash under the same continuation strategy that buys today's player.
+    # Compare full-season spending and saving outcomes for every cash/roster state.
     budgets = sorted({max(0, budget - step) for step in BUDGET_STEPS} | {0, budget}) if pending else [budget]
     baseline_runs = run_replays(
         inputs, records, [(roster, b, pol) for pol in POLICIES for b in budgets]
@@ -138,7 +146,7 @@ def claims(
     # Every candidate at the full budget (his value as a free pickup), then the price
     # grid only for the ones worth paying for: a player who does not help for free
     # does not help for money.
-    free_runs = run_replays(inputs, records, [(variant_rosters[j], budget, policy) for j in candidates])
+    free_runs = best_replays(inputs, records, [(variant_rosters[j], budget) for j in candidates])
     free_value = dict(zip(candidates, free_runs))
     paid = [j for j in sorted(candidates, key=lambda j: -free_value[j]["p_title"]) if free_value[j]["p_title"] > v0][:PRICED_CANDIDATES]
     # Keep the original interpolation knots bracketing legal bids; prices above the
@@ -148,8 +156,8 @@ def claims(
         lower = max(b for b in budgets if b <= budget - int(offers[j].ceiling)) if pending else budget
         priced_budgets[j] = [b for b in budgets if lower <= b < budget]
     tasks = [(j, b) for j in paid for b in priced_budgets[j]]
-    paid_runs = dict(zip(tasks, run_replays(
-        inputs, records, [(variant_rosters[j], b, policy) for j, b in tasks]
+    paid_runs = dict(zip(tasks, best_replays(
+        inputs, records, [(variant_rosters[j], b) for j, b in tasks]
     )))
     per_candidate: dict[int, list[tuple[int, float]]] = {}
     record_grids = {}
@@ -259,7 +267,8 @@ def claims(
             "p_reach_final": round(base["p_reach_final"], 4),
             "p_cut_now": round(base["p_cut_now"], 4),
             "p_alive_by_week": [round(x, 4) for x in base["p_alive_by_week"]],
-            "budget_by_week": [round(x) for x in base["budget_by_week"]],
+            "budget_by_week": [round(x) if x is not None else None for x in base["budget_by_week"]],
+            "budget_after_claims": [round(x) if x is not None else None for x in base["budget_after_claims"]],
         },
         "roster_size": WEEK_ROSTER_SIZE[w] + extra,
         "candidates": rows,

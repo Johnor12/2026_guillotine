@@ -3,7 +3,7 @@
 Charchian's early-season guide supplies the scale, not player-specific predictions:
 https://www.fantasylife.com/articles/guillotine-leagues/guillotine-league-fantasy-football-waiver-wire-guide-for-week-2
 Elite / ordinary starters / depth: 15–20% / 2.5–5% / 0.1–1% of $1,000.
-Our positional-rank curve, four-week lookahead, and uncertainty priors are modeling
+Our positional-rank curve, season-long roster valuation, and uncertainty priors are modeling
 assumptions. They adapt that 18-team guide to our scoring and expanding lineups.
 """
 
@@ -22,8 +22,32 @@ from .season import lineup_points, thresholds
 from .guillotine import SIGMA_WEEK, _cdf
 
 GUIDE_URL = "https://www.fantasylife.com/articles/guillotine-leagues/guillotine-league-fantasy-football-waiver-wire-guide-for-week-2"
-LOOKAHEAD = (1.0, 0.75, 0.5, 0.25)
 BID_SIGMA = 0.8
+
+# Desired cash entering each week (zero-based). These are strategy priors, not fits
+# to one auction. The patient plan keeps half its cash for week-14 superflex.
+SAVING_PLANS = {
+    "value": ((0, 0.0), (17, 0.0)),
+    "balanced": ((0, 1.0), (4, 0.9), (8, 0.75), (12, 0.25), (13, 0.2), (15, 0.05), (17, 0.0)),
+    "patient": ((0, 1.0), (4, 0.95), (8, 0.85), (12, 0.55), (13, 0.5), (15, 0.15), (17, 0.0)),
+}
+
+
+def reserve_fraction(policy: str, w: int) -> float:
+    for (w0, r0), (w1, r1) in zip(SAVING_PLANS[policy], SAVING_PLANS[policy][1:]):
+        if w0 <= w <= w1:
+            return r0 + (r1 - r0) * (w - w0) / (w1 - w0)
+    raise ValueError(f"week index {w} outside the saving plan")
+
+
+def spending_allowance(budget: int, initial_budget: int, start: int, w: int,
+                       policy: str, risk: float) -> int:
+    if policy == "value":
+        return budget
+    reserve = initial_budget * reserve_fraction(policy, w + 1) / reserve_fraction(policy, start)
+    # Survival emergencies can override saving; ordinary weekly cut risk cannot.
+    emergency = min(1.0, max(0.0, (risk - 0.25) / 0.25))
+    return min(budget, max(0, int(budget - reserve * (1.0 - emergency))))
 
 
 def projected_bar(rosters, alive, points, positions, w):
@@ -84,35 +108,33 @@ class Bidding:
 
     @lru_cache(maxsize=8192)
     def context(self, roster: tuple[int, ...], w: int, extra: int):
-        weeks = tuple(range(w, min(WEEKS, w + len(LOOKAHEAD))))
-        weights = LOOKAHEAD[:len(weeks)]
+        weeks = tuple(range(w, WEEKS))
         totals = [lineup_points(roster, self.weekly[v], self.positions, v) for v in weeks]
         drop = None
         if len(roster) >= WEEK_ROSTER_SIZE[w] + extra:
-            # Preserve scarce starters and approaching bye/expansion coverage.
+            # Include every remaining bye and expansion, including week-14 superflex.
             def lost(j):
                 rest = [p for p in roster if p != j]
-                loss = sum(weight * (total - lineup_points(rest, self.weekly[v], self.positions, v))
-                           for v, weight, total in zip(weeks, weights, totals))
+                loss = sum(total - lineup_points(rest, self.weekly[v], self.positions, v)
+                           for v, total in zip(weeks, totals))
                 return loss, self.ros[w][j], j
             drop = min(roster, key=lost)
         rest = [p for p in roster if p != drop]
         losses = tuple(total - lineup_points(rest, self.weekly[v], self.positions, v) for v, total in zip(weeks, totals))
         floors = tuple(thresholds(rest, self.weekly[v], self.positions, v) for v in weeks)
-        return weeks, weights, drop, losses, floors
+        return weeks, drop, losses, floors
 
     def offers(self, roster, candidates, budget: int, w: int, extra: int, risk: float = 0.0):
-        weeks, weights, drop, losses, floors = self.context(tuple(sorted(roster)), w, extra)
+        weeks, drop, losses, floors = self.context(tuple(sorted(roster)), w, extra)
         scale = budget * (WEEKS - 1) / (WEEKS - w) * (1.0 + 2.0 * risk)
-        norm = sum(weights)
         owned = set(roster)
         out = []
         for j in candidates:
             if j in owned:
                 continue
             pos = self.positions[j]
-            gain = sum(weight * (max(0.0, self.weekly[v][j] - floor[pos]) - loss)
-                       for v, weight, loss, floor in zip(weeks, weights, losses, floors)) / norm
+            gain = sum(max(0.0, self.weekly[v][j] - floor[pos]) - loss
+                       for v, loss, floor in zip(weeks, losses, floors)) / len(weeks)
             if gain <= 0.0:
                 continue
             ceiling = min(budget, scale * self.shares[w][j] * min(1.5, gain / 5.0))

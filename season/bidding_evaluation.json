@@ -7,45 +7,45 @@
     "bid_weeks": 1,
     "submitted_bids": 56,
     "positive_bids_tested": 48,
-    "prior_log_mae": 0.966,
+    "prior_log_mae": 0.86,
     "legacy_log_mae": 0.906,
-    "fitted_log_mae": 0.842,
+    "fitted_log_mae": 0.773,
     "predictions": [
       {
         "player": "Xavier Worthy",
         "roster_id": 3,
         "actual": 6,
-        "predicted": 2
+        "predicted": 3
       },
       {
         "player": "Jeremiyah Love",
         "roster_id": 3,
         "actual": 56,
-        "predicted": 42
+        "predicted": 55
       },
       {
         "player": "Jeremiyah Love",
         "roster_id": 4,
         "actual": 143,
-        "predicted": 87
+        "predicted": 90
       },
       {
         "player": "Jeremiyah Love",
         "roster_id": 26,
         "actual": 150,
-        "predicted": 81
+        "predicted": 87
       },
       {
         "player": "Jeremiyah Love",
         "roster_id": 9,
         "actual": 152,
-        "predicted": 86
+        "predicted": 106
       },
       {
         "player": "Carson Wentz",
         "roster_id": 3,
         "actual": 1,
-        "predicted": 3
+        "predicted": 1
       },
       {
         "player": "Kalif Raymond",
@@ -57,25 +57,25 @@
         "player": "Mack Hollins",
         "roster_id": 20,
         "actual": 20,
-        "predicted": 2
+        "predicted": 1
       },
       {
         "player": "Matthew Stafford",
         "roster_id": 3,
         "actual": 3,
-        "predicted": 13
+        "predicted": 10
       },
       {
         "player": "Matthew Stafford",
         "roster_id": 11,
         "actual": 151,
-        "predicted": 39
+        "predicted": 30
       },
       {
         "player": "Dalton Schultz",
         "roster_id": 3,
         "actual": 6,
-        "predicted": 2
+        "predicted": 3
       },
       {
         "player": "Dalton Schultz",
@@ -87,73 +87,73 @@
         "player": "Dalton Schultz",
         "roster_id": 11,
         "actual": 131,
-        "predicted": 25
+        "predicted": 29
       },
       {
         "player": "Courtland Sutton",
         "roster_id": 3,
         "actual": 6,
-        "predicted": 6
+        "predicted": 8
       },
       {
         "player": "Drew Lock",
         "roster_id": 3,
         "actual": 1,
-        "predicted": 2
+        "predicted": 1
       },
       {
         "player": "J.K. Dobbins",
         "roster_id": 5,
         "actual": 15,
-        "predicted": 12
+        "predicted": 14
       },
       {
         "player": "J.K. Dobbins",
         "roster_id": 3,
         "actual": 6,
-        "predicted": 5
+        "predicted": 6
       },
       {
         "player": "J.K. Dobbins",
         "roster_id": 9,
         "actual": 52,
-        "predicted": 4
+        "predicted": 7
       },
       {
         "player": "Ja'Marr Chase",
         "roster_id": 20,
         "actual": 400,
-        "predicted": 887
+        "predicted": 954
       },
       {
         "player": "Ja'Marr Chase",
         "roster_id": 2,
         "actual": 300,
-        "predicted": 539
+        "predicted": 505
       },
       {
         "player": "Ja'Marr Chase",
         "roster_id": 8,
         "actual": 307,
-        "predicted": 447
+        "predicted": 461
       },
       {
         "player": "Ja'Marr Chase",
         "roster_id": 5,
         "actual": 347,
-        "predicted": 733
+        "predicted": 732
       },
       {
         "player": "Ja'Marr Chase",
         "roster_id": 3,
         "actual": 156,
-        "predicted": 289
+        "predicted": 374
       },
       {
         "player": "Ja'Marr Chase",
         "roster_id": 4,
         "actual": 413,
-        "predicted": 683
+        "predicted": 705
       },
       {
         "player": "Ja'Marr Chase",
@@ -165,109 +165,109 @@
         "player": "Ja'Marr Chase",
         "roster_id": 15,
         "actual": 450,
-        "predicted": 502
+        "predicted": 529
       },
       {
         "player": "Ja'Marr Chase",
         "roster_id": 23,
         "actual": 750,
-        "predicted": 527
+        "predicted": 556
       },
       {
         "player": "Ja'Marr Chase",
         "roster_id": 28,
         "actual": 400,
-        "predicted": 453
+        "predicted": 456
       },
       {
         "player": "Ja'Marr Chase",
         "roster_id": 26,
         "actual": 300,
-        "predicted": 744
+        "predicted": 733
       },
       {
         "player": "Ja'Marr Chase",
         "roster_id": 9,
         "actual": 502,
-        "predicted": 1000
+        "predicted": 887
       },
       {
         "player": "Drake London",
         "roster_id": 20,
         "actual": 100,
-        "predicted": 340
+        "predicted": 366
       },
       {
         "player": "Drake London",
         "roster_id": 2,
         "actual": 100,
-        "predicted": 150
+        "predicted": 186
       },
       {
         "player": "Drake London",
         "roster_id": 8,
         "actual": 79,
-        "predicted": 173
+        "predicted": 178
       },
       {
         "player": "Drake London",
         "roster_id": 3,
         "actual": 56,
-        "predicted": 100
+        "predicted": 135
       },
       {
         "player": "Drake London",
         "roster_id": 11,
         "actual": 141,
-        "predicted": 482
+        "predicted": 536
       },
       {
         "player": "Drake London",
         "roster_id": 28,
         "actual": 50,
-        "predicted": 174
+        "predicted": 204
       },
       {
         "player": "Garrett Wilson",
         "roster_id": 20,
         "actual": 150,
-        "predicted": 84
+        "predicted": 91
       },
       {
         "player": "Garrett Wilson",
         "roster_id": 2,
         "actual": 100,
-        "predicted": 36
+        "predicted": 46
       },
       {
         "player": "Garrett Wilson",
         "roster_id": 8,
         "actual": 77,
-        "predicted": 43
+        "predicted": 45
       },
       {
         "player": "Garrett Wilson",
         "roster_id": 10,
         "actual": 28,
-        "predicted": 62
+        "predicted": 66
       },
       {
         "player": "Garrett Wilson",
         "roster_id": 3,
         "actual": 36,
-        "predicted": 31
+        "predicted": 40
       },
       {
         "player": "Garrett Wilson",
         "roster_id": 4,
         "actual": 163,
-        "predicted": 60
+        "predicted": 63
       },
       {
         "player": "Garrett Wilson",
         "roster_id": 11,
         "actual": 151,
-        "predicted": 135
+        "predicted": 150
       },
       {
         "player": "Garrett Wilson",
@@ -279,89 +279,89 @@
         "player": "Garrett Wilson",
         "roster_id": 26,
         "actual": 200,
-        "predicted": 49
+        "predicted": 59
       },
       {
         "player": "Garrett Wilson",
         "roster_id": 7,
         "actual": 50,
-        "predicted": 25
+        "predicted": 33
       },
       {
         "player": "Aaron Rodgers",
         "roster_id": 3,
         "actual": 2,
-        "predicted": 6
+        "predicted": 4
       },
       {
         "player": "Aaron Rodgers",
         "roster_id": 11,
         "actual": 131,
-        "predicted": 13
+        "predicted": 10
       }
     ]
   },
   "scenarios": {
     "fitted_activity": {
       "value": {
-        "p_title": 0.09695717426870612,
-        "p_reach_final": 0.2048759485297082,
+        "p_title": 0.10712162721986643,
+        "p_reach_final": 0.24072406656672748,
         "budget_by_week": [
           {
             "week": 2,
-            "budget": 998
+            "budget": 1000
           },
           {
             "week": 3,
-            "budget": 997
+            "budget": 998
           },
           {
             "week": 4,
-            "budget": 995
+            "budget": 954
           },
           {
             "week": 5,
-            "budget": 987
+            "budget": 908
           },
           {
             "week": 6,
-            "budget": 967
+            "budget": 815
           },
           {
             "week": 7,
-            "budget": 757
+            "budget": 749
           },
           {
             "week": 8,
-            "budget": 679
+            "budget": 467
           },
           {
             "week": 9,
-            "budget": 439
+            "budget": 363
           },
           {
             "week": 10,
-            "budget": 281
+            "budget": 230
           },
           {
             "week": 11,
-            "budget": 133
+            "budget": 189
           },
           {
             "week": 12,
-            "budget": 23
+            "budget": 139
           },
           {
             "week": 13,
-            "budget": 6
+            "budget": 61
           },
           {
             "week": 14,
-            "budget": 1
+            "budget": 28
           },
           {
             "week": 15,
-            "budget": 0
+            "budget": 6
           },
           {
             "week": 16,
@@ -372,51 +372,656 @@
             "budget": 0
           }
         ],
-        "mean_week9_spend": 240
+        "mean_week9_spend": 132
       },
-      "room": {
-        "p_title": 0.06616121712527659,
-        "p_reach_final": 0.12355600437663297,
+      "balanced": {
+        "p_title": 0.09984218076344673,
+        "p_reach_final": 0.20999050502487154,
         "budget_by_week": [
           {
             "week": 2,
-            "budget": 998
+            "budget": 1000
           },
           {
             "week": 3,
-            "budget": 992
+            "budget": 998
           },
           {
             "week": 4,
-            "budget": 982
+            "budget": 994
           },
           {
             "week": 5,
-            "budget": 965
+            "budget": 986
           },
           {
             "week": 6,
-            "budget": 940
+            "budget": 966
           },
           {
             "week": 7,
-            "budget": 527
+            "budget": 937
           },
           {
             "week": 8,
-            "budget": 486
+            "budget": 820
           },
           {
             "week": 9,
-            "budget": 134
+            "budget": 790
           },
           {
             "week": 10,
-            "budget": 112
+            "budget": 654
           },
           {
             "week": 11,
-            "budget": 89
+            "budget": 573
+          },
+          {
+            "week": 12,
+            "budget": 431
+          },
+          {
+            "week": 13,
+            "budget": 269
+          },
+          {
+            "week": 14,
+            "budget": 208
+          },
+          {
+            "week": 15,
+            "budget": 124
+          },
+          {
+            "week": 16,
+            "budget": 29
+          },
+          {
+            "week": 17,
+            "budget": 20
+          }
+        ],
+        "mean_week9_spend": 137,
+        "value_advantage_percentage_points": 0.728,
+        "paired_95_percent_interval": [
+          0.506,
+          0.95
+        ]
+      },
+      "patient": {
+        "p_title": 0.06961921987219931,
+        "p_reach_final": 0.15660864563917903,
+        "budget_by_week": [
+          {
+            "week": 2,
+            "budget": 1000
+          },
+          {
+            "week": 3,
+            "budget": 998
+          },
+          {
+            "week": 4,
+            "budget": 996
+          },
+          {
+            "week": 5,
+            "budget": 993
+          },
+          {
+            "week": 6,
+            "budget": 986
+          },
+          {
+            "week": 7,
+            "budget": 969
+          },
+          {
+            "week": 8,
+            "budget": 891
+          },
+          {
+            "week": 9,
+            "budget": 872
+          },
+          {
+            "week": 10,
+            "budget": 785
+          },
+          {
+            "week": 11,
+            "budget": 731
+          },
+          {
+            "week": 12,
+            "budget": 641
+          },
+          {
+            "week": 13,
+            "budget": 549
+          },
+          {
+            "week": 14,
+            "budget": 491
+          },
+          {
+            "week": 15,
+            "budget": 276
+          },
+          {
+            "week": 16,
+            "budget": 51
+          },
+          {
+            "week": 17,
+            "budget": 41
+          }
+        ],
+        "mean_week9_spend": 87,
+        "value_advantage_percentage_points": 3.75,
+        "paired_95_percent_interval": [
+          3.469,
+          4.031
+        ]
+      },
+      "room": {
+        "p_title": 0.05003542294450135,
+        "p_reach_final": 0.11469200151292187,
+        "budget_by_week": [
+          {
+            "week": 2,
+            "budget": 1000
+          },
+          {
+            "week": 3,
+            "budget": 998
+          },
+          {
+            "week": 4,
+            "budget": 962
+          },
+          {
+            "week": 5,
+            "budget": 917
+          },
+          {
+            "week": 6,
+            "budget": 860
+          },
+          {
+            "week": 7,
+            "budget": 804
+          },
+          {
+            "week": 8,
+            "budget": 299
+          },
+          {
+            "week": 9,
+            "budget": 258
+          },
+          {
+            "week": 10,
+            "budget": 124
+          },
+          {
+            "week": 11,
+            "budget": 115
+          },
+          {
+            "week": 12,
+            "budget": 108
+          },
+          {
+            "week": 13,
+            "budget": 82
+          },
+          {
+            "week": 14,
+            "budget": 65
+          },
+          {
+            "week": 15,
+            "budget": 30
+          },
+          {
+            "week": 16,
+            "budget": 26
+          },
+          {
+            "week": 17,
+            "budget": 20
+          }
+        ],
+        "mean_week9_spend": 135,
+        "value_advantage_percentage_points": 5.709,
+        "paired_95_percent_interval": [
+          5.272,
+          6.145
+        ]
+      },
+      "hold": {
+        "p_title": 0.021779969678800498,
+        "p_reach_final": 0.05163681627289712,
+        "budget_by_week": [
+          {
+            "week": 2,
+            "budget": 1000
+          },
+          {
+            "week": 3,
+            "budget": 998
+          },
+          {
+            "week": 4,
+            "budget": 998
+          },
+          {
+            "week": 5,
+            "budget": 998
+          },
+          {
+            "week": 6,
+            "budget": 998
+          },
+          {
+            "week": 7,
+            "budget": 998
+          },
+          {
+            "week": 8,
+            "budget": 998
+          },
+          {
+            "week": 9,
+            "budget": 998
+          },
+          {
+            "week": 10,
+            "budget": 69
+          },
+          {
+            "week": 11,
+            "budget": 63
+          },
+          {
+            "week": 12,
+            "budget": 57
+          },
+          {
+            "week": 13,
+            "budget": 45
+          },
+          {
+            "week": 14,
+            "budget": 34
+          },
+          {
+            "week": 15,
+            "budget": 9
+          },
+          {
+            "week": 16,
+            "budget": 8
+          },
+          {
+            "week": 17,
+            "budget": 6
+          }
+        ],
+        "mean_week9_spend": 928,
+        "value_advantage_percentage_points": 8.534,
+        "paired_95_percent_interval": [
+          8.03,
+          9.038
+        ]
+      }
+    },
+    "all_opponents_active": {
+      "value": {
+        "p_title": 0.0810521491310168,
+        "p_reach_final": 0.18438867512840987,
+        "budget_by_week": [
+          {
+            "week": 2,
+            "budget": 1000
+          },
+          {
+            "week": 3,
+            "budget": 998
+          },
+          {
+            "week": 4,
+            "budget": 993
+          },
+          {
+            "week": 5,
+            "budget": 978
+          },
+          {
+            "week": 6,
+            "budget": 912
+          },
+          {
+            "week": 7,
+            "budget": 841
+          },
+          {
+            "week": 8,
+            "budget": 517
+          },
+          {
+            "week": 9,
+            "budget": 382
+          },
+          {
+            "week": 10,
+            "budget": 219
+          },
+          {
+            "week": 11,
+            "budget": 179
+          },
+          {
+            "week": 12,
+            "budget": 130
+          },
+          {
+            "week": 13,
+            "budget": 53
+          },
+          {
+            "week": 14,
+            "budget": 23
+          },
+          {
+            "week": 15,
+            "budget": 5
+          },
+          {
+            "week": 16,
+            "budget": 0
+          },
+          {
+            "week": 17,
+            "budget": 0
+          }
+        ],
+        "mean_week9_spend": 163
+      },
+      "balanced": {
+        "p_title": 0.07752234717557063,
+        "p_reach_final": 0.16435050262647585,
+        "budget_by_week": [
+          {
+            "week": 2,
+            "budget": 1000
+          },
+          {
+            "week": 3,
+            "budget": 998
+          },
+          {
+            "week": 4,
+            "budget": 998
+          },
+          {
+            "week": 5,
+            "budget": 996
+          },
+          {
+            "week": 6,
+            "budget": 984
+          },
+          {
+            "week": 7,
+            "budget": 959
+          },
+          {
+            "week": 8,
+            "budget": 833
+          },
+          {
+            "week": 9,
+            "budget": 799
+          },
+          {
+            "week": 10,
+            "budget": 651
+          },
+          {
+            "week": 11,
+            "budget": 567
+          },
+          {
+            "week": 12,
+            "budget": 417
+          },
+          {
+            "week": 13,
+            "budget": 265
+          },
+          {
+            "week": 14,
+            "budget": 207
+          },
+          {
+            "week": 15,
+            "budget": 120
+          },
+          {
+            "week": 16,
+            "budget": 24
+          },
+          {
+            "week": 17,
+            "budget": 18
+          }
+        ],
+        "mean_week9_spend": 148,
+        "value_advantage_percentage_points": 0.353,
+        "paired_95_percent_interval": [
+          0.154,
+          0.552
+        ]
+      },
+      "patient": {
+        "p_title": 0.052825948729180346,
+        "p_reach_final": 0.1176693809256964,
+        "budget_by_week": [
+          {
+            "week": 2,
+            "budget": 1000
+          },
+          {
+            "week": 3,
+            "budget": 998
+          },
+          {
+            "week": 4,
+            "budget": 998
+          },
+          {
+            "week": 5,
+            "budget": 997
+          },
+          {
+            "week": 6,
+            "budget": 992
+          },
+          {
+            "week": 7,
+            "budget": 980
+          },
+          {
+            "week": 8,
+            "budget": 902
+          },
+          {
+            "week": 9,
+            "budget": 880
+          },
+          {
+            "week": 10,
+            "budget": 781
+          },
+          {
+            "week": 11,
+            "budget": 727
+          },
+          {
+            "week": 12,
+            "budget": 630
+          },
+          {
+            "week": 13,
+            "budget": 540
+          },
+          {
+            "week": 14,
+            "budget": 473
+          },
+          {
+            "week": 15,
+            "budget": 242
+          },
+          {
+            "week": 16,
+            "budget": 36
+          },
+          {
+            "week": 17,
+            "budget": 31
+          }
+        ],
+        "mean_week9_spend": 99,
+        "value_advantage_percentage_points": 2.823,
+        "paired_95_percent_interval": [
+          2.577,
+          3.068
+        ]
+      },
+      "room": {
+        "p_title": 0.03909311707710974,
+        "p_reach_final": 0.08772170715370882,
+        "budget_by_week": [
+          {
+            "week": 2,
+            "budget": 1000
+          },
+          {
+            "week": 3,
+            "budget": 998
+          },
+          {
+            "week": 4,
+            "budget": 992
+          },
+          {
+            "week": 5,
+            "budget": 978
+          },
+          {
+            "week": 6,
+            "budget": 947
+          },
+          {
+            "week": 7,
+            "budget": 896
+          },
+          {
+            "week": 8,
+            "budget": 481
+          },
+          {
+            "week": 9,
+            "budget": 384
+          },
+          {
+            "week": 10,
+            "budget": 131
+          },
+          {
+            "week": 11,
+            "budget": 120
+          },
+          {
+            "week": 12,
+            "budget": 111
+          },
+          {
+            "week": 13,
+            "budget": 82
+          },
+          {
+            "week": 14,
+            "budget": 65
+          },
+          {
+            "week": 15,
+            "budget": 29
+          },
+          {
+            "week": 16,
+            "budget": 26
+          },
+          {
+            "week": 17,
+            "budget": 20
+          }
+        ],
+        "mean_week9_spend": 253,
+        "value_advantage_percentage_points": 4.196,
+        "paired_95_percent_interval": [
+          3.821,
+          4.57
+        ]
+      },
+      "hold": {
+        "p_title": 0.016156562198905617,
+        "p_reach_final": 0.03723261050703523,
+        "budget_by_week": [
+          {
+            "week": 2,
+            "budget": 1000
+          },
+          {
+            "week": 3,
+            "budget": 998
+          },
+          {
+            "week": 4,
+            "budget": 998
+          },
+          {
+            "week": 5,
+            "budget": 998
+          },
+          {
+            "week": 6,
+            "budget": 998
+          },
+          {
+            "week": 7,
+            "budget": 998
+          },
+          {
+            "week": 8,
+            "budget": 998
+          },
+          {
+            "week": 9,
+            "budget": 998
+          },
+          {
+            "week": 10,
+            "budget": 57
+          },
+          {
+            "week": 11,
+            "budget": 53
           },
           {
             "week": 12,
@@ -424,312 +1029,11 @@
           },
           {
             "week": 13,
-            "budget": 35
+            "budget": 40
           },
           {
             "week": 14,
-            "budget": 23
-          },
-          {
-            "week": 15,
-            "budget": 18
-          },
-          {
-            "week": 16,
-            "budget": 14
-          },
-          {
-            "week": 17,
-            "budget": 14
-          }
-        ],
-        "mean_week9_spend": 352,
-        "value_advantage_percentage_points": 3.08,
-        "paired_95_percent_interval": [
-          2.629,
-          3.531
-        ]
-      },
-      "hold": {
-        "p_title": 0.04991559967154178,
-        "p_reach_final": 0.09128676232107555,
-        "budget_by_week": [
-          {
-            "week": 2,
-            "budget": 998
-          },
-          {
-            "week": 3,
-            "budget": 998
-          },
-          {
-            "week": 4,
-            "budget": 998
-          },
-          {
-            "week": 5,
-            "budget": 998
-          },
-          {
-            "week": 6,
-            "budget": 998
-          },
-          {
-            "week": 7,
-            "budget": 998
-          },
-          {
-            "week": 8,
-            "budget": 998
-          },
-          {
-            "week": 9,
-            "budget": 135
-          },
-          {
-            "week": 10,
-            "budget": 103
-          },
-          {
-            "week": 11,
-            "budget": 77
-          },
-          {
-            "week": 12,
-            "budget": 39
-          },
-          {
-            "week": 13,
-            "budget": 25
-          },
-          {
-            "week": 14,
-            "budget": 15
-          },
-          {
-            "week": 15,
-            "budget": 11
-          },
-          {
-            "week": 16,
-            "budget": 9
-          },
-          {
-            "week": 17,
-            "budget": 9
-          }
-        ],
-        "mean_week9_spend": 863,
-        "value_advantage_percentage_points": 4.704,
-        "paired_95_percent_interval": [
-          4.229,
-          5.18
-        ]
-      }
-    },
-    "all_opponents_active": {
-      "value": {
-        "p_title": 0.07391722321591018,
-        "p_reach_final": 0.16003493080030295,
-        "budget_by_week": [
-          {
-            "week": 2,
-            "budget": 998
-          },
-          {
-            "week": 3,
-            "budget": 998
-          },
-          {
-            "week": 4,
-            "budget": 997
-          },
-          {
-            "week": 5,
-            "budget": 994
-          },
-          {
-            "week": 6,
-            "budget": 985
-          },
-          {
-            "week": 7,
-            "budget": 790
-          },
-          {
-            "week": 8,
-            "budget": 728
-          },
-          {
-            "week": 9,
-            "budget": 434
-          },
-          {
-            "week": 10,
-            "budget": 245
-          },
-          {
-            "week": 11,
-            "budget": 102
-          },
-          {
-            "week": 12,
-            "budget": 15
-          },
-          {
-            "week": 13,
-            "budget": 3
-          },
-          {
-            "week": 14,
-            "budget": 0
-          },
-          {
-            "week": 15,
-            "budget": 0
-          },
-          {
-            "week": 16,
-            "budget": 0
-          },
-          {
-            "week": 17,
-            "budget": 0
-          }
-        ],
-        "mean_week9_spend": 294
-      },
-      "room": {
-        "p_title": 0.04677178384089631,
-        "p_reach_final": 0.08975239120359003,
-        "budget_by_week": [
-          {
-            "week": 2,
-            "budget": 998
-          },
-          {
-            "week": 3,
-            "budget": 996
-          },
-          {
-            "week": 4,
-            "budget": 991
-          },
-          {
-            "week": 5,
-            "budget": 981
-          },
-          {
-            "week": 6,
-            "budget": 967
-          },
-          {
-            "week": 7,
-            "budget": 675
-          },
-          {
-            "week": 8,
-            "budget": 621
-          },
-          {
-            "week": 9,
-            "budget": 111
-          },
-          {
-            "week": 10,
-            "budget": 91
-          },
-          {
-            "week": 11,
-            "budget": 69
-          },
-          {
-            "week": 12,
-            "budget": 37
-          },
-          {
-            "week": 13,
-            "budget": 25
-          },
-          {
-            "week": 14,
-            "budget": 16
-          },
-          {
-            "week": 15,
-            "budget": 12
-          },
-          {
-            "week": 16,
-            "budget": 10
-          },
-          {
-            "week": 17,
-            "budget": 10
-          }
-        ],
-        "mean_week9_spend": 511,
-        "value_advantage_percentage_points": 2.715,
-        "paired_95_percent_interval": [
-          2.308,
-          3.121
-        ]
-      },
-      "hold": {
-        "p_title": 0.036730072630124386,
-        "p_reach_final": 0.0698612642052015,
-        "budget_by_week": [
-          {
-            "week": 2,
-            "budget": 998
-          },
-          {
-            "week": 3,
-            "budget": 998
-          },
-          {
-            "week": 4,
-            "budget": 998
-          },
-          {
-            "week": 5,
-            "budget": 998
-          },
-          {
-            "week": 6,
-            "budget": 998
-          },
-          {
-            "week": 7,
-            "budget": 998
-          },
-          {
-            "week": 8,
-            "budget": 998
-          },
-          {
-            "week": 9,
-            "budget": 109
-          },
-          {
-            "week": 10,
-            "budget": 83
-          },
-          {
-            "week": 11,
-            "budget": 59
-          },
-          {
-            "week": 12,
-            "budget": 28
-          },
-          {
-            "week": 13,
-            "budget": 18
-          },
-          {
-            "week": 14,
-            "budget": 10
+            "budget": 31
           },
           {
             "week": 15,
@@ -737,18 +1041,18 @@
           },
           {
             "week": 16,
-            "budget": 7
+            "budget": 6
           },
           {
             "week": 17,
-            "budget": 7
+            "budget": 4
           }
         ],
-        "mean_week9_spend": 889,
-        "value_advantage_percentage_points": 3.719,
+        "mean_week9_spend": 940,
+        "value_advantage_percentage_points": 6.49,
         "paired_95_percent_interval": [
-          3.304,
-          4.133
+          6.038,
+          6.941
         ]
       }
     }
@@ -762,196 +1066,108 @@
     "note": "Current projections and learned opponent bids; a counterfactual, not an ex-ante backtest.",
     "candidates": [
       {
-        "name": "Courtland Sutton",
-        "optimal_bid": 2,
-        "bid_ceiling": 3,
-        "p_win_at_optimal": 0.218,
-        "title_at_optimal": 0.5,
-        "gain_this_week": 2.0
+        "name": "Ja'Marr Chase",
+        "optimal_bid": 296,
+        "bid_ceiling": 303,
+        "p_win_at_optimal": 0.066,
+        "title_at_optimal": 1.5,
+        "gain_this_week": 7.7
       },
       {
         "name": "Jeremiyah Love",
-        "optimal_bid": 26,
-        "bid_ceiling": 26,
-        "p_win_at_optimal": 0.007,
-        "title_at_optimal": 0.2,
+        "optimal_bid": 35,
+        "bid_ceiling": 36,
+        "p_win_at_optimal": 0.236,
+        "title_at_optimal": 1.2,
         "gain_this_week": 1.7
       },
       {
         "name": "Drake London",
-        "optimal_bid": 50,
-        "bid_ceiling": 72,
-        "p_win_at_optimal": 0.003,
-        "title_at_optimal": 0.1,
+        "optimal_bid": 26,
+        "bid_ceiling": 89,
+        "p_win_at_optimal": 0.109,
+        "title_at_optimal": 0.8,
         "gain_this_week": 3.7
       },
       {
         "name": "Garrett Wilson",
-        "optimal_bid": 24,
+        "optimal_bid": 21,
         "bid_ceiling": 24,
-        "p_win_at_optimal": 0.017,
-        "title_at_optimal": 0.1,
+        "p_win_at_optimal": 0.087,
+        "title_at_optimal": 0.6,
         "gain_this_week": 5.1
       },
       {
-        "name": "Ja'Marr Chase",
-        "optimal_bid": 0,
-        "bid_ceiling": 303,
-        "p_win_at_optimal": 0.0,
-        "title_at_optimal": -0.0,
-        "gain_this_week": 7.7
+        "name": "Courtland Sutton",
+        "optimal_bid": 1,
+        "bid_ceiling": 4,
+        "p_win_at_optimal": 0.16,
+        "title_at_optimal": 0.5,
+        "gain_this_week": 2.0
       },
       {
-        "name": "Dalton Schultz",
-        "optimal_bid": 0,
+        "name": "J.K. Dobbins",
+        "optimal_bid": 2,
         "bid_ceiling": 2,
-        "p_win_at_optimal": 0.0,
-        "title_at_optimal": -0.0,
-        "gain_this_week": 2.1
+        "p_win_at_optimal": 0.335,
+        "title_at_optimal": 0.3,
+        "gain_this_week": 0.0
       },
       {
-        "name": "Mack Hollins",
+        "name": "Aaron Rodgers",
         "optimal_bid": 0,
         "bid_ceiling": 0,
         "p_win_at_optimal": 0.0,
-        "title_at_optimal": -0.0,
-        "gain_this_week": 0.4
+        "title_at_optimal": 0.0,
+        "gain_this_week": 0.0
       },
       {
-        "name": "Xavier Worthy",
+        "name": "Sam Darnold",
         "optimal_bid": 0,
-        "bid_ceiling": 1,
+        "bid_ceiling": 0,
         "p_win_at_optimal": 0.0,
-        "title_at_optimal": -0.0,
-        "gain_this_week": 1.7
+        "title_at_optimal": 0.0,
+        "gain_this_week": 0.0
       },
       {
         "name": "Tyjae Spears",
         "optimal_bid": 0,
         "bid_ceiling": 0,
         "p_win_at_optimal": 0.0,
-        "title_at_optimal": -0.0,
+        "title_at_optimal": 0.0,
         "gain_this_week": 0.0
       },
       {
-        "name": "J.K. Dobbins",
+        "name": "Dalton Schultz",
+        "optimal_bid": 0,
+        "bid_ceiling": 3,
+        "p_win_at_optimal": 0.0,
+        "title_at_optimal": 0.0,
+        "gain_this_week": 2.1
+      },
+      {
+        "name": "Omar Cooper",
+        "optimal_bid": 0,
+        "bid_ceiling": 0,
+        "p_win_at_optimal": 0.004,
+        "title_at_optimal": 0.0,
+        "gain_this_week": 0.0
+      },
+      {
+        "name": "Matthew Stafford",
+        "optimal_bid": 0,
+        "bid_ceiling": 3,
+        "p_win_at_optimal": 0.0,
+        "title_at_optimal": 0.0,
+        "gain_this_week": 0.0
+      },
+      {
+        "name": "Xavier Worthy",
         "optimal_bid": 0,
         "bid_ceiling": 1,
         "p_win_at_optimal": 0.0,
-        "title_at_optimal": -0.0,
-        "gain_this_week": 0.0
-      },
-      {
-        "name": "Ty Johnson",
-        "optimal_bid": 0,
-        "bid_ceiling": 0,
-        "p_win_at_optimal": 1.0,
-        "title_at_optimal": -0.1,
-        "gain_this_week": 0.0
-      },
-      {
-        "name": "Ray Davis",
-        "optimal_bid": 0,
-        "bid_ceiling": 0,
-        "p_win_at_optimal": 1.0,
-        "title_at_optimal": -0.1,
-        "gain_this_week": 0.0
-      },
-      {
-        "name": "Kendre Miller",
-        "optimal_bid": 0,
-        "bid_ceiling": 0,
-        "p_win_at_optimal": 0.986,
-        "title_at_optimal": -0.2,
-        "gain_this_week": 0.0
-      },
-      {
-        "name": "Jonah Coleman",
-        "optimal_bid": 0,
-        "bid_ceiling": 0,
-        "p_win_at_optimal": 1.0,
-        "title_at_optimal": -0.2,
-        "gain_this_week": 0.0
-      },
-      {
-        "name": "Devin Singletary",
-        "optimal_bid": 0,
-        "bid_ceiling": 0,
-        "p_win_at_optimal": 0.999,
-        "title_at_optimal": -0.2,
-        "gain_this_week": 0.0
-      },
-      {
-        "name": "Kaytron Allen",
-        "optimal_bid": 0,
-        "bid_ceiling": 0,
-        "p_win_at_optimal": 1.0,
-        "title_at_optimal": -0.2,
-        "gain_this_week": 0.0
-      },
-      {
-        "name": "Tyrone Tracy",
-        "optimal_bid": 0,
-        "bid_ceiling": 0,
-        "p_win_at_optimal": 1.0,
-        "title_at_optimal": -0.2,
-        "gain_this_week": 0.0
-      },
-      {
-        "name": "LeQuint Allen",
-        "optimal_bid": 0,
-        "bid_ceiling": 0,
-        "p_win_at_optimal": 1.0,
-        "title_at_optimal": -0.2,
-        "gain_this_week": 0.0
-      },
-      {
-        "name": "Seth McGowan",
-        "optimal_bid": 0,
-        "bid_ceiling": 0,
-        "p_win_at_optimal": 1.0,
-        "title_at_optimal": -0.2,
-        "gain_this_week": 0.0
-      },
-      {
-        "name": "Jaylen Wright",
-        "optimal_bid": 0,
-        "bid_ceiling": 0,
-        "p_win_at_optimal": 1.0,
-        "title_at_optimal": -0.2,
-        "gain_this_week": 0.0
-      },
-      {
-        "name": "Emanuel Wilson",
-        "optimal_bid": 0,
-        "bid_ceiling": 0,
-        "p_win_at_optimal": 0.999,
-        "title_at_optimal": -0.2,
-        "gain_this_week": 0.0
-      },
-      {
-        "name": "Kimani Vidal",
-        "optimal_bid": 0,
-        "bid_ceiling": 0,
-        "p_win_at_optimal": 1.0,
-        "title_at_optimal": -0.2,
-        "gain_this_week": 0.0
-      },
-      {
-        "name": "Najee Harris",
-        "optimal_bid": 0,
-        "bid_ceiling": 0,
-        "p_win_at_optimal": 1.0,
-        "title_at_optimal": -0.2,
-        "gain_this_week": 0.0
-      },
-      {
-        "name": "Ollie Gordon",
-        "optimal_bid": 0,
-        "bid_ceiling": 0,
-        "p_win_at_optimal": 1.0,
-        "title_at_optimal": -0.2,
-        "gain_this_week": 0.0
+        "title_at_optimal": 0.0,
+        "gain_this_week": 1.7
       }
     ]
   }
