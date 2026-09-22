@@ -173,16 +173,19 @@ noise, the two lowest are cut, and their players hit the wire. `ranker/waivers.p
 prices acquisitions from [Paul Charchian's guillotine FAAB guide](https://www.fantasylife.com/articles/guillotine-leagues/guillotine-league-fantasy-football-waiver-wire-guide-for-week-2):
 early elite players about 15–20% of the starting budget, ordinary starters 2.5–5%,
 and depth 0.1–1%. This is an 18-team guide, not a fitted rule for our 32-team format.
-Our adaptation uses league-scored positional ranks (elite anchors QB4/RB6/WR6/TE3,
-then an inverse-square price curve), the claim's projected net lineup points at its
-best hold horizon through Week 17, per remaining week, and projected cut risk. Each
-candidate's drop is chosen with him: the body whose loss leaves the best
+Our adaptation uses league-scored positional ranks by points per game played for the
+rest of the season (elite anchors QB4/RB6/WR6/TE3, then an inverse-square price
+curve), the claim's projected net lineup points through Week 17, per remaining week,
+and projected cut risk. Ranking by games played keeps a player returning from an
+absence from being charged twice: the net lineup points already count only the weeks
+he plays. Each candidate's drop is chosen with him: the body whose loss leaves the best
 remaining-season roster with the candidate on it, including distant byes and
-superflex, so a backup QB goes when a better QB arrives rather than a bench RB. A
-one-week fill-in counts this week's points without being charged the drop's whole
-season, because the race and replay refill the spot later. The two reserve slots hold
-Out/IR/PUP bodies while their projection is zero; once a body's projection resumes he
-needs a regular spot, and every simulated team cuts its least valuable body to make
+superflex, so a backup QB goes when a better QB arrives rather than a bench RB. The
+drop's whole remaining season is charged, so a returning starter is not a free
+placeholder for a short-term fill-in; paired replays favor this over charging only
+through the fill-in's best hold horizon. The two reserve slots hold Out/IR/PUP
+bodies while their projection is zero; once a body's projection resumes he needs a
+regular spot, and every simulated team cuts its least valuable body to make
 room before that week's claims. The guide ceiling scales with remaining
 cash and weeks, but a separate saving plan limits total auction spending.
 Terminal-week improvements can use all remaining money.

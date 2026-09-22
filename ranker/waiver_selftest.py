@@ -89,20 +89,37 @@ class WaiverTests(unittest.TestCase):
         offer = bidding.offers(list(roster), [10], 1000, 6)[0]
         self.assertEqual(offer.drop, 1, "With a better QB arriving, the backup QB is the drop")
 
-    def test_one_week_fix_survives_screening(self):
-        # QB0 sits out week 2 only; the streamer scores once. RB3's season of bye cover
-        # outweighs that one week, but the spot he leaves is refilled later.
-        positions = [0, 1, 1, 2, 2, 2, 3, 1, 0, 0]
-        weekly = [[20., 15., 14., 12., 11., 10., 14., 2., 0., 0.] for _ in range(WEEKS)]
-        weekly[1][0] = 0.
-        weekly[1][8] = 15.
-        for w in range(2, 12):
-            weekly[w][1] = 0.
-        bidding = Bidding(positions, weekly, weekly, [0] * 10)
-        offers = bidding.offers(list(range(8)), [8], 1000, 1)
-        self.assertTrue(offers)
-        self.assertAlmostEqual(offers[0].gain, 15. / (WEEKS - 1))
-        self.assertEqual(offers[0].drop, 7)
+    def test_one_week_fix_pays_for_the_drop(self):
+        # QB0 sits out week 2 only; the streamer scores once. RB7 starts every week (RB1's
+        # ten zero weeks, then the expanded lineup), so the streamer is worth a claim only
+        # while that cover is worth less than one week.
+        def offers(cover):
+            positions = [0, 1, 1, 2, 2, 2, 3, 1, 0, 0]
+            weekly = [[20., 15., 14., 12., 11., 10., 14., cover, 0., 0.] for _ in range(WEEKS)]
+            weekly[1][0] = 0.
+            weekly[1][8] = 15.
+            for w in range(2, 12):
+                weekly[w][1] = 0.
+            return Bidding(positions, weekly, weekly, [0] * 10).offers(list(range(8)), [8], 1000, 1)
+        cheap = offers(0.5)
+        self.assertEqual(cheap[0].drop, 7)
+        self.assertAlmostEqual(cheap[0].gain, (15. - 0.5 * (WEEKS - 2)) / (WEEKS - 1))
+        self.assertFalse(offers(2.), "Thirty points of cover outweigh one fifteen-point week")
+
+    def test_returning_starter_is_not_a_placeholder(self):
+        # RB7 is out through week index 3, then starts; RB8 fills in until then.
+        positions = [0, 1, 1, 2, 2, 2, 3, 1, 1]
+        weekly = [[20., 15., 14., 12., 11., 10., 14., 12., 0.] for _ in range(WEEKS)]
+        for w in range(1, 4):
+            weekly[w][7], weekly[w][8] = 0., 13.
+        self.assertFalse(Bidding(positions, weekly, weekly, [0] * 9).offers(list(range(8)), [8], 1000, 1))
+
+    def test_guide_rank_ignores_missed_weeks(self):
+        # RB0 misses half the season but outscores the 12- and 13-point RBs whenever he plays.
+        positions = [1] * 8
+        weekly = [[0. if w % 2 else 15., 12.] + [13.] * 6 for w in range(WEEKS)]
+        bidding = Bidding(positions, weekly, weekly, [0] * 8)
+        self.assertGreater(bidding.shares[1][0], bidding.shares[1][1])
 
     def test_reserve_bodies_hold_no_spot_until_they_return(self):
         bidding = Bidding(self.positions, self.bidding.weekly, self.bidding.ros, [2] + [0] * 9)

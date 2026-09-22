@@ -8,9 +8,10 @@ assumptions. They adapt that 18-team guide to our scoring and expanding lineups.
 
 A claim is a pickup and a drop together: for each candidate the drop is the body whose
 loss leaves the best remaining-season roster with the candidate on it, so a backup QB
-goes when a better QB arrives and a bench RB goes for a receiver. The claim's gain is its
-net lineup points at the best hold horizon — a one-week fill-in counts this week without
-charging the drop's whole season, because the race and replay refill the spot later.
+goes when a better QB arrives and a bench RB goes for a receiver. The claim's gain is that
+swap's net lineup points through Week 17, charging the drop's whole remaining season:
+a returning starter is not a free placeholder. Guide prices rank players by points per
+game played, since the gain already prorates missed weeks.
 The two reserve slots hold Out/IR/PUP bodies while their projection is zero and stop
 holding them when it resumes (league.RESERVE_SLOTS, season.SeasonPlayer.ir_until).
 """
@@ -109,9 +110,9 @@ class Context:
     w: int
     eligible: int  # reserve-eligible bodies on the roster this week
     floors: tuple[tuple[float, ...], ...]  # [pos] -> per-week entry threshold, no drop
-    # Per drop, cheapest first: (player, reserve-eligible, season lineup loss, per-week
-    # lineup loss, [pos] -> per-week threshold).
-    options: list[tuple[int, bool, float, tuple[float, ...], tuple[tuple[float, ...], ...]]]
+    # Per drop, cheapest first: (player, reserve-eligible, season lineup loss,
+    # [pos] -> per-week threshold).
+    options: list[tuple[int, bool, float, tuple[tuple[float, ...], ...]]]
     floor_min: tuple[tuple[float, ...], ...]  # [pos] -> per-week threshold under the kindest drop
     memo: dict[int, tuple[float, int | None]] = field(default_factory=dict)
 
@@ -123,7 +124,11 @@ class Bidding:
         self.ros = ros
         self.ir_until = ir_until
         self.shares = []
-        for points in ros:
+        for w in range(WEEKS):
+            points = []
+            for j in range(len(positions)):
+                played = [weekly[v][j] for v in range(w, WEEKS) if weekly[v][j] > 0]
+                points.append(sum(played) / len(played) if played else 0.0)
             shares = [0.0] * len(positions)
             for pos, elite in enumerate((4, 6, 6, 3)):
                 ordered = sorted((j for j, p in enumerate(positions) if p == pos), key=lambda j: (-points[j], j))
@@ -151,7 +156,7 @@ class Bidding:
             return None
         ctx = self.context(tuple(sorted(roster)), w)
         # Cutting a reserve body frees nothing unless the reserve slots are oversubscribed.
-        return next(d for d, eligible, _, _, _ in ctx.options if not eligible or ctx.eligible > RESERVE_SLOTS)
+        return next(d for d, eligible, *_ in ctx.options if not eligible or ctx.eligible > RESERVE_SLOTS)
 
     @lru_cache(maxsize=8192)
     def context(self, roster: tuple[int, ...], w: int) -> Context:
@@ -159,18 +164,17 @@ class Bidding:
         floors = tuple(zip(*(f for _, f, _ in per_week)))
         options = []
         for d in roster:
-            losses = tuple(total - without[d][0] for total, _, without in per_week)
+            loss = sum(total - without[d][0] for total, _, without in per_week)
             rest_floors = tuple(zip(*(without[d][1] for _, _, without in per_week)))
-            options.append((d, self.ir_until[d] > w, sum(losses), losses, rest_floors))
+            options.append((d, self.ir_until[d] > w, loss, rest_floors))
         options.sort(key=lambda o: (o[2], self.ros[w][o[0]], o[0]))
-        floor_min = tuple(tuple(min(col) for col in zip(*(o[4][pos] for o in options))) for pos in range(4))
+        floor_min = tuple(tuple(min(col) for col in zip(*(o[3][pos] for o in options))) for pos in range(4))
         eligible = sum(1 for i in roster if self.ir_until[i] > w)
         return Context(roster, w, eligible, floors, options, floor_min)
 
     def _evaluate(self, ctx: Context, j: int) -> tuple[float, int | None]:
         """(gain per remaining week, drop) for adding `j`: the drop leaving the best
-        remaining-season roster with `j` on it, and the swap's net lineup points at its
-        best hold horizon."""
+        remaining-season roster with `j` on it, and that swap's net lineup points."""
         w, size, n = ctx.w, WEEK_ROSTER_SIZE[ctx.w], len(ctx.roster)
         pos = self.positions[j]
         points = list(map(itemgetter(j), self.weekly[w:]))
@@ -184,22 +188,17 @@ class Bidding:
         if most <= 0.0:
             return 0.0, None
         best = None
-        for d, eligible_d, loss_total, losses, floors in ctx.options:
-            if best is not None and most - loss_total < best[0][0] - 1e-9:
+        for d, eligible_d, loss, floors in ctx.options:
+            if best is not None and most - loss < best[0] - 1e-9:
                 break
             if n - min(RESERVE_SLOTS, ctx.eligible - eligible_d + eligible_j) > size:
                 continue
-            total = peak = 0.0
-            for p, f, loss in zip(points, floors[pos], losses):
-                total += (p - f if p > f else 0.0) - loss
-                if total > peak:
-                    peak = total
-            key = (total, -self.ros[w][d], -d)
-            if best is None or key > best[0]:
-                best = (key, d, peak)
-        if best is None:
+            key = (sum(p - f for p, f in zip(points, floors[pos]) if p > f) - loss, -self.ros[w][d], -d)
+            if best is None or key > best:
+                best = key
+        if best is None or best[0] <= 0.0:
             return 0.0, None
-        return best[2] / len(points), best[1]
+        return best[0] / len(points), -best[2]
 
     def offers(self, roster, candidates, budget: int, w: int, risk: float = 0.0):
         ctx = self.context(tuple(sorted(roster)), w)
