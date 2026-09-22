@@ -4,11 +4,13 @@ Lineup: the greedy optimum on this week's projections (season.lineup), compared 
 the starters Sleeper currently has set for me.
 
 Claims: choose the best modeled bid within the guide-based, roster-specific ceiling.
-Roster variants use all remaining weeks for drops and replay the same opponent
-seasons at several budgets under spending and saving plans. A record contributes the
-acquired roster's title value if the bid wins, and standing pat otherwise. This keeps
-the dependence between prices and future opportunities. Odds are relative to standing pat; replay
-levels are approximate because opponents retain players acquired by our variant.
+Each candidate's drop is chosen with him (waivers.Bidding), and the roster variant
+replays the same opponent seasons at several budgets under spending and saving plans.
+A variant that only fits with a body moved onto reserve names that move. A record
+contributes the acquired roster's title value if the bid wins, and standing pat
+otherwise. This keeps the dependence between prices and future opportunities. Odds are
+relative to standing pat; replay levels are approximate because opponents retain
+players acquired by our variant.
 """
 
 from __future__ import annotations
@@ -108,9 +110,8 @@ def claims(
         CANDIDATES_BY_WEEK, inputs.free_agents, key=lambda i: (points[i], -i)
     )
     candidates = list(dict.fromkeys(by_ros + by_week))
-    extra = inputs.capacity_extra[state.me]
     risk = cut_risk(inputs, roster, w, statistics.fmean(r["forecast_bars"][w] for r in records))
-    offers = {o.player: o for o in inputs.bidding.offers(roster, candidates, budget, w, extra, risk)}
+    offers = {o.player: o for o in inputs.bidding.offers(roster, candidates, budget, w, risk)}
     candidates = [j for j in candidates if j in offers]
     auction = records[0]["auctions"][w] if records else None
     outcomes: dict[int, list[int]] = {j: [] for j in candidates}
@@ -192,6 +193,13 @@ def claims(
             "ros_per_week": ros_w[i],
         }
 
+    def reserve_moves(variant: tuple[int, ...]) -> list[str]:
+        """Bodies to move onto reserve, beyond those already there, for the variant to fit."""
+        held = sum(1 for i in variant if i in me.reserve)
+        needed = len(variant) - WEEK_ROSTER_SIZE[w] - held
+        movable = [i for i in variant if inputs.bidding.ir_until[i] > w and i not in me.reserve]
+        return [state.players[i].name for i in movable[:max(0, needed)]]
+
     rows = []
     for j in candidates:
         grid = per_candidate[j]
@@ -221,6 +229,7 @@ def claims(
             {
                 **player(j),
                 "drop": player(drop) if drop is not None else None,
+                "to_reserve": reserve_moves(variant_rosters[j]),
                 "gain_this_week": round(this_week_total - base_total, 1),
                 "title_if_free": _relative(value_at(budget), v0),
                 "title_if_free_se": round(paired_se(free_value[j]), 1),
@@ -270,7 +279,7 @@ def claims(
             "budget_by_week": [round(x) if x is not None else None for x in base["budget_by_week"]],
             "budget_after_claims": [round(x) if x is not None else None for x in base["budget_after_claims"]],
         },
-        "roster_size": WEEK_ROSTER_SIZE[w] + extra,
+        "roster_size": WEEK_ROSTER_SIZE[w] + inputs.bidding.reserved(roster, w),
         "candidates": rows,
     }
 

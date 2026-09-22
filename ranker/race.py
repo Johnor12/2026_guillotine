@@ -10,7 +10,9 @@ Bids use season-long roster values, guide ceilings, and manager behavior in waiv
 Our policy considers every improving candidate, including early discounted depth;
 opponents have uncertain participation and spending tendencies learned from submitted
 bids and persistent, sampled saving habits. Claims naming the same drop are
-alternatives and open slots remain bounded.
+alternatives and open slots remain bounded. The reserve slots hold Out/IR/PUP bodies
+while their projection is zero; when one resumes, the team cuts its least valuable body
+to make room before that week's claims.
 Week 1 is free agency. The legacy room/hold replay branches are evaluation baselines.
 
 Two runs of the same race answer two questions. Excluding me (`exclude_me`), the 31
@@ -45,7 +47,6 @@ from .league import (
     REGULAR_WEEKS,
     SCORE_FLOOR_Z,
     TEAM_SEASON_SIGMA,
-    WEEK_ROSTER_SIZE,
     WEEKS,
 )
 from .season import POS_CODE, SeasonState, lineup_points, thresholds
@@ -63,7 +64,6 @@ class RaceInputs:
     rosters: list[list[int]]
     budgets: list[int]
     alive: list[bool]
-    capacity_extra: list[int]  # reserve (IR) bodies each team carries beyond the roster size
     me: int
     free_agents: list[int]
     waivers_ran: bool
@@ -82,7 +82,7 @@ def race_inputs(state: SeasonState) -> RaceInputs:
     for w in range(WEEKS):
         span = WEEKS - w
         ros.append([round(sum(p.weekly[w:]) / span, 2) for p in state.players])
-    bidding = Bidding(positions, weekly, ros)
+    bidding = Bidding(positions, weekly, ros, [p.ir_until for p in state.players])
     observations = bid_observations(state, bidding)
     spent = {t.roster_id: 0 for t in state.teams}
     for tx in state.transactions:
@@ -96,7 +96,6 @@ def race_inputs(state: SeasonState) -> RaceInputs:
         rosters=[list(t.roster) for t in state.teams],
         budgets=[t.faab_left for t in state.teams],
         alive=[t.alive for t in state.teams],
-        capacity_extra=[len(t.reserve) for t in state.teams],
         me=state.me,
         free_agents=list(state.free_agents),
         waivers_ran=state.waivers_ran,
@@ -133,17 +132,19 @@ def my_bid_for(gain: float, budget: int, w: int, rng: random.Random) -> int:
 POLICIES = tuple(SAVING_PLANS)
 
 
-def _add_player(
-    roster: list[int], player: int, w: int, ros_w: list[float], extra: int
-) -> int | None:
-    """Add to a roster before week `w`, dropping the weakest rest-of-season body when
-    the roster is over the week's size. Returns the dropped player, if any."""
+def fit_roster(bidding: Bidding, roster: list[int], w: int, free: set[int] | None = None) -> None:
+    """Cut until the roster fits week `w`: a reserve body whose projection resumed needs a
+    regular spot, and the cuts (the cheapest lineup losses) hit the wire when `free` is given."""
+    while (drop := bidding.crunch(roster, w)) is not None:
+        roster.remove(drop)
+        if free is not None:
+            free.add(drop)
+
+
+def _add_player(roster: list[int], player: int, w: int, bidding: Bidding) -> None:
+    """Legacy baseline: add before week `w`, cutting until the roster fits."""
     roster.append(player)
-    if len(roster) <= WEEK_ROSTER_SIZE[w] + extra:
-        return None
-    drop = min((i for i in roster if i != player), key=lambda i: (ros_w[i], i))
-    roster.remove(drop)
-    return drop
+    fit_roster(bidding, roster, w)
 
 
 def forecast_bar(inputs, w, rosters, alive):
@@ -155,9 +156,9 @@ def cut_risk(inputs, roster, w, bar):
     return projected_risk(roster, inputs.weekly[w], inputs.positions, w, bar)
 
 
-def claim_plan(inputs, roster, candidates, budget, w, extra, risk, rng, scale=None,
+def claim_plan(inputs, roster, candidates, budget, w, risk, rng, scale=None,
                policy="value", initial_budget=None):
-    offers = inputs.bidding.offers(roster, candidates, budget, w, extra, risk)
+    offers = inputs.bidding.offers(roster, candidates, budget, w, risk)
     allowance = spending_allowance(budget, budget if initial_budget is None else initial_budget,
                                    inputs.week0, w, policy, risk)
     if scale is None:
@@ -193,7 +194,7 @@ def _auction(inputs, w, rosters, budgets, alive, free, rng, skip, scales, bar, p
             continue
         active.append(team)
         plan, allowances[team] = claim_plan(
-            inputs, roster, candidates, budgets[team], w, inputs.capacity_extra[team],
+            inputs, roster, candidates, budgets[team], w,
             cut_risk(inputs, roster, w, bar), rng, None if mine else scales[team],
             policies[team], inputs.budgets[team])
         for bid, offer in plan:
@@ -207,10 +208,10 @@ def _auction(inputs, w, rosters, budgets, alive, free, rng, skip, scales, bar, p
             continue
         if offer.drop is not None and offer.drop not in rosters[team]:
             continue  # Claims naming the same drop are alternatives, as on Sleeper.
-        if offer.drop is None and len(rosters[team]) >= WEEK_ROSTER_SIZE[w] + inputs.capacity_extra[team]:
+        if offer.drop is None and not inputs.bidding.fits(rosters[team], j, w):
             continue
         # Open roster spots can accept several wins; stop redundant purchases.
-        if not inputs.bidding.offers(rosters[team], [j], budgets[team], w, inputs.capacity_extra[team]):
+        if not inputs.bidding.offers(rosters[team], [j], budgets[team], w):
             continue
         apply_offer(rosters[team], offer)
         budgets[team] -= bid
@@ -224,7 +225,7 @@ def _auction(inputs, w, rosters, budgets, alive, free, rng, skip, scales, bar, p
     taken = 0
     for team in active:
         offers = inputs.bidding.offers(rosters[team], [j for j in candidates if winning[j] == -1],
-                                       budgets[team], w, inputs.capacity_extra[team])
+                                       budgets[team], w)
         if not offers:
             continue
         offer = max(offers, key=lambda o: (o.gain, -o.player))
@@ -267,6 +268,9 @@ def simulate(inputs: RaceInputs, seed: int, exclude_me: bool) -> dict:
     budget_after_claims: list[list[int]] = []
     championship = [0.0] * n
     for w in range(w0, WEEKS):
+        for i in range(n):
+            if alive[i]:
+                fit_roster(inputs.bidding, rosters[i], w, free)
         budget_path.append(list(inputs.opening_budgets if w == w0 else budgets))
         forecast_bars[w] = forecast_bar(inputs, w, rosters, alive)
         if not (w == w0 and inputs.waivers_ran):
@@ -342,7 +346,6 @@ def replay(
     bid_rule = {"room": bid_for, "hold": my_bid_for}.get(policy)
     w0 = inputs.week0
     positions = inputs.positions
-    extra = inputs.capacity_extra[inputs.me]
     title = 0.0
     reach = 0.0
     alive_by_week = [0.0] * REGULAR_WEEKS
@@ -357,6 +360,7 @@ def replay(
         surv = 1.0
         champ = 0.0
         for w in range(w0, WEEKS):
+            fit_roster(inputs.bidding, mine, w)
             budget_left[w] += surv * (inputs.opening_budgets[inputs.me] if w == w0 else left)
             budget_weight[w] += surv
             auction = rec["auctions"][w]
@@ -374,7 +378,7 @@ def replay(
 
                 if policy in POLICIES:
                     plan, allowance = claim_plan(
-                        inputs, mine, auction[0], left, w, extra,
+                        inputs, mine, auction[0], left, w,
                         cut_risk(inputs, mine, w, rec["forecast_bars"][w]), rng,
                         policy=policy, initial_budget=budget)
                     outcomes = dict(zip(*auction))
@@ -383,18 +387,18 @@ def replay(
                             continue
                         if offer.drop is not None and offer.drop not in mine:
                             continue
-                        if offer.drop is None and len(mine) >= WEEK_ROSTER_SIZE[w] + extra:
+                        if offer.drop is None and not inputs.bidding.fits(mine, offer.player, w):
                             continue
                         outcome = outcomes[offer.player]
                         if not ((bid > outcome) if outcome >= 0 else (bid > 0 or open_to_me(outcome))):
                             continue
-                        if not inputs.bidding.offers(mine, [offer.player], left, w, extra):
+                        if not inputs.bidding.offers(mine, [offer.player], left, w):
                             continue
                         apply_offer(mine, offer)
                         left -= bid
                         allowance -= bid
                     offers = inputs.bidding.offers(mine, [j for j, outcome in zip(*auction)
-                                                         if outcome < 0 and open_to_me(outcome)], left, w, extra)
+                                                         if outcome < 0 and open_to_me(outcome)], left, w)
                     if offers:
                         apply_offer(mine, max(offers, key=lambda o: (o.gain, -o.player)))
                 else:
@@ -407,7 +411,7 @@ def replay(
                         # A paid claim beats any free pickup; a $0 claim is a free pickup.
                         if (bid > outcome) if outcome >= 0 else (bid > 0 or open_to_me(outcome)):
                             left -= bid
-                            _add_player(mine, j, w, ros_w, extra)
+                            _add_player(mine, j, w, inputs.bidding)
                     thr = thresholds(mine, ros_w, positions, w)
                     free_gain, free_pick = 0.0, None
                     for gain, j, outcome in gains:
@@ -416,7 +420,7 @@ def replay(
                             if gain > free_gain:
                                 free_gain, free_pick = gain, j
                     if free_pick is not None:
-                        _add_player(mine, free_pick, w, ros_w, extra)
+                        _add_player(mine, free_pick, w, inputs.bidding)
             budget_after_claims[w] += surv * left
             if w >= REGULAR_WEEKS:
                 champ += lineup_points(mine, inputs.weekly[w], positions, w)

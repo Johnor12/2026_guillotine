@@ -227,6 +227,11 @@ def _bench(week: int) -> int:
 
 WEEK_ROSTER_SIZE = tuple(WEEK_STARTERS[w] + _bench(w + 1) for w in range(WEEKS))
 FAAB_BUDGET = 1000
+# Sleeper's reserve_allow_out setting: the two reserve slots hold IR, PUP and Out players.
+# The model keeps a body there while his projection is zero; once it resumes he needs a
+# regular spot, whatever label Sleeper still shows.
+RESERVE_SLOTS = 2
+RESERVE_STATUSES = frozenset({"Out", "IR", "PUP"})
 
 # --- legacy bidding baselines, retained for evaluate_waivers.py --------------------
 CLAIM_FULL_BUDGET_GAIN = 12.0

@@ -40,6 +40,8 @@ def report_decisions(payload: dict) -> None:
         print("Each bid is evaluated separately; treat these as alternatives.")
         for c in candidates:
             drop = c["drop"]["name"] if c["drop"] else "no drop needed"
+            if c["to_reserve"]:
+                drop += f"; to IR: {', '.join(c['to_reserve'])}"
             print(
                 f"  ${c['optimal_bid']:<4} {c['name']} ({c['position']}) — "
                 f"drop: {drop}; this week's gain: {c['gain_this_week']:+.1f} pts"

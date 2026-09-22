@@ -10,8 +10,8 @@ from unittest.mock import patch
 
 from .claims import _record_values, best_replays, claims
 from .league import WEEKS
-from .race import RaceInputs, _auction, claim_plan, race_inputs, replay
-from .season import lineup_points
+from .race import RaceInputs, _auction, claim_plan, fit_roster, race_inputs, replay
+from .season import draftsharks_by_sleeper, lineup_points
 from .waivers import Bidding, Manager, fit_managers, spending_allowance, submitted_bids
 
 
@@ -21,17 +21,17 @@ class WaiverTests(unittest.TestCase):
         self.positions = [0, 1, 2, 2, 2, 3, 3, 3, 1, 2]
         self.points = [20., 15., 12., 11., 5., 14., 10., 9., 8., 13.]
         self.bidding = Bidding(self.positions, [self.points[:] for _ in range(WEEKS)],
-                               [self.points[:] for _ in range(WEEKS)])
+                               [self.points[:] for _ in range(WEEKS)], [0] * 10)
         self.roster = list(range(8))
 
     def inputs(self):
         return RaceInputs(1, self.positions, self.bidding.weekly, self.bidding.ros,
-                          [self.roster[:]], [1000], [True], [0], 0, [8, 9], False,
+                          [self.roster[:]], [1000], [True], 0, [8, 9], False,
                           self.bidding, [Manager()], {}, [1000])
 
     def test_buy_before_expansion(self):
-        early = self.bidding.offers(self.roster, [8], 1000, 1, 0)
-        preparing = self.bidding.offers(self.roster, [8], 1000, 6, 0)
+        early = self.bidding.offers(self.roster, [8], 1000, 1)
+        preparing = self.bidding.offers(self.roster, [8], 1000, 6)
         self.assertTrue(early, "Value after a distant expansion must count from week 2")
         self.assertTrue(preparing, "A cheap RB should count before the second RB slot opens")
         self.assertGreater(preparing[0].ceiling, 0)
@@ -40,7 +40,7 @@ class WaiverTests(unittest.TestCase):
         self.positions[8] = 0
         for points in self.bidding.weekly:
             points[8] = 18.
-        offer = self.bidding.offers(self.roster, [8], 1000, 1, 0)[0]
+        offer = self.bidding.offers(self.roster, [8], 1000, 1)[0]
         self.assertGreater(offer.gain, 0)
         self.assertEqual(lineup_points(self.roster + [8], self.bidding.weekly[1], self.positions, 1),
                          lineup_points(self.roster, self.bidding.weekly[1], self.positions, 1))
@@ -63,19 +63,72 @@ class WaiverTests(unittest.TestCase):
 
     def test_byes_and_legal_drops(self):
         self.bidding.weekly[2][1] = 0.0
-        offer = self.bidding.offers(self.roster, [8], 1000, 1, 0)[0]
+        offer = self.bidding.offers(self.roster, [8], 1000, 1)[0]
         self.assertGreater(offer.ceiling, 0)
         self.assertNotIn(offer.drop, (0, 1, 2, 3), "Keep scarce starters instead of dropping by raw points")
 
     def test_owned_players_do_not_crowd_out_bargains(self):
         inputs = self.inputs()
-        plan, allowance = claim_plan(inputs, self.roster, list(range(10)), 1000, 1, 0, 0, random.Random(1))
+        plan, allowance = claim_plan(inputs, self.roster, list(range(10)), 1000, 1, 0, random.Random(1))
         self.assertTrue(any(o.player == 9 for _, o in plan))
         self.assertTrue(all(o.player not in self.roster for _, o in plan))
         self.assertEqual(allowance, max(b for b, _ in plan))
 
+    def test_drop_is_chosen_with_the_pickup(self):
+        # Week 7's ten-man roster. QB0 misses weeks 7-9 and QB1 covers them; RB8 covers
+        # RB2's five zero weeks for a point a week, so alone he is the cheapest cut.
+        positions = [0, 0, 1, 1, 2, 2, 2, 3, 1, 3, 0]
+        weekly = [[20., 12., 15., 14., 12., 11., 10., 14., 1., 5., 15.] for _ in range(WEEKS)]
+        for w in (6, 7, 8):
+            weekly[w][0] = 0.
+        for w in range(9, 14):
+            weekly[w][2] = 0.
+        bidding = Bidding(positions, weekly, weekly, [0] * 11)
+        roster = tuple(range(10))
+        self.assertEqual(bidding.context(roster, 6).options[0][0], 8, "Alone, the point-a-week RB is the cheapest cut")
+        offer = bidding.offers(list(roster), [10], 1000, 6)[0]
+        self.assertEqual(offer.drop, 1, "With a better QB arriving, the backup QB is the drop")
+
+    def test_one_week_fix_survives_screening(self):
+        # QB0 sits out week 2 only; the streamer scores once. RB3's season of bye cover
+        # outweighs that one week, but the spot he leaves is refilled later.
+        positions = [0, 1, 1, 2, 2, 2, 3, 1, 0, 0]
+        weekly = [[20., 15., 14., 12., 11., 10., 14., 2., 0., 0.] for _ in range(WEEKS)]
+        weekly[1][0] = 0.
+        weekly[1][8] = 15.
+        for w in range(2, 12):
+            weekly[w][1] = 0.
+        bidding = Bidding(positions, weekly, weekly, [0] * 10)
+        offers = bidding.offers(list(range(8)), [8], 1000, 1)
+        self.assertTrue(offers)
+        self.assertAlmostEqual(offers[0].gain, 15. / (WEEKS - 1))
+        self.assertEqual(offers[0].drop, 7)
+
+    def test_reserve_bodies_hold_no_spot_until_they_return(self):
+        bidding = Bidding(self.positions, self.bidding.weekly, self.bidding.ros, [2] + [0] * 9)
+        roster = list(range(8))  # eight bodies, the QB on reserve through week index 1
+        self.assertIsNone(bidding.offers(roster, [9], 1000, 0)[0].drop, "Reserve leaves an open spot")
+        self.assertFalse(bidding.fits(roster + [9], 8, 0))
+        self.assertNotEqual(bidding.crunch(roster + [8, 9], 0), 0, "Cutting a reserve body frees nothing")
+        returned = roster + [9]
+        fit_roster(bidding, returned, 2)
+        self.assertEqual(len(returned), 8, "The returning QB needs a regular spot")
+        self.assertIn(0, returned)
+
+    def test_draftsharks_rows_outside_the_pool_join_by_name(self):
+        pool = {"players": [{"player_id": 1, "sleeper_id": "11"}]}
+        weekly = {"players": [{"player_id": 1, "name": "Josh Allen", "position": "QB", "weeks": {"3": {"points": 20.}}},
+                              {"player_id": 2, "name": "Marcus Mariota", "position": "QB", "weeks": {"3": {"points": 15.}}},
+                              {"player_id": 3, "name": "Mike Williams", "position": "WR", "weeks": {"3": {"points": 9.}}}]}
+        directory = {"11": {"name": "Josh Allen", "position": "QB"},
+                     "22": {"name": "Marcus Mariota", "position": "QB"},
+                     "33": {"name": "Mike Williams", "position": "WR"},
+                     "34": {"name": "Mike Williams", "position": "WR"}}
+        joined = draftsharks_by_sleeper(pool, weekly, directory)
+        self.assertEqual(joined, {"11": {"3": 20.}, "22": {"3": 15.}}, "Ambiguous names stay unjoined")
+
     def test_final_dollars_have_no_salvage_value(self):
-        offer = self.bidding.offers(self.roster, [9], 317, WEEKS - 1, 0)[0]
+        offer = self.bidding.offers(self.roster, [9], 317, WEEKS - 1)[0]
         self.assertEqual(offer.ceiling, 317)
 
     def test_capacity_and_same_drop_claims(self):
@@ -141,7 +194,7 @@ class WaiverTests(unittest.TestCase):
         for points in inputs.weekly:
             points[9] = 25.
         inputs.free_agents = [9]
-        state = SimpleNamespace(me=0, my_team=SimpleNamespace(roster=self.roster, faab_left=1000),
+        state = SimpleNamespace(me=0, my_team=SimpleNamespace(roster=self.roster, faab_left=1000, reserve=[]),
                                 players=[SimpleNamespace(sleeper_id=str(j), name=str(j), position="WR",
                                                          team="T", injury_status=None, source="test") for j in range(10)])
         records = []
@@ -196,7 +249,7 @@ class WaiverTests(unittest.TestCase):
         self.assertEqual(budgets[5]["budget"], 260, "The team cut in week 13 is absent in week 14")
 
     def test_opening_cash_restores_only_completed_current_week_bids(self):
-        players = [SimpleNamespace(index=j, sleeper_id=str(j), name=str(j),
+        players = [SimpleNamespace(index=j, sleeper_id=str(j), name=str(j), ir_until=0,
                                    position=("QB", "RB", "WR", "TE")[pos], weekly=(points,) * WEEKS)
                    for j, (pos, points) in enumerate(zip(self.positions, self.points))]
         team = SimpleNamespace(roster_id=1, faab_left=850, roster=self.roster[:], reserve=[],

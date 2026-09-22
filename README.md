@@ -16,7 +16,8 @@ league-state fetch and the season model behind the season desk.
   lineups expand in-season (+1 WR wk 7, +1 RB wk 9, +1 flex wk 12, +1 superflex
   wk 14, bench grows from 1 to 5, assumed one spot at each expansion)
 - $1000 FAAB, claims processed once a week, unclaimed players free afterwards
-- 2 reserve spots (reserve is not drafted into), no per-position roster caps
+- 2 reserve spots holding Out/IR/PUP players (reserve is not drafted into), no
+  per-position roster caps
 - 32 teams and 8 drafted players per team (256 picks, all offense)
 - Snake draft with a third-round reversal: round 1 forward, rounds 2–3 reversed,
   alternating from there; picks can be traded
@@ -77,7 +78,7 @@ sources/ investigate.py (boards + draft) ─────────────
 rank.py ──────────────────────────────────────────────> rankings.json <───────────┘
 
 season/  fetch_league.py (Sleeper rosters, FAAB, moves, weekly projections) -> league.json ─┐
-pool/data/weekly_projections.json + pool.json (id join) ────────────────────────────────────┤
+pool/data/weekly_projections.json + pool.json (id join; name fallback via league.json) ────┤
 season.py ────────────────────────────────────────────> season.json <───────────────────────┘
 ```
 
@@ -115,7 +116,8 @@ season.py ───────────────────────�
   claims may remain under the previous submission leg. Both successful and failed
   bids are retained; pending claims do not establish that waivers have processed.
 - `season.json`: this week's optimal lineup and the moves it implies, the optimal FAAB
-  bid on each free agent worth a look, every team's chance of being cut this week, of
+  bid on each free agent worth a look with the drop and any move onto reserve it needs,
+  every team's chance of being cut this week, of
   reaching the final and of the title, its expected spend and budget path, the
   elimination bar by week, and the observed versus simulated waiver market.
   Budget paths show cash entering each week, before that week's claims, conditional
@@ -162,18 +164,26 @@ end of the draft. See `rank.py` and the `ranker/` module docstrings for the deta
 
 The season desk runs an agent-based race from the live state (`ranker/race.py`). The
 value input is per week: DraftSharks' weekly projection blended 2:1 with Sleeper's for
-the same week, Sleeper alone for anyone outside the draft pool (`ranker/season.py`).
+the same week, Sleeper alone for anyone DraftSharks does not project
+(`ranker/season.py`). DraftSharks rows join Sleeper ids through `pool.json`; a row
+outside the draft pool, such as a backup who became a starter, joins `league.json`'s
+directory by normalized name and position when that names exactly one player.
 Each simulated week every alive team fields its optimal lineup under the draft model's
 noise, the two lowest are cut, and their players hit the wire. `ranker/waivers.py`
 prices acquisitions from [Paul Charchian's guillotine FAAB guide](https://www.fantasylife.com/articles/guillotine-leagues/guillotine-league-fantasy-football-waiver-wire-guide-for-week-2):
 early elite players about 15–20% of the starting budget, ordinary starters 2.5–5%,
 and depth 0.1–1%. This is an 18-team guide, not a fitted rule for our 32-team format.
 Our adaptation uses league-scored positional ranks (elite anchors QB4/RB6/WR6/TE3,
-then an inverse-square price curve), mean projected lineup improvement across
-**every remaining week through Week 17**, and projected cut risk. Drop choices
-protect lineup value over that same horizon, including distant byes and superflex.
-This roster-value calculation holds the roster fixed; the subsequent season replay
-models its future acquisitions and drops. The guide ceiling scales with remaining
+then an inverse-square price curve), the claim's projected net lineup points at its
+best hold horizon through Week 17, per remaining week, and projected cut risk. Each
+candidate's drop is chosen with him: the body whose loss leaves the best
+remaining-season roster with the candidate on it, including distant byes and
+superflex, so a backup QB goes when a better QB arrives rather than a bench RB. A
+one-week fill-in counts this week's points without being charged the drop's whole
+season, because the race and replay refill the spot later. The two reserve slots hold
+Out/IR/PUP bodies while their projection is zero; once a body's projection resumes he
+needs a regular spot, and every simulated team cuts its least valuable body to make
+room before that week's claims. The guide ceiling scales with remaining
 cash and weeks, but a separate saving plan limits total auction spending.
 Terminal-week improvements can use all remaining money.
 
@@ -242,10 +252,11 @@ It refetches projections (DraftSharks weekly for the weeks still to play, Sleepe
 season), fetches the league state (including Sleeper weekly projections), and runs
 the season model. The NFL week comes from Sleeper. Each stage must succeed before
 the next starts; a failure exits nonzero without printing recommendations from an
-older run.
+older run. The season model takes about half an hour at six workers, most of it
+replaying roster variants for this week's claims.
 
-The terminal summary shows the remaining budget, recommended bids and drops, and
-the optimal lineup with start/sit changes. Bids are evaluated individually, so treat
+The terminal summary shows the remaining budget, recommended bids with their drops and
+reserve moves, and the optimal lineup with start/sit changes. Bids are evaluated individually, so treat
 them as alternatives. After this week's waivers process, recommendations are free
 pickups. Enter the recommended claims and lineup on Sleeper yourself. Add `--report`
 for detailed model diagnostics and league odds.

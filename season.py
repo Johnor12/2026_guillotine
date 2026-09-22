@@ -189,7 +189,8 @@ def report(payload: dict) -> None:
             f"  {c['name']:<22} {c['position']} ros {c['ros_per_week']:>4} wk {c['points_this_week']:>4} "
             f"bid ${c['optimal_bid']:<4} win {c['p_win_at_optimal']:.0%} title {c['title_at_optimal']:+.1f}% "
             f"(free {c['title_if_free']:+.1f}%, even ${c['break_even_bid']}, market p50 {cl['p50']} p90 {cl['p90']} "
-            f"claimed {cl['p_claimed']:.0%}) drop {c['drop']['name'] if c['drop'] else '-'}",
+            f"claimed {cl['p_claimed']:.0%}) drop {c['drop']['name'] if c['drop'] else '-'}"
+            + (f" IR {', '.join(c['to_reserve'])}" if c["to_reserve"] else ""),
             file=sys.stderr,
         )
     print("league (P cut now / P final / P title / FAAB / spend now):", file=sys.stderr)
@@ -257,7 +258,7 @@ def main(argv: list[str] | None = None) -> int:
         "waivers_ran": state.waivers_ran,
         "value_input": (
             "DraftSharks weekly projections blended 2:1 with Sleeper's weekly projections "
-            "in this league's scoring; Sleeper alone for players outside the draft pool"
+            "in this league's scoring; Sleeper alone for players DraftSharks does not project"
         ),
         "method": (
             "Agent-based season race: optimal weekly lineups under the draft model's noise, "

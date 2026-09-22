@@ -1,11 +1,11 @@
 """In-season state: the player universe, the 32 rosters, and the weekly lineup solver.
 
 Value input for the season is per-week and per-player: DraftSharks' weekly projection
-(pool/data/weekly_projections.json, joined to Sleeper ids through pool.json) blended 2:1
-with Sleeper's weekly projection for the same week (league.json), the same weighting the
-draft used on season totals. A player only Sleeper projects — anyone outside the draft
-pool who has since become relevant — carries Sleeper's number alone. Weeks already
-played are zero: nothing in the season model looks backwards.
+(pool/data/weekly_projections.json, joined to Sleeper ids through pool.json, or by name
+against league.json's directory for a player outside the draft pool) blended 2:1 with
+Sleeper's weekly projection for the same week (league.json), the same weighting the
+draft used on season totals. A player only Sleeper projects carries Sleeper's number
+alone. Weeks already played are zero: nothing in the season model looks backwards.
 
 The weekly lineup is the greedy optimum: dedicated slots take each position's best
 bodies, the flex seats take the best pooled RB/WR/TE leftovers. That greedy fill is
@@ -19,12 +19,15 @@ cascade is too slow for that.
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
 from .league import (
     FAAB_BUDGET,
     POSITIONS,
+    RESERVE_SLOTS,
+    RESERVE_STATUSES,
     WEEK_ROSTER_SIZE,
     WEEKLY_SHAPES,
     WEEKS,
@@ -46,6 +49,7 @@ class SeasonPlayer:
     injury_status: str | None
     weekly: tuple[float, ...]  # per league week, past weeks zero
     source: str  # "blend" (DraftSharks + Sleeper) or "sleeper"
+    ir_until: int  # first week index he needs a regular roster spot; reserve-eligible before it
 
 
 @dataclass(slots=True)
@@ -95,6 +99,40 @@ def _shape_from_sleeper(positions: list[str]) -> dict[str, int]:
     return shape | {"BN": bench}
 
 
+_SUFFIXES = ("jr", "sr", "ii", "iii", "iv", "v")
+
+
+def _name_key(name: str) -> str:
+    """build_pool.py's normalization: lowercase alphanumerics, generational suffix dropped."""
+    words = [w for w in (re.sub(r"[^a-z0-9]", "", part.lower()) for part in name.split()) if w]
+    while len(words) > 1 and words[-1] in _SUFFIXES:
+        words.pop()
+    return "".join(words)
+
+
+def draftsharks_by_sleeper(pool: dict, weekly_raw: dict, directory: dict) -> dict[str, dict[str, float]]:
+    """DraftSharks weekly rows keyed by sleeper id: the pool's verified join first, then a
+    row outside the pool (a backup who became a starter after the pool was built) joins on
+    normalized name and position when the directory holds exactly one such player."""
+    sleeper_of_ds = {p["player_id"]: p["sleeper_id"] for p in pool["players"] if p.get("sleeper_id")}
+    by_name: dict[tuple[str, str | None], list[str]] = {}
+    for sid, meta in directory.items():
+        by_name.setdefault((_name_key(meta["name"]), meta.get("position")), []).append(sid)
+    out: dict[str, dict[str, float]] = {}
+    unpooled = []
+    for row in weekly_raw["players"]:
+        sid = sleeper_of_ds.get(row["player_id"])
+        if sid is None:
+            unpooled.append(row)
+        else:
+            out[sid] = {w: v["points"] for w, v in row["weeks"].items()}
+    for row in unpooled:
+        found = by_name.get((_name_key(row["name"]), row["position"]), [])
+        if len(found) == 1 and found[0] not in out:
+            out[found[0]] = {w: v["points"] for w, v in row["weeks"].items()}
+    return out
+
+
 def load_season(pool_path: Path, weekly_path: Path, league_path: Path) -> SeasonState:
     pool = json.loads(pool_path.read_text())
     weekly_raw = json.loads(weekly_path.read_text())
@@ -112,16 +150,12 @@ def load_season(pool_path: Path, weekly_path: Path, league_path: Path) -> Season
         )
     if league["faab_budget"] != FAAB_BUDGET:
         problems.append(f"Sleeper says the FAAB budget is {league['faab_budget']}, league.py {FAAB_BUDGET}")
+    if league["reserve_slots"] != RESERVE_SLOTS:
+        problems.append(f"Sleeper says there are {league['reserve_slots']} reserve slots, league.py {RESERVE_SLOTS}")
 
-    # DraftSharks weekly by sleeper id, through the pool's id join.
-    sleeper_of_ds = {p["player_id"]: p["sleeper_id"] for p in pool["players"] if p.get("sleeper_id")}
-    ds_weekly: dict[str, dict[str, float]] = {}
-    for row in weekly_raw["players"]:
-        sid = sleeper_of_ds.get(row["player_id"])
-        if sid:
-            ds_weekly[sid] = {w: v["points"] for w, v in row["weeks"].items()}
-    sl_weekly = league["projections"]  # week -> sleeper_id -> points
     directory = league["players"]
+    ds_weekly = draftsharks_by_sleeper(pool, weekly_raw, directory)
+    sl_weekly = league["projections"]  # week -> sleeper_id -> points
 
     def profile(sid: str) -> tuple[tuple[float, ...], str] | None:
         ds = ds_weekly.get(sid)
@@ -152,6 +186,11 @@ def load_season(pool_path: Path, weekly_path: Path, league_path: Path) -> Season
         if got is None:
             continue
         weekly, source = got
+        ir_until = w0
+        if meta.get("injury_status") in RESERVE_STATUSES:
+            # Reserve-eligible while his projection stays zero; a stale Out label on a
+            # player projected to play opens no slot.
+            ir_until = next((w for w in range(w0, WEEKS) if weekly[w] > 0), WEEKS)
         index[sid] = len(players)
         players.append(
             SeasonPlayer(
@@ -163,6 +202,7 @@ def load_season(pool_path: Path, weekly_path: Path, league_path: Path) -> Season
                 injury_status=meta.get("injury_status"),
                 weekly=weekly,
                 source=source,
+                ir_until=ir_until,
             )
         )
 
@@ -272,23 +312,57 @@ def lineup_points(roster: list[int], points: list[float], positions: list[int], 
     return total + sum(flex)
 
 
-def thresholds(roster: list[int], points: list[float], positions: list[int], w: int) -> tuple[float, float, float, float]:
-    """Per position, the points a free agent must beat to enter the week-`w` lineup: the
-    weaker of the last dedicated starter and the last flex starter (0 for an empty seat).
-    A player above his position's threshold adds exactly (his points - threshold)."""
-    shape = WEEKLY_SHAPES[w]
+def _columns(roster: list[int], points: list[float], positions: list[int]) -> list[list[float]]:
     cols: list[list[float]] = [[], [], [], []]
     for i in roster:
         cols[positions[i]].append(points[i])
     for col in cols:
         col.sort(reverse=True)
+    return cols
+
+
+def _solve(cols: list[list[float]], shape: dict[str, int]) -> tuple[float, tuple[float, float, float, float], float]:
+    """(lineup total, per-position entry thresholds, last flex starter) from sorted
+    position columns."""
     nq, nrb, nwr, nte, nflex = shape["QB"], shape["RB"], shape["WR"], shape["TE"], shape["FLEX"]
-    qb_last = cols[0][nq - 1] if len(cols[0]) >= nq else 0.0
     flex = cols[1][nrb:] + cols[2][nwr:] + cols[3][nte:]
     flex.sort(reverse=True)
     flex_last = flex[nflex - 1] if len(flex) >= nflex else 0.0
+    total = sum(cols[0][:nq]) + sum(cols[1][:nrb]) + sum(cols[2][:nwr]) + sum(cols[3][:nte]) + sum(flex[:nflex])
 
     def last(col: list[float], n: int) -> float:
         return min(col[n - 1] if len(col) >= n else 0.0, flex_last)
 
-    return qb_last, last(cols[1], nrb), last(cols[2], nwr), last(cols[3], nte)
+    qb_last = cols[0][nq - 1] if len(cols[0]) >= nq else 0.0
+    return total, (qb_last, last(cols[1], nrb), last(cols[2], nwr), last(cols[3], nte)), flex_last
+
+
+def thresholds(roster: list[int], points: list[float], positions: list[int], w: int) -> tuple[float, float, float, float]:
+    """Per position, the points a free agent must beat to enter the week-`w` lineup: the
+    weaker of the last dedicated starter and the last flex starter (0 for an empty seat).
+    A player above his position's threshold adds exactly (his points - threshold)."""
+    return _solve(_columns(roster, points, positions), WEEKLY_SHAPES[w])[1]
+
+
+def lineup_without_each(
+    roster: list[int], points: list[float], positions: list[int], w: int
+) -> tuple[float, tuple[float, float, float, float], dict[int, tuple[float, tuple[float, float, float, float]]]]:
+    """The week-`w` lineup total and thresholds of `roster`, and for each body the pair
+    without him. Removing a body outside the lineup changes neither, so only starters
+    (and bodies tied with one) are recomputed: the bidding context's hot path."""
+    shape = WEEKLY_SHAPES[w]
+    cols = _columns(roster, points, positions)
+    total, floors, flex_last = _solve(cols, shape)
+    counts = (shape["QB"], shape["RB"], shape["WR"], shape["TE"])
+    dedicated = [col[n - 1] if len(col) >= n else 0.0 for col, n in zip(cols, counts)]
+    without = {}
+    for i in roster:
+        pos, val = positions[i], points[i]
+        if val < dedicated[pos] and (pos == 0 or val < flex_last):
+            without[i] = (total, floors)
+            continue
+        rest = list(cols)
+        rest[pos] = cols[pos][:]
+        rest[pos].remove(val)
+        without[i] = _solve(rest, shape)[:2]
+    return total, floors, without
