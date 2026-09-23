@@ -6,11 +6,18 @@ the starters Sleeper currently has set for me.
 Objective: a drop's spot can be refilled from the wire the room leaves untaken, and my
 bidding values each week's points alike or by d log P(title) / d(points), whichever
 replays to better title odds (title_objective). Screening, drops, ceilings and my
-future policy use it; every bid is still chosen by replayed title odds.
+future policy use it; this week's bids are chosen by replayed title odds.
 
-Claims: choose the best modeled bid within the guide-based, roster-specific ceiling.
-Each candidate's drop is chosen with him (waivers.Bidding), and the roster variant
-replays the same opponent seasons at several budgets under spending and saving plans.
+Claims: choose the bid that maximizes replayed title odds anywhere in the budget. The
+guide-based ceiling caps only my future bids inside the replays (and the room's): for
+this week's claim it undersold players the room buys (a depth upgrade capped at $0 that
+the room claims nine times in ten at a median $25).
+Each candidate's drop is chosen by replay among the few that waivers.Bidding ranks best:
+the heuristic prices a fixed roster, where a future lineup expansion is an empty seat,
+so its favorite can give up a starter today for depth the wire would supply anyway.
+The chosen roster variant replays the same opponent seasons at several budgets under
+spending and saving plans. After this week's run, only players dropped since are still
+on waivers and take a bid; everyone else is a free add.
 A variant that only fits with a body moved onto reserve names that move. A record
 contributes the acquired roster's title value if the bid wins, and standing pat
 otherwise. This keeps the dependence between prices and future opportunities. Odds are
@@ -30,6 +37,7 @@ from .race import POLICIES, RaceInputs, apply_offer, cut_risk, fit_roster, run_r
 from .season import SeasonState, lineup
 
 BUDGET_STEPS = (0, 25, 50, 100, 200, 400, 700)
+DROP_CHOICES = 3  # drops per candidate compared by replay, best heuristic gain first
 CANDIDATES_BY_WEEK = 10  # streamers: free agents that would start for me this week
 PRICED_CANDIDATES = 12  # free agents whose value is priced across the whole bid range
 UNTAKEN = 0.5  # a free agent the room takes in fewer of its seasons refills a dropped spot
@@ -41,19 +49,21 @@ def title_objective(inputs: RaceInputs, records: list[dict]) -> tuple[RaceInputs
     summary of that choice.
 
     The refill pool is today's free agents the room takes (claim or free pickup) in
-    fewer than UNTAKEN of its seasons at the next auction; they are assumed to stay
-    available. Title weights come from the points objective's replay, normalized to
-    average 1 so gains keep the guide ceiling's points-a-week scale. They are a
-    first-order fit computed once, so a policy on them can give up points in weeks that
-    only look safe; the replay decides.
+    fewer than UNTAKEN of its seasons by the next weekly auction, counting any off-cycle
+    auction before it; they are assumed to stay available. Title weights come from the
+    points objective's replay, normalized to average 1 so gains keep the guide ceiling's
+    points-a-week scale. They are a first-order fit computed once, so a policy on them
+    can give up points in weeks that only look safe; the replay decides.
     """
     if not inputs.alive[inputs.me]:
         return inputs, None
     w = inputs.week0
     pool = []
-    auction = next((v for v in range(w, WEEKS) if records[0]["auctions"][v] is not None), None)
+    weekly = w + 1 if inputs.waivers_ran else w
+    auction = next((v for v in range(weekly, WEEKS) if records[0]["auctions"][v] is not None), None)
     if auction is not None:
-        taken = Counter(j for rec in records for j, outcome in zip(*rec["auctions"][auction]) if outcome != -1)
+        taken = Counter(j for rec in records for v in range(w, auction + 1) if rec["auctions"][v] is not None
+                        for j, outcome in zip(*rec["auctions"][v]) if outcome != -1)
         pool = [j for j in inputs.free_agents if taken[j] < UNTAKEN * len(records)]
     roster, budget = tuple(inputs.rosters[inputs.me]), inputs.budgets[inputs.me]
 
@@ -163,8 +173,8 @@ def claims(
     )
     candidates = list(dict.fromkeys(by_ros + by_week))
     risk = cut_risk(inputs, roster, w, statistics.fmean(r["forecast_bars"][w] for r in records))
-    offers = {o.player: o for o in inputs.my_bidding.offers(roster, candidates, budget, w, risk)}
-    candidates = [j for j in candidates if j in offers]
+    choices = {j: inputs.my_bidding.swaps(roster, j, budget, w, risk, DROP_CHOICES) for j in candidates}
+    candidates = [j for j in candidates if choices[j]]
     auction = records[0]["auctions"][w] if records else None
     outcomes: dict[int, list[int]] = {j: [] for j in candidates}
     if auction is not None:
@@ -189,25 +199,24 @@ def claims(
     base = baseline[policy][-1][1]
     v0 = base["p_title"]
 
-    variant_rosters: dict[int, tuple[int, ...]] = {}
-    drops: dict[int, int | None] = {}
-    for j in candidates:
+    def with_offer(offer) -> tuple[int, ...]:
         mine = list(roster)
-        drops[j] = offers[j].drop
-        apply_offer(mine, offers[j])
-        variant_rosters[j] = tuple(mine)
-    # Every candidate at the full budget (his value as a free pickup), then the price
-    # grid only for the ones worth paying for: a player who does not help for free
-    # does not help for money.
-    free_runs = best_replays(inputs, records, [(variant_rosters[j], budget) for j in candidates])
-    free_value = dict(zip(candidates, free_runs))
-    paid = [j for j in sorted(candidates, key=lambda j: -free_value[j]["p_title"]) if free_value[j]["p_title"] > v0][:PRICED_CANDIDATES]
-    # Keep the original interpolation knots bracketing legal bids; prices above the
-    # ceiling cannot affect any recommendation or reported break-even value.
-    priced_budgets = {}
-    for j in paid:
-        lower = max(b for b in budgets if b <= budget - int(offers[j].ceiling)) if pending else budget
-        priced_budgets[j] = [b for b in budgets if lower <= b < budget]
+        apply_offer(mine, offer)
+        return tuple(mine)
+
+    # Every candidate with each of his drops at the full budget (his value as a free
+    # pickup) keeps the drop that replays best; then the price grid only for the ones
+    # worth paying for: a player who does not help for free does not help for money.
+    swaps = [offer for j in candidates for offer in choices[j]]
+    free_value, offers = {}, {}
+    for offer, run in zip(swaps, best_replays(inputs, records, [(with_offer(o), budget) for o in swaps])):
+        if offer.player not in free_value or run["p_title"] > free_value[offer.player]["p_title"]:
+            free_value[offer.player], offers[offer.player] = run, offer
+    variant_rosters = {j: with_offer(offers[j]) for j in candidates}
+    drops = {j: offers[j].drop for j in candidates}
+    priced = [j for j in candidates if not inputs.waivers_ran or j in inputs.on_waivers]
+    paid = [j for j in sorted(priced, key=lambda j: -free_value[j]["p_title"]) if free_value[j]["p_title"] > v0][:PRICED_CANDIDATES]
+    priced_budgets = {j: [b for b in budgets if b < budget] for j in paid}
     tasks = [(j, b) for j in paid for b in priced_budgets[j]]
     paid_runs = dict(zip(tasks, best_replays(
         inputs, records, [(variant_rosters[j], b) for j, b in tasks]
@@ -257,8 +266,8 @@ def claims(
         grid = per_candidate[j]
         value_at = lambda b: _interpolate(grid, b)  # noqa: E731
         outs = outcomes[j]
-        ceiling = int(offers[j].ceiling)
-        bids = sorted({0, 1, ceiling, *(o + 1 for o in outs if 0 <= o < ceiling)} & set(range(ceiling + 1))) if pending and j in paid else [0]
+        # Title odds are flat between clearing prices, so the best bid is one above one of them.
+        bids = sorted({0, 1, *(o + 1 for o in outs if 0 <= o < budget)}) if pending and j in paid else [0]
         curve = []
         best = None
         for b in bids:
@@ -273,20 +282,20 @@ def claims(
             curve.append((b, p_win, ev))
             if best is None or ev > best[0] + 1e-12:
                 best = (ev, b, p_win)
-        break_even = max((b for b in range(ceiling + 1) if value_at(budget - b) >= v0), default=0) if j in paid else 0
+        break_even = max((b for b in range(budget + 1) if value_at(budget - b) >= v0), default=0) if j in paid else 0
         claimed = [o for o in outs if o >= 0]
         this_week_total, _ = lineup(list(variant_rosters[j]), points, positions, w)
         drop = drops[j]
         rows.append(
             {
                 **player(j),
+                "waiver_clears": inputs.on_waivers.get(j),
                 "drop": player(drop) if drop is not None else None,
                 "to_reserve": reserve_moves(variant_rosters[j]),
                 "gain_this_week": round(this_week_total - base_total, 1),
                 "title_if_free": _relative(value_at(budget), v0),
                 "title_if_free_se": round(paired_se(free_value[j]), 1),
                 "optimal_bid": best[1],
-                "bid_ceiling": ceiling,
                 "planning_gain": round(offers[j].gain, 2),
                 "p_win_at_optimal": round(best[2], 3),
                 "title_at_optimal": _relative(best[0], v0),

@@ -11,8 +11,8 @@ draft model's noise, the bottom two are cut, their players hit the wire, and the
 survivors bid under guide-based ceilings and learned tendencies (ranker/waivers.py). Run once
 without me it is the market and the elimination bars I face, which price my roster
 variants (ranker/claims.py: this week's lineup, and for each free agent the bid that
-maximizes modeled title odds within our ceiling, screened and paired with its drop by
-title-weighted points); run with all 32 it is every
+maximizes modeled title odds, with the drop that replays best among those the bidding
+heuristic ranks highest); run with all 32 it is every
 team's chance of being cut this week, of reaching the final, and of the title, along
 with its expected spend and budget path.
 
@@ -185,7 +185,9 @@ def report(payload: dict) -> None:
     print("Budget value under the future bidding policy (relative to standing pat):", file=sys.stderr)
     for pol, rows in payload["claims"]["baseline"].items():
         print("  " + pol + ": " + ", ".join(f"${r['budget']} {r['relative']:+.0f}%" for r in rows), file=sys.stderr)
-    print(f"claims ({'pending' if payload['claims']['pending'] else 'not pending: free agents only'}):", file=sys.stderr)
+    mode = ("weekly run pending" if not payload["waivers_ran"] else
+            "off-cycle: players dropped since the run need a claim" if payload["claims"]["pending"] else "free agents only")
+    print(f"claims ({mode}):", file=sys.stderr)
     for c in payload["claims"]["candidates"][:12]:
         cl = c["clearing"]
         print(
@@ -193,7 +195,8 @@ def report(payload: dict) -> None:
             f"bid ${c['optimal_bid']:<4} win {c['p_win_at_optimal']:.0%} title {c['title_at_optimal']:+.1f}% "
             f"(free {c['title_if_free']:+.1f}%, even ${c['break_even_bid']}, market p50 {cl['p50']} p90 {cl['p90']} "
             f"claimed {cl['p_claimed']:.0%}) drop {c['drop']['name'] if c['drop'] else '-'}"
-            + (f" IR {', '.join(c['to_reserve'])}" if c["to_reserve"] else ""),
+            + (f" IR {', '.join(c['to_reserve'])}" if c["to_reserve"] else "")
+            + (f" clears {c['waiver_clears']}" if c["waiver_clears"] else ""),
             file=sys.stderr,
         )
     print("league (P cut now / P final / P title / FAAB / spend now):", file=sys.stderr)
@@ -309,6 +312,7 @@ def main(argv: list[str] | None = None) -> int:
             "weekly_sigma": league.WEEKLY_SIGMA,
             "team_season_sigma": league.TEAM_SEASON_SIGMA,
             "bid_noise_sigma": round(inputs.price_curve.sigma, 3),
+            "off_cycle_share": round(inputs.off_cycle_share, 3),
             "claims_per_team": league.CLAIMS_PER_TEAM,
             "claim_candidates": league.CLAIM_CANDIDATES,
             "roster_size_by_week": list(league.WEEK_ROSTER_SIZE),

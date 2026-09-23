@@ -49,9 +49,9 @@ def counterfactual(state):
     records = run_race(inputs, RACE_SIMS, SEED + 200_000, exclude_me=True)
     decisions = claims(before, title_objective(inputs, records)[0], records, 0.0)
     assert decisions["pending"]
-    assert all(0 <= c["optimal_bid"] <= c["bid_ceiling"] <= decisions["budget"] for c in decisions["candidates"])
+    assert all(0 <= c["optimal_bid"] <= decisions["budget"] for c in decisions["candidates"])
     return {"note": "Current projections and learned opponent bids; a counterfactual, not an ex-ante backtest.",
-            "candidates": [{k: c[k] for k in ("name", "optimal_bid", "bid_ceiling", "p_win_at_optimal",
+            "candidates": [{k: c[k] for k in ("name", "optimal_bid", "break_even_bid", "p_win_at_optimal",
                                              "title_at_optimal", "gain_this_week")}
                            for c in decisions["candidates"]]}
 

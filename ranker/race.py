@@ -15,7 +15,10 @@ submitted bids, and persistent, sampled saving habits. Claims naming the same dr
 alternatives and open slots remain bounded. The reserve slots hold Out/IR/PUP bodies
 while their projection is zero; when one resumes, the team cuts its least valuable body
 to make room before that week's claims.
-Week 1 is free agency. The legacy room/hold replay branches are evaluation baselines.
+Week 1 is free agency. After this week's run, the players dropped since are still on
+waivers: they are auctioned off-cycle, among opponents at the observed mid-week share of
+their participation (waivers.off_cycle_share), and everyone else stays free.
+The legacy room/hold replay branches are evaluation baselines.
 
 Two runs of the same race answer two questions. Excluding me (`exclude_me`), the 31
 opponents race among themselves and the record carries, per week, the elimination bar
@@ -33,7 +36,7 @@ import heapq
 import math
 import multiprocessing
 import random
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from .guillotine import SIGMA_CHAMP, SIGMA_WEEK, _cdf, _phi
 from .league import (
@@ -54,8 +57,8 @@ from .league import (
 from .season import POS_CODE, SeasonState, lineup_points, thresholds
 from .workers import worker_count
 from .waivers import (ROOM_CURRENT_WEEK_WEIGHT, SAVING_PLANS, Bidding, Manager, PriceCurve, bid_observations,
-                      calibration, fit_managers, guide_reference, projected_bar, projected_risk,
-                      spending_allowance)
+                      calibration, fit_managers, guide_reference, off_cycle_share, projected_bar,
+                      projected_risk, spending_allowance)
 
 
 @dataclass(slots=True)
@@ -77,6 +80,10 @@ class RaceInputs:
     policy: str = "balanced"
     my_bidding: Bidding | None = None  # mine, without the room's current-week weight; claims.title_objective sets its weeks
     price_curve: PriceCurve = PriceCurve()  # the room's bid for a guide reference
+    # After the weekly run: players still on waivers -> when they clear, and opponents'
+    # participation in that off-cycle auction relative to a weekly run's.
+    on_waivers: dict[int, str] = field(default_factory=dict)
+    off_cycle_share: float = 0.0
 
     def __post_init__(self):
         if self.my_bidding is None:
@@ -102,6 +109,7 @@ def race_inputs(state: SeasonState) -> RaceInputs:
     for tx in state.transactions:
         if tx["week"] == state.week and tx["type"] == "waiver" and tx["status"] == "complete":
             spent[tx["roster_id"]] += tx["bid"] or 0
+    on_waivers = dict(state.on_waivers) if state.waivers_ran else {}
     return RaceInputs(
         week0=w0,
         positions=positions,
@@ -119,6 +127,8 @@ def race_inputs(state: SeasonState) -> RaceInputs:
         market_fit=calibration(state, observations),
         opening_budgets=[t.faab_left + spent[t.roster_id] for t in state.teams],
         price_curve=curve,
+        on_waivers=on_waivers,
+        off_cycle_share=off_cycle_share(state) if on_waivers else 0.0,
     )
 
 
@@ -199,8 +209,10 @@ def apply_offer(roster, offer):
     roster.append(offer.player)
 
 
-def _auction(inputs, w, rosters, budgets, alive, free, rng, skip, bar, policies):
-    candidates = heapq.nlargest(CLAIM_CANDIDATES, free, key=lambda i: (inputs.ros[w][i], -i))
+def _auction(inputs, w, rosters, budgets, alive, free, rng, skip, bar, policies, pool=None, attention=1.0):
+    """One week's claims, then free pickups. An off-cycle auction limits the players in
+    play to `pool` and scales opponents' participation by `attention`."""
+    candidates = heapq.nlargest(CLAIM_CANDIDATES, free if pool is None else pool, key=lambda i: (inputs.ros[w][i], -i))
     bids = []
     allowances = list(budgets)
     active = []
@@ -208,7 +220,7 @@ def _auction(inputs, w, rosters, budgets, alive, free, rng, skip, bar, policies)
         if not alive[team] or team == skip:
             continue
         mine = team == inputs.me
-        if not mine and rng.random() >= inputs.managers[team].participation(w, inputs.week0):
+        if not mine and rng.random() >= attention * inputs.managers[team].participation(w, inputs.week0):
             continue
         active.append(team)
         plan, allowances[team] = claim_plan(
@@ -291,9 +303,12 @@ def simulate(inputs: RaceInputs, seed: int, exclude_me: bool) -> dict:
                 fit_roster(inputs.bidding_for(i), rosters[i], w, free)
         budget_path.append(list(inputs.opening_budgets if w == w0 else budgets))
         forecast_bars[w] = forecast_bar(inputs, w, rosters, alive)
-        if not (w == w0 and inputs.waivers_ran):
-            candidates, winning, wins = _auction(inputs, w, rosters, budgets, alive, free, rng, skip,
-                                                forecast_bars[w], policies)
+        # Once this week's run is done, only players dropped since are auctioned, as they clear.
+        off_cycle = w == w0 and inputs.waivers_ran
+        if not off_cycle or inputs.on_waivers:
+            candidates, winning, wins = _auction(
+                inputs, w, rosters, budgets, alive, free, rng, skip, forecast_bars[w], policies,
+                list(inputs.on_waivers) if off_cycle else None, inputs.off_cycle_share if off_cycle else 1.0)
             auctions[w] = (candidates, winning)
             claims[w] = wins
         budget_after_claims.append(list(budgets))

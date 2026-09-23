@@ -211,7 +211,7 @@
             <th class="num">This week</th>
             <th class="num">ROS / wk</th>
             <th>Drop</th>
-            <th class="num" title="Best modeled bid within your roster-specific ceiling">Bid</th>
+            <th class="num" title="The bid that maximizes modeled title odds">Bid</th>
             <th class="num" title="Chance that bid wins, from the simulated room">Wins</th>
             <th class="num" title="Title odds at that bid, relative to standing pat (± one standard error of the free-pickup value)">Title odds</th>
             <th class="num" title="Title odds if he cost nothing">If free</th>
@@ -307,6 +307,7 @@ const fmt = value => value == null ? "—" : Number(value).toLocaleString("en-US
 const pct = value => value == null ? "—" : `${Math.round(value * 100)}%`;
 const pct1 = value => value == null ? "—" : `${(value * 100).toFixed(1)}%`;
 const money = value => value == null ? "—" : `$${Math.round(value)}`;
+const when = iso => new Date(iso).toLocaleString("en-US", { weekday: "short", hour: "numeric", minute: "2-digit" });
 const rel = value => value == null ? "—" : `${value > 0.05 ? "+" : ""}${fmt(Math.abs(value) < 0.05 ? 0 : value)}%`;
 const relClass = value => value > 0.05 ? "positive" : value < -0.05 ? "negative" : "";
 
@@ -365,27 +366,33 @@ function renderWeek(d) {
 
 function renderClaims(d) {
   const c = d.claims;
-  document.getElementById("claimsTitle").textContent = c.pending ? `Waiver claims for week ${d.week}` : `Free agents · week ${d.week}`;
-  document.getElementById("claimsHint").textContent = c.pending
-    ? `Claims have not processed yet. Each bid maximizes modeled title odds within your roster-specific ceiling; odds are relative to standing pat with $${c.budget}. Treat these bids as alternatives.`
+  // After the weekly run, only players dropped since are still on waivers and need a claim.
+  const isClaim = x => !d.waivers_ran || x.waiver_clears != null;
+  document.getElementById("claimsTitle").textContent = !d.waivers_ran ? `Waiver claims for week ${d.week}`
+    : c.pending ? `Waivers and free agents · week ${d.week}` : `Free agents · week ${d.week}`;
+  document.getElementById("claimsHint").textContent = !d.waivers_ran
+    ? `Claims have not processed yet. Each bid maximizes modeled title odds; odds are relative to standing pat with $${c.budget}. Treat these bids as alternatives.`
+    : c.pending
+    ? `This week's claims have processed. Players dropped since are still on waivers: a claim at the bid shown processes when he clears (time under his name), and opponents bid off-cycle at ${pct(d.model.off_cycle_share)} of their weekly-run rate. Everyone else is a free pickup right now. Odds are relative to standing pat with $${c.budget}; treat these as alternatives.`
     : (d.week === 1
       ? "Week 1 is open free agency: every add is $0 and first come, so the table ranks pickups by what they do to your title odds. Claims with bids begin after the week-1 cuts."
       : "This week's claims have already processed; anyone below is a free pickup right now, ranked by what he does to your title odds.");
   const rows = c.candidates.slice(0, 20).map(x => {
     const worth = x.title_at_optimal > 0.05 || x.title_if_free > 0.05;
-    const market = x.clearing.p50 == null ? (c.pending ? "uncontested" : "—")
+    const market = x.clearing.p50 == null ? (c.pending && isClaim(x) ? "uncontested" : "—")
       : `$${x.clearing.p50} · p90 $${x.clearing.p90} · claimed ${pct(x.clearing.p_claimed)}`;
     return h("tr", { class: worth ? "" : "dim" },
-      playerCell(x, x.injury_status ? [" ", status(x)] : null),
+      playerCell(x, [x.injury_status ? [" ", status(x)] : null,
+        x.waiver_clears ? h("div", { class: "cell-note" }, `on waivers · clears ~${when(x.waiver_clears)}`) : null]),
       h("td", { class: "num" }, h("div", {}, fmt(x.points_this_week)), h("div", { class: "cell-note" }, x.gain_this_week > 0 ? `lineup +${fmt(x.gain_this_week)}` : "bench")),
       h("td", { class: "num" }, fmt(x.ros_per_week)),
       h("td", {}, x.drop ? [x.drop.name, h("div", { class: "cell-note" }, `${x.drop.position} · ${fmt(x.drop.ros_per_week)}/wk`)] : "open spot",
         x.to_reserve.length ? h("div", { class: "cell-note" }, `to IR: ${x.to_reserve.join(", ")}`) : null),
-      h("td", { class: "num" }, h("span", { class: "bid" }, c.pending ? money(x.optimal_bid) : "free")),
+      h("td", { class: "num" }, h("span", { class: "bid" }, c.pending && isClaim(x) ? money(x.optimal_bid) : "free")),
       h("td", { class: "num" }, pct(x.p_win_at_optimal)),
       h("td", { class: `num ${relClass(x.title_at_optimal)}` }, rel(x.title_at_optimal), h("div", { class: "cell-note" }, `± ${fmt(x.title_if_free_se)}`)),
       h("td", { class: `num ${relClass(x.title_if_free)}` }, rel(x.title_if_free)),
-      h("td", { class: "num" }, c.pending ? money(x.break_even_bid) : "—"),
+      h("td", { class: "num" }, c.pending && isClaim(x) ? money(x.break_even_bid) : "—"),
       h("td", {}, market, x.curve.length > 1 ? h("div", { class: "cell-note" }, x.curve.filter((_, i) => i % 4 === 0).map(pt => `$${pt.bid}: ${pct(pt.p_win)} → ${rel(pt.title)}`).join(" · ")) : null));
   });
   document.getElementById("claimsBody").replaceChildren(...rows);
@@ -409,7 +416,7 @@ function renderClaims(d) {
           h("td", { class: `num ${relClass(r.relative)}` }, rel(r.relative))))))
       : h("p", { style: "margin:0" }, "Priced once claims are pending: your title odds at each remaining budget, if you stood pat this week."));
   document.getElementById("claimsNote").textContent =
-    `Acquisitions and drops consider all ${d.model.bid_lookahead_weeks} remaining weeks through Week 17, including byes and superflex. Each roster and cash variant compares spending and saving plans across ${d.model.race_sims} opponent seasons. Winning and losing outcomes retain their connection to that season's future opportunities. This compares continuation plans, not every possible future decision. The ceiling combines the guide limit and modeled break-even value. Claims are alternatives, not a combined spending plan. Opponents mix spending and saving habits; participation and bid sizes learn from submitted bids, including losses.`;
+    `Acquisitions and drops consider all ${d.model.bid_lookahead_weeks} remaining weeks through Week 17, including byes and superflex. Each roster and cash variant compares spending and saving plans across ${d.model.race_sims} opponent seasons. Winning and losing outcomes retain their connection to that season's future opportunities. This compares continuation plans, not every possible future decision. The ceiling is the modeled break-even: the most a win is worth to your title odds. Claims are alternatives, not a combined spending plan. Opponents mix spending and saving habits; participation and bid sizes learn from submitted bids, including losses.`;
 }
 
 function renderChart(d) {
@@ -517,7 +524,8 @@ function renderMarket(d) {
   document.getElementById("stripWeek").textContent = `Week ${d.week}`;
   document.getElementById("stripAlive").textContent = `${d.alive} teams alive`;
   document.getElementById("stripFaab").textContent = `${d.me.name} · $${d.me.faab_left} FAAB`;
-  document.getElementById("stripWaivers").textContent = d.claims.pending ? "claims pending" : (d.week === 1 ? "free agency" : "claims processed");
+  document.getElementById("stripWaivers").textContent = d.claims.pending ? (d.waivers_ran ? "off-cycle claims pending" : "claims pending")
+    : (d.week === 1 ? "free agency" : "claims processed");
   renderWeek(d);
   renderClaims(d);
   renderChart(d);

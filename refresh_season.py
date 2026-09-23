@@ -21,6 +21,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import json
 import subprocess
 import sys
@@ -38,7 +39,10 @@ def report_decisions(payload: dict) -> None:
         print(f"\nNo longer reserve-eligible, move to the active roster: {', '.join(claims['activate'])}")
     if claims["forced_cuts"]:
         print(f"Roster over capacity, cut before any add below: {', '.join(c['name'] for c in claims['forced_cuts'])}")
-    print("\nFAAB recommendations:" if claims["pending"] else "\nFree-agent recommendations (waivers already processed):")
+    if not payload["waivers_ran"]:
+        print("\nFAAB recommendations:")
+    else:
+        print("\nRecommendations (this week's waivers processed; players dropped since need a claim until they clear):")
     candidates = [c for c in claims["candidates"] if c["title_at_optimal"] > 0][:12]
     if candidates:
         print("Each bid is evaluated separately; treat these as alternatives.")
@@ -46,8 +50,16 @@ def report_decisions(payload: dict) -> None:
             drop = c["drop"]["name"] if c["drop"] else "no drop needed"
             if c["to_reserve"]:
                 drop += f"; to IR: {', '.join(c['to_reserve'])}"
+            if payload["waivers_ran"] and not c["waiver_clears"]:
+                action, terms = "free", "add now"
+            else:
+                action = f"${c['optimal_bid']}"
+                terms = f"wins {c['p_win_at_optimal']:.0%}, worth up to ${c['break_even_bid']}"
+                if c["waiver_clears"]:
+                    clears = dt.datetime.fromisoformat(c["waiver_clears"]).astimezone()
+                    terms = f"claim clears ~{clears:%a %H:%M %Z}; {terms}"
             print(
-                f"  ${c['optimal_bid']:<4} {c['name']} ({c['position']}) — "
+                f"  {action:<5} {c['name']} ({c['position']}) — {terms}; "
                 f"drop: {drop}; this week's gain: {c['gain_this_week']:+.1f} pts"
             )
     else:

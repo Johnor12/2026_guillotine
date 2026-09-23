@@ -111,12 +111,16 @@ season.py ───────────────────────�
   position, team, injury status), and Sleeper's weekly projections in league scoring for
   the current week through week 17. A roster the commissioner has emptied after week 1
   is an eliminated team (Sleeper has no guillotine flag).
+  It also records `waiver_clear_days`, which the season model checks against
+  `ranker/league.py`.
   Transactions retain Sleeper's submission `leg`, ID and processing timestamp;
   `week` follows processing time relative to Sleeper's season-start date. Wednesday
   claims may remain under the previous submission leg. Both successful and failed
   bids are retained; pending claims do not establish that waivers have processed.
 - `season.json`: this week's optimal lineup and the moves it implies, the optimal FAAB
-  bid on each free agent worth a look with the drop and any move onto reserve it needs,
+  bid on each free agent worth a look with the drop and any move onto reserve it needs
+  (after the weekly run, the players still on waivers carry `waiver_clears`, and
+  the rest are free adds),
   the cut that must come first when a reserve body lost Out/IR/PUP status and the
   roster no longer fits (claims are evaluated on the roster after that cut),
   which objective my bidding uses (points alike every week or title-weighted, by
@@ -213,12 +217,22 @@ In the week-3 state it did not (11.1% against 14.2%; damped re-derivation of the
 weights reached 11.3%, and blending a quarter of them into flat points 13.0%): the
 weights are a first-order fit computed once, so a policy on them gives up points in
 weeks that look safe until they are not. The chosen objective screens this week's
-candidates, picks each one's drop, sets the guide ceiling's gain, and drives my
-future policy and roster cuts in the replays; the bids themselves are chosen by
-replayed title odds. Opponents keep the points behavior above, with their current-week
-weight. The guide ceiling scales with remaining
+candidates, ranks each one's drops, sets the guide ceiling's gain, and drives my
+future policy and roster cuts in the replays. Opponents keep the points behavior above,
+with their current-week weight. The guide ceiling scales with remaining
 cash and weeks, but a separate saving plan limits total auction spending.
 Terminal-week improvements can use all remaining money.
+
+This week's claims are decided by replay, not by that heuristic. Each candidate's
+three best drops by the heuristic are replayed and the best by title odds is kept: the
+heuristic prices a fixed roster, where a future lineup expansion is an empty seat
+worth a body's full points, so in the week-3 state it would have dropped Michael
+Penix, the week's starting QB, for a receiver the wire could supply by week 7. The bid
+is then whatever maximizes replayed title odds anywhere in the budget. The guide
+ceiling caps only the future bids inside the replays: applied to this week's claim, it
+held a depth receiver upgrade to $0 when the simulated room claimed him in more than
+nine seasons in ten at a median of $25. The break-even ("worth up to") is the bid at
+which winning no longer beats standing pat.
 
 Opponents' bids follow one room-wide price curve fit to every submitted bid, including
 losses: log bid = a + b log(guide reference), the reference being the guide ceiling for
@@ -256,9 +270,18 @@ are alternatives; open spots, remaining cash and redundant upgrades are checked 
 claims resolve. Opponents choose their best few targets with preference noise.
 Active managers can also make a free pickup after claims. Week 1 is free agency.
 
+After the weekly run, a player dropped since (including drops on winning claims) is on
+waivers until he clears, about 23 hours after the drop on Sleeper's next 20-minute
+processing tick (`WAIVER_CLEAR_HOURS`, observed in week 2), and claims on him process
+then. The race auctions these players off-cycle before the week's games. Opponents
+participate at their usual rate times the observed off-cycle share: opponents who
+claimed off-cycle per opponent in that week's run, pooled over completed weeks (week 2:
+5 of 15). Bids follow the same price curve, and every other free agent stays free. The
+windows clear at different times, but they are modeled as one auction.
+
 The race excluding us records opponent markets and cut bars. Our roster/budget
 variants are replayed through those same seasons to choose this week's best modeled
-bid within the guide ceiling (`ranker/claims.py`). For our team only, each roster and
+bid (`ranker/claims.py`). For our team only, each roster and
 cash variant compares all three future spending/saving plans through the championship.
 One plan is chosen by its average outcome across seasons, never separately using a
 record's future prices or scores. This searches a small family of continuation
@@ -297,9 +320,10 @@ replaying roster variants for this week's claims.
 The terminal summary shows the remaining budget, any reserve body to activate and the
 forced cut that makes room for him, recommended bids with their drops and
 reserve moves, and the optimal lineup with start/sit changes. Bids are evaluated individually, so treat
-them as alternatives. After this week's waivers process, recommendations are free
-pickups, including players still on waivers for a day after being dropped, which in
-fact need a claim. Enter the recommended claims and lineup on Sleeper yourself. Add `--report`
+them as alternatives. After this week's waivers process, players dropped since are
+still on waivers: their recommendations are claims with a bid, the approximate time
+they clear, win chance, and break-even. Everyone else is a free pickup to add now.
+Enter the recommended claims and lineup on Sleeper yourself. Add `--report`
 for detailed model diagnostics and league odds.
 
 Results are saved to `league.json` and `season.json`; `uv run serve.py` displays them

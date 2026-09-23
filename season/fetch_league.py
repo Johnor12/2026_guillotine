@@ -184,6 +184,7 @@ def main() -> int:
                 "season_start_date": state.get("season_start_date"),
                 "roster_positions": league["roster_positions"],
                 "reserve_slots": league["settings"].get("reserve_slots", 0),
+                "waiver_clear_days": league["settings"]["waiver_clear_days"],
                 "faab_budget": league["settings"]["waiver_budget"],
                 "me": {"user_id": MY_USER_ID, "roster_id": next(t["roster_id"] for t in teams if t["is_mine"])},
                 "teams": teams,

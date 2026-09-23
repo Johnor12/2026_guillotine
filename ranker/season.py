@@ -18,6 +18,7 @@ cascade is too slow for that.
 
 from __future__ import annotations
 
+import datetime as dt
 import json
 import re
 from dataclasses import dataclass, field
@@ -28,6 +29,8 @@ from .league import (
     POSITIONS,
     RESERVE_SLOTS,
     RESERVE_STATUSES,
+    WAIVER_CLEAR_DAYS,
+    WAIVER_CLEAR_HOURS,
     WEEK_ROSTER_SIZE,
     WEEKLY_SHAPES,
     WEEKS,
@@ -80,6 +83,8 @@ class SeasonState:
     waivers_ran: bool  # this week's claims already processed (or week 1's free agency)
     transactions: list[dict]
     problems: list[str] = field(default_factory=list)
+    # After the weekly run: free agents dropped since who are still on waivers -> when they clear
+    on_waivers: dict[int, str] = field(default_factory=dict)
 
     @property
     def my_team(self) -> Team:
@@ -152,6 +157,9 @@ def load_season(pool_path: Path, weekly_path: Path, league_path: Path) -> Season
         problems.append(f"Sleeper says the FAAB budget is {league['faab_budget']}, league.py {FAAB_BUDGET}")
     if league["reserve_slots"] != RESERVE_SLOTS:
         problems.append(f"Sleeper says there are {league['reserve_slots']} reserve slots, league.py {RESERVE_SLOTS}")
+    if league["waiver_clear_days"] != WAIVER_CLEAR_DAYS:
+        problems.append(f"Sleeper says waivers clear after {league['waiver_clear_days']} day(s), league.py "
+                        f"{WAIVER_CLEAR_DAYS}; re-observe WAIVER_CLEAR_HOURS")
 
     directory = league["players"]
     ds_weekly = draftsharks_by_sleeper(pool, weekly_raw, directory)
@@ -235,6 +243,12 @@ def load_season(pool_path: Path, weekly_path: Path, league_path: Path) -> Season
         tx["type"] == "waiver" and tx["week"] == week and tx["status"] in ("complete", "failed")
         for tx in transactions
     )
+    free = set(free_agents)
+    # Before the weekly run every free agent is in it; after, only the recently dropped need a claim.
+    on_waivers = {
+        index[sid]: clears for sid, clears in waiver_clears(transactions, league["fetched_at"]).items()
+        if sid in index and index[sid] in free
+    } if waivers_ran else {}
     return SeasonState(
         week=week,
         fetched_at=league["fetched_at"],
@@ -246,7 +260,22 @@ def load_season(pool_path: Path, weekly_path: Path, league_path: Path) -> Season
         waivers_ran=waivers_ran,
         transactions=transactions,
         problems=problems,
+        on_waivers=on_waivers,
     )
+
+
+def waiver_clears(transactions: list[dict], fetched_at: str) -> dict[str, str]:
+    """Sleeper id -> when he clears waivers (UTC), for every player whose latest drop is
+    still inside the clearing window at `fetched_at`."""
+    dropped: dict[str, dt.datetime] = {}
+    for tx in transactions:
+        if tx["status"] == "complete":
+            at = dt.datetime.fromisoformat(tx["processed_at"])
+            for sid in tx["drops"]:
+                dropped[sid] = max(dropped.get(sid, at), at)
+    now = dt.datetime.fromisoformat(fetched_at)
+    window = dt.timedelta(hours=WAIVER_CLEAR_HOURS)
+    return {sid: (at + window).isoformat(timespec="minutes") for sid, at in dropped.items() if at + window > now}
 
 
 # --- weekly lineup -------------------------------------------------------------------

@@ -12,8 +12,9 @@ from unittest.mock import patch
 from .claims import _record_values, best_replays, claims, title_objective
 from .league import WEEKS
 from .race import RaceInputs, _auction, claim_plan, fit_roster, race_inputs, replay
-from .season import draftsharks_by_sleeper, lineup_points
-from .waivers import ROOM_CURRENT_WEEK_WEIGHT, Bidding, Manager, PriceCurve, calibration, fit_managers, fit_price_curve, spending_allowance, submitted_bids
+from .season import draftsharks_by_sleeper, lineup_points, waiver_clears
+from .waivers import (ROOM_CURRENT_WEEK_WEIGHT, Bidding, Manager, PriceCurve, calibration, fit_managers, fit_price_curve,
+                      off_cycle_share, spending_allowance, submitted_bids)
 
 
 class WaiverTests(unittest.TestCase):
@@ -269,7 +270,7 @@ class WaiverTests(unittest.TestCase):
         result = replay([record], inputs, self.roster, 1000, "value")
         self.assertAlmostEqual(result["p_title"], 0.5)
 
-    def test_pending_claim_prices_only_legal_budget_range(self):
+    def test_pending_claim_bid_follows_title_odds_past_the_guide_ceiling(self):
         inputs = self.inputs()
         for points in inputs.weekly:
             points[9] = 25.
@@ -278,18 +279,15 @@ class WaiverTests(unittest.TestCase):
                                 players=[SimpleNamespace(sleeper_id=str(j), name=str(j), position="WR",
                                                          team="T", injury_status=None, source="test") for j in range(10)])
         records = []
-        for price in (100, 200):
+        for price in (300, 400):
             auctions = [None] * WEEKS
             auctions[1] = ([9], [price])
             records.append({"auctions": auctions, "forecast_bars": [0.] * WEEKS})
-        candidate_budgets = []
 
         def values(inputs, records, variants):
             out = []
             for roster, budget, policy in variants:
-                if 9 in roster:
-                    candidate_budgets.append(budget)
-                title = budget * 0.00001 + (0.004 if 9 in roster else 0.)
+                title = budget * 0.00001 + (0.008 if 9 in roster else 0.)
                 out.append({"p_title": title, "title_by_record": [title, title], "p_reach_final": title,
                             "p_cut_now": 0., "p_alive_by_week": [1.] * 14, "budget_by_week": [budget] * 16,
                             "budget_after_claims": [budget] * 16})
@@ -298,10 +296,10 @@ class WaiverTests(unittest.TestCase):
         with patch("ranker.claims.run_replays", side_effect=values):
             result = claims(state, inputs, records, 0.)
         candidate = result["candidates"][0]
-        self.assertEqual(candidate["optimal_bid"], 201)
-        self.assertLessEqual(candidate["optimal_bid"], candidate["bid_ceiling"])
-        self.assertNotIn(0, candidate_budgets)
-        self.assertEqual(min(candidate_budgets), 600, "Keep the lower interpolation bracket")
+        guide = max(o.ceiling for o in inputs.my_bidding.swaps(self.roster, 9, 1000, 1, 0., 3))
+        self.assertLess(guide, 401)
+        self.assertEqual(candidate["optimal_bid"], 401, "Outbid both clearing prices, past the guide ceiling")
+        self.assertEqual(candidate["break_even_bid"], 800)
 
     def test_over_capacity_roster_is_fit_before_claims(self):
         # Nine bodies for eight spots, as when a reserve body loses Out/IR/PUP status.
@@ -361,7 +359,7 @@ class WaiverTests(unittest.TestCase):
             return {"week": week, "bid": bid, "status": status, "created": created,
                     "type": "waiver", "roster_id": 1, "adds": {"9": 1}, "drops": {}}
         state = SimpleNamespace(week=2, players=players, teams=[team], me=0, free_agents=[8, 9],
-                                 waivers_ran=True, transactions=[tx(1, 50, "complete", "a"),
+                                 waivers_ran=True, on_waivers={}, transactions=[tx(1, 50, "complete", "a"),
                                                                tx(2, 100, "complete", "b"),
                                                                tx(2, 300, "failed", "c")])
         inputs = race_inputs(state)
@@ -369,6 +367,66 @@ class WaiverTests(unittest.TestCase):
         self.assertEqual(inputs.opening_budgets, [950])
         self.assertEqual(inputs.bidding.current_weight, ROOM_CURRENT_WEEK_WEIGHT)
         self.assertEqual(inputs.my_bidding.current_weight, 1., "My bidding keeps its own objective")
+
+    def test_players_dropped_since_the_run_need_a_claim(self):
+        def drop(sid, at):
+            return {"status": "complete", "processed_at": at, "drops": {sid: 1}}
+        txs = [drop("a", "2026-09-22T07:00:00+00:00"), drop("a", "2026-09-23T07:05:00+00:00"),
+               drop("b", "2026-09-22T12:00:00+00:00"), drop("c", "2026-09-23T12:01:00+00:00")]
+        self.assertEqual(waiver_clears(txs, "2026-09-23T16:56:00+00:00"),
+                         {"a": "2026-09-24T06:05+00:00", "c": "2026-09-24T11:01+00:00"},
+                         "The latest drop restarts the clock; an older one has cleared")
+
+    def test_off_cycle_auction_plays_only_players_on_waivers(self):
+        inputs = self.inputs()
+        candidates, _, _ = _auction(inputs, 1, [self.roster[:]], [1000], [True], {8, 9}, random.Random(7),
+                                    None, 40, ["value"], pool=[9])
+        self.assertEqual(candidates, [9])
+        inputs.me = -1
+        candidates, winning, wins = _auction(inputs, 1, [self.roster[:4]], [1000], [True], {8, 9}, random.Random(7),
+                                             None, 40, ["value"], pool=[9], attention=0.)
+        self.assertEqual((winning, wins), ([-1], []), "An inattentive room neither claims nor picks up")
+
+    def test_off_cycle_share_pools_completed_weeks(self):
+        def claim(week, team, at):
+            return {"type": "waiver", "status": "failed", "week": week, "roster_id": team, "processed_at": at}
+        run2, run3 = "2026-09-16T07:06:02+00:00", "2026-09-23T07:05:12+00:00"
+        txs = [claim(2, 2, run2), claim(2, 3, run2), claim(2, 4, run2), claim(2, 1, run2),
+               claim(2, 2, "2026-09-17T06:15:30+00:00"), claim(2, 1, "2026-09-17T06:15:30+00:00"),
+               claim(3, 2, run3), claim(3, 3, "2026-09-24T06:15:30+00:00")]
+        state = SimpleNamespace(week=3, transactions=txs, my_team=SimpleNamespace(roster_id=1))
+        self.assertAlmostEqual(off_cycle_share(state), 1 / 3, msg="Mine and the unfinished week are excluded")
+
+    def test_refill_pool_waits_for_the_weekly_auction(self):
+        inputs = self.inputs()
+        inputs.waivers_ran = True
+        auctions = [None] * WEEKS
+        auctions[1] = ([9], [5])  # off-cycle: 9 is claimed
+        auctions[2] = ([8, 9], [-1, -1])
+        runs = [{"p_title": .1, "leverage": [1.] * (WEEKS - 1)}] * 3
+        with patch("ranker.claims.run_replays", return_value=runs):
+            mine, _ = title_objective(inputs, [{"auctions": auctions}])
+        self.assertEqual({r for col in mine.my_bidding.refills[1] for r in col}, {8})
+
+    def test_replay_chooses_among_the_best_drops(self):
+        options = self.bidding.swaps(self.roster, 9, 1000, 1, 0., 3)
+        self.assertEqual(options[0], self.bidding.offers(self.roster, [9], 1000, 1)[0])
+        self.assertEqual(len({o.drop for o in options}), len(options))
+        self.assertEqual([o.gain for o in options], sorted((o.gain for o in options), reverse=True))
+        runner_up = options[1].drop
+        inputs = self.inputs()
+        state = SimpleNamespace(me=0, my_team=SimpleNamespace(roster=self.roster, faab_left=1000, reserve=[]),
+                                players=[SimpleNamespace(sleeper_id=str(j), name=str(j), position="WR",
+                                                         team="T", injury_status=None, source="test") for j in range(10)])
+
+        def values(inputs, records, variants):
+            return [{"p_title": (t := .01 + (.004 if 9 in r and runner_up not in r else 0.)), "title_by_record": [t, t],
+                     "p_reach_final": t, "p_cut_now": 0., "p_alive_by_week": [1.] * 14,
+                     "budget_by_week": [b] * 16, "budget_after_claims": [b] * 16} for r, b, _ in variants]
+
+        with patch("ranker.claims.run_replays", side_effect=values):
+            result = claims(state, inputs, [{"auctions": [None] * WEEKS, "forecast_bars": [0.] * WEEKS}] * 2, 0.)
+        self.assertEqual(result["candidates"][0]["drop"]["name"], str(runner_up))
 
     def test_room_values_the_week_it_bids_for(self):
         weekly = [self.points[:] for _ in range(WEEKS)]

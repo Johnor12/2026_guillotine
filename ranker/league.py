@@ -232,6 +232,11 @@ FAAB_BUDGET = 1000
 # regular spot, whatever label Sleeper still shows.
 RESERVE_SLOTS = 2
 RESERVE_STATUSES = frozenset({"Out", "IR", "PUP"})
+# Sleeper's waiver_clear_days. After the weekly run, a dropped player sits on waivers and
+# claims on him process when he clears: observed about 23 hours after the drop, on
+# Sleeper's next 20-minute processing tick (07:06 -> 06:15, 12:54 -> 11:55 next day).
+WAIVER_CLEAR_DAYS = 1
+WAIVER_CLEAR_HOURS = 23
 
 # --- legacy bidding baselines, retained for evaluate_waivers.py --------------------
 CLAIM_FULL_BUDGET_GAIN = 12.0

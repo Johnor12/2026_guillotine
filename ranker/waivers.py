@@ -305,9 +305,14 @@ class Bidding:
             return 0.0, None
         return best[0] / len(points), -best[2]
 
+    def _offer(self, j: int, drop: int | None, gain: float, budget: int, w: int, risk: float) -> Offer:
+        if w == WEEKS - 1:
+            return Offer(j, drop, gain, budget)  # Unspent FAAB has no value after the final game.
+        scale = budget * (WEEKS - 1) / (WEEKS - w) * (1.0 + 2.0 * risk)
+        return Offer(j, drop, gain, min(budget, scale * self.shares[w][j] * min(1.5, gain / 5.0)))
+
     def offers(self, roster, candidates, budget: int, w: int, risk: float = 0.0):
         ctx = self.context(tuple(sorted(roster)), w)
-        scale = budget * (WEEKS - 1) / (WEEKS - w) * (1.0 + 2.0 * risk)
         owned = set(roster)
         out = []
         for j in candidates:
@@ -317,13 +322,23 @@ class Bidding:
             if got is None:
                 got = ctx.memo[j] = self._evaluate(ctx, j)
             gain, drop = got
+            if gain > 0.0:
+                out.append(self._offer(j, drop, gain, budget, w, risk))
+        return out
+
+    def swaps(self, roster, j: int, budget: int, w: int, risk: float, k: int) -> list[Offer]:
+        """Up to `k` improving offers for `j`, one per drop, best gain first: the drop
+        `offers` picks, then the runners-up it prunes. An open spot needs no drop."""
+        ctx = self.context(tuple(sorted(roster)), w)
+        found = []
+        for option in ctx.options:
+            gain, drop = self._evaluate(Context(ctx.roster, w, ctx.eligible, ctx.floors, [option], ctx.floor_min), j)
             if gain <= 0.0:
                 continue
-            ceiling = min(budget, scale * self.shares[w][j] * min(1.5, gain / 5.0))
-            if w == WEEKS - 1:
-                ceiling = budget  # Unspent FAAB has no value after the final game.
-            out.append(Offer(j, drop, gain, ceiling))
-        return out
+            if drop is None:
+                return [self._offer(j, None, gain, budget, w, risk)]
+            found.append((gain, -self.ros[w][drop], -drop))
+        return [self._offer(j, -d, gain, budget, w, risk) for gain, _, d in sorted(found, reverse=True)[:k]]
 
 
 def submitted_bids(state):
@@ -394,6 +409,22 @@ def fit_price_curve(observations) -> PriceCurve:
     intercept = my - slope * mx
     sigma = math.sqrt(sum((y - intercept - slope * x) ** 2 for x, y in points) / (len(points) - 2))
     return PriceCurve(intercept, slope, sigma)
+
+
+def off_cycle_share(state) -> float:
+    """Opponents claiming off-cycle (processed after the week's run, on players dropped
+    since) per opponent claiming in that run, pooled over completed weeks. Mid-week
+    attention is thinner: week 2 had 5 off-cycle bidders against 15 in the run."""
+    mine = state.my_team.roster_id
+    claims = [tx for tx in state.transactions if tx["type"] == "waiver" and tx["status"] in ("complete", "failed")
+              and tx["week"] < state.week and tx["roster_id"] != mine]
+    in_run = off_cycle = 0
+    for week in {tx["week"] for tx in claims}:
+        rows = [tx for tx in claims if tx["week"] == week]
+        run = min(tx["processed_at"] for tx in rows)  # the weekly run processes every claim at once
+        in_run += len({tx["roster_id"] for tx in rows if tx["processed_at"] == run})
+        off_cycle += len({tx["roster_id"] for tx in rows if tx["processed_at"] > run})
+    return off_cycle / in_run
 
 
 def fit_managers(state, observations):
