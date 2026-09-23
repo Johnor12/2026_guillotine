@@ -26,7 +26,7 @@ import statistics
 from collections import Counter
 
 from .league import CLAIM_CANDIDATES, WEEK_ROSTER_SIZE, WEEKS
-from .race import POLICIES, RaceInputs, apply_offer, cut_risk, run_replays
+from .race import POLICIES, RaceInputs, apply_offer, cut_risk, fit_roster, run_replays
 from .season import SeasonState, lineup
 
 BUDGET_STEPS = (0, 25, 50, 100, 200, 400, 700)
@@ -58,11 +58,11 @@ def title_objective(inputs: RaceInputs, records: list[dict]) -> tuple[RaceInputs
     roster, budget = tuple(inputs.rosters[inputs.me]), inputs.budgets[inputs.me]
 
     def best_run(weights):
-        variant = dataclasses.replace(inputs, my_bidding=inputs.bidding.objective(weights, pool))
+        variant = dataclasses.replace(inputs, my_bidding=inputs.my_bidding.objective(weights, pool))
         runs = run_replays(variant, records, [(roster, budget, pol) for pol in POLICIES])
         return variant, max(runs, key=lambda run: run["p_title"])
 
-    points, points_run = best_run(inputs.bidding.weights)
+    points, points_run = best_run(inputs.my_bidding.weights)
     scale = len(points_run["leverage"]) / sum(points_run["leverage"])
     weights = [0.0] * w + [x * scale for x in points_run["leverage"]]
     titled, titled_run = best_run(weights)
@@ -146,7 +146,11 @@ def claims(
     w = inputs.week0
     me = state.my_team
     budget = me.faab_left
-    roster = tuple(me.roster)
+    # A reserve body that lost eligibility needs a regular spot before any claim, as the
+    # race's fit_roster assumes; otherwise no one-for-one swap fits the roster.
+    fitted = list(me.roster)
+    fit_roster(inputs.my_bidding, fitted, w)
+    roster = tuple(fitted)
     positions = inputs.positions
     ros_w = inputs.ros[w]
     points = inputs.weekly[w]
@@ -328,6 +332,8 @@ def claims(
             "budget_after_claims": [round(x) if x is not None else None for x in base["budget_after_claims"]],
         },
         "roster_size": WEEK_ROSTER_SIZE[w] + inputs.bidding.reserved(roster, w),
+        "forced_cuts": [player(i) for i in me.roster if i not in roster],
+        "activate": [state.players[i].name for i in me.reserve if inputs.bidding.ir_until[i] <= w],
         "candidates": rows,
     }
 

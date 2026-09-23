@@ -14,9 +14,10 @@ weeks, after which the vacated spot is refilled from `replacements`, the wire th
 leaves untaken: the drop is charged what that refill cannot restore. With no
 replacement, the drop's whole remaining season is charged, so a returning starter is
 not a free placeholder. `weights` value each week's points (opponents: every week alike;
-mine: alike or by title leverage, whichever replays better, claims.title_objective).
-Guide prices rank players by points per game played, since the gain already prorates
-missed weeks.
+mine: alike or by title leverage, whichever replays better, claims.title_objective), and
+opponents also multiply the week they are bidding for by ROOM_CURRENT_WEEK_WEIGHT.
+Guide prices rank players by points per game played, weighted the same way, since the
+gain already prorates missed weeks.
 The two reserve slots hold Out/IR/PUP bodies while their projection is zero and stop
 holding them when it resumes (league.RESERVE_SLOTS, season.SeasonPlayer.ir_until).
 """
@@ -40,7 +41,12 @@ from .season import lineup_points, lineup_without_each, thresholds
 from .guillotine import SIGMA_WEEK, _cdf
 
 GUIDE_URL = "https://www.fantasylife.com/articles/guillotine-leagues/guillotine-league-fantasy-football-waiver-wire-guide-for-week-2"
-BID_SIGMA = 0.8
+BID_SIGMA = 0.8  # per-bid log noise before any bid is observed
+# Opponents value the week they bid for this many times each later week, in claim gains
+# and guide ranks. An ex-ante backtest of the week-3 auction (fit on week 2) improved with
+# the weight up to 32-64x on bid sizes, who got claimed and clearing prices; 32 predicted
+# who got claimed best, and valuing this week alone did worse.
+ROOM_CURRENT_WEEK_WEIGHT = 32.0
 
 # Desired cash entering each week (zero-based). These are strategy priors, not fits
 # to one auction. The patient plan keeps half its cash for week-14 superflex.
@@ -88,11 +94,34 @@ def projected_risk(roster, points, positions, w, bar):
     return _cdf((bar - mu) / math.hypot(TEAM_SEASON_SIGMA, SIGMA_WEEK[w]))
 
 
+# Participation prior Beta(2/3, 1/3), worth one auction: the method-of-moments fit to the
+# week-2 and week-3 auctions, where 15 of 16 week-2 bidders bid again and 5 of 11 quiet
+# managers started.
+ACTIVE_PRIOR = 2.0 / 3.0
+
+
+def guide_reference(bidding, player: int, ceiling: float, budget: int, w: int) -> float:
+    """The guide price a bid is measured against. Managers also speculate on depth; a small
+    market-value floor keeps a pickup the guide ceiling barely values priced."""
+    return max(budget * bidding.shares[w][player] * 0.25, ceiling, 1.0)
+
+
+@dataclass(frozen=True)
+class PriceCurve:
+    """The room's bid for a guide reference: log bid = intercept + slope * log reference.
+    This room is flatter than the guide (slope below 1): depth and fill-ins sell for
+    several times their guide price, stars for less."""
+    intercept: float = 0.0
+    slope: float = 1.0
+    sigma: float = BID_SIGMA  # residual log noise of one submitted bid
+
+    def price(self, reference: float) -> float:
+        return math.exp(self.intercept + self.slope * math.log(reference))
+
+
 @dataclass(frozen=True)
 class Manager:
     activity: float = 0.5
-    log_scale: float = 0.0
-    scale_sd: float = 0.6
     bid_weeks: int = 0
     bids: int = 0
 
@@ -130,19 +159,21 @@ REFILL_DEPTH = 3  # untaken bodies ranked per position, in case the best are alr
 
 
 class Bidding:
-    def __init__(self, positions, weekly, ros, ir_until):
+    def __init__(self, positions, weekly, ros, ir_until, current_weight: float = 1.0):
         self.positions = positions
         self.weekly = weekly
         self.ros = ros
         self.ir_until = ir_until
         self.weights = (1.0,) * WEEKS
+        self.current_weight = current_weight  # multiplies the week being decided
         self.refills = [((),) * 4] * WEEKS  # [w][pos] -> refill candidates, best first
         self.shares = []
         for w in range(WEEKS):
             points = []
             for j in range(len(positions)):
-                played = [weekly[v][j] for v in range(w, WEEKS) if weekly[v][j] > 0]
-                points.append(sum(played) / len(played) if played else 0.0)
+                played = [(current_weight if v == w else 1.0, weekly[v][j]) for v in range(w, WEEKS) if weekly[v][j] > 0]
+                total = sum(k for k, _ in played)
+                points.append(sum(k * p for k, p in played) / total if total else 0.0)
             shares = [0.0] * len(positions)
             for pos, elite in enumerate((4, 6, 6, 3)):
                 ordered = sorted((j for j, p in enumerate(positions) if p == pos), key=lambda j: (-points[j], j))
@@ -165,6 +196,10 @@ class Bidding:
             for w in range(WEEKS)
         ]
         return other
+
+    def week_weights(self, w: int) -> tuple[float, ...]:
+        """Weights on weeks w onward for a decision before week `w`'s games."""
+        return (self.weights[w] * self.current_weight, *self.weights[w + 1:])
 
     def reserved(self, roster, w: int) -> int:
         """Bodies the reserve slots hold before week `w`'s games."""
@@ -193,7 +228,7 @@ class Bidding:
     @lru_cache(maxsize=8192)
     def context(self, roster: tuple[int, ...], w: int) -> Context:
         per_week = [lineup_without_each(roster, self.weekly[v], self.positions, v) for v in range(w, WEEKS)]
-        weights = self.weights[w:]
+        weights = self.week_weights(w)
         span = len(weights)
         floors = tuple(zip(*(f for _, f, _ in per_week)))
         owned = set(roster)
@@ -237,7 +272,7 @@ class Bidding:
         holding `j` for the most valuable number of weeks before refilling the spot."""
         w, size, n = ctx.w, WEEK_ROSTER_SIZE[ctx.w], len(ctx.roster)
         pos = self.positions[j]
-        weights = self.weights[w:]
+        weights = self.week_weights(w)
         points = list(map(itemgetter(j), self.weekly[w:]))
         eligible_j = self.ir_until[j] > w
         if n + 1 - min(RESERVE_SLOTS, ctx.eligible + eligible_j) <= size:
@@ -336,56 +371,88 @@ def bid_observations(state, bidding):
                 continue
             risk = projected_risk(rosters[team], bidding.weekly[w], bidding.positions, w, bar)
             offers = bidding.offers(rosters[team], [j], budgets[team], w, risk)
-            # Managers also speculate on depth; a small market-value floor allows that.
-            reference = max(budgets[team] * bidding.shares[w][j] * 0.25,
-                            offers[0].ceiling if offers else 0.0, 1.0)
+            reference = guide_reference(bidding, j, offers[0].ceiling if offers else 0.0, budgets[team], w)
             gain = bidding.ros[w][j] - thresholds(rosters[team], bidding.ros[w], bidding.positions, w)[bidding.positions[j]]
             observations.append({"week": week, "team": team, "player": j, "bid": tx["bid"],
                                  "reference": reference, "budget": budgets[team], "gain": gain})
     return observations
 
 
-def fit_managers(state, observations, exclude_player: int | None = None):
-    obs = [o for o in observations if o["player"] != exclude_player]
+def fit_price_curve(observations) -> PriceCurve:
+    """Least squares of log bid on log guide reference over positive submitted bids, with
+    the residual spread as bid noise; the guide itself when there is nothing to fit.
+
+    One curve for the room: managers' levels around it did not persist from the week-2 to
+    the week-3 auction (correlation -0.24 over 15 managers), and per-manager offsets fit on
+    week 2 predicted week 3 worse than the curve alone."""
+    points = [(math.log(o["reference"]), math.log(o["bid"])) for o in observations if o["bid"] > 0]
+    if len(points) < 3 or len({x for x, _ in points}) < 2:
+        return PriceCurve()
+    mx = statistics.fmean(x for x, _ in points)
+    my = statistics.fmean(y for _, y in points)
+    slope = sum((x - mx) * (y - my) for x, y in points) / sum((x - mx) ** 2 for x, _ in points)
+    intercept = my - slope * mx
+    sigma = math.sqrt(sum((y - intercept - slope * x) ** 2 for x, y in points) / (len(points) - 2))
+    return PriceCurve(intercept, slope, sigma)
+
+
+def fit_managers(state, observations):
+    """The room's price curve, and each manager's participation, which does persist."""
     weeks = {o["week"] for o in observations}
-    positive = [math.log(o["bid"] / o["reference"]) for o in obs if o["bid"] > 0]
-    # Partial pooling limits what one auction can say about a manager's habits.
-    room = sum(positive) / (len(positive) + 8)
     out = []
     for team in state.teams:
-        rows = [o for o in obs if o["team"] == team.roster_id]
+        rows = [o for o in observations if o["team"] == team.roster_id]
         active = len({o["week"] for o in rows})
-        ratios = [math.log(o["bid"] / o["reference"]) for o in rows if o["bid"] > 0]
-        strength = 3.0
-        mean = (strength * room + sum(ratios)) / (strength + len(ratios))
-        out.append(Manager((2.0 + active) / (4.0 + len(weeks)), mean,
-                           BID_SIGMA / math.sqrt(strength + len(ratios)), active, len(rows)))
-    return out
+        out.append(Manager((ACTIVE_PRIOR + active) / (1.0 + len(weeks)), active, len(rows)))
+    return fit_price_curve(observations), out
+
+
+def _errors(state, rows, curve):
+    """Log errors of the fitted, guide and legacy predictions for positive bids in `rows`."""
+    fitted, prior, legacy, predictions = [], [], [], []
+    for row in rows:
+        if row["bid"] <= 0:
+            continue
+        predicted = min(row["budget"], curve.price(row["reference"]))
+        fitted.append(math.log(row["bid"] / predicted))
+        prior.append(math.log(row["bid"] / row["reference"]))
+        ramp = min(1.0, (row["week"] - 1) / (CLAIM_CONSERVATION_FULL_WEEK - 1))
+        old = row["budget"] * min(1.0, max(0.0, row["gain"]) / CLAIM_FULL_BUDGET_GAIN) ** CLAIM_GAIN_EXPONENT
+        old *= CLAIM_CONSERVATION_FLOOR + (1 - CLAIM_CONSERVATION_FLOOR) * ramp
+        legacy.append(math.log(row["bid"] / max(1.0, old)))
+        predictions.append({"player": state.players[row["player"]].name, "roster_id": row["team"],
+                            "actual": row["bid"], "predicted": round(predicted)})
+    return fitted, prior, legacy, predictions
+
+
+def _mae(errors):
+    return round(statistics.fmean(abs(e) for e in errors), 3) if errors else None
 
 
 def calibration(state, observations):
-    """Leave an entire player's bids out, then predict them from other players' bids."""
-    errors, prior_errors, legacy_errors = [], [], []
-    by_team = {t.roster_id: i for i, t in enumerate(state.teams)}
-    predictions = []
+    """Leave an entire player's bids out, then predict them from other players' bids; and
+    with two or more auctions, predict the latest from the earlier ones alone."""
+    errors, prior_errors, legacy_errors, predictions = [], [], [], []
     for j in sorted({o["player"] for o in observations}):
-        fitted = fit_managers(state, observations, exclude_player=j)
-        for row in observations:
-            if row["player"] != j or row["bid"] <= 0:
-                continue
-            predicted = min(row["budget"], row["reference"] * math.exp(fitted[by_team[row["team"]]].log_scale))
-            errors.append(abs(math.log(row["bid"] / predicted)))
-            prior_errors.append(abs(math.log(row["bid"] / row["reference"])))
-            ramp = min(1.0, (row["week"] - 1) / (CLAIM_CONSERVATION_FULL_WEEK - 1))
-            legacy = row["budget"] * min(1.0, max(0.0, row["gain"]) / CLAIM_FULL_BUDGET_GAIN) ** CLAIM_GAIN_EXPONENT
-            legacy *= CLAIM_CONSERVATION_FLOOR + (1 - CLAIM_CONSERVATION_FLOOR) * ramp
-            legacy_errors.append(abs(math.log(row["bid"] / max(1.0, legacy))))
-            predictions.append({"player": state.players[j].name, "roster_id": row["team"],
-                                "actual": row["bid"], "predicted": round(predicted)})
+        curve = fit_price_curve([o for o in observations if o["player"] != j])
+        got = _errors(state, [o for o in observations if o["player"] == j], curve)
+        for acc, new in zip((errors, prior_errors, legacy_errors, predictions), got):
+            acc.extend(new)
+    weeks = sorted({o["week"] for o in observations})
+    temporal = None
+    if len(weeks) > 1:
+        earlier = [o for o in observations if o["week"] < weeks[-1]]
+        fitted, prior, legacy, _ = _errors(state, [o for o in observations if o["week"] == weeks[-1]],
+                                           fit_price_curve(earlier))
+        temporal = {"test_week": weeks[-1], "positive_bids_tested": len(fitted),
+                    "prior_log_mae": _mae(prior), "legacy_log_mae": _mae(legacy), "fitted_log_mae": _mae(fitted),
+                    "fitted_mean_log_ratio": round(statistics.fmean(fitted), 3) if fitted else None}
+    curve = fit_price_curve(observations)
     return {"method": "leave-one-player-out; current projections proxy historical player value",
-            "bid_weeks": len({o["week"] for o in observations}), "submitted_bids": len(observations),
+            "bid_weeks": len(weeks), "submitted_bids": len(observations),
             "positive_bids_tested": len(errors),
-            "prior_log_mae": round(statistics.fmean(prior_errors), 3) if errors else None,
-            "legacy_log_mae": round(statistics.fmean(legacy_errors), 3) if errors else None,
-            "fitted_log_mae": round(statistics.fmean(errors), 3) if errors else None,
+            "price_curve": {"intercept": round(curve.intercept, 3), "slope": round(curve.slope, 3),
+                            "sigma": round(curve.sigma, 3)},
+            "prior_log_mae": _mae(prior_errors), "legacy_log_mae": _mae(legacy_errors),
+            "fitted_log_mae": _mae(errors), "latest_week_holdout": temporal,
             "predictions": predictions}

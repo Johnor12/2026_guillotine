@@ -5,9 +5,10 @@
 
 The policy comparison uses paired opponent seasons, including a sensitivity run where
 every opponent participates immediately. Absolute replay odds are approximate because
-opponents retain players our replay buys. One observed auction cannot validate future
-activity or supply a temporal backtest; held-out bid-size errors are conditional on a
-manager submitting a positive bid, using current projections for historical values.
+opponents retain players our replay buys. A few observed auctions cannot validate future
+activity; held-out bid-size errors (per player, and the latest auction from earlier ones)
+are conditional on a manager submitting a positive bid, using current projections for
+historical values.
 """
 from __future__ import annotations
 
@@ -42,7 +43,8 @@ def counterfactual(state):
     before = dataclasses.replace(state, teams=teams, waivers_ran=False,
                                  free_agents=[p.index for p in state.players if p.index not in owned],
                                  transactions=[t for t in state.transactions if t["week"] < state.week])
-    inputs = dataclasses.replace(race_inputs(before), managers=race_inputs(state).managers)
+    learned = race_inputs(state)
+    inputs = dataclasses.replace(race_inputs(before), managers=learned.managers, price_curve=learned.price_curve)
     print(f"simulating pre-auction reconstruction: {RACE_SIMS} seasons", file=sys.stderr, flush=True)
     records = run_race(inputs, RACE_SIMS, SEED + 200_000, exclude_me=True)
     decisions = claims(before, title_objective(inputs, records)[0], records, 0.0)
@@ -86,8 +88,9 @@ def main():
         records = run_race(inputs, RACE_SIMS, SEED + 100_000, exclude_me=True)
         result["scenarios"][name] = compare(title_objective(inputs, records)[0], records,
                                             state.my_team.roster, state.my_team.faab_left)
-    result["limitations"] = ["Only one observed auction; no temporal backtest or validated reactivation rate.",
-                              "Bid-size validation holds out all bids on a player; current projections proxy historical values.",
+    result["limitations"] = ["Few observed auctions; the reactivation rate is not validated.",
+                              "Bid-size validation holds out all bids on a player, and the latest auction; "
+                              "current projections proxy historical values.",
                               "Replay odds are paired approximations, not calibrated championship probabilities."]
     result["pre_auction_counterfactual"] = counterfactual(state)
     print(json.dumps(result, indent=2))

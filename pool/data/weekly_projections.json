@@ -2,7 +2,7 @@
  "source": "https://www.draftsharks.com/weekly-rankings/1/flex/half-ppr",
  "league_id": "1397662420398247936",
  "season": "2026",
- "fetched_at": "2026-09-22T19:59:53+00:00",
+ "fetched_at": "2026-09-23T16:55:59+00:00",
  "scoring": {
   "pass_yd": 0.04,
   "pass_td": 4.0,
@@ -147,7 +147,7 @@
      "points": 19.01
     },
     "3": {
-     "points": 20.67
+     "points": 20.37
     },
     "4": {
      "points": 19.01
@@ -312,6 +312,65 @@
    }
   },
   {
+   "player_id": 10748,
+   "name": "Trevor Lawrence",
+   "position": "QB",
+   "team": "JAC",
+   "weeks": {
+    "1": {
+     "points": 19.07
+    },
+    "2": {
+     "points": 17.5
+    },
+    "3": {
+     "points": 18.11
+    },
+    "4": {
+     "points": 19.07
+    },
+    "5": {
+     "points": 19.07
+    },
+    "6": {
+     "points": 19.07
+    },
+    "8": {
+     "points": 19.07
+    },
+    "9": {
+     "points": 19.07
+    },
+    "10": {
+     "points": 19.07
+    },
+    "11": {
+     "points": 19.07
+    },
+    "12": {
+     "points": 19.07
+    },
+    "13": {
+     "points": 19.07
+    },
+    "14": {
+     "points": 19.07
+    },
+    "15": {
+     "points": 19.07
+    },
+    "16": {
+     "points": 19.07
+    },
+    "17": {
+     "points": 19.07
+    },
+    "18": {
+     "points": 19.07
+    }
+   }
+  },
+  {
    "player_id": 10482,
    "name": "Joe Burrow",
    "position": "QB",
@@ -371,65 +430,6 @@
    }
   },
   {
-   "player_id": 10748,
-   "name": "Trevor Lawrence",
-   "position": "QB",
-   "team": "JAC",
-   "weeks": {
-    "1": {
-     "points": 19.07
-    },
-    "2": {
-     "points": 17.5
-    },
-    "3": {
-     "points": 17.87
-    },
-    "4": {
-     "points": 19.07
-    },
-    "5": {
-     "points": 19.07
-    },
-    "6": {
-     "points": 19.07
-    },
-    "8": {
-     "points": 19.07
-    },
-    "9": {
-     "points": 19.07
-    },
-    "10": {
-     "points": 19.07
-    },
-    "11": {
-     "points": 19.07
-    },
-    "12": {
-     "points": 19.07
-    },
-    "13": {
-     "points": 19.07
-    },
-    "14": {
-     "points": 19.07
-    },
-    "15": {
-     "points": 19.07
-    },
-    "16": {
-     "points": 19.07
-    },
-    "17": {
-     "points": 19.07
-    },
-    "18": {
-     "points": 19.07
-    }
-   }
-  },
-  {
    "player_id": 12737,
    "name": "Brock Purdy",
    "position": "QB",
@@ -442,7 +442,7 @@
      "points": 19.51
     },
     "3": {
-     "points": 19.15
+     "points": 19.03
     },
     "4": {
      "points": 18.37
@@ -1026,7 +1026,7 @@
      "points": 17.0
     },
     "3": {
-     "points": 15.99
+     "points": 16.11
     },
     "4": {
      "points": 17.86
@@ -1262,7 +1262,7 @@
      "points": 16.06
     },
     "3": {
-     "points": 16.51
+     "points": 16.69
     },
     "4": {
      "points": 16.9
@@ -1318,7 +1318,7 @@
      "points": 18.33
     },
     "3": {
-     "points": 15.75
+     "points": 14.83
     },
     "4": {
      "points": 18.4
@@ -1420,65 +1420,6 @@
     },
     "18": {
      "points": 16.83
-    }
-   }
-  },
-  {
-   "player_id": 13680,
-   "name": "Puka Nacua",
-   "position": "WR",
-   "team": "LAR",
-   "weeks": {
-    "1": {
-     "points": 16.5
-    },
-    "2": {
-     "points": 15.98
-    },
-    "3": {
-     "points": 12.92
-    },
-    "4": {
-     "points": 16.6
-    },
-    "5": {
-     "points": 17.16
-    },
-    "6": {
-     "points": 17.16
-    },
-    "7": {
-     "points": 17.16
-    },
-    "8": {
-     "points": 17.16
-    },
-    "9": {
-     "points": 17.16
-    },
-    "10": {
-     "points": 17.16
-    },
-    "12": {
-     "points": 17.16
-    },
-    "13": {
-     "points": 17.16
-    },
-    "14": {
-     "points": 17.16
-    },
-    "15": {
-     "points": 17.16
-    },
-    "16": {
-     "points": 17.16
-    },
-    "17": {
-     "points": 17.16
-    },
-    "18": {
-     "points": 17.16
     }
    }
   },
@@ -1672,7 +1613,7 @@
      "points": 16.22
     },
     "3": {
-     "points": 14.59
+     "points": 14.67
     },
     "4": {
      "points": 16.08
@@ -1715,6 +1656,65 @@
     },
     "18": {
      "points": 16.08
+    }
+   }
+  },
+  {
+   "player_id": 13547,
+   "name": "Jaxon Smith-Njigba",
+   "position": "WR",
+   "team": "SEA",
+   "weeks": {
+    "1": {
+     "points": 15.43
+    },
+    "2": {
+     "points": 15.7
+    },
+    "3": {
+     "points": 16.57
+    },
+    "4": {
+     "points": 15.6
+    },
+    "5": {
+     "points": 15.91
+    },
+    "6": {
+     "points": 15.91
+    },
+    "7": {
+     "points": 15.91
+    },
+    "8": {
+     "points": 15.91
+    },
+    "9": {
+     "points": 15.91
+    },
+    "10": {
+     "points": 15.91
+    },
+    "12": {
+     "points": 15.91
+    },
+    "13": {
+     "points": 15.91
+    },
+    "14": {
+     "points": 15.91
+    },
+    "15": {
+     "points": 15.91
+    },
+    "16": {
+     "points": 15.91
+    },
+    "17": {
+     "points": 15.91
+    },
+    "18": {
+     "points": 15.91
     }
    }
   },
@@ -1955,61 +1955,61 @@
    }
   },
   {
-   "player_id": 13547,
-   "name": "Jaxon Smith-Njigba",
+   "player_id": 10783,
+   "name": "Amon-Ra St. Brown",
    "position": "WR",
-   "team": "SEA",
+   "team": "DET",
    "weeks": {
     "1": {
-     "points": 15.43
+     "points": 15.21
     },
     "2": {
-     "points": 15.7
+     "points": 15.1
     },
     "3": {
-     "points": 16.57
+     "points": 15.81
     },
     "4": {
-     "points": 15.23
+     "points": 15.62
     },
     "5": {
-     "points": 15.54
-    },
-    "6": {
-     "points": 15.54
+     "points": 15.62
     },
     "7": {
-     "points": 15.54
+     "points": 15.62
     },
     "8": {
-     "points": 15.54
+     "points": 15.62
     },
     "9": {
-     "points": 15.54
+     "points": 15.62
     },
     "10": {
-     "points": 15.54
+     "points": 15.62
+    },
+    "11": {
+     "points": 15.62
     },
     "12": {
-     "points": 15.54
+     "points": 15.62
     },
     "13": {
-     "points": 15.54
+     "points": 15.62
     },
     "14": {
-     "points": 15.54
+     "points": 15.62
     },
     "15": {
-     "points": 15.54
+     "points": 15.62
     },
     "16": {
-     "points": 15.54
+     "points": 15.62
     },
     "17": {
-     "points": 15.54
+     "points": 15.62
     },
     "18": {
-     "points": 15.54
+     "points": 15.62
     }
    }
   },
@@ -2073,61 +2073,61 @@
    }
   },
   {
-   "player_id": 10783,
-   "name": "Amon-Ra St. Brown",
+   "player_id": 13680,
+   "name": "Puka Nacua",
    "position": "WR",
-   "team": "DET",
+   "team": "LAR",
    "weeks": {
     "1": {
-     "points": 15.21
+     "points": 16.5
     },
     "2": {
-     "points": 15.1
+     "points": 15.98
     },
     "3": {
-     "points": 15.81
+     "points": 12.92
     },
     "4": {
-     "points": 15.21
+     "points": 15.07
     },
     "5": {
-     "points": 15.21
+     "points": 15.6
+    },
+    "6": {
+     "points": 15.6
     },
     "7": {
-     "points": 15.21
+     "points": 15.6
     },
     "8": {
-     "points": 15.21
+     "points": 15.6
     },
     "9": {
-     "points": 15.21
+     "points": 15.6
     },
     "10": {
-     "points": 15.21
-    },
-    "11": {
-     "points": 15.21
+     "points": 15.6
     },
     "12": {
-     "points": 15.21
+     "points": 15.6
     },
     "13": {
-     "points": 15.21
+     "points": 15.6
     },
     "14": {
-     "points": 15.21
+     "points": 15.6
     },
     "15": {
-     "points": 15.21
+     "points": 15.6
     },
     "16": {
-     "points": 15.21
+     "points": 15.6
     },
     "17": {
-     "points": 15.21
+     "points": 15.6
     },
     "18": {
-     "points": 15.21
+     "points": 15.6
     }
    }
   },
@@ -2321,7 +2321,7 @@
      "points": 14.56
     },
     "3": {
-     "points": 13.31
+     "points": 13.19
     },
     "4": {
      "points": 14.98
@@ -2672,7 +2672,7 @@
      "points": 15.29
     },
     "3": {
-     "points": 15.1
+     "points": 15.12
     },
     "4": {
      "points": 14.76
@@ -2774,65 +2774,6 @@
     },
     "18": {
      "points": 14.02
-    }
-   }
-  },
-  {
-   "player_id": 35361,
-   "name": "Harold Fannin Jr.",
-   "position": "TE",
-   "team": "CLE",
-   "weeks": {
-    "1": {
-     "points": 13.95
-    },
-    "2": {
-     "points": 11.69
-    },
-    "3": {
-     "points": 12.45
-    },
-    "4": {
-     "points": 13.4
-    },
-    "5": {
-     "points": 13.95
-    },
-    "6": {
-     "points": 13.95
-    },
-    "7": {
-     "points": 13.95
-    },
-    "8": {
-     "points": 13.95
-    },
-    "9": {
-     "points": 13.95
-    },
-    "10": {
-     "points": 13.95
-    },
-    "12": {
-     "points": 13.95
-    },
-    "13": {
-     "points": 13.95
-    },
-    "14": {
-     "points": 13.95
-    },
-    "15": {
-     "points": 13.95
-    },
-    "16": {
-     "points": 13.95
-    },
-    "17": {
-     "points": 14.04
-    },
-    "18": {
-     "points": 12.88
     }
    }
   },
@@ -3246,6 +3187,65 @@
     },
     "18": {
      "points": 13.15
+    }
+   }
+  },
+  {
+   "player_id": 35361,
+   "name": "Harold Fannin Jr.",
+   "position": "TE",
+   "team": "CLE",
+   "weeks": {
+    "1": {
+     "points": 13.95
+    },
+    "2": {
+     "points": 11.69
+    },
+    "3": {
+     "points": 12.45
+    },
+    "4": {
+     "points": 12.51
+    },
+    "5": {
+     "points": 13.05
+    },
+    "6": {
+     "points": 13.05
+    },
+    "7": {
+     "points": 13.05
+    },
+    "8": {
+     "points": 13.05
+    },
+    "9": {
+     "points": 13.05
+    },
+    "10": {
+     "points": 13.05
+    },
+    "12": {
+     "points": 13.05
+    },
+    "13": {
+     "points": 13.05
+    },
+    "14": {
+     "points": 13.05
+    },
+    "15": {
+     "points": 13.05
+    },
+    "16": {
+     "points": 13.05
+    },
+    "17": {
+     "points": 13.08
+    },
+    "18": {
+     "points": 12.16
     }
    }
   },
@@ -3728,7 +3728,7 @@
      "points": 13.76
     },
     "3": {
-     "points": 16.24
+     "points": 15.96
     },
     "4": {
      "points": 14.01
@@ -4099,7 +4099,7 @@
    "team": "NYG",
    "weeks": {
     "3": {
-     "points": 13.64
+     "points": 13.4
     },
     "4": {
      "points": 13.86
@@ -4892,65 +4892,6 @@
    }
   },
   {
-   "player_id": 13553,
-   "name": "Rashee Rice",
-   "position": "WR",
-   "team": "KC",
-   "weeks": {
-    "1": {
-     "points": 12.42
-    },
-    "2": {
-     "points": 10.59
-    },
-    "3": {
-     "points": 10.01
-    },
-    "4": {
-     "points": 11.39
-    },
-    "6": {
-     "points": 11.39
-    },
-    "7": {
-     "points": 11.39
-    },
-    "8": {
-     "points": 11.39
-    },
-    "9": {
-     "points": 11.39
-    },
-    "10": {
-     "points": 11.57
-    },
-    "11": {
-     "points": 11.57
-    },
-    "12": {
-     "points": 11.57
-    },
-    "13": {
-     "points": 11.57
-    },
-    "14": {
-     "points": 11.57
-    },
-    "15": {
-     "points": 11.57
-    },
-    "16": {
-     "points": 11.57
-    },
-    "17": {
-     "points": 11.57
-    },
-    "18": {
-     "points": 11.57
-    }
-   }
-  },
-  {
    "player_id": 35915,
    "name": "Fernando Mendoza",
    "position": "QB",
@@ -5411,6 +5352,65 @@
    }
   },
   {
+   "player_id": 9970,
+   "name": "D.J. Moore",
+   "position": "WR",
+   "team": "BUF",
+   "weeks": {
+    "1": {
+     "points": 10.22
+    },
+    "2": {
+     "points": 11.59
+    },
+    "3": {
+     "points": 10.83
+    },
+    "4": {
+     "points": 11.05
+    },
+    "5": {
+     "points": 10.87
+    },
+    "6": {
+     "points": 10.87
+    },
+    "8": {
+     "points": 10.87
+    },
+    "9": {
+     "points": 10.87
+    },
+    "10": {
+     "points": 10.87
+    },
+    "11": {
+     "points": 10.87
+    },
+    "12": {
+     "points": 10.87
+    },
+    "13": {
+     "points": 10.87
+    },
+    "14": {
+     "points": 10.87
+    },
+    "15": {
+     "points": 10.87
+    },
+    "16": {
+     "points": 10.87
+    },
+    "17": {
+     "points": 10.87
+    },
+    "18": {
+     "points": 10.87
+    }
+   }
+  },
+  {
    "player_id": 6938,
    "name": "Mike Evans",
    "position": "WR",
@@ -5541,10 +5541,10 @@
      "points": 10.49
     },
     "3": {
-     "points": 11.57
+     "points": 11.82
     },
     "4": {
-     "points": 10.54
+     "points": 10.29
     },
     "5": {
      "points": 10.54
@@ -5584,65 +5584,6 @@
     },
     "18": {
      "points": 10.54
-    }
-   }
-  },
-  {
-   "player_id": 9970,
-   "name": "D.J. Moore",
-   "position": "WR",
-   "team": "BUF",
-   "weeks": {
-    "1": {
-     "points": 10.22
-    },
-    "2": {
-     "points": 11.59
-    },
-    "3": {
-     "points": 10.83
-    },
-    "4": {
-     "points": 10.62
-    },
-    "5": {
-     "points": 10.51
-    },
-    "6": {
-     "points": 10.51
-    },
-    "8": {
-     "points": 10.51
-    },
-    "9": {
-     "points": 10.51
-    },
-    "10": {
-     "points": 10.51
-    },
-    "11": {
-     "points": 10.51
-    },
-    "12": {
-     "points": 10.51
-    },
-    "13": {
-     "points": 10.51
-    },
-    "14": {
-     "points": 10.51
-    },
-    "15": {
-     "points": 10.51
-    },
-    "16": {
-     "points": 10.51
-    },
-    "17": {
-     "points": 10.51
-    },
-    "18": {
-     "points": 10.51
     }
    }
   },
@@ -5883,6 +5824,65 @@
    }
   },
   {
+   "player_id": 13553,
+   "name": "Rashee Rice",
+   "position": "WR",
+   "team": "KC",
+   "weeks": {
+    "1": {
+     "points": 12.42
+    },
+    "2": {
+     "points": 10.59
+    },
+    "3": {
+     "points": 10.01
+    },
+    "4": {
+     "points": 10.35
+    },
+    "6": {
+     "points": 10.35
+    },
+    "7": {
+     "points": 10.35
+    },
+    "8": {
+     "points": 10.35
+    },
+    "9": {
+     "points": 10.35
+    },
+    "10": {
+     "points": 10.41
+    },
+    "11": {
+     "points": 10.41
+    },
+    "12": {
+     "points": 10.41
+    },
+    "13": {
+     "points": 10.41
+    },
+    "14": {
+     "points": 10.41
+    },
+    "15": {
+     "points": 10.41
+    },
+    "16": {
+     "points": 10.41
+    },
+    "17": {
+     "points": 10.41
+    },
+    "18": {
+     "points": 10.41
+    }
+   }
+  },
+  {
    "player_id": 10269,
    "name": "Terry McLaurin",
    "position": "WR",
@@ -5895,7 +5895,7 @@
      "points": 10.43
     },
     "3": {
-     "points": 9.99
+     "points": 9.9
     },
     "4": {
      "points": 10.68
@@ -6072,7 +6072,7 @@
      "points": 9.39
     },
     "3": {
-     "points": 10.28
+     "points": 10.4
     },
     "4": {
      "points": 10.18
@@ -6131,7 +6131,7 @@
      "points": 10.41
     },
     "3": {
-     "points": 9.52
+     "points": 9.48
     },
     "4": {
      "points": 10.15
@@ -6986,7 +6986,7 @@
      "points": 8.21
     },
     "3": {
-     "points": 8.31
+     "points": 8.37
     },
     "4": {
      "points": 9.32
@@ -7502,61 +7502,61 @@
    }
   },
   {
-   "player_id": 35021,
-   "name": "Xavier Worthy",
-   "position": "WR",
-   "team": "KC",
+   "player_id": 35973,
+   "name": "Kenyon Sadiq",
+   "position": "TE",
+   "team": "NYJ",
    "weeks": {
     "1": {
-     "points": 8.94
+     "points": 6.98
     },
     "2": {
-     "points": 8.61
+     "points": 7.58
     },
     "3": {
-     "points": 9.6
+     "points": 9.54
     },
     "4": {
-     "points": 8.96
+     "points": 9.16
+    },
+    "5": {
+     "points": 9.16
     },
     "6": {
-     "points": 8.96
+     "points": 9.16
     },
     "7": {
-     "points": 8.96
+     "points": 9.16
     },
     "8": {
-     "points": 8.96
+     "points": 9.16
     },
     "9": {
-     "points": 8.96
+     "points": 9.16
     },
     "10": {
-     "points": 8.95
+     "points": 9.16
     },
     "11": {
-     "points": 8.95
+     "points": 9.16
     },
     "12": {
-     "points": 8.95
-    },
-    "13": {
-     "points": 8.95
+     "points": 9.16
     },
     "14": {
-     "points": 8.95
+     "points": 9.16
     },
     "15": {
-     "points": 8.95
+     "points": 9.16
     },
     "16": {
-     "points": 8.95
+     "points": 9.16
     },
     "17": {
-     "points": 8.95
+     "points": 9.16
     },
     "18": {
-     "points": 8.95
+     "points": 9.16
     }
    }
   },
@@ -8083,65 +8083,6 @@
    }
   },
   {
-   "player_id": 35973,
-   "name": "Kenyon Sadiq",
-   "position": "TE",
-   "team": "NYJ",
-   "weeks": {
-    "1": {
-     "points": 6.98
-    },
-    "2": {
-     "points": 7.58
-    },
-    "3": {
-     "points": 7.52
-    },
-    "4": {
-     "points": 9.16
-    },
-    "5": {
-     "points": 9.16
-    },
-    "6": {
-     "points": 9.16
-    },
-    "7": {
-     "points": 9.16
-    },
-    "8": {
-     "points": 9.16
-    },
-    "9": {
-     "points": 9.16
-    },
-    "10": {
-     "points": 9.16
-    },
-    "11": {
-     "points": 9.16
-    },
-    "12": {
-     "points": 9.16
-    },
-    "14": {
-     "points": 9.16
-    },
-    "15": {
-     "points": 9.16
-    },
-    "16": {
-     "points": 9.16
-    },
-    "17": {
-     "points": 9.16
-    },
-    "18": {
-     "points": 9.16
-    }
-   }
-  },
-  {
    "player_id": 7769,
    "name": "Evan Engram",
    "position": "TE",
@@ -8490,6 +8431,65 @@
    }
   },
   {
+   "player_id": 35021,
+   "name": "Xavier Worthy",
+   "position": "WR",
+   "team": "KC",
+   "weeks": {
+    "1": {
+     "points": 8.94
+    },
+    "2": {
+     "points": 8.61
+    },
+    "3": {
+     "points": 9.6
+    },
+    "4": {
+     "points": 8.38
+    },
+    "6": {
+     "points": 8.38
+    },
+    "7": {
+     "points": 8.38
+    },
+    "8": {
+     "points": 8.38
+    },
+    "9": {
+     "points": 8.38
+    },
+    "10": {
+     "points": 8.48
+    },
+    "11": {
+     "points": 8.48
+    },
+    "12": {
+     "points": 8.48
+    },
+    "13": {
+     "points": 8.48
+    },
+    "14": {
+     "points": 8.48
+    },
+    "15": {
+     "points": 8.48
+    },
+    "16": {
+     "points": 8.48
+    },
+    "17": {
+     "points": 8.48
+    },
+    "18": {
+     "points": 8.48
+    }
+   }
+  },
+  {
    "player_id": 35365,
    "name": "Gunnar Helm",
    "position": "TE",
@@ -8797,7 +8797,7 @@
      "points": 9.81
     },
     "3": {
-     "points": 11.3
+     "points": 11.42
     },
     "4": {
      "points": 12.33
@@ -9135,59 +9135,6 @@
     },
     "18": {
      "points": 7.8
-    }
-   }
-  },
-  {
-   "player_id": 12605,
-   "name": "Alec Pierce",
-   "position": "WR",
-   "team": "IND",
-   "weeks": {
-    "2": {
-     "points": 8.92
-    },
-    "4": {
-     "points": 8.67
-    },
-    "5": {
-     "points": 8.67
-    },
-    "6": {
-     "points": 8.67
-    },
-    "7": {
-     "points": 8.67
-    },
-    "8": {
-     "points": 8.67
-    },
-    "9": {
-     "points": 8.67
-    },
-    "10": {
-     "points": 8.67
-    },
-    "11": {
-     "points": 8.67
-    },
-    "12": {
-     "points": 8.67
-    },
-    "14": {
-     "points": 8.67
-    },
-    "15": {
-     "points": 8.67
-    },
-    "16": {
-     "points": 8.67
-    },
-    "17": {
-     "points": 8.67
-    },
-    "18": {
-     "points": 8.67
     }
    }
   },
@@ -9961,7 +9908,7 @@
    "team": "WAS",
    "weeks": {
     "3": {
-     "points": 15.52
+     "points": 15.24
     },
     "4": {
      "points": 19.95
@@ -10092,65 +10039,6 @@
     },
     "18": {
      "points": 7.17
-    }
-   }
-  },
-  {
-   "player_id": 34996,
-   "name": "Braelon Allen",
-   "position": "RB",
-   "team": "NYJ",
-   "weeks": {
-    "1": {
-     "points": 4.05
-    },
-    "2": {
-     "points": 5.53
-    },
-    "3": {
-     "points": 5.3
-    },
-    "4": {
-     "points": 6.7
-    },
-    "5": {
-     "points": 6.7
-    },
-    "6": {
-     "points": 6.7
-    },
-    "7": {
-     "points": 6.7
-    },
-    "8": {
-     "points": 6.7
-    },
-    "9": {
-     "points": 6.7
-    },
-    "10": {
-     "points": 6.7
-    },
-    "11": {
-     "points": 6.7
-    },
-    "12": {
-     "points": 6.7
-    },
-    "14": {
-     "points": 6.7
-    },
-    "15": {
-     "points": 6.7
-    },
-    "16": {
-     "points": 6.7
-    },
-    "17": {
-     "points": 6.7
-    },
-    "18": {
-     "points": 6.7
     }
    }
   },
@@ -10447,6 +10335,50 @@
    }
   },
   {
+   "player_id": 12605,
+   "name": "Alec Pierce",
+   "position": "WR",
+   "team": "IND",
+   "weeks": {
+    "2": {
+     "points": 8.92
+    },
+    "7": {
+     "points": 8.67
+    },
+    "8": {
+     "points": 8.67
+    },
+    "9": {
+     "points": 8.67
+    },
+    "10": {
+     "points": 8.67
+    },
+    "11": {
+     "points": 8.67
+    },
+    "12": {
+     "points": 8.67
+    },
+    "14": {
+     "points": 8.67
+    },
+    "15": {
+     "points": 8.67
+    },
+    "16": {
+     "points": 8.67
+    },
+    "17": {
+     "points": 8.67
+    },
+    "18": {
+     "points": 8.67
+    }
+   }
+  },
+  {
    "player_id": 13677,
    "name": "Chris Rodriguez",
    "position": "RB",
@@ -10698,46 +10630,46 @@
      "points": 6.03
     },
     "4": {
-     "points": 6.06
+     "points": 6.15
     },
     "5": {
-     "points": 6.06
+     "points": 6.15
     },
     "6": {
-     "points": 6.06
+     "points": 6.15
     },
     "7": {
-     "points": 6.06
+     "points": 6.15
     },
     "9": {
-     "points": 6.06
+     "points": 6.15
     },
     "10": {
-     "points": 6.06
+     "points": 6.15
     },
     "11": {
-     "points": 6.06
+     "points": 6.15
     },
     "12": {
-     "points": 6.06
+     "points": 6.15
     },
     "13": {
-     "points": 6.06
+     "points": 6.15
     },
     "14": {
-     "points": 6.06
+     "points": 6.15
     },
     "15": {
-     "points": 6.06
+     "points": 6.15
     },
     "16": {
-     "points": 6.06
+     "points": 6.15
     },
     "17": {
-     "points": 6.06
+     "points": 6.15
     },
     "18": {
-     "points": 6.06
+     "points": 6.15
     }
    }
   },
@@ -10866,7 +10798,7 @@
    "team": "PHI",
    "weeks": {
     "3": {
-     "points": 7.15
+     "points": 7.13
     },
     "4": {
      "points": 6.64
@@ -11612,6 +11544,65 @@
    }
   },
   {
+   "player_id": 34996,
+   "name": "Braelon Allen",
+   "position": "RB",
+   "team": "NYJ",
+   "weeks": {
+    "1": {
+     "points": 4.05
+    },
+    "2": {
+     "points": 5.53
+    },
+    "3": {
+     "points": 5.3
+    },
+    "4": {
+     "points": 5.41
+    },
+    "5": {
+     "points": 5.41
+    },
+    "6": {
+     "points": 5.41
+    },
+    "7": {
+     "points": 5.41
+    },
+    "8": {
+     "points": 5.41
+    },
+    "9": {
+     "points": 5.41
+    },
+    "10": {
+     "points": 5.41
+    },
+    "11": {
+     "points": 5.41
+    },
+    "12": {
+     "points": 5.41
+    },
+    "14": {
+     "points": 5.41
+    },
+    "15": {
+     "points": 5.41
+    },
+    "16": {
+     "points": 5.41
+    },
+    "17": {
+     "points": 5.41
+    },
+    "18": {
+     "points": 5.41
+    }
+   }
+  },
+  {
    "player_id": 35045,
    "name": "Malik Washington",
    "position": "WR",
@@ -11667,62 +11658,6 @@
     },
     "18": {
      "points": 5.01
-    }
-   }
-  },
-  {
-   "player_id": 7751,
-   "name": "Alvin Kamara",
-   "position": "RB",
-   "team": "NO",
-   "weeks": {
-    "2": {
-     "points": 4.67
-    },
-    "3": {
-     "points": 6.31
-    },
-    "4": {
-     "points": 5.59
-    },
-    "5": {
-     "points": 5.59
-    },
-    "6": {
-     "points": 5.59
-    },
-    "7": {
-     "points": 5.59
-    },
-    "9": {
-     "points": 5.59
-    },
-    "10": {
-     "points": 5.59
-    },
-    "11": {
-     "points": 5.59
-    },
-    "12": {
-     "points": 5.59
-    },
-    "13": {
-     "points": 5.59
-    },
-    "14": {
-     "points": 5.59
-    },
-    "15": {
-     "points": 5.59
-    },
-    "16": {
-     "points": 5.59
-    },
-    "17": {
-     "points": 5.59
-    },
-    "18": {
-     "points": 5.59
     }
    }
   },
@@ -11956,65 +11891,6 @@
     },
     "18": {
      "points": 5.41
-    }
-   }
-  },
-  {
-   "player_id": 35362,
-   "name": "Mason Taylor",
-   "position": "TE",
-   "team": "NYJ",
-   "weeks": {
-    "1": {
-     "points": 6.59
-    },
-    "2": {
-     "points": 6.25
-    },
-    "3": {
-     "points": 6.59
-    },
-    "4": {
-     "points": 4.83
-    },
-    "5": {
-     "points": 4.83
-    },
-    "6": {
-     "points": 4.83
-    },
-    "7": {
-     "points": 4.83
-    },
-    "8": {
-     "points": 4.83
-    },
-    "9": {
-     "points": 4.83
-    },
-    "10": {
-     "points": 4.83
-    },
-    "11": {
-     "points": 4.83
-    },
-    "12": {
-     "points": 4.83
-    },
-    "14": {
-     "points": 4.83
-    },
-    "15": {
-     "points": 4.83
-    },
-    "16": {
-     "points": 4.83
-    },
-    "17": {
-     "points": 4.83
-    },
-    "18": {
-     "points": 4.83
     }
    }
   },
@@ -12404,6 +12280,177 @@
     },
     "18": {
      "points": 4.29
+    }
+   }
+  },
+  {
+   "player_id": 35927,
+   "name": "Jonah Coleman",
+   "position": "RB",
+   "team": "DEN",
+   "weeks": {
+    "1": {
+     "points": 4.26
+    },
+    "2": {
+     "points": 2.18
+    },
+    "3": {
+     "points": 9.59
+    },
+    "4": {
+     "points": 4.61
+    },
+    "5": {
+     "points": 4.61
+    },
+    "6": {
+     "points": 4.61
+    },
+    "7": {
+     "points": 4.61
+    },
+    "8": {
+     "points": 4.61
+    },
+    "9": {
+     "points": 4.61
+    },
+    "11": {
+     "points": 4.61
+    },
+    "12": {
+     "points": 4.61
+    },
+    "13": {
+     "points": 4.61
+    },
+    "14": {
+     "points": 4.61
+    },
+    "15": {
+     "points": 4.61
+    },
+    "16": {
+     "points": 4.61
+    },
+    "17": {
+     "points": 4.61
+    },
+    "18": {
+     "points": 4.61
+    }
+   }
+  },
+  {
+   "player_id": 35362,
+   "name": "Mason Taylor",
+   "position": "TE",
+   "team": "NYJ",
+   "weeks": {
+    "1": {
+     "points": 6.59
+    },
+    "2": {
+     "points": 6.25
+    },
+    "4": {
+     "points": 4.83
+    },
+    "5": {
+     "points": 4.83
+    },
+    "6": {
+     "points": 4.83
+    },
+    "7": {
+     "points": 4.83
+    },
+    "8": {
+     "points": 4.83
+    },
+    "9": {
+     "points": 4.83
+    },
+    "10": {
+     "points": 4.83
+    },
+    "11": {
+     "points": 4.83
+    },
+    "12": {
+     "points": 4.83
+    },
+    "14": {
+     "points": 4.83
+    },
+    "15": {
+     "points": 4.83
+    },
+    "16": {
+     "points": 4.83
+    },
+    "17": {
+     "points": 4.83
+    },
+    "18": {
+     "points": 4.83
+    }
+   }
+  },
+  {
+   "player_id": 7751,
+   "name": "Alvin Kamara",
+   "position": "RB",
+   "team": "NO",
+   "weeks": {
+    "2": {
+     "points": 4.67
+    },
+    "3": {
+     "points": 6.31
+    },
+    "4": {
+     "points": 4.95
+    },
+    "5": {
+     "points": 4.95
+    },
+    "6": {
+     "points": 4.95
+    },
+    "7": {
+     "points": 4.95
+    },
+    "9": {
+     "points": 4.95
+    },
+    "10": {
+     "points": 4.95
+    },
+    "11": {
+     "points": 4.95
+    },
+    "12": {
+     "points": 4.95
+    },
+    "13": {
+     "points": 4.95
+    },
+    "14": {
+     "points": 4.95
+    },
+    "15": {
+     "points": 4.95
+    },
+    "16": {
+     "points": 4.95
+    },
+    "17": {
+     "points": 4.95
+    },
+    "18": {
+     "points": 4.95
     }
    }
   },
@@ -12880,65 +12927,6 @@
    }
   },
   {
-   "player_id": 13534,
-   "name": "KaVontae Turpin",
-   "position": "WR",
-   "team": "DAL",
-   "weeks": {
-    "1": {
-     "points": 4.72
-    },
-    "2": {
-     "points": 3.3
-    },
-    "3": {
-     "points": 2.46
-    },
-    "4": {
-     "points": 4.72
-    },
-    "5": {
-     "points": 4.72
-    },
-    "6": {
-     "points": 4.72
-    },
-    "7": {
-     "points": 4.72
-    },
-    "8": {
-     "points": 4.72
-    },
-    "9": {
-     "points": 4.72
-    },
-    "10": {
-     "points": 4.72
-    },
-    "11": {
-     "points": 4.72
-    },
-    "12": {
-     "points": 4.72
-    },
-    "13": {
-     "points": 4.72
-    },
-    "15": {
-     "points": 4.72
-    },
-    "16": {
-     "points": 4.72
-    },
-    "17": {
-     "points": 4.72
-    },
-    "18": {
-     "points": 4.72
-    }
-   }
-  },
-  {
    "player_id": 35025,
    "name": "Roman Wilson",
    "position": "WR",
@@ -13112,65 +13100,6 @@
     },
     "18": {
      "points": 4.5
-    }
-   }
-  },
-  {
-   "player_id": 35927,
-   "name": "Jonah Coleman",
-   "position": "RB",
-   "team": "DEN",
-   "weeks": {
-    "1": {
-     "points": 4.26
-    },
-    "2": {
-     "points": 2.18
-    },
-    "3": {
-     "points": 9.59
-    },
-    "4": {
-     "points": 4.15
-    },
-    "5": {
-     "points": 4.15
-    },
-    "6": {
-     "points": 4.15
-    },
-    "7": {
-     "points": 4.15
-    },
-    "8": {
-     "points": 4.15
-    },
-    "9": {
-     "points": 4.15
-    },
-    "11": {
-     "points": 4.15
-    },
-    "12": {
-     "points": 4.15
-    },
-    "13": {
-     "points": 4.15
-    },
-    "14": {
-     "points": 4.15
-    },
-    "15": {
-     "points": 4.15
-    },
-    "16": {
-     "points": 4.15
-    },
-    "17": {
-     "points": 4.15
-    },
-    "18": {
-     "points": 4.15
     }
    }
   },
@@ -16578,6 +16507,65 @@
    }
   },
   {
+   "player_id": 13534,
+   "name": "KaVontae Turpin",
+   "position": "WR",
+   "team": "DAL",
+   "weeks": {
+    "1": {
+     "points": 4.72
+    },
+    "2": {
+     "points": 3.3
+    },
+    "3": {
+     "points": 2.46
+    },
+    "4": {
+     "points": 2.55
+    },
+    "5": {
+     "points": 2.55
+    },
+    "6": {
+     "points": 2.55
+    },
+    "7": {
+     "points": 2.55
+    },
+    "8": {
+     "points": 2.55
+    },
+    "9": {
+     "points": 2.55
+    },
+    "10": {
+     "points": 2.55
+    },
+    "11": {
+     "points": 2.55
+    },
+    "12": {
+     "points": 2.55
+    },
+    "13": {
+     "points": 2.55
+    },
+    "15": {
+     "points": 2.55
+    },
+    "16": {
+     "points": 2.55
+    },
+    "17": {
+     "points": 2.55
+    },
+    "18": {
+     "points": 2.55
+    }
+   }
+  },
+  {
    "player_id": 10780,
    "name": "Dyami Brown",
    "position": "WR",
@@ -16633,65 +16621,6 @@
     },
     "18": {
      "points": 2.66
-    }
-   }
-  },
-  {
-   "player_id": 35936,
-   "name": "Seth McGowan",
-   "position": "RB",
-   "team": "IND",
-   "weeks": {
-    "1": {
-     "points": 2.79
-    },
-    "2": {
-     "points": 1.81
-    },
-    "3": {
-     "points": 1.3
-    },
-    "4": {
-     "points": 2.79
-    },
-    "5": {
-     "points": 2.79
-    },
-    "6": {
-     "points": 2.79
-    },
-    "7": {
-     "points": 2.79
-    },
-    "8": {
-     "points": 2.79
-    },
-    "9": {
-     "points": 2.79
-    },
-    "10": {
-     "points": 2.79
-    },
-    "11": {
-     "points": 2.79
-    },
-    "12": {
-     "points": 2.79
-    },
-    "14": {
-     "points": 2.79
-    },
-    "15": {
-     "points": 2.79
-    },
-    "16": {
-     "points": 2.79
-    },
-    "17": {
-     "points": 2.79
-    },
-    "18": {
-     "points": 2.79
     }
    }
   },
@@ -16851,6 +16780,65 @@
     },
     "18": {
      "points": 3.44
+    }
+   }
+  },
+  {
+   "player_id": 35936,
+   "name": "Seth McGowan",
+   "position": "RB",
+   "team": "IND",
+   "weeks": {
+    "1": {
+     "points": 2.79
+    },
+    "2": {
+     "points": 1.81
+    },
+    "3": {
+     "points": 1.3
+    },
+    "4": {
+     "points": 2.76
+    },
+    "5": {
+     "points": 2.76
+    },
+    "6": {
+     "points": 2.76
+    },
+    "7": {
+     "points": 2.76
+    },
+    "8": {
+     "points": 2.76
+    },
+    "9": {
+     "points": 2.76
+    },
+    "10": {
+     "points": 2.76
+    },
+    "11": {
+     "points": 2.76
+    },
+    "12": {
+     "points": 2.76
+    },
+    "14": {
+     "points": 2.76
+    },
+    "15": {
+     "points": 2.76
+    },
+    "16": {
+     "points": 2.76
+    },
+    "17": {
+     "points": 2.76
+    },
+    "18": {
+     "points": 2.76
     }
    }
   },
@@ -17577,46 +17565,46 @@
      "points": 4.04
     },
     "4": {
-     "points": 2.37
+     "points": 2.34
     },
     "5": {
-     "points": 2.37
+     "points": 2.34
     },
     "6": {
-     "points": 2.37
+     "points": 2.34
     },
     "7": {
-     "points": 2.37
+     "points": 2.34
     },
     "9": {
-     "points": 2.37
+     "points": 2.34
     },
     "10": {
-     "points": 2.37
+     "points": 2.34
     },
     "11": {
-     "points": 2.37
+     "points": 2.34
     },
     "12": {
-     "points": 2.37
+     "points": 2.34
     },
     "13": {
-     "points": 2.37
+     "points": 2.34
     },
     "14": {
-     "points": 2.37
+     "points": 2.34
     },
     "15": {
-     "points": 2.37
+     "points": 2.34
     },
     "16": {
-     "points": 2.37
+     "points": 2.34
     },
     "17": {
-     "points": 2.37
+     "points": 2.34
     },
     "18": {
-     "points": 2.37
+     "points": 2.34
     }
    }
   },
@@ -18708,7 +18696,7 @@
      "points": 2.31
     },
     "3": {
-     "points": 2.95
+     "points": 2.94
     },
     "4": {
      "points": 1.98
@@ -21207,6 +21195,65 @@
    }
   },
   {
+   "player_id": 12701,
+   "name": "Jeremy Ruckert",
+   "position": "TE",
+   "team": "NYJ",
+   "weeks": {
+    "1": {
+     "points": 0.85
+    },
+    "2": {
+     "points": 1.37
+    },
+    "3": {
+     "points": 3.33
+    },
+    "4": {
+     "points": 1.15
+    },
+    "5": {
+     "points": 1.15
+    },
+    "6": {
+     "points": 1.15
+    },
+    "7": {
+     "points": 1.15
+    },
+    "8": {
+     "points": 1.15
+    },
+    "9": {
+     "points": 1.15
+    },
+    "10": {
+     "points": 1.15
+    },
+    "11": {
+     "points": 1.15
+    },
+    "12": {
+     "points": 1.15
+    },
+    "14": {
+     "points": 1.15
+    },
+    "15": {
+     "points": 1.15
+    },
+    "16": {
+     "points": 1.15
+    },
+    "17": {
+     "points": 1.15
+    },
+    "18": {
+     "points": 1.15
+    }
+   }
+  },
+  {
    "player_id": 35566,
    "name": "Jordan Watkins",
    "position": "WR",
@@ -21272,7 +21319,7 @@
      "points": 1.16
     },
     "3": {
-     "points": 2.33
+     "points": 2.27
     },
     "4": {
      "points": 1.16
@@ -21315,65 +21362,6 @@
     },
     "18": {
      "points": 1.18
-    }
-   }
-  },
-  {
-   "player_id": 12701,
-   "name": "Jeremy Ruckert",
-   "position": "TE",
-   "team": "NYJ",
-   "weeks": {
-    "1": {
-     "points": 0.85
-    },
-    "2": {
-     "points": 1.37
-    },
-    "3": {
-     "points": 2.19
-    },
-    "4": {
-     "points": 1.15
-    },
-    "5": {
-     "points": 1.15
-    },
-    "6": {
-     "points": 1.15
-    },
-    "7": {
-     "points": 1.15
-    },
-    "8": {
-     "points": 1.15
-    },
-    "9": {
-     "points": 1.15
-    },
-    "10": {
-     "points": 1.15
-    },
-    "11": {
-     "points": 1.15
-    },
-    "12": {
-     "points": 1.15
-    },
-    "14": {
-     "points": 1.15
-    },
-    "15": {
-     "points": 1.15
-    },
-    "16": {
-     "points": 1.15
-    },
-    "17": {
-     "points": 1.15
-    },
-    "18": {
-     "points": 1.15
     }
    }
   },
@@ -23939,17 +23927,6 @@
    }
   },
   {
-   "player_id": 35388,
-   "name": "E.J. Jenkins",
-   "position": "TE",
-   "team": "PHI",
-   "weeks": {
-    "3": {
-     "points": 1.84
-    }
-   }
-  },
-  {
    "player_id": 9559,
    "name": "David Moore",
    "position": "WR",
@@ -23976,6 +23953,17 @@
    "name": "CJ Donaldson",
    "position": "RB",
    "team": "NO",
+   "weeks": {
+    "3": {
+     "points": 1.72
+    }
+   }
+  },
+  {
+   "player_id": 35388,
+   "name": "E.J. Jenkins",
+   "position": "TE",
+   "team": "PHI",
    "weeks": {
     "3": {
      "points": 1.72

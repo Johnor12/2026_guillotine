@@ -34,6 +34,10 @@ def report_decisions(payload: dict) -> None:
     me = payload["me"]
     claims = payload["claims"]
     print(f"\nWeek {payload['week']} — {me['name']} — FAAB remaining: ${me['faab_left']}")
+    if claims["activate"]:
+        print(f"\nNo longer reserve-eligible, move to the active roster: {', '.join(claims['activate'])}")
+    if claims["forced_cuts"]:
+        print(f"Roster over capacity, cut before any add below: {', '.join(c['name'] for c in claims['forced_cuts'])}")
     print("\nFAAB recommendations:" if claims["pending"] else "\nFree-agent recommendations (waivers already processed):")
     candidates = [c for c in claims["candidates"] if c["title_at_optimal"] > 0][:12]
     if candidates:

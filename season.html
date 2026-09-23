@@ -481,7 +481,9 @@ function renderLeague(d) {
 function renderMarket(d) {
   const fit = d.market.calibration;
   document.getElementById("calibrationNote").textContent = fit.positive_bids_tested
-    ? `${fit.submitted_bids} distinct opponent bids across ${fit.bid_weeks} auction week(s). Held-out player bid-size error (lower is better): original ${fit.legacy_log_mae}, guide ${fit.prior_log_mae}, fitted ${fit.fitted_log_mae}. This tests submitted amounts; future participation remains uncertain.`
+    ? `${fit.submitted_bids} distinct opponent bids across ${fit.bid_weeks} auction week(s). Held-out player bid-size error (lower is better): original ${fit.legacy_log_mae}, guide ${fit.prior_log_mae}, fitted ${fit.fitted_log_mae}.` +
+      (fit.latest_week_holdout ? ` Week ${fit.latest_week_holdout.test_week} predicted from earlier weeks only: original ${fit.latest_week_holdout.legacy_log_mae}, guide ${fit.latest_week_holdout.prior_log_mae}, fitted ${fit.latest_week_holdout.fitted_log_mae}.` : "") +
+      " This tests submitted amounts; future participation remains uncertain."
     : "No resolved bids yet: opponent behavior follows the guide prior.";
   const observed = d.market.observed.slice(0, 40);
   document.getElementById("observedBody").replaceChildren(...(observed.length ? observed.map(o => h("tr", { class: o.status === "complete" ? "" : "dim" },

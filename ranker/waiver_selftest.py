@@ -13,7 +13,7 @@ from .claims import _record_values, best_replays, claims, title_objective
 from .league import WEEKS
 from .race import RaceInputs, _auction, claim_plan, fit_roster, race_inputs, replay
 from .season import draftsharks_by_sleeper, lineup_points
-from .waivers import Bidding, Manager, fit_managers, spending_allowance, submitted_bids
+from .waivers import ROOM_CURRENT_WEEK_WEIGHT, Bidding, Manager, PriceCurve, calibration, fit_managers, fit_price_curve, spending_allowance, submitted_bids
 
 
 class WaiverTests(unittest.TestCase):
@@ -58,8 +58,8 @@ class WaiverTests(unittest.TestCase):
         inputs = self.inputs()
         inputs.me = -1
         rosters, budgets = [self.roster[:4]], [1000]
-        _auction(inputs, 1, rosters, budgets, [True], {8, 9}, random.Random(7), None,
-                 [1e6], -100, ["patient"])
+        inputs.price_curve = PriceCurve(intercept=20.)  # bids far beyond any allowance
+        _auction(inputs, 1, rosters, budgets, [True], {8, 9}, random.Random(7), None, -100, ["patient"])
         self.assertGreaterEqual(budgets[0], 1000 - spending_allowance(1000, 1000, 1, 1, "patient", 0))
 
     def test_byes_and_legal_drops(self):
@@ -204,7 +204,7 @@ class WaiverTests(unittest.TestCase):
         for roster in (self.roster[:], self.roster[:-1]):
             inputs = self.inputs()
             rosters, budgets, free = [roster], [1000], {8, 9}
-            _auction(inputs, 1, rosters, budgets, [True], free, random.Random(7), None, [1.0], 40, ["value"])
+            _auction(inputs, 1, rosters, budgets, [True], free, random.Random(7), None, 40, ["value"])
             self.assertLessEqual(len(rosters[0]), 8)
             self.assertEqual(len(rosters[0]), len(set(rosters[0])))
             self.assertFalse(set(rosters[0]) & free)
@@ -213,11 +213,18 @@ class WaiverTests(unittest.TestCase):
     def test_losing_bid_is_activity_and_no_permanent_sleepers(self):
         state = SimpleNamespace(teams=[SimpleNamespace(roster_id=1), SimpleNamespace(roster_id=2)])
         obs = [{"team": 1, "player": 9, "week": 2, "bid": 100, "reference": 50.}]
-        active, quiet = fit_managers(state, obs)
+        _, (active, quiet) = fit_managers(state, obs)
         self.assertGreater(active.activity, quiet.activity)
         self.assertGreater(quiet.activity, 0)
         self.assertGreater(quiet.participation(13, 1), quiet.activity)
-        self.assertLess(active.log_scale, math.log(2), "One bid must stay shrunk toward the prior")
+
+    def test_room_price_curve(self):
+        obs = [{"bid": round(5 * r ** 0.6), "reference": r} for r in (1., 10., 100., 1000.)]
+        curve = fit_price_curve(obs)
+        self.assertAlmostEqual(curve.slope, 0.6, places=2)
+        self.assertAlmostEqual(curve.price(1.), 5., delta=0.2)
+        self.assertEqual(fit_price_curve(obs[:1]), PriceCurve(), "Nothing to fit: the guide itself")
+        self.assertEqual(PriceCurve().price(40.), 40.)
 
     def test_latest_duplicate_bid_and_pending_not_training_data(self):
         def tx(bid, created, status="failed"):
@@ -238,9 +245,13 @@ class WaiverTests(unittest.TestCase):
         self.assertEqual(result[0]["title_by_record"], [.6, .6])
 
     def test_holdout_does_not_learn_its_own_player(self):
-        state = SimpleNamespace(teams=[SimpleNamespace(roster_id=1)])
-        obs = [{"team": 1, "player": 9, "week": 2, "bid": 999, "reference": 1.}]
-        self.assertEqual(fit_managers(state, obs, exclude_player=9)[0].log_scale, 0)
+        state = SimpleNamespace(teams=[SimpleNamespace(roster_id=1)],
+                                players=[SimpleNamespace(name=str(j)) for j in range(10)])
+        row = {"team": 1, "week": 2, "budget": 1000, "gain": 1.}
+        obs = [{**row, "player": 9, "bid": 999, "reference": 1.}] + [
+            {**row, "player": 8, "bid": r, "reference": float(r)} for r in (10, 100, 1000)]
+        predicted = {p["player"]: p["predicted"] for p in calibration(state, obs)["predictions"]}
+        self.assertEqual(predicted["9"], 1, "Player 9's own $999 must not move his prediction")
 
     def test_processing_date_overrides_submission_leg(self):
         fetch = runpy.run_path(str(Path(__file__).resolve().parents[1] / "season/fetch_league.py"))
@@ -292,6 +303,29 @@ class WaiverTests(unittest.TestCase):
         self.assertNotIn(0, candidate_budgets)
         self.assertEqual(min(candidate_budgets), 600, "Keep the lower interpolation bracket")
 
+    def test_over_capacity_roster_is_fit_before_claims(self):
+        # Nine bodies for eight spots, as when a reserve body loses Out/IR/PUP status.
+        roster = self.roster + [8]
+        inputs = self.inputs()
+        inputs.rosters, inputs.free_agents, inputs.waivers_ran = [roster[:]], [9], True
+        for points in inputs.weekly:
+            points[9] = 25.
+        state = SimpleNamespace(me=0, my_team=SimpleNamespace(roster=roster, faab_left=1000, reserve=[8]),
+                                players=[SimpleNamespace(sleeper_id=str(j), name=str(j), position="WR",
+                                                         team="T", injury_status=None, source="test") for j in range(10)])
+        records = [{"auctions": [None] * WEEKS, "forecast_bars": [0.] * WEEKS}] * 2
+
+        def values(inputs, records, variants):
+            return [{"p_title": (t := 0.01 + (0.004 if 9 in r else 0.)), "title_by_record": [t, t], "p_reach_final": t,
+                     "p_cut_now": 0., "p_alive_by_week": [1.] * 14, "budget_by_week": [b] * 16,
+                     "budget_after_claims": [b] * 16} for r, b, _ in variants]
+
+        with patch("ranker.claims.run_replays", side_effect=values):
+            result = claims(state, inputs, records, 0.)
+        self.assertEqual([c["name"] for c in result["forced_cuts"]], ["4"], "The cheapest bench body goes first")
+        self.assertEqual(result["activate"], ["8"])
+        self.assertEqual([c["name"] for c in result["candidates"]], ["9"], "A healthy pickup still fits after the cut")
+
     def test_reporting_excludes_eliminated_teams_and_uses_opening_cash(self):
         from season import league_odds, market
 
@@ -333,6 +367,21 @@ class WaiverTests(unittest.TestCase):
         inputs = race_inputs(state)
         self.assertEqual(inputs.budgets, [850])
         self.assertEqual(inputs.opening_budgets, [950])
+        self.assertEqual(inputs.bidding.current_weight, ROOM_CURRENT_WEEK_WEIGHT)
+        self.assertEqual(inputs.my_bidding.current_weight, 1., "My bidding keeps its own objective")
+
+    def test_room_values_the_week_it_bids_for(self):
+        weekly = [self.points[:] for _ in range(WEEKS)]
+        for v, points in enumerate(weekly):
+            points[8] = 30. if v == 1 else 0.  # a one-week fill-in
+            points[9] = 0. if v <= 1 else 13.  # a body who helps from next week on
+
+        def favorite(weight):
+            offers = Bidding(self.positions, weekly, weekly, [0] * 10, weight).offers(self.roster, [8, 9], 1000, 1)
+            return max(offers, key=lambda o: o.gain).player
+
+        self.assertEqual(favorite(1.), 9)
+        self.assertEqual(favorite(ROOM_CURRENT_WEEK_WEIGHT), 8)
 
     def test_replay_budget_is_before_claims(self):
         inputs = self.inputs()

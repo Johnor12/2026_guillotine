@@ -117,6 +117,8 @@ season.py ───────────────────────�
   bids are retained; pending claims do not establish that waivers have processed.
 - `season.json`: this week's optimal lineup and the moves it implies, the optimal FAAB
   bid on each free agent worth a look with the drop and any move onto reserve it needs,
+  the cut that must come first when a reserve body lost Out/IR/PUP status and the
+  roster no longer fits (claims are evaluated on the roster after that cut),
   which objective my bidding uses (points alike every week or title-weighted, by
   replayed title odds) with the per-week title weights,
   every team's chance of being cut this week, of
@@ -180,7 +182,12 @@ rest of the season (elite anchors QB4/RB6/WR6/TE3, then an inverse-square price
 curve), the claim's projected net lineup points through Week 17, per remaining week,
 and projected cut risk. Ranking by games played keeps a player returning from an
 absence from being charged twice: the net lineup points already count only the weeks
-he plays. Each candidate's drop is chosen with him: the body whose loss leaves the best
+he plays. Opponents weight the week they are bidding for 32 times each later week, in
+both the ranks and the net lineup points (`ROOM_CURRENT_WEEK_WEIGHT`): the room pays for
+this week's fill-ins and passes on injured stashes. In an ex-ante backtest of the
+week-3 auction, fit on week-2 bids from the Tuesday state, bid sizes, who got claimed
+and clearing prices all improved as that weight rose to 32-64; 32 predicted who got
+claimed best, and valuing that week alone did worse. Each candidate's drop is chosen with him: the body whose loss leaves the best
 remaining-season roster with the candidate on it, including distant byes and
 superflex, so a backup QB goes when a better QB arrives rather than a bench RB.
 Opponents charge the drop's whole remaining season, so a returning starter is not a
@@ -208,19 +215,26 @@ weights are a first-order fit computed once, so a policy on them gives up points
 weeks that look safe until they are not. The chosen objective screens this week's
 candidates, picks each one's drop, sets the guide ceiling's gain, and drives my
 future policy and roster cuts in the replays; the bids themselves are chosen by
-replayed title odds. Opponents keep the season-points behavior above. The guide ceiling scales with remaining
+replayed title odds. Opponents keep the points behavior above, with their current-week
+weight. The guide ceiling scales with remaining
 cash and weeks, but a separate saving plan limits total auction spending.
 Terminal-week improvements can use all remaining money.
 
-Opponents learn separate participation probabilities and bid multipliers from their
-submitted bids, including losses. Duplicate team/player/week claims use the latest
+Opponents' bids follow one room-wide price curve fit to every submitted bid, including
+losses: log bid = a + b log(guide reference), the reference being the guide ceiling for
+that manager's roster, cash and cut risk. This room is flatter than the guide (b about
+0.66 after two auctions): depth and fill-ins sell for several times their guide price,
+stars for less. The curve's residual spread is each bid's noise. There are no
+per-manager bid multipliers: managers' levels around the curve did not persist from
+the week-2 auction to week 3 (correlation -0.24), and multipliers fit on week 2 predicted
+week 3 worse than the curve alone. Participation does persist (15 of 16 week-2 bidders
+bid again), so each manager keeps his own participation probability under a
+Beta(2/3, 1/3) prior worth one auction, rising toward the end of the season; that
+reactivation curve is an assumption. Duplicate team/player/week claims use the latest
 submission; a winner's roster and budget are rolled back before measuring his need.
-Bid multipliers are shrunk toward the room and the published prior, with persistent
-manager uncertainty and bid noise. A manager with no bids remains uncertain, and his
-participation probability rises toward the end of the season. This reactivation curve
-is an assumption, not something one auction can estimate. Earlier bids use current
-projections as a proxy for historical player value. Manager estimates and held-out
-bid-size errors are published in `season.json` under `market`.
+Earlier bids use current projections as a proxy for historical player value. The curve,
+participation estimates and held-out bid-size errors (per player, and the latest auction
+predicted from the earlier ones alone) are published in `season.json` under `market`.
 
 Opponent saving habits are a uniform prior over three persistent season-long plans:
 no reserve, balanced saving, and patient saving. The balanced plan targets 75% of
@@ -230,7 +244,7 @@ The patient plan targets 85%, 55%, and 50%, respectively, to preserve buying pow
 for late chopped rosters and superflex. Targets interpolate between milestones and
 rescale to the manager's live remaining cash; unused allowances carry forward.
 Reserves relax as projected cut risk rises from 25% to 50%, and reach zero after
-Week 17. Bid multipliers and noise cannot exceed the resulting auction allowance.
+Week 17. Bids and their noise cannot exceed the resulting auction allowance.
 These habits and their equal prior weights are assumptions, not inferred from one
 auction or optimized for opponents. Participation, target noise and observed bid
 tendencies still distinguish managers.
@@ -280,10 +294,12 @@ the next starts; a failure exits nonzero without printing recommendations from a
 older run. The season model takes about half an hour at six workers, most of it
 replaying roster variants for this week's claims.
 
-The terminal summary shows the remaining budget, recommended bids with their drops and
+The terminal summary shows the remaining budget, any reserve body to activate and the
+forced cut that makes room for him, recommended bids with their drops and
 reserve moves, and the optimal lineup with start/sit changes. Bids are evaluated individually, so treat
 them as alternatives. After this week's waivers process, recommendations are free
-pickups. Enter the recommended claims and lineup on Sleeper yourself. Add `--report`
+pickups, including players still on waivers for a day after being dropped, which in
+fact need a claim. Enter the recommended claims and lineup on Sleeper yourself. Add `--report`
 for detailed model diagnostics and league odds.
 
 Results are saved to `league.json` and `season.json`; `uv run serve.py` displays them
@@ -340,13 +356,14 @@ Before and after changing the draft opponent model, compare
 `evaluate_opponents.py`'s replay accuracy.
 
 `evaluate_waivers.py` holds out every bid on a player before predicting that player's
-positive submitted bids. It compares the original bidding formula, the guide prior,
-and fitted manager behavior using mean absolute log error. It also compares the
+positive submitted bids, and predicts the latest auction from the earlier ones alone. It
+compares the original bidding formula, the guide prior, and the fitted price curve using
+mean absolute log error. It also compares the
 no-reserve, balanced, and patient plans with the old room/hold policies on 2,048
 paired opponent seasons using a separate seed, then repeats with every opponent
 active. The report includes paired
-confidence intervals and opening budget paths conditional on survival. One observed
-auction cannot establish future activity or saving habits, or validate absolute
+confidence intervals and opening budget paths conditional on survival. A few observed
+auctions cannot establish future activity or saving habits, or validate absolute
 championship probabilities.
 It also reconstructs the current week's pre-auction rosters and exercises paid claim
 pricing with the learned model. That counterfactual uses observed bids and current

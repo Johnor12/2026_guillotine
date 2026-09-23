@@ -24,7 +24,6 @@ from __future__ import annotations
 import argparse
 import dataclasses
 import json
-import math
 import statistics
 import sys
 import time
@@ -35,7 +34,7 @@ from ranker.claims import claims, my_lineup, title_objective
 from ranker.league import RACE_SIMS, REGULAR_WEEKS, SEED, WEEKS
 from ranker.race import race_inputs, run_race
 from ranker.season import lineup_points, load_season
-from ranker.waivers import BID_SIGMA, GUIDE_URL, SAVING_PLANS
+from ranker.waivers import GUIDE_URL, SAVING_PLANS
 
 REPO_ROOT = Path(__file__).resolve().parent
 POOL = REPO_ROOT / "pool.json"
@@ -145,7 +144,6 @@ def market(state, inputs, excluded: list[dict], full: list[dict]) -> dict:
         "calibration": inputs.market_fit,
         "managers": [
             {"roster_id": t.roster_id, "name": t.name, "activity": round(m.activity, 3),
-             "bid_multiplier": round(math.exp(m.log_scale), 2),
              "bid_weeks": m.bid_weeks, "bids": m.bids}
             for t, m in zip(state.teams, inputs.managers) if t.alive and not t.is_mine
         ],
@@ -211,6 +209,10 @@ def report(payload: dict) -> None:
         print(f"bid-size validation: {fit['submitted_bids']} opponent bids, {fit['bid_weeks']} auction week(s); "
               f"held-out log MAE: original {fit['legacy_log_mae']}, guide {fit['prior_log_mae']}, fitted {fit['fitted_log_mae']}",
               file=sys.stderr)
+        if fit["latest_week_holdout"]:
+            t = fit["latest_week_holdout"]
+            print(f"  week {t['test_week']} predicted from earlier weeks only: original {t['legacy_log_mae']}, "
+                  f"guide {t['prior_log_mae']}, fitted {t['fitted_log_mae']}", file=sys.stderr)
     if observed:
         print("observed waiver claims (latest):", file=sys.stderr)
         for o in observed:
@@ -306,7 +308,7 @@ def main(argv: list[str] | None = None) -> int:
             "race_sims": RACE_SIMS,
             "weekly_sigma": league.WEEKLY_SIGMA,
             "team_season_sigma": league.TEAM_SEASON_SIGMA,
-            "bid_noise_sigma": BID_SIGMA,
+            "bid_noise_sigma": round(inputs.price_curve.sigma, 3),
             "claims_per_team": league.CLAIMS_PER_TEAM,
             "claim_candidates": league.CLAIM_CANDIDATES,
             "roster_size_by_week": list(league.WEEK_ROSTER_SIZE),

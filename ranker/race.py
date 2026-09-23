@@ -10,8 +10,8 @@ Bids use season-long roster values, guide ceilings, and manager behavior in waiv
 My own bidding (`my_bidding`) refills drops from the wire the room leaves untaken and
 values points by title leverage when that replays better (claims.title_objective).
 Our policy considers every improving candidate, including early discounted depth;
-opponents have uncertain participation and spending tendencies learned from submitted
-bids and persistent, sampled saving habits. Claims naming the same drop are
+opponents have per-manager participation and the room's price curve, both learned from
+submitted bids, and persistent, sampled saving habits. Claims naming the same drop are
 alternatives and open slots remain bounded. The reserve slots hold Out/IR/PUP bodies
 while their projection is zero; when one resumes, the team cuts its least valuable body
 to make room before that week's claims.
@@ -53,8 +53,9 @@ from .league import (
 )
 from .season import POS_CODE, SeasonState, lineup_points, thresholds
 from .workers import worker_count
-from .waivers import (BID_SIGMA, SAVING_PLANS, Bidding, Manager, bid_observations,
-                      calibration, fit_managers, projected_bar, projected_risk, spending_allowance)
+from .waivers import (ROOM_CURRENT_WEEK_WEIGHT, SAVING_PLANS, Bidding, Manager, PriceCurve, bid_observations,
+                      calibration, fit_managers, guide_reference, projected_bar, projected_risk,
+                      spending_allowance)
 
 
 @dataclass(slots=True)
@@ -74,7 +75,8 @@ class RaceInputs:
     market_fit: dict
     opening_budgets: list[int]  # actual cash entering the current week, before completed claims
     policy: str = "balanced"
-    my_bidding: Bidding | None = None  # my objective; the room's until claims.title_objective
+    my_bidding: Bidding | None = None  # mine, without the room's current-week weight; claims.title_objective sets its weeks
+    price_curve: PriceCurve = PriceCurve()  # the room's bid for a guide reference
 
     def __post_init__(self):
         if self.my_bidding is None:
@@ -92,8 +94,10 @@ def race_inputs(state: SeasonState) -> RaceInputs:
     for w in range(WEEKS):
         span = WEEKS - w
         ros.append([round(sum(p.weekly[w:]) / span, 2) for p in state.players])
-    bidding = Bidding(positions, weekly, ros, [p.ir_until for p in state.players])
+    ir_until = [p.ir_until for p in state.players]
+    bidding = Bidding(positions, weekly, ros, ir_until, ROOM_CURRENT_WEEK_WEIGHT)
     observations = bid_observations(state, bidding)
+    curve, managers = fit_managers(state, observations)
     spent = {t.roster_id: 0 for t in state.teams}
     for tx in state.transactions:
         if tx["week"] == state.week and tx["type"] == "waiver" and tx["status"] == "complete":
@@ -110,9 +114,11 @@ def race_inputs(state: SeasonState) -> RaceInputs:
         free_agents=list(state.free_agents),
         waivers_ran=state.waivers_ran,
         bidding=bidding,
-        managers=fit_managers(state, observations),
+        my_bidding=Bidding(positions, weekly, ros, ir_until),
+        managers=managers,
         market_fit=calibration(state, observations),
         opening_budgets=[t.faab_left + spent[t.roster_id] for t in state.teams],
+        price_curve=curve,
     )
 
 
@@ -166,19 +172,21 @@ def cut_risk(inputs, roster, w, bar):
     return projected_risk(roster, inputs.weekly[w], inputs.positions, w, bar)
 
 
-def claim_plan(inputs, bidding, roster, candidates, budget, w, risk, rng, scale=None,
+def claim_plan(inputs, bidding, roster, candidates, budget, w, risk, rng, opponent=False,
                policy="value", initial_budget=None):
     offers = bidding.offers(roster, candidates, budget, w, risk)
     allowance = spending_allowance(budget, budget if initial_budget is None else initial_budget,
                                    inputs.week0, w, policy, risk)
-    if scale is None:
+    if not opponent:
         # Every affordable improvement gets an offer, including fallback bargains.
         plan = [(min(allowance, int(o.ceiling)), o) for o in offers]
         allowance = max((bid for bid, _ in plan), default=0)
     else:
         chosen = heapq.nlargest(CLAIMS_PER_TEAM, offers,
                                key=lambda o: o.gain * math.exp(rng.gauss(0, 0.5)))
-        plan = [(min(allowance, int(o.ceiling * scale * math.exp(rng.gauss(0, BID_SIGMA)))), o)
+        curve = inputs.price_curve
+        plan = [(min(allowance, int(curve.price(guide_reference(bidding, o.player, o.ceiling, budget, w))
+                                    * math.exp(rng.gauss(0, curve.sigma)))), o)
                 for o in chosen]
     if w == 0:
         plan = [(0, offer) for _, offer in plan]
@@ -191,7 +199,7 @@ def apply_offer(roster, offer):
     roster.append(offer.player)
 
 
-def _auction(inputs, w, rosters, budgets, alive, free, rng, skip, scales, bar, policies):
+def _auction(inputs, w, rosters, budgets, alive, free, rng, skip, bar, policies):
     candidates = heapq.nlargest(CLAIM_CANDIDATES, free, key=lambda i: (inputs.ros[w][i], -i))
     bids = []
     allowances = list(budgets)
@@ -205,7 +213,7 @@ def _auction(inputs, w, rosters, budgets, alive, free, rng, skip, scales, bar, p
         active.append(team)
         plan, allowances[team] = claim_plan(
             inputs, inputs.bidding_for(team), roster, candidates, budgets[team], w,
-            cut_risk(inputs, roster, w, bar), rng, None if mine else scales[team],
+            cut_risk(inputs, roster, w, bar), rng, not mine,
             policies[team], inputs.budgets[team])
         for bid, offer in plan:
             bids.append((bid, rng.random(), team, offer))
@@ -266,7 +274,6 @@ def simulate(inputs: RaceInputs, seed: int, exclude_me: bool) -> dict:
     w0 = inputs.week0
     positions = inputs.positions
 
-    scales = [math.exp(rng.gauss(m.log_scale, m.scale_sd)) for m in inputs.managers]
     # A manager keeps one saving strategy for the season, independent of bid noise.
     policies = [inputs.policy if i == inputs.me else rng.choice(POLICIES) for i in range(n)]
     forecast_bars = [0.0] * WEEKS
@@ -286,7 +293,7 @@ def simulate(inputs: RaceInputs, seed: int, exclude_me: bool) -> dict:
         forecast_bars[w] = forecast_bar(inputs, w, rosters, alive)
         if not (w == w0 and inputs.waivers_ran):
             candidates, winning, wins = _auction(inputs, w, rosters, budgets, alive, free, rng, skip,
-                                                scales, forecast_bars[w], policies)
+                                                forecast_bars[w], policies)
             auctions[w] = (candidates, winning)
             claims[w] = wins
         budget_after_claims.append(list(budgets))
