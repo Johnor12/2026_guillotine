@@ -21,7 +21,7 @@ from pathlib import Path
 from ranker.league import RACE_SIMS, SEED
 from ranker.race import POLICIES, race_inputs, run_race, run_replays
 from ranker.season import load_season
-from ranker.claims import claims
+from ranker.claims import claims, title_objective
 
 ROOT = Path(__file__).resolve().parent
 
@@ -45,7 +45,7 @@ def counterfactual(state):
     inputs = dataclasses.replace(race_inputs(before), managers=race_inputs(state).managers)
     print(f"simulating pre-auction reconstruction: {RACE_SIMS} seasons", file=sys.stderr, flush=True)
     records = run_race(inputs, RACE_SIMS, SEED + 200_000, exclude_me=True)
-    decisions = claims(before, inputs, records, 0.0)
+    decisions = claims(before, title_objective(inputs, records)[0], records, 0.0)
     assert decisions["pending"]
     assert all(0 <= c["optimal_bid"] <= c["bid_ceiling"] <= decisions["budget"] for c in decisions["candidates"])
     return {"note": "Current projections and learned opponent bids; a counterfactual, not an ex-ante backtest.",
@@ -84,7 +84,8 @@ def main():
             inputs = dataclasses.replace(inputs, managers=[dataclasses.replace(m, activity=1.0) for m in inputs.managers])
         print(f"simulating {name}: {RACE_SIMS} seasons", file=sys.stderr, flush=True)
         records = run_race(inputs, RACE_SIMS, SEED + 100_000, exclude_me=True)
-        result["scenarios"][name] = compare(inputs, records, state.my_team.roster, state.my_team.faab_left)
+        result["scenarios"][name] = compare(title_objective(inputs, records)[0], records,
+                                            state.my_team.roster, state.my_team.faab_left)
     result["limitations"] = ["Only one observed auction; no temporal backtest or validated reactivation rate.",
                               "Bid-size validation holds out all bids on a player; current projections proxy historical values.",
                               "Replay odds are paired approximations, not calibrated championship probabilities."]

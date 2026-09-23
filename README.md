@@ -117,6 +117,8 @@ season.py ───────────────────────�
   bids are retained; pending claims do not establish that waivers have processed.
 - `season.json`: this week's optimal lineup and the moves it implies, the optimal FAAB
   bid on each free agent worth a look with the drop and any move onto reserve it needs,
+  which objective my bidding uses (points alike every week or title-weighted, by
+  replayed title odds) with the per-week title weights,
   every team's chance of being cut this week, of
   reaching the final and of the title, its expected spend and budget path, the
   elimination bar by week, and the observed versus simulated waiver market.
@@ -180,13 +182,33 @@ and projected cut risk. Ranking by games played keeps a player returning from an
 absence from being charged twice: the net lineup points already count only the weeks
 he plays. Each candidate's drop is chosen with him: the body whose loss leaves the best
 remaining-season roster with the candidate on it, including distant byes and
-superflex, so a backup QB goes when a better QB arrives rather than a bench RB. The
-drop's whole remaining season is charged, so a returning starter is not a free
-placeholder for a short-term fill-in; paired replays favor this over charging only
-through the fill-in's best hold horizon. The two reserve slots hold Out/IR/PUP
+superflex, so a backup QB goes when a better QB arrives rather than a bench RB.
+Opponents charge the drop's whole remaining season, so a returning starter is not a
+free placeholder for a short-term fill-in. The two reserve slots hold Out/IR/PUP
 bodies while their projection is zero; once a body's projection resumes he needs a
 regular spot, and every simulated team cuts its least valuable body to make
-room before that week's claims. The guide ceiling scales with remaining
+room before that week's claims; a cut is charged its whole loss, since no spot is
+left to refill.
+
+My own bidding is chosen for title odds (`ranker/claims.py` `title_objective`). A
+pickup may be held only for its useful weeks: afterwards the vacated spot is refilled
+from the wire the room leaves untaken (free agents taken, by claim or free pickup, in
+fewer than half of the opponent seasons at the next auction, assumed to stay
+available), and the drop is charged only what the best such body cannot restore. A
+one-week starter can then displace depth the wire replaces for free, while a
+returning starter nothing on the wire replaces is still charged in full. Each run
+also derives per-week title weights, d log P(title) / d(points), the draft's week
+weights: the standing roster's replay through the recorded opponent races, the
+per-week survival hazard and championship term weighted by each season's title
+probability, normalized to average 1. My bidding weights weeks by them only if that
+replays the standing roster to better title odds than weighting every week alike.
+In the week-3 state it did not (11.1% against 14.2%; damped re-derivation of the
+weights reached 11.3%, and blending a quarter of them into flat points 13.0%): the
+weights are a first-order fit computed once, so a policy on them gives up points in
+weeks that look safe until they are not. The chosen objective screens this week's
+candidates, picks each one's drop, sets the guide ceiling's gain, and drives my
+future policy and roster cuts in the replays; the bids themselves are chosen by
+replayed title odds. Opponents keep the season-points behavior above. The guide ceiling scales with remaining
 cash and weeks, but a separate saving plan limits total auction spending.
 Terminal-week improvements can use all remaining money.
 
@@ -213,8 +235,8 @@ These habits and their equal prior weights are assumptions, not inferred from on
 auction or optimized for opponents. Participation, target noise and observed bid
 tendencies still distinguish managers.
 
-Our future policy submits offers for every improving candidate within a team-specific
-ceiling and saving allowance, including early bargains. Total paid spending in an
+Our future policy submits offers for every candidate improving the chosen objective
+within a team-specific ceiling and saving allowance, including early bargains. Total paid spending in an
 auction is also limited to its largest individual bid. Claims naming the same drop
 are alternatives; open spots, remaining cash and redundant upgrades are checked as
 claims resolve. Opponents choose their best few targets with preference noise.

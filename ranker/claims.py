@@ -3,6 +3,11 @@
 Lineup: the greedy optimum on this week's projections (season.lineup), compared with
 the starters Sleeper currently has set for me.
 
+Objective: a drop's spot can be refilled from the wire the room leaves untaken, and my
+bidding values each week's points alike or by d log P(title) / d(points), whichever
+replays to better title odds (title_objective). Screening, drops, ceilings and my
+future policy use it; every bid is still chosen by replayed title odds.
+
 Claims: choose the best modeled bid within the guide-based, roster-specific ceiling.
 Each candidate's drop is chosen with him (waivers.Bidding), and the roster variant
 replays the same opponent seasons at several budgets under spending and saving plans.
@@ -15,16 +20,59 @@ players acquired by our variant.
 
 from __future__ import annotations
 
+import dataclasses
 import heapq
 import statistics
+from collections import Counter
 
-from .league import CLAIM_CANDIDATES, WEEK_ROSTER_SIZE
+from .league import CLAIM_CANDIDATES, WEEK_ROSTER_SIZE, WEEKS
 from .race import POLICIES, RaceInputs, apply_offer, cut_risk, run_replays
 from .season import SeasonState, lineup
 
 BUDGET_STEPS = (0, 25, 50, 100, 200, 400, 700)
 CANDIDATES_BY_WEEK = 10  # streamers: free agents that would start for me this week
 PRICED_CANDIDATES = 12  # free agents whose value is priced across the whole bid range
+UNTAKEN = 0.5  # a free agent the room takes in fewer of its seasons refills a dropped spot
+
+
+def title_objective(inputs: RaceInputs, records: list[dict]) -> tuple[RaceInputs, dict | None]:
+    """`inputs` with my bidding refilling drops from the untaken wire and weighting weeks
+    by whichever objective replays the standing roster to better title odds, plus a
+    summary of that choice.
+
+    The refill pool is today's free agents the room takes (claim or free pickup) in
+    fewer than UNTAKEN of its seasons at the next auction; they are assumed to stay
+    available. Title weights come from the points objective's replay, normalized to
+    average 1 so gains keep the guide ceiling's points-a-week scale. They are a
+    first-order fit computed once, so a policy on them can give up points in weeks that
+    only look safe; the replay decides.
+    """
+    if not inputs.alive[inputs.me]:
+        return inputs, None
+    w = inputs.week0
+    pool = []
+    auction = next((v for v in range(w, WEEKS) if records[0]["auctions"][v] is not None), None)
+    if auction is not None:
+        taken = Counter(j for rec in records for j, outcome in zip(*rec["auctions"][auction]) if outcome != -1)
+        pool = [j for j in inputs.free_agents if taken[j] < UNTAKEN * len(records)]
+    roster, budget = tuple(inputs.rosters[inputs.me]), inputs.budgets[inputs.me]
+
+    def best_run(weights):
+        variant = dataclasses.replace(inputs, my_bidding=inputs.bidding.objective(weights, pool))
+        runs = run_replays(variant, records, [(roster, budget, pol) for pol in POLICIES])
+        return variant, max(runs, key=lambda run: run["p_title"])
+
+    points, points_run = best_run(inputs.bidding.weights)
+    scale = len(points_run["leverage"]) / sum(points_run["leverage"])
+    weights = [0.0] * w + [x * scale for x in points_run["leverage"]]
+    titled, titled_run = best_run(weights)
+    chosen = "title_weighted" if titled_run["p_title"] > points_run["p_title"] else "points"
+    return (titled if chosen == "title_weighted" else points), {
+        "chosen": chosen,
+        "p_title": {"points": round(points_run["p_title"], 4), "title_weighted": round(titled_run["p_title"], 4)},
+        "title_weights": [{"week": v + 1, "weight": round(weights[v], 3)} for v in range(w, WEEKS)],
+        "refill_pool": len(pool),
+    }
 
 
 def my_lineup(state: SeasonState, inputs: RaceInputs) -> dict:
@@ -111,7 +159,7 @@ def claims(
     )
     candidates = list(dict.fromkeys(by_ros + by_week))
     risk = cut_risk(inputs, roster, w, statistics.fmean(r["forecast_bars"][w] for r in records))
-    offers = {o.player: o for o in inputs.bidding.offers(roster, candidates, budget, w, risk)}
+    offers = {o.player: o for o in inputs.my_bidding.offers(roster, candidates, budget, w, risk)}
     candidates = [j for j in candidates if j in offers]
     auction = records[0]["auctions"][w] if records else None
     outcomes: dict[int, list[int]] = {j: [] for j in candidates}

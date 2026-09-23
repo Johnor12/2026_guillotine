@@ -11,7 +11,8 @@ draft model's noise, the bottom two are cut, their players hit the wire, and the
 survivors bid under guide-based ceilings and learned tendencies (ranker/waivers.py). Run once
 without me it is the market and the elimination bars I face, which price my roster
 variants (ranker/claims.py: this week's lineup, and for each free agent the bid that
-maximizes modeled title odds within our ceiling); run with all 32 it is every
+maximizes modeled title odds within our ceiling, screened and paired with its drop by
+title-weighted points); run with all 32 it is every
 team's chance of being cut this week, of reaching the final, and of the title, along
 with its expected spend and budget path.
 
@@ -30,7 +31,7 @@ import time
 from pathlib import Path
 
 from ranker import league
-from ranker.claims import claims, my_lineup
+from ranker.claims import claims, my_lineup, title_objective
 from ranker.league import RACE_SIMS, REGULAR_WEEKS, SEED, WEEKS
 from ranker.race import race_inputs, run_race
 from ranker.season import lineup_points, load_season
@@ -179,6 +180,10 @@ def report(payload: dict) -> None:
         print(f"  {s['slot']:<5} {s.get('name') or '(empty)':<24} {s.get('points', 0):>5}", file=sys.stderr)
     if lu["start"] or lu["sit"]:
         print(f"  start {lu['start']}, sit {lu['sit']}", file=sys.stderr)
+    objective = payload["claims"]["objective"]
+    if objective:
+        print(f"objective {objective['chosen']} (replay P(title): points {objective['p_title']['points']:.1%}, "
+              f"title-weighted {objective['p_title']['title_weighted']:.1%})", file=sys.stderr)
     print("Budget value under the future bidding policy (relative to standing pat):", file=sys.stderr)
     for pol, rows in payload["claims"]["baseline"].items():
         print("  " + pol + ": " + ", ".join(f"${r['budget']} {r['relative']:+.0f}%" for r in rows), file=sys.stderr)
@@ -224,7 +229,12 @@ def main(argv: list[str] | None = None) -> int:
     if args.report:
         print(f"[opponent races {time.perf_counter() - t0:.1f}s]", file=sys.stderr)
     t0 = time.perf_counter()
+    inputs, objective = title_objective(inputs, excluded)
+    if args.report:
+        print(f"[title objective {time.perf_counter() - t0:.1f}s]", file=sys.stderr)
+    t0 = time.perf_counter()
     decisions = claims(state, inputs, excluded, 0.0)
+    decisions["objective"] = objective
     if args.report:
         print(f"[claims {time.perf_counter() - t0:.1f}s]", file=sys.stderr)
     inputs = dataclasses.replace(inputs, policy=decisions["policy"])

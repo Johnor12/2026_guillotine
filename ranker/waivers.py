@@ -9,15 +9,22 @@ assumptions. They adapt that 18-team guide to our scoring and expanding lineups.
 A claim is a pickup and a drop together: for each candidate the drop is the body whose
 loss leaves the best remaining-season roster with the candidate on it, so a backup QB
 goes when a better QB arrives and a bench RB goes for a receiver. The claim's gain is that
-swap's net lineup points through Week 17, charging the drop's whole remaining season:
-a returning starter is not a free placeholder. Guide prices rank players by points per
-game played, since the gain already prorates missed weeks.
+swap's net lineup points through Week 17. The pickup may be held only for its useful
+weeks, after which the vacated spot is refilled from `replacements`, the wire the room
+leaves untaken: the drop is charged what that refill cannot restore. With no
+replacement, the drop's whole remaining season is charged, so a returning starter is
+not a free placeholder. `weights` value each week's points (opponents: every week alike;
+mine: alike or by title leverage, whichever replays better, claims.title_objective).
+Guide prices rank players by points per game played, since the gain already prorates
+missed weeks.
 The two reserve slots hold Out/IR/PUP bodies while their projection is zero and stop
 holding them when it resumes (league.RESERVE_SLOTS, season.SeasonPlayer.ir_until).
 """
 
 from __future__ import annotations
 
+import copy
+import heapq
 import math
 import statistics
 from dataclasses import dataclass, field
@@ -110,11 +117,16 @@ class Context:
     w: int
     eligible: int  # reserve-eligible bodies on the roster this week
     floors: tuple[tuple[float, ...], ...]  # [pos] -> per-week entry threshold, no drop
-    # Per drop, cheapest first: (player, reserve-eligible, season lineup loss,
-    # [pos] -> per-week threshold).
-    options: list[tuple[int, bool, float, tuple[tuple[float, ...], ...]]]
+    # Per drop, cheapest to vacate first: (player, reserve-eligible, season lineup loss,
+    # cheapest vacate cost holding a pickup at least one week, [pos] -> per-week
+    # threshold, per-week loss, [i] -> loss after a pickup's first i + 1 weeks that the
+    # refill cannot restore, or None when nothing on the wire refills him).
+    options: list[tuple[int, bool, float, float, tuple[tuple[float, ...], ...], list[float], list[float] | None]]
     floor_min: tuple[tuple[float, ...], ...]  # [pos] -> per-week threshold under the kindest drop
     memo: dict[int, tuple[float, int | None]] = field(default_factory=dict)
+
+
+REFILL_DEPTH = 3  # untaken bodies ranked per position, in case the best are already held
 
 
 class Bidding:
@@ -123,6 +135,8 @@ class Bidding:
         self.weekly = weekly
         self.ros = ros
         self.ir_until = ir_until
+        self.weights = (1.0,) * WEEKS
+        self.refills = [((),) * 4] * WEEKS  # [w][pos] -> refill candidates, best first
         self.shares = []
         for w in range(WEEKS):
             points = []
@@ -135,6 +149,22 @@ class Bidding:
                 for rank, j in enumerate(ordered, 1):
                     shares[j] = 0.20 * min(1.0, elite / rank) ** 2
             self.shares.append(shares)
+
+    def objective(self, weights, replacements) -> "Bidding":
+        """A copy valuing week v's points at weights[v] whose drops can be refilled from
+        `replacements` once a pickup has served its weeks."""
+        other = copy.copy(self)
+        other.weights = tuple(weights)
+        other.refills = [
+            tuple(
+                tuple(heapq.nlargest(
+                    REFILL_DEPTH, (r for r in replacements if self.positions[r] == pos),
+                    key=lambda r: (sum(other.weights[v] * self.weekly[v][r] for v in range(w + 1, WEEKS)), -r)))
+                for pos in range(4)
+            )
+            for w in range(WEEKS)
+        ]
+        return other
 
     def reserved(self, roster, w: int) -> int:
         """Bodies the reserve slots hold before week `w`'s games."""
@@ -156,44 +186,84 @@ class Bidding:
             return None
         ctx = self.context(tuple(sorted(roster)), w)
         # Cutting a reserve body frees nothing unless the reserve slots are oversubscribed.
-        return next(d for d, eligible, *_ in ctx.options if not eligible or ctx.eligible > RESERVE_SLOTS)
+        # A cut leaves no spot for a refill, so it is charged its whole loss.
+        return min((o for o in ctx.options if not o[1] or ctx.eligible > RESERVE_SLOTS),
+                   key=lambda o: (o[2], self.ros[w][o[0]], o[0]))[0]
 
     @lru_cache(maxsize=8192)
     def context(self, roster: tuple[int, ...], w: int) -> Context:
         per_week = [lineup_without_each(roster, self.weekly[v], self.positions, v) for v in range(w, WEEKS)]
+        weights = self.weights[w:]
+        span = len(weights)
         floors = tuple(zip(*(f for _, f, _ in per_week)))
+        owned = set(roster)
+        # The best untaken body at each position not already held; he arrives next week
+        # at the earliest.
+        refills = [r for r in (next((r for r in col if r not in owned), None) for col in self.refills[w])
+                   if r is not None]
+        later = [list(map(itemgetter(r), self.weekly[w + 1:])) for r in refills]
         options = []
         for d in roster:
-            loss = sum(total - without[d][0] for total, _, without in per_week)
+            lost = [k * (total - without[d][0]) for k, (total, _, without) in zip(weights, per_week)]
+            loss = sum(lost)
             rest_floors = tuple(zip(*(without[d][1] for _, _, without in per_week)))
-            options.append((d, self.ir_until[d] > w, loss, rest_floors))
-        options.sort(key=lambda o: (o[2], self.ros[w][o[0]], o[0]))
-        floor_min = tuple(tuple(min(col) for col in zip(*(o[3][pos] for o in options))) for pos in range(4))
+            restored, refilled = None, 0.0
+            for r, points in zip(refills, later):
+                gains = [k * (p - f) if p > f else 0.0
+                         for k, p, f in zip(weights[1:], points, rest_floors[self.positions[r]][1:])]
+                if sum(gains) > refilled:
+                    restored, refilled = gains, sum(gains)
+            if restored is None:
+                options.append((d, self.ir_until[d] > w, loss, loss, rest_floors, lost, None))
+                continue
+            after, tail = [0.0] * span, 0.0
+            for h in range(span - 1, 0, -1):
+                tail += lost[h] - restored[h - 1]
+                after[h - 1] = tail if tail > 0.0 else 0.0
+            held, cost = 0.0, math.inf
+            for held_loss, unrestored in zip(lost, after):
+                held += held_loss
+                if held + unrestored < cost:
+                    cost = held + unrestored
+            options.append((d, self.ir_until[d] > w, loss, cost, rest_floors, lost, after))
+        options.sort(key=lambda o: (o[3], self.ros[w][o[0]], o[0]))
+        floor_min = tuple(tuple(min(col) for col in zip(*(o[4][pos] for o in options))) for pos in range(4))
         eligible = sum(1 for i in roster if self.ir_until[i] > w)
         return Context(roster, w, eligible, floors, options, floor_min)
 
     def _evaluate(self, ctx: Context, j: int) -> tuple[float, int | None]:
         """(gain per remaining week, drop) for adding `j`: the drop leaving the best
-        remaining-season roster with `j` on it, and that swap's net lineup points."""
+        remaining-season roster with `j` on it, and that swap's net weighted lineup points,
+        holding `j` for the most valuable number of weeks before refilling the spot."""
         w, size, n = ctx.w, WEEK_ROSTER_SIZE[ctx.w], len(ctx.roster)
         pos = self.positions[j]
+        weights = self.weights[w:]
         points = list(map(itemgetter(j), self.weekly[w:]))
         eligible_j = self.ir_until[j] > w
         if n + 1 - min(RESERVE_SLOTS, ctx.eligible + eligible_j) <= size:
-            return sum(p - f for p, f in zip(points, ctx.floors[pos]) if p > f) / len(points), None
+            return sum(k * (p - f) for k, p, f in zip(weights, points, ctx.floors[pos]) if p > f) / len(points), None
         # No swap nets more than j's gain against the kindest thresholds less the drop's
-        # own loss, so drops in loss order stop once that bound cannot beat the best swap
-        # (with slack for rounding, so ties are settled by the same key as without pruning).
-        most = sum(p - f for p, f in zip(points, ctx.floor_min[pos]) if p > f)
+        # cheapest vacate cost, so drops in that order stop once the bound cannot beat the
+        # best swap (with slack for rounding, so ties are settled by the same key as
+        # without pruning).
+        most = sum(k * (p - f) for k, p, f in zip(weights, points, ctx.floor_min[pos]) if p > f)
         if most <= 0.0:
             return 0.0, None
         best = None
-        for d, eligible_d, loss, floors in ctx.options:
-            if best is not None and most - loss < best[0] - 1e-9:
+        for d, eligible_d, loss, cost, floors, lost, after in ctx.options:
+            if best is not None and most - cost < best[0] - 1e-9:
                 break
             if n - min(RESERVE_SLOTS, ctx.eligible - eligible_d + eligible_j) > size:
                 continue
-            key = (sum(p - f for p, f in zip(points, floors[pos]) if p > f) - loss, -self.ros[w][d], -d)
+            if after is None:
+                net = sum(k * (p - f) for k, p, f in zip(weights, points, floors[pos]) if p > f) - loss
+            else:
+                held, net = 0.0, -math.inf
+                for k, p, f, held_loss, unrestored in zip(weights, points, floors[pos], lost, after):
+                    held += (k * (p - f) if p > f else 0.0) - held_loss
+                    if held - unrestored > net:
+                        net = held - unrestored
+            key = (net, -self.ros[w][d], -d)
             if best is None or key > best:
                 best = key
         if best is None or best[0] <= 0.0:

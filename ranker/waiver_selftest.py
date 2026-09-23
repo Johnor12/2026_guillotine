@@ -1,6 +1,7 @@
 """Small economic and auction regressions, independent of live league files."""
 import math
 import random
+import statistics
 import datetime as dt
 import runpy
 import unittest
@@ -8,7 +9,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from .claims import _record_values, best_replays, claims
+from .claims import _record_values, best_replays, claims, title_objective
 from .league import WEEKS
 from .race import RaceInputs, _auction, claim_plan, fit_roster, race_inputs, replay
 from .season import draftsharks_by_sleeper, lineup_points
@@ -69,7 +70,7 @@ class WaiverTests(unittest.TestCase):
 
     def test_owned_players_do_not_crowd_out_bargains(self):
         inputs = self.inputs()
-        plan, allowance = claim_plan(inputs, self.roster, list(range(10)), 1000, 1, 0, random.Random(1))
+        plan, allowance = claim_plan(inputs, inputs.bidding, self.roster, list(range(10)), 1000, 1, 0, random.Random(1))
         self.assertTrue(any(o.player == 9 for _, o in plan))
         self.assertTrue(all(o.player not in self.roster for _, o in plan))
         self.assertEqual(allowance, max(b for b, _ in plan))
@@ -106,6 +107,23 @@ class WaiverTests(unittest.TestCase):
         self.assertAlmostEqual(cheap[0].gain, (15. - 0.5 * (WEEKS - 2)) / (WEEKS - 1))
         self.assertFalse(offers(2.), "Thirty points of cover outweigh one fifteen-point week")
 
+    def test_untaken_wire_refills_the_cover(self):
+        # The same thirty points of cover, but an equal RB sits untaken on the wire: hold
+        # the streamer his one week, then refill the spot.
+        positions = [0, 1, 1, 2, 2, 2, 3, 1, 0, 1]
+        weekly = [[20., 15., 14., 12., 11., 10., 14., 2., 0., 2.] for _ in range(WEEKS)]
+        weekly[1][0] = 0.
+        weekly[1][8] = 15.
+        for w in range(2, 12):
+            weekly[w][1] = 0.
+        bidding = Bidding(positions, weekly, weekly, [0] * 10)
+        refilled = bidding.objective(bidding.weights, [9])
+        offer = refilled.offers(list(range(8)), [8], 1000, 1)[0]
+        self.assertEqual(offer.drop, 7)
+        self.assertAlmostEqual(offer.gain, 15. / (WEEKS - 1))
+        self.assertEqual(refilled.crunch(list(range(8)) + [8], 1), bidding.crunch(list(range(8)) + [8], 1),
+                         "A cut leaves no spot to refill")
+
     def test_returning_starter_is_not_a_placeholder(self):
         # RB7 is out through week index 3, then starts; RB8 fills in until then.
         positions = [0, 1, 1, 2, 2, 2, 3, 1, 1]
@@ -113,6 +131,12 @@ class WaiverTests(unittest.TestCase):
         for w in range(1, 4):
             weekly[w][7], weekly[w][8] = 0., 13.
         self.assertFalse(Bidding(positions, weekly, weekly, [0] * 9).offers(list(range(8)), [8], 1000, 1))
+        # A one-point RB on the wire does not stand in for him.
+        positions.append(1)
+        for points in weekly:
+            points.append(1.)
+        bidding = Bidding(positions, weekly, weekly, [0] * 10)
+        self.assertFalse(bidding.objective(bidding.weights, [9]).offers(list(range(8)), [8], 1000, 1))
 
     def test_guide_rank_ignores_missed_weeks(self):
         # RB0 misses half the season but outscores the 12- and 13-point RBs whenever he plays.
@@ -143,6 +167,34 @@ class WaiverTests(unittest.TestCase):
                      "34": {"name": "Mike Williams", "position": "WR"}}
         joined = draftsharks_by_sleeper(pool, weekly, directory)
         self.assertEqual(joined, {"11": {"3": 20.}, "22": {"3": 15.}}, "Ambiguous names stay unjoined")
+
+    def test_title_leverage_ignores_safe_weeks(self):
+        inputs = self.inputs()
+        bars = [-1000.] * WEEKS
+        bars[2] = lineup_points(self.roster, self.points, self.positions, 2)
+        record = {"seed": 1, "my_bias": 0., "bars": bars, "forecast_bars": [0.] * WEEKS,
+                  "alive": [2] * WEEKS, "champ_bar": 0., "auctions": [None] * WEEKS}
+        leverage = replay([record], inputs, self.roster, 1000, "value")["leverage"]
+        self.assertEqual(leverage[0], 0., "A week cleared in every season carries no weight")
+        self.assertGreater(leverage[1], 0.)
+
+    def test_title_objective_keeps_what_replays_better(self):
+        inputs = self.inputs()
+        auctions = [None] * WEEKS
+        auctions[1] = ([8, 9], [5, -1])
+        for weighted_title, chosen in ((.2, "title_weighted"), (.05, "points")):
+            def runs(inputs, records, variants):
+                flat = set(inputs.my_bidding.weights) == {1.}
+                return [{"p_title": .1 if flat else weighted_title, "leverage": [2.] + [1.] * (WEEKS - 2)}] * 3
+            with patch("ranker.claims.run_replays", side_effect=runs):
+                mine, summary = title_objective(inputs, [{"auctions": auctions}])
+            self.assertEqual(summary["chosen"], chosen)
+            self.assertEqual({r for col in mine.my_bidding.refills[1] for r in col}, {9})
+            self.assertIs(mine.bidding, inputs.bidding, "The room keeps its own objective")
+        weights = [row["weight"] for row in summary["title_weights"]]
+        self.assertAlmostEqual(statistics.fmean(weights), 1., places=2)
+        self.assertGreater(weights[0], weights[1])
+        self.assertEqual(set(mine.my_bidding.weights), {1.}, "A weighting that replays worse is not used")
 
     def test_final_dollars_have_no_salvage_value(self):
         offer = self.bidding.offers(self.roster, [9], 317, WEEKS - 1)[0]
