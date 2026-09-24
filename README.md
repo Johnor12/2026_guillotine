@@ -1,10 +1,25 @@
 # 2026 guillotine
 
 A draft and in-season toolkit for a 32-team 0.5 PPR guillotine redraft league on
-Sleeper ("Gnosis Guillotine", league 1397662420398247936). Four draft processes each
-publish one JSON artifact at the repository root; the ranker consumes the other three
-and the static dashboard renders its output. Two more processes run the season: a
-league-state fetch and the season model behind the season desk.
+Sleeper ("Gnosis Guillotine", league 1397662420398247936). The code is three packages:
+
+- `shared/`: what both halves agree on. The league's shape (`league.py`), the weekly
+  score noise model (`noise.py`), the Sleeper client (`sleeper.py`), name resolution
+  across data providers (`names.py`), the projection fetch and pool build, the six-worker
+  cap (`workers.py`), every artifact path (`paths.py`) and the dashboard server.
+- `draft/`: the live draft board. Sleeper draft fetch and geometry, the pool of
+  valued players, the guillotine-weighted roster valuation, the opponent model, the
+  fixed-point level convergence, the pick planner, and `sources/` (provider boards and
+  the per-drafter source investigator).
+- `season/`: the in-season desk. Sleeper league fetch, the season state and weekly
+  lineup, the FAAB bidding model, the agent-based elimination race, and this week's
+  claims priced by replayed title odds.
+
+Artifacts stay at the repository root (`pool.json`, `draft.json`, `rankings.json`,
+`data_source_matches.json`, `league.json`, `season.json`, `bidding_evaluation.json`)
+next to the three dashboards that read them (`index.html`, `season.html`,
+`sources.html`). Provider snapshots live with the code that reads them
+(`shared/data/`, `draft/sources/data/`).
 
 ## League assumptions
 
@@ -23,24 +38,115 @@ league-state fetch and the season model behind the season desk.
   alternating from there; picks can be traded
 - My slot is 20 (johnor): 1.20, 2.13, 3.13, 4.20, 5.13, 6.20, 7.13, 8.20 before trades
 
-These are constants in `ranker/league.py`, not runtime configuration. The ranker
-complains loudly when `draft.json` disagrees with them.
+The league's shape is `shared/league.py`, the draft's geometry and strategy knobs are
+`draft/settings.py`; neither is runtime configuration. The draft board loader and the
+season state loader complain loudly when Sleeper disagrees with them.
 
 ## Setup
 
-[uv](https://docs.astral.sh/uv/) pins Python 3.12; everything is stdlib.
+[uv](https://docs.astral.sh/uv/) pins Python 3.12 and installs the three packages into
+the environment, so every process runs as a module from anywhere in the repository:
 
 ```bash
 uv sync
-uv run <script>
+uv run -m season.refresh
 ```
 
-Every script anchors its paths to its own location, so commands work from anywhere.
+Dependencies are numpy and numba: the bidding model's lineup arithmetic is compiled
+(`season/waivers.py`), which is what makes the season model fast. The first run
+compiles it (about twenty seconds); the compiled code is cached under
+`season/__pycache__` after that.
+
+## Workflows
+
+Refresh projections and league information, compute this week's FAAB bids, and
+optimize the lineup. Run before the week's waiver deadline, and again before games
+start to update the lineup. No manual input:
+
+```bash
+uv run -m season.refresh
+```
+
+It refetches projections (DraftSharks weekly for the weeks still to play, Sleeper
+season), fetches the league state (including Sleeper weekly projections), and runs the
+season model. The NFL week comes from Sleeper. Each stage must succeed before the next
+starts; a failure exits nonzero without printing recommendations from an older run.
+The season model takes about three minutes at six workers; `--sims 256` runs it in
+under half a minute for a quick check, with correspondingly noisier odds.
+
+The terminal summary shows the remaining budget, any reserve body to activate and the
+forced cut that makes room for him, recommended bids with their drops and reserve
+moves, and the optimal lineup with start/sit changes. Bids are evaluated individually,
+so treat them as alternatives. After this week's waivers process, players dropped
+since are still on waivers: their recommendations are claims with a bid, the
+approximate time they clear, win chance, and break-even. Everyone else is a free
+pickup to add now. Enter the recommended claims and lineup on Sleeper yourself. Add
+`--report` for detailed model diagnostics and league odds. The season model alone is
+`uv run -m season.run`, with the same flags.
+
+Results are saved to `league.json` and `season.json`; `uv run -m shared.serve`
+displays them at http://127.0.0.1:8123/season.html. The season model reads refreshed
+weekly projections directly and uses the existing `pool.json` only to join player
+IDs, so this workflow does not need a pool rebuild or a new hand-saved DraftSharks
+page.
+
+Refresh the live board and recommendations between picks (Sleeper's draft API is
+real-time, so this is the whole live loop):
+
+```bash
+uv run -m draft.refresh --report
+```
+
+It runs three steps: fetch the draft, re-run source inference against the existing
+boards snapshot, then rank. It never rebuilds the pool or fetches provider boards.
+
+Rebuild the pool after refetching projections or saving a new DraftSharks page to
+`shared/data/projections.html`:
+
+```bash
+uv run -m shared.fetch_projections      # Sleeper season + DraftSharks weekly, manual
+uv run -m shared.build_pool --report
+```
+
+Refresh the provider boards (rebuild the pool first if it changed, since every board
+resolves onto it):
+
+```bash
+uv run -m draft.sources.fetch_rankings
+uv run -m draft.sources.build_rankings --report
+```
+
+Follow a different draft, such as a league mock at `sleeper.com/draft/nfl/<id>`:
+
+```bash
+uv run -m draft.fetch --draft-id <id>
+uv run -m draft.sources.investigate
+uv run -m draft.rank --report
+```
+
+Offline checks and evaluations:
+
+```bash
+uv run -m unittest discover -p tests.py   # draft/tests.py and season/tests.py
+uv run -m draft.evaluate_opponents         # replays every completed opponent pick through the model
+uv run -m season.evaluate_waivers          # -> bidding_evaluation.json
+```
+
+Before and after changing the draft opponent model, compare
+`draft.evaluate_opponents`'s replay accuracy. `season.evaluate_waivers` holds out every
+bid on a player before predicting that player's positive submitted bids, and predicts
+the latest auction from the earlier ones alone, comparing the guide prior with the
+fitted price curve by mean absolute log error. It also compares the no-reserve,
+balanced and patient saving plans on paired opponent seasons with a separate seed, then
+repeats with every opponent active, and reconstructs the current week's pre-auction
+rosters to exercise paid claim pricing with the learned model (a diagnostic using
+observed bids, not an ex-ante backtest). A few observed auctions cannot establish
+future activity or saving habits, or validate absolute championship probabilities.
 
 ## CPU limits
 
 Draft and season simulation pools use at most **six worker processes**, limited
-further by CPU affinity when available (`ranker/workers.py`). Simulation counts,
+further by CPU affinity when available (`shared/workers.py`). Simulation counts,
 candidate searches, and seeded results are unchanged; runs take longer instead of
 using every CPU. This is a limit per process pool, so run one pipeline at a time.
 
@@ -54,8 +160,7 @@ processors=6
 
 That file lives outside the repository. The limit takes effect after WSL shuts down
 and restarts. Save work in WSL, run `wsl --shutdown` from **Windows PowerShell**, then
-reopen the terminal; `nproc` should report `6`. Even programs that request more
-workers must share those six virtual CPUs. This does not limit native Windows
+reopen the terminal; `nproc` should report `6`. This does not limit native Windows
 programs. See [Microsoft's WSL configuration reference](https://learn.microsoft.com/en-us/windows/wsl/wsl-config).
 
 These limits reduce load; they do not repair a machine that abruptly powers off
@@ -67,32 +172,30 @@ overclock/undervolt settings before trying sustained full-load tests; see
 ## Data flow
 
 ```text
-pool/    projections.html + sleeper_projections.json + weekly_projections.json
-         └─ build_pool.py ─────────────────────────────> pool.json ──────────────┐
-sources/ fetch_rankings.py -> data/raw/ -> build_rankings.py -> data/boards.json ─┤
-                                                                                  │
-draft/   fetch_draft.py ──────────────────────────────> draft.json ──────────────┤
-                                                                                  │
-sources/ investigate.py (boards + draft) ─────────────> data_source_matches.json ─┤
-                                                                                  │
-rank.py ──────────────────────────────────────────────> rankings.json <───────────┘
+shared/  data/projections.html + data/sleeper_projections.json + data/weekly_projections.json
+         └─ build_pool ──────────────────────────────────> pool.json ─────────────────┐
+draft/   sources.fetch_rankings -> sources/data/raw/ -> sources.build_rankings         │
+                                                        -> sources/data/boards.json ───┤
+draft/   fetch ──────────────────────────────────────────> draft.json ────────────────┤
+draft/   sources.investigate (boards + draft) ───────────> data_source_matches.json ──┤
+draft/   rank ───────────────────────────────────────────> rankings.json <────────────┘
 
-season/  fetch_league.py (Sleeper rosters, FAAB, moves, weekly projections) -> league.json ─┐
-pool/data/weekly_projections.json + pool.json (id join; name fallback via league.json) ────┤
-season.py ────────────────────────────────────────────> season.json <───────────────────────┘
+season/  fetch_league (Sleeper rosters, FAAB, moves, weekly projections) -> league.json ─┐
+shared/data/weekly_projections.json + pool.json (id join; name fallback via league.json) ─┤
+season/  run ────────────────────────────────────────────> season.json <───────────────────┘
 ```
 
 - `pool.json`: ~370 QB/RB/WR/TE players. DraftSharks supplies identity, age, bye,
   rookie flag and 1QB ADP from a hand-saved rankings page; a Sleeper season projection
   gates membership and supplies `sleeper_id`; `weekly_points` is DraftSharks' per-week
   projection for weeks 1–17 in the league's scoring, with byes and known absences as
-  zero weeks. It is the ranker's value input, after `ranker/projections.py` blends
-  each season total 2:1 with Sleeper's league-scored projection (`points`).
+  zero weeks. It is the draft's value input, after `draft/pool.py` blends each season
+  total 2:1 with Sleeper's league-scored projection (`points`).
 - `draft.json`: all 256 made and pending picks from Sleeper's public, real-time draft
   API, with pending picks derived from the draft settings and traded picks applied.
-- `sources/data/boards.json`: provider boards in two families, ordinary 1QB redraft
-  (FantasyCalc, KeepTradeCut, FF Calculator ADP, FantasyPros ECR, DraftSharks ADP,
-  Sleeper ADP) and the superflex/2QB variant of each provider for this room's QB
+- `draft/sources/data/boards.json`: provider boards in two families, ordinary 1QB
+  redraft (FantasyCalc, KeepTradeCut, FF Calculator ADP, FantasyPros ECR, DraftSharks
+  ADP, Sleeper ADP) and the superflex/2QB variant of each provider for this room's QB
   scarcity, plus Sleeper's league-scored points order and a value-over-replacement
   board on that projection under the opening lineup across 32 teams (the two boards
   that price the TE premium; the VORP board is what an LLM handed the league id and
@@ -100,7 +203,7 @@ season.py ───────────────────────�
   50% Sleeper's half-PPR ADP, which is what the draft room displays and autopick
   drafts from, 30% the VORP board for the LLM-assisted minority this office is
   expected to hold, and 20% the format-adjusted boards. Each row is resolved to the
-  pool's `sleeper_id`.
+  pool's `sleeper_id` by `shared/names.py`.
 - `data_source_matches.json`: for each drafter, the board closest to its picks so far,
   with fit scores and pick-level evidence.
 - `rankings.json`: undrafted-player rankings, next-pick recommendations, the example
@@ -110,34 +213,31 @@ season.py ───────────────────────�
   free-agent move so far with its bid, a directory of every referenced player (name,
   position, team, injury status), and Sleeper's weekly projections in league scoring for
   the current week through week 17. A roster the commissioner has emptied after week 1
-  is an eliminated team (Sleeper has no guillotine flag).
-  It also records `waiver_clear_days`, which the season model checks against
-  `ranker/league.py`.
-  Transactions retain Sleeper's submission `leg`, ID and processing timestamp;
-  `week` follows processing time relative to Sleeper's season-start date. Wednesday
-  claims may remain under the previous submission leg. Both successful and failed
-  bids are retained; pending claims do not establish that waivers have processed.
+  is an eliminated team (Sleeper has no guillotine flag). It also records
+  `waiver_clear_days`, which the season model checks against `shared/league.py`.
+  Transactions retain Sleeper's submission `leg`, ID and processing timestamp; `week`
+  follows processing time relative to Sleeper's season-start date. Wednesday claims may
+  remain under the previous submission leg. Both successful and failed bids are
+  retained; pending claims do not establish that waivers have processed.
 - `season.json`: this week's optimal lineup and the moves it implies, the optimal FAAB
   bid on each free agent worth a look with the drop and any move onto reserve it needs
-  (after the weekly run, the players still on waivers carry `waiver_clears`, and
-  the rest are free adds),
-  the cut that must come first when a reserve body lost Out/IR/PUP status and the
-  roster no longer fits (claims are evaluated on the roster after that cut),
-  which objective my bidding uses (points alike every week or title-weighted, by
-  replayed title odds) with the per-week title weights,
-  every team's chance of being cut this week, of
-  reaching the final and of the title, its expected spend and budget path, the
-  elimination bar by week, and the observed versus simulated waiver market.
-  Budget paths show cash entering each week, before that week's claims, conditional
-  on surviving to that week. The current week's opening cash adds back completed
-  claims to the live balance. Post-claim cash is recorded separately. Already
+  (after the weekly run, the players still on waivers carry `waiver_clears`, and the
+  rest are free adds), the cut that must come first when a reserve body lost
+  Out/IR/PUP status and the roster no longer fits (claims are evaluated on the roster
+  after that cut), which objective my bidding uses (points alike every week or
+  title-weighted, by replayed title odds) with the per-week title weights, every team's
+  chance of being cut this week, of reaching the final and of the title, its expected
+  spend and budget path, the elimination bar by week, and the observed versus simulated
+  waiver market. Budget paths show cash entering each week, before that week's claims,
+  conditional on surviving to that week. The current week's opening cash adds back
+  completed claims to the live balance. Post-claim cash is recorded separately. Already
   eliminated teams have zero survival odds and no future budget estimates, and are
   excluded from league averages.
 
 `sleeper_id` is the cross-process player key; `roster_id` and `draft_slot` connect
 opponent source matches to the live board.
 
-## Method
+## Draft method
 
 The guillotine is the objective. A roster is valued week by week as the expected
 optimal lineup under that week's starting shape and position-wide availability, using
@@ -163,21 +263,21 @@ TE tilt for the share of the room that half-notices the premium without a board
 that prices it, and QB scarcity sense (a team without a quarterback never takes one
 who does not start week 1, and takes a starter once the run leaves none likely to
 last to its next pick), and never sees my projections. A drafter named in
-`OPPONENT_INTEL` (`ranker/league.py`) follows its stated plan for its next picks
-before any of that applies. The first pending decision
-searches target plans across my next four held picks and plays each plan out to the
-end of the draft. See `rank.py` and the `ranker/` module docstrings for the details.
+`OPPONENT_INTEL` (`draft/settings.py`) follows its stated plan for its next picks
+before any of that applies. The first pending decision searches target plans across
+my next four held picks and plays each plan out to the end of the draft. See
+`draft/rank.py` and the `draft/` module docstrings for the details.
 
 ## In-season method
 
-The season desk runs an agent-based race from the live state (`ranker/race.py`). The
+The season desk runs an agent-based race from the live state (`season/race.py`). The
 value input is per week: DraftSharks' weekly projection blended 2:1 with Sleeper's for
 the same week, Sleeper alone for anyone DraftSharks does not project
-(`ranker/season.py`). DraftSharks rows join Sleeper ids through `pool.json`; a row
+(`season/state.py`). DraftSharks rows join Sleeper ids through `pool.json`; a row
 outside the draft pool, such as a backup who became a starter, joins `league.json`'s
 directory by normalized name and position when that names exactly one player.
 Each simulated week every alive team fields its optimal lineup under the draft model's
-noise, the two lowest are cut, and their players hit the wire. `ranker/waivers.py`
+noise, the two lowest are cut, and their players hit the wire. `season/waivers.py`
 prices acquisitions from [Paul Charchian's guillotine FAAB guide](https://www.fantasylife.com/articles/guillotine-leagues/guillotine-league-fantasy-football-waiver-wire-guide-for-week-2):
 early elite players about 15–20% of the starting budget, ordinary starters 2.5–5%,
 and depth 0.1–1%. This is an 18-team guide, not a fitted rule for our 32-team format.
@@ -191,17 +291,17 @@ both the ranks and the net lineup points (`ROOM_CURRENT_WEEK_WEIGHT`): the room 
 this week's fill-ins and passes on injured stashes. In an ex-ante backtest of the
 week-3 auction, fit on week-2 bids from the Tuesday state, bid sizes, who got claimed
 and clearing prices all improved as that weight rose to 32-64; 32 predicted who got
-claimed best, and valuing that week alone did worse. Each candidate's drop is chosen with him: the body whose loss leaves the best
-remaining-season roster with the candidate on it, including distant byes and
-superflex, so a backup QB goes when a better QB arrives rather than a bench RB.
-Opponents charge the drop's whole remaining season, so a returning starter is not a
-free placeholder for a short-term fill-in. The two reserve slots hold Out/IR/PUP
-bodies while their projection is zero; once a body's projection resumes he needs a
-regular spot, and every simulated team cuts its least valuable body to make
-room before that week's claims; a cut is charged its whole loss, since no spot is
-left to refill.
+claimed best, and valuing that week alone did worse. Each candidate's drop is chosen
+with him: the body whose loss leaves the best remaining-season roster with the
+candidate on it, including distant byes and superflex, so a backup QB goes when a
+better QB arrives rather than a bench RB. Opponents charge the drop's whole remaining
+season, so a returning starter is not a free placeholder for a short-term fill-in. The
+two reserve slots hold Out/IR/PUP bodies while their projection is zero; once a body's
+projection resumes he needs a regular spot, and every simulated team cuts its least
+valuable body to make room before that week's claims; a cut is charged its whole
+loss, since no spot is left to refill.
 
-My own bidding is chosen for title odds (`ranker/claims.py` `title_objective`). A
+My own bidding is chosen for title odds (`season/claims.py` `title_objective`). A
 pickup may be held only for its useful weeks: afterwards the vacated spot is refilled
 from the wire the room leaves untaken (free agents taken, by claim or free pickup, in
 fewer than half of the opponent seasons at the next auction, assumed to stay
@@ -213,15 +313,14 @@ weights: the standing roster's replay through the recorded opponent races, the
 per-week survival hazard and championship term weighted by each season's title
 probability, normalized to average 1. My bidding weights weeks by them only if that
 replays the standing roster to better title odds than weighting every week alike.
-In the week-3 state it did not (11.1% against 14.2%; damped re-derivation of the
-weights reached 11.3%, and blending a quarter of them into flat points 13.0%): the
-weights are a first-order fit computed once, so a policy on them gives up points in
-weeks that look safe until they are not. The chosen objective screens this week's
-candidates, ranks each one's drops, sets the guide ceiling's gain, and drives my
-future policy and roster cuts in the replays. Opponents keep the points behavior above,
-with their current-week weight. The guide ceiling scales with remaining
-cash and weeks, but a separate saving plan limits total auction spending.
-Terminal-week improvements can use all remaining money.
+In the week-3 state it did not (14.1% against 16.8%): the weights are a first-order
+fit computed once, so a policy on them gives up points in weeks that look safe until
+they are not. The chosen objective screens this week's candidates, ranks each one's
+drops, sets the guide ceiling's gain, and drives my future policy and roster cuts in
+the replays. Opponents keep the points behavior above, with their current-week
+weight. The guide ceiling scales with remaining cash and weeks, but a separate saving
+plan limits total auction spending. Terminal-week improvements can use all remaining
+money.
 
 This week's claims are decided by replay, not by that heuristic. Each candidate's
 three best drops by the heuristic are replayed and the best by title odds is kept: the
@@ -237,7 +336,7 @@ which winning no longer beats standing pat.
 Opponents' bids follow one room-wide price curve fit to every submitted bid, including
 losses: log bid = a + b log(guide reference), the reference being the guide ceiling for
 that manager's roster, cash and cut risk. This room is flatter than the guide (b about
-0.66 after two auctions): depth and fill-ins sell for several times their guide price,
+0.69 after two auctions): depth and fill-ins sell for several times their guide price,
 stars for less. The curve's residual spread is each bid's noise. There are no
 per-manager bid multipliers: managers' levels around the curve did not persist from
 the week-2 auction to week 3 (correlation -0.24), and multipliers fit on week 2 predicted
@@ -264,11 +363,13 @@ auction or optimized for opponents. Participation, target noise and observed bid
 tendencies still distinguish managers.
 
 Our future policy submits offers for every candidate improving the chosen objective
-within a team-specific ceiling and saving allowance, including early bargains. Total paid spending in an
-auction is also limited to its largest individual bid. Claims naming the same drop
-are alternatives; open spots, remaining cash and redundant upgrades are checked as
-claims resolve. Opponents choose their best few targets with preference noise.
-Active managers can also make a free pickup after claims. Week 1 is free agency.
+within a team-specific ceiling and saving allowance, including early bargains. Total
+paid spending in an auction is also limited to its largest individual bid. Claims
+naming the same drop are alternatives; open spots, remaining cash and redundant
+upgrades are checked as claims resolve (a claim that no longer improves the roster
+after an earlier win is passed over, which Sleeper itself cannot do for you: keep
+your live claim list short). Opponents choose their best few targets with preference
+noise. Active managers can also make a free pickup after claims. Week 1 is free agency.
 
 After the weekly run, a player dropped since (including drops on winning claims) is on
 waivers until he clears, about 23 hours after the drop on Sleeper's next 20-minute
@@ -281,124 +382,30 @@ windows clear at different times, but they are modeled as one auction.
 
 The race excluding us records opponent markets and cut bars. Our roster/budget
 variants are replayed through those same seasons to choose this week's best modeled
-bid (`ranker/claims.py`). For our team only, each roster and
-cash variant compares all three future spending/saving plans through the championship.
-One plan is chosen by its average outcome across seasons, never separately using a
-record's future prices or scores. This searches a small family of continuation
-strategies, not every possible sequence of future auction decisions.
-Winning and losing outcomes are evaluated per recorded season, preserving their
-connection to future opportunity.
-These are individual alternatives, not an optimized simultaneous claim portfolio.
-Replay title odds are approximate: opponents retain players taken by our replay.
-Championship weeks are scored with the roster held in each week; a Week 17 pickup
-cannot improve Week 16 retroactively.
-The full race uses our selected baseline saving plan when reporting league odds.
-The old `room` and `hold` replay policies remain only as evaluation baselines; the
-draft model's separate FAAB assumptions are unchanged.
+bid (`season/claims.py`). The standing roster is replayed at several budgets under
+all three saving plans; that grid is the value of cash, and the plan that replays
+best at each budget is the future policy every variant at that budget is priced
+under. A plan is chosen by its average outcome across seasons, never separately using
+a record's future prices or scores. This searches a small family of continuation
+strategies, not every possible sequence of future auction decisions. Winning and
+losing outcomes are evaluated per recorded season, preserving their connection to
+future opportunity. These are individual alternatives, not an optimized simultaneous
+claim portfolio. Replay title odds are approximate: opponents retain players taken by
+our replay. Championship weeks are scored with the roster held in each week; a Week 17
+pickup cannot improve Week 16 retroactively. The full race uses our selected saving
+plan when reporting league odds.
 
 Sleeper documents its [suggested bid ranges](https://support.sleeper.com/en/articles/12111984-suggested-faab-bids),
 but its [public API](https://docs.sleeper.com/) does not document an endpoint for them.
 The model does not depend on those suggestions or on future-week guide publications.
 
-## Workflows
-
-Refresh projections and league information, compute this week's FAAB bids, and
-optimize the lineup. Run before the week's waiver deadline, and again before games
-start to update the lineup. No manual input:
-
-```bash
-uv run refresh_season.py
-```
-
-It refetches projections (DraftSharks weekly for the weeks still to play, Sleeper
-season), fetches the league state (including Sleeper weekly projections), and runs
-the season model. The NFL week comes from Sleeper. Each stage must succeed before
-the next starts; a failure exits nonzero without printing recommendations from an
-older run. The season model takes about half an hour at six workers, most of it
-replaying roster variants for this week's claims.
-
-The terminal summary shows the remaining budget, any reserve body to activate and the
-forced cut that makes room for him, recommended bids with their drops and
-reserve moves, and the optimal lineup with start/sit changes. Bids are evaluated individually, so treat
-them as alternatives. After this week's waivers process, players dropped since are
-still on waivers: their recommendations are claims with a bid, the approximate time
-they clear, win chance, and break-even. Everyone else is a free pickup to add now.
-Enter the recommended claims and lineup on Sleeper yourself. Add `--report`
-for detailed model diagnostics and league odds.
-
-Results are saved to `league.json` and `season.json`; `uv run serve.py` displays them
-at http://127.0.0.1:8123/season.html. The season model reads refreshed weekly
-projections directly and uses the existing `pool.json` only to join player IDs, so
-this workflow does not need a pool rebuild or a new hand-saved DraftSharks page.
-
-Refresh the live board and recommendations between picks (Sleeper's draft API is
-real-time, so this is the whole live loop):
-
-```bash
-uv run refresh.py --report
-```
-
-It runs three steps: fetch the draft, re-run source inference against the existing
-boards snapshot, then rank. It never rebuilds the pool or fetches provider boards.
-
-Rebuild the pool after refetching projections or saving a new DraftSharks page to
-`pool/data/projections.html`:
-
-```bash
-uv run pool/fetch_projections.py      # Sleeper season + DraftSharks weekly, manual
-uv run pool/build_pool.py --report
-```
-
-Refresh the provider boards (rebuild the pool first if it changed, since every board
-resolves onto it):
-
-```bash
-uv run sources/fetch_rankings.py
-uv run sources/build_rankings.py --report
-```
-
-Follow a different draft, such as a league mock at `sleeper.com/draft/nfl/<id>`:
-
-```bash
-uv run draft/fetch_draft.py --draft-id <id>
-uv run sources/investigate.py
-uv run rank.py --report
-```
-
-Offline checks:
-
-```bash
-uv run rank.py --selftest
-uv run draft/fetch_draft.py --selftest
-uv run sources/investigate.py --selftest
-uv run evaluate_opponents.py   # replays every completed opponent pick through the model
-uv run python -m unittest ranker.waiver_selftest
-uv run evaluate_waivers.py > season/bidding_evaluation.json
-```
-
-Before and after changing the draft opponent model, compare
-`evaluate_opponents.py`'s replay accuracy.
-
-`evaluate_waivers.py` holds out every bid on a player before predicting that player's
-positive submitted bids, and predicts the latest auction from the earlier ones alone. It
-compares the original bidding formula, the guide prior, and the fitted price curve using
-mean absolute log error. It also compares the
-no-reserve, balanced, and patient plans with the old room/hold policies on 2,048
-paired opponent seasons using a separate seed, then repeats with every opponent
-active. The report includes paired
-confidence intervals and opening budget paths conditional on survival. A few observed
-auctions cannot establish future activity or saving habits, or validate absolute
-championship probabilities.
-It also reconstructs the current week's pre-auction rosters and exercises paid claim
-pricing with the learned model. That counterfactual uses observed bids and current
-projections, so it is a diagnostic rather than an ex-ante backtest.
-
 ## Dashboards
 
-`uv run serve.py` serves the repository at http://127.0.0.1:8123 (direct `file://`
-access cannot fetch the JSON). `/` renders `rankings.json`, including the live board
-state embedded in it and when that snapshot was taken; `/season.html` renders
-`season.json`: this week's lineup, the waiver claims with their optimal bids, the
-elimination bar by week, every team's odds and budget outlook, and the waiver market;
-`/sources/` renders `data_source_matches.json` as a team-by-source fit heatmap with
-pick-level evidence. Re-run `refresh_season.py` or `refresh.py` and reload to advance.
+`uv run -m shared.serve` serves the repository at http://127.0.0.1:8123 (direct
+`file://` access cannot fetch the JSON). `/` renders `rankings.json`, including the
+live board state embedded in it and when that snapshot was taken; `/season.html`
+renders `season.json`: this week's lineup, the waiver claims with their optimal bids,
+the elimination bar by week, every team's odds and budget outlook, and the waiver
+market; `/sources.html` renders `data_source_matches.json` as a team-by-source fit
+heatmap with pick-level evidence. Re-run `season.refresh` or `draft.refresh` and
+reload to advance.

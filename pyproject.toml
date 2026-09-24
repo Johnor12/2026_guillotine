@@ -1,15 +1,20 @@
 [project]
-name = "redraft-2026"
+name = "guillotine-2026"
 version = "0.1.0"
-description = "Draft pool, live board, and rankings for a 32-team 0.5 PPR guillotine league"
+description = "Draft and in-season decision models for a 32-team 0.5 PPR guillotine league"
 readme = "README.md"
 requires-python = ">=3.12"
+dependencies = [
+    "numba>=0.67.0",
+    "numpy>=2",
+]
 
-# Stdlib only, on purpose: the html parses use html.parser, the fetches use
-# urllib.request, and the ranker is arithmetic. Nothing here needs a wheel.
-dependencies = []
+[build-system]
+requires = ["uv_build>=0.8,<0.9"]
+build-backend = "uv_build"
 
-[tool.uv]
-# A folder of scripts, not an importable package: there is nothing to build or
-# install, and each process is run by path (`uv run pool/build_pool.py`).
-package = false
+# Three flat packages at the repository root, installed editable by `uv sync` so
+# `uv run -m <package>.<module>` works from any directory in the project.
+[tool.uv.build-backend]
+module-root = ""
+module-name = ["shared", "draft", "season"]

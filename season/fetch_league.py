@@ -18,7 +18,7 @@ weekly projections for the weeks still to play:
                     with no game that week has no entry (bye)
 
 Usage:
-    uv run season/fetch_league.py
+    uv run -m season.fetch_league
 """
 
 from __future__ import annotations
@@ -26,34 +26,14 @@ from __future__ import annotations
 import datetime as dt
 import json
 import sys
-import time
-import urllib.request
-from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-LEAGUE_JSON = REPO_ROOT / "league.json"
+from shared.paths import LEAGUE as LEAGUE_JSON
+from shared.sleeper import API, LEAGUE_ID, MY_USER_ID, get_json, score
 
-LEAGUE_ID = "1397662420398247936"
-MY_USER_ID = "1127785716420898816"  # johnor
-API = "https://api.sleeper.app/v1"
 PROJECTIONS = "https://api.sleeper.com/projections/nfl/{season}/{week}?season_type=regular&" + "&".join(
     f"position[]={p}" for p in ("QB", "RB", "WR", "TE")
 )
 LAST_WEEK = 17
-
-
-def get_json(url: str):
-    # Sleeper's CDN caches for minutes; a unique query param forces origin.
-    bust = f"{'&' if '?' in url else '?'}nocache={time.time_ns()}"
-    request = urllib.request.Request(
-        url + bust, headers={"Accept": "application/json", "User-Agent": "curl/8.0"}
-    )
-    with urllib.request.urlopen(request, timeout=60) as response:
-        return json.load(response)
-
-
-def score(stats: dict, scoring: dict) -> float:
-    return round(sum(scoring[k] * v for k, v in stats.items() if k in scoring and v), 2)
 
 
 def processing_week(processed: dt.datetime, season_start: dt.date) -> int:

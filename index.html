@@ -224,7 +224,7 @@
   <div class="card" id="error">
     <strong>Couldn't load <code>rankings.json</code>!</strong>
     <p>Serve the repository root instead of opening this page directly from disk:</p>
-    <p><code>uv run serve.py</code> → open <code>http://127.0.0.1:8123/</code>.</p>
+    <p><code>uv run -m shared.serve</code> → open <code>http://127.0.0.1:8123/</code>.</p>
   </div>
 
   <div id="app" hidden>
@@ -605,7 +605,7 @@ function renderLeagueOutlook(d) {
   });
   document.getElementById("footer").replaceChildren(
     `Projection input: ${d.value_input} · ${d.monte_carlo.sims} availability simulations · ${d.my_next_picks.option_sims} short option redraws · ${d.my_next_picks.rollout_sims} full-draft rollouts per four-pick plan · `,
-    h("a", { href: "sources/" }, "data source investigator"), " · ",
+    h("a", { href: "sources.html" }, "data source investigator"), " · ",
     h("a", { href: "season.html" }, "season desk"));
   document.getElementById("app").hidden = false;
 })();

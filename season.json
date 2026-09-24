@@ -5,14 +5,14 @@
  "alive": 28,
  "waivers_ran": true,
  "value_input": "DraftSharks weekly projections blended 2:1 with Sleeper's weekly projections in this league's scoring; Sleeper alone for players DraftSharks does not project",
- "method": "Agent-based season race: optimal weekly lineups under the draft model's noise, bottom two cut, survivors bid FAAB on the wire; see season.py and ranker/race.py.",
+ "method": "Agent-based season race: optimal weekly lineups under the draft model's noise, bottom two cut, survivors bid FAAB on the wire; see season/run.py and season/race.py.",
  "me": {
   "roster_id": 1,
   "name": "Guh-football",
   "faab_left": 998,
   "p_cut_now": 0.0518,
-  "p_reach_final": 0.3901,
-  "p_title": 0.2583,
+  "p_reach_final": 0.4043,
+  "p_title": 0.2637,
   "rank_by_title": 1,
   "bar_now": {
    "mean": 41.2,
@@ -148,43 +148,43 @@
     "week": 5,
     "my_points": 61.8,
     "bar_mean": 50.7,
-    "p_alive": 0.7982,
+    "p_alive": 0.7977,
     "budget": 929
    },
    {
     "week": 6,
     "my_points": 85.7,
-    "bar_mean": 50.6,
-    "p_alive": 0.78,
-    "budget": 774
+    "bar_mean": 50.5,
+    "p_alive": 0.7795,
+    "budget": 775
    },
    {
     "week": 7,
     "my_points": 74.3,
     "bar_mean": 57.5,
-    "p_alive": 0.7635,
-    "budget": 649
+    "p_alive": 0.7633,
+    "budget": 650
    },
    {
     "week": 8,
     "my_points": 84.5,
-    "bar_mean": 66.5,
-    "p_alive": 0.7453,
-    "budget": 407
+    "bar_mean": 66.7,
+    "p_alive": 0.7448,
+    "budget": 408
    },
    {
     "week": 9,
     "my_points": 84.7,
-    "bar_mean": 83.2,
-    "p_alive": 0.7359,
-    "budget": 303
+    "bar_mean": 83.3,
+    "p_alive": 0.7354,
+    "budget": 305
    },
    {
     "week": 10,
     "my_points": 76.0,
-    "bar_mean": 87.4,
-    "p_alive": 0.7219,
-    "budget": 206
+    "bar_mean": 87.5,
+    "p_alive": 0.7218,
+    "budget": 207
    },
    {
     "week": 11,
@@ -196,29 +196,29 @@
    {
     "week": 12,
     "my_points": 92.6,
-    "bar_mean": 117.5,
-    "p_alive": 0.6459,
+    "bar_mean": 117.2,
+    "p_alive": 0.6464,
     "budget": 107
    },
    {
     "week": 13,
     "my_points": 91.7,
-    "bar_mean": 123.0,
-    "p_alive": 0.5925,
-    "budget": 67
+    "bar_mean": 123.1,
+    "p_alive": 0.5928,
+    "budget": 66
    },
    {
     "week": 14,
     "my_points": 107.2,
-    "bar_mean": 157.8,
-    "p_alive": 0.5094,
-    "budget": 30
+    "bar_mean": 157.3,
+    "p_alive": 0.5113,
+    "budget": 29
    },
    {
     "week": 15,
     "my_points": 106.8,
     "bar_mean": 181.7,
-    "p_alive": 0.3266,
+    "p_alive": 0.3244,
     "budget": 9
    },
    {
@@ -241,207 +241,206 @@
   "pending": true,
   "policy": "value",
   "budget": 998,
-  "race_title": 0.2583,
   "baseline": {
    "value": [
     {
      "budget": 0,
-     "p_title": 0.0226,
-     "p_reach_final": 0.0495,
-     "relative": -86.4
+     "p_title": 0.0237,
+     "p_reach_final": 0.0501,
+     "relative": -85.9
     },
     {
      "budget": 298,
-     "p_title": 0.1113,
-     "p_reach_final": 0.2237,
-     "relative": -32.9
+     "p_title": 0.1115,
+     "p_reach_final": 0.2211,
+     "relative": -33.6
     },
     {
      "budget": 598,
-     "p_title": 0.1405,
-     "p_reach_final": 0.2794,
-     "relative": -15.3
+     "p_title": 0.1412,
+     "p_reach_final": 0.2768,
+     "relative": -15.9
     },
     {
      "budget": 798,
-     "p_title": 0.1538,
-     "p_reach_final": 0.3033,
-     "relative": -7.3
+     "p_title": 0.155,
+     "p_reach_final": 0.3011,
+     "relative": -7.7
     },
     {
      "budget": 898,
-     "p_title": 0.1597,
-     "p_reach_final": 0.3156,
-     "relative": -3.7
+     "p_title": 0.1621,
+     "p_reach_final": 0.3134,
+     "relative": -3.5
     },
     {
      "budget": 948,
-     "p_title": 0.1629,
-     "p_reach_final": 0.3213,
-     "relative": -1.8
+     "p_title": 0.165,
+     "p_reach_final": 0.3189,
+     "relative": -1.7
     },
     {
      "budget": 973,
-     "p_title": 0.1641,
-     "p_reach_final": 0.324,
-     "relative": -1.0
+     "p_title": 0.1664,
+     "p_reach_final": 0.3217,
+     "relative": -0.9
     },
     {
      "budget": 998,
-     "p_title": 0.1659,
-     "p_reach_final": 0.3266,
+     "p_title": 0.1679,
+     "p_reach_final": 0.3244,
      "relative": 0.0
     }
    ],
    "balanced": [
     {
      "budget": 0,
-     "p_title": 0.0226,
-     "p_reach_final": 0.0495,
-     "relative": -86.4
+     "p_title": 0.0237,
+     "p_reach_final": 0.0501,
+     "relative": -85.9
     },
     {
      "budget": 298,
-     "p_title": 0.0961,
-     "p_reach_final": 0.1892,
+     "p_title": 0.0971,
+     "p_reach_final": 0.1872,
      "relative": -42.1
     },
     {
      "budget": 598,
-     "p_title": 0.1177,
-     "p_reach_final": 0.2293,
-     "relative": -29.0
+     "p_title": 0.1196,
+     "p_reach_final": 0.2284,
+     "relative": -28.8
     },
     {
      "budget": 798,
-     "p_title": 0.129,
-     "p_reach_final": 0.2492,
-     "relative": -22.2
+     "p_title": 0.1315,
+     "p_reach_final": 0.2486,
+     "relative": -21.6
     },
     {
      "budget": 898,
-     "p_title": 0.1359,
-     "p_reach_final": 0.2611,
-     "relative": -18.1
+     "p_title": 0.1379,
+     "p_reach_final": 0.2599,
+     "relative": -17.9
     },
     {
      "budget": 948,
-     "p_title": 0.139,
-     "p_reach_final": 0.2663,
-     "relative": -16.2
+     "p_title": 0.1408,
+     "p_reach_final": 0.2648,
+     "relative": -16.1
     },
     {
      "budget": 973,
-     "p_title": 0.1413,
-     "p_reach_final": 0.2705,
-     "relative": -14.8
+     "p_title": 0.1432,
+     "p_reach_final": 0.2689,
+     "relative": -14.7
     },
     {
      "budget": 998,
-     "p_title": 0.1447,
-     "p_reach_final": 0.2769,
-     "relative": -12.8
+     "p_title": 0.147,
+     "p_reach_final": 0.2754,
+     "relative": -12.4
     }
    ],
    "patient": [
     {
      "budget": 0,
-     "p_title": 0.0226,
-     "p_reach_final": 0.0495,
-     "relative": -86.4
+     "p_title": 0.0237,
+     "p_reach_final": 0.0501,
+     "relative": -85.9
     },
     {
      "budget": 298,
-     "p_title": 0.0861,
-     "p_reach_final": 0.1705,
-     "relative": -48.1
+     "p_title": 0.087,
+     "p_reach_final": 0.1686,
+     "relative": -48.2
     },
     {
      "budget": 598,
-     "p_title": 0.0986,
-     "p_reach_final": 0.1932,
-     "relative": -40.6
+     "p_title": 0.0999,
+     "p_reach_final": 0.1915,
+     "relative": -40.5
     },
     {
      "budget": 798,
-     "p_title": 0.1041,
-     "p_reach_final": 0.2034,
-     "relative": -37.3
+     "p_title": 0.1061,
+     "p_reach_final": 0.2018,
+     "relative": -36.8
     },
     {
      "budget": 898,
-     "p_title": 0.1094,
-     "p_reach_final": 0.2123,
-     "relative": -34.0
+     "p_title": 0.1112,
+     "p_reach_final": 0.2109,
+     "relative": -33.8
     },
     {
      "budget": 948,
-     "p_title": 0.1115,
-     "p_reach_final": 0.216,
-     "relative": -32.8
+     "p_title": 0.1135,
+     "p_reach_final": 0.215,
+     "relative": -32.4
     },
     {
      "budget": 973,
-     "p_title": 0.1123,
-     "p_reach_final": 0.2175,
-     "relative": -32.3
+     "p_title": 0.1142,
+     "p_reach_final": 0.2163,
+     "relative": -32.0
     },
     {
      "budget": 998,
-     "p_title": 0.1145,
-     "p_reach_final": 0.2212,
-     "relative": -31.0
+     "p_title": 0.1156,
+     "p_reach_final": 0.2193,
+     "relative": -31.1
     }
    ]
   },
   "base": {
-   "p_title": 0.1659,
-   "p_reach_final": 0.3266,
+   "p_title": 0.1679,
+   "p_reach_final": 0.3244,
    "p_cut_now": 0.0166,
    "p_alive_by_week": [
     0.9834,
     0.9675,
-    0.7982,
-    0.78,
-    0.7635,
-    0.7453,
-    0.7359,
-    0.7219,
+    0.7977,
+    0.7795,
+    0.7633,
+    0.7448,
+    0.7354,
+    0.7218,
     0.677,
-    0.6459,
-    0.5925,
-    0.5094,
-    0.3266
+    0.6464,
+    0.5928,
+    0.5113,
+    0.3244
    ],
    "budget_by_week": [
     998,
     998,
     929,
-    774,
-    649,
-    407,
-    303,
-    206,
+    775,
+    650,
+    408,
+    305,
+    207,
     164,
     107,
-    67,
-    30,
+    66,
+    29,
     9,
     1,
     0
    ],
    "budget_after_claims": [
     998,
-    929,
+    930,
     788,
-    648,
-    408,
-    304,
+    650,
+    409,
+    306,
     207,
     164,
     107,
-    67,
-    30,
+    66,
+    29,
     9,
     1,
     0,
@@ -475,12 +474,12 @@
     "to_reserve": [],
     "gain_this_week": -0.6,
     "title_if_free": 5.8,
-    "title_if_free_se": 0.3,
-    "optimal_bid": 42,
+    "title_if_free_se": 0.4,
+    "optimal_bid": 53,
     "planning_gain": 0.4,
-    "p_win_at_optimal": 0.647,
+    "p_win_at_optimal": 0.697,
     "title_at_optimal": 2.8,
-    "break_even_bid": 159,
+    "break_even_bid": 157,
     "clearing": {
      "p_claimed": 0.971,
      "p_free_pickup": 0.027,
@@ -492,7 +491,7 @@
      {
       "bid": 0,
       "p_win": 0.002,
-      "title": 0.0
+      "title": -0.0
      },
      {
       "bid": 10,
@@ -502,27 +501,27 @@
      {
       "bid": 21,
       "p_win": 0.283,
-      "title": 1.6
+      "title": 1.7
      },
      {
       "bid": 32,
       "p_win": 0.585,
-      "title": 2.7
+      "title": 2.8
      },
      {
       "bid": 43,
       "p_win": 0.652,
-      "title": 2.8
+      "title": 2.7
      },
      {
       "bid": 54,
       "p_win": 0.704,
-      "title": 2.7
+      "title": 2.8
      },
      {
       "bid": 65,
       "p_win": 0.748,
-      "title": 2.4
+      "title": 2.5
      },
      {
       "bid": 76,
@@ -552,22 +551,22 @@
      {
       "bid": 132,
       "p_win": 0.904,
-      "title": 1.0
+      "title": 1.1
      },
      {
       "bid": 144,
       "p_win": 0.917,
-      "title": 0.6
+      "title": 0.7
      },
      {
       "bid": 158,
       "p_win": 0.928,
-      "title": 0.1
+      "title": 0.2
      },
      {
       "bid": 175,
       "p_win": 0.936,
-      "title": -0.5
+      "title": -0.4
      },
      {
       "bid": 191,
@@ -582,7 +581,7 @@
      {
       "bid": 228,
       "p_win": 0.961,
-      "title": -2.5
+      "title": -2.6
      },
      {
       "bid": 253,
@@ -597,22 +596,22 @@
      {
       "bid": 344,
       "p_win": 0.982,
-      "title": -7.3
+      "title": -7.5
      },
      {
       "bid": 419,
       "p_win": 0.989,
-      "title": -10.8
+      "title": -11.1
      },
      {
       "bid": 586,
       "p_win": 0.995,
-      "title": -20.6
+      "title": -21.1
      },
      {
       "bid": 963,
       "p_win": 1.0,
-      "title": -78.9
+      "title": -78.6
      }
     ]
    },
@@ -638,13 +637,13 @@
     },
     "to_reserve": [],
     "gain_this_week": -1.4,
-    "title_if_free": 3.5,
+    "title_if_free": 3.4,
     "title_if_free_se": 0.3,
     "optimal_bid": 33,
     "planning_gain": 0.36,
     "p_win_at_optimal": 0.735,
-    "title_at_optimal": 1.8,
-    "break_even_bid": 103,
+    "title_at_optimal": 1.5,
+    "break_even_bid": 96,
     "clearing": {
      "p_claimed": 0.939,
      "p_free_pickup": 0.054,
@@ -661,7 +660,7 @@
      {
       "bid": 8,
       "p_win": 0.135,
-      "title": 0.3
+      "title": 0.4
      },
      {
       "bid": 16,
@@ -671,67 +670,67 @@
      {
       "bid": 25,
       "p_win": 0.538,
-      "title": 1.3
+      "title": 1.1
      },
      {
       "bid": 33,
       "p_win": 0.735,
-      "title": 1.8
+      "title": 1.5
      },
      {
       "bid": 42,
       "p_win": 0.78,
-      "title": 1.7
+      "title": 1.4
      },
      {
       "bid": 50,
       "p_win": 0.814,
-      "title": 1.5
+      "title": 1.3
      },
      {
       "bid": 58,
       "p_win": 0.84,
-      "title": 1.3
+      "title": 1.1
      },
      {
       "bid": 67,
       "p_win": 0.86,
-      "title": 1.1
+      "title": 0.9
      },
      {
       "bid": 75,
       "p_win": 0.88,
-      "title": 0.7
+      "title": 0.6
      },
      {
       "bid": 84,
       "p_win": 0.904,
-      "title": 0.4
+      "title": 0.2
      },
      {
       "bid": 92,
       "p_win": 0.919,
-      "title": 0.1
+      "title": -0.0
      },
      {
       "bid": 103,
       "p_win": 0.935,
-      "title": -0.2
+      "title": -0.3
      },
      {
       "bid": 112,
       "p_win": 0.942,
-      "title": -0.5
+      "title": -0.6
      },
      {
       "bid": 121,
       "p_win": 0.95,
-      "title": -0.8
+      "title": -1.0
      },
      {
       "bid": 135,
       "p_win": 0.956,
-      "title": -1.4
+      "title": -1.5
      },
      {
       "bid": 148,
@@ -751,7 +750,7 @@
      {
       "bid": 201,
       "p_win": 0.978,
-      "title": -4.3
+      "title": -4.2
      },
      {
       "bid": 227,
@@ -766,17 +765,17 @@
      {
       "bid": 340,
       "p_win": 0.992,
-      "title": -9.7
+      "title": -9.8
      },
      {
       "bid": 413,
       "p_win": 0.996,
-      "title": -12.8
+      "title": -13.1
      },
      {
       "bid": 851,
       "p_win": 1.0,
-      "title": -58.4
+      "title": -58.5
      }
     ]
    },
@@ -795,11 +794,11 @@
      "Ja'Kobi Lane"
     ],
     "gain_this_week": 0.0,
-    "title_if_free": 0.3,
+    "title_if_free": 0.2,
     "title_if_free_se": 0.2,
-    "optimal_bid": 6,
+    "optimal_bid": 0,
     "planning_gain": 3.27,
-    "p_win_at_optimal": 0.553,
+    "p_win_at_optimal": 0.023,
     "title_at_optimal": 0.1,
     "break_even_bid": 6,
     "clearing": {
@@ -813,27 +812,27 @@
      {
       "bid": 0,
       "p_win": 0.023,
-      "title": 0.0
+      "title": 0.1
      },
      {
       "bid": 2,
       "p_win": 0.353,
-      "title": 0.0
+      "title": -0.0
      },
      {
       "bid": 5,
       "p_win": 0.508,
-      "title": 0.1
+      "title": -0.1
      },
      {
       "bid": 8,
       "p_win": 0.659,
-      "title": -0.1
+      "title": -0.2
      },
      {
       "bid": 10,
       "p_win": 0.714,
-      "title": -0.2
+      "title": -0.3
      },
      {
       "bid": 13,
@@ -848,87 +847,87 @@
      {
       "bid": 18,
       "p_win": 0.899,
-      "title": -0.6
+      "title": -0.5
      },
      {
       "bid": 21,
       "p_win": 0.929,
-      "title": -0.6
+      "title": -0.5
      },
      {
       "bid": 24,
       "p_win": 0.94,
-      "title": -0.8
+      "title": -0.7
      },
      {
       "bid": 26,
       "p_win": 0.958,
-      "title": -0.9
+      "title": -0.7
      },
      {
       "bid": 29,
       "p_win": 0.972,
-      "title": -1.0
+      "title": -0.9
      },
      {
       "bid": 33,
       "p_win": 0.976,
-      "title": -1.2
+      "title": -1.1
      },
      {
       "bid": 35,
       "p_win": 0.979,
-      "title": -1.3
+      "title": -1.2
      },
      {
       "bid": 38,
       "p_win": 0.982,
-      "title": -1.5
+      "title": -1.4
      },
      {
       "bid": 41,
       "p_win": 0.984,
-      "title": -1.6
+      "title": -1.5
      },
      {
       "bid": 44,
       "p_win": 0.986,
-      "title": -1.8
+      "title": -1.7
      },
      {
       "bid": 48,
       "p_win": 0.989,
-      "title": -1.9
+      "title": -1.8
      },
      {
       "bid": 51,
       "p_win": 0.992,
-      "title": -2.1
+      "title": -2.0
      },
      {
       "bid": 55,
       "p_win": 0.993,
-      "title": -2.2
+      "title": -2.1
      },
      {
       "bid": 62,
       "p_win": 0.995,
-      "title": -2.4
+      "title": -2.3
      },
      {
       "bid": 66,
       "p_win": 0.996,
-      "title": -2.5
+      "title": -2.4
      },
      {
       "bid": 74,
       "p_win": 0.997,
-      "title": -2.8
+      "title": -2.7
      },
      {
       "bid": 86,
       "p_win": 0.999,
-      "title": -3.1
+      "title": -3.0
      },
      {
       "bid": 109,
@@ -959,7 +958,7 @@
     },
     "to_reserve": [],
     "gain_this_week": 0.2,
-    "title_if_free": 0.2,
+    "title_if_free": 0.1,
     "title_if_free_se": 0.1,
     "optimal_bid": 1,
     "planning_gain": 0.13,
@@ -992,72 +991,72 @@
      {
       "bid": 17,
       "p_win": 0.837,
-      "title": -0.6
+      "title": -0.5
      },
      {
       "bid": 23,
       "p_win": 0.863,
-      "title": -0.8
+      "title": -0.7
      },
      {
       "bid": 29,
       "p_win": 0.897,
-      "title": -1.1
+      "title": -0.9
      },
      {
       "bid": 35,
       "p_win": 0.908,
-      "title": -1.2
+      "title": -1.1
      },
      {
       "bid": 41,
       "p_win": 0.919,
-      "title": -1.4
+      "title": -1.3
      },
      {
       "bid": 47,
       "p_win": 0.931,
-      "title": -1.6
+      "title": -1.5
      },
      {
       "bid": 55,
       "p_win": 0.939,
-      "title": -1.9
+      "title": -1.8
      },
      {
       "bid": 62,
       "p_win": 0.948,
-      "title": -2.2
+      "title": -2.1
      },
      {
       "bid": 68,
       "p_win": 0.955,
-      "title": -2.4
+      "title": -2.3
      },
      {
       "bid": 74,
       "p_win": 0.96,
-      "title": -2.6
+      "title": -2.5
      },
      {
       "bid": 80,
       "p_win": 0.964,
-      "title": -2.8
+      "title": -2.7
      },
      {
       "bid": 89,
       "p_win": 0.968,
-      "title": -3.1
+      "title": -2.9
      },
      {
       "bid": 97,
       "p_win": 0.973,
-      "title": -3.4
+      "title": -3.3
      },
      {
       "bid": 109,
       "p_win": 0.976,
-      "title": -3.9
+      "title": -3.8
      },
      {
       "bid": 119,
@@ -1072,69 +1071,32 @@
      {
       "bid": 138,
       "p_win": 0.985,
-      "title": -4.9
+      "title": -5.0
      },
      {
       "bid": 171,
       "p_win": 0.989,
-      "title": -6.0
+      "title": -6.3
      },
      {
       "bid": 197,
       "p_win": 0.992,
-      "title": -6.9
+      "title": -7.4
      },
      {
       "bid": 233,
       "p_win": 0.995,
-      "title": -8.4
+      "title": -8.9
      },
      {
       "bid": 362,
       "p_win": 0.998,
-      "title": -13.6
+      "title": -14.2
      },
      {
       "bid": 825,
       "p_win": 1.0,
-      "title": -55.3
-     }
-    ]
-   },
-   {
-    "player_id": "13276",
-    "name": "Omar Cooper",
-    "position": "WR",
-    "team": "NYJ",
-    "injury_status": "IR",
-    "source": "blend",
-    "points_this_week": 0.0,
-    "ros_per_week": 4.75,
-    "waiver_clears": null,
-    "drop": null,
-    "to_reserve": [
-     "Omar Cooper"
-    ],
-    "gain_this_week": 0.0,
-    "title_if_free": -0.0,
-    "title_if_free_se": 0.2,
-    "optimal_bid": 0,
-    "planning_gain": 4.35,
-    "p_win_at_optimal": 1.0,
-    "title_at_optimal": -0.0,
-    "break_even_bid": 0,
-    "clearing": {
-     "p_claimed": 0.0,
-     "p_free_pickup": 0.0,
-     "mean": null,
-     "p50": null,
-     "p90": null
-    },
-    "curve": [
-     {
-      "bid": 0,
-      "p_win": 1.0,
-      "title": -0.0
+      "title": -55.5
      }
     ]
    },
@@ -1158,7 +1120,7 @@
     "optimal_bid": 0,
     "planning_gain": 2.82,
     "p_win_at_optimal": 1.0,
-    "title_at_optimal": -0.0,
+    "title_at_optimal": 0.0,
     "break_even_bid": 0,
     "clearing": {
      "p_claimed": 0.0,
@@ -1171,7 +1133,44 @@
      {
       "bid": 0,
       "p_win": 1.0,
-      "title": -0.0
+      "title": 0.0
+     }
+    ]
+   },
+   {
+    "player_id": "13276",
+    "name": "Omar Cooper",
+    "position": "WR",
+    "team": "NYJ",
+    "injury_status": "IR",
+    "source": "blend",
+    "points_this_week": 0.0,
+    "ros_per_week": 4.75,
+    "waiver_clears": null,
+    "drop": null,
+    "to_reserve": [
+     "Omar Cooper"
+    ],
+    "gain_this_week": 0.0,
+    "title_if_free": -0.1,
+    "title_if_free_se": 0.2,
+    "optimal_bid": 0,
+    "planning_gain": 4.35,
+    "p_win_at_optimal": 1.0,
+    "title_at_optimal": -0.1,
+    "break_even_bid": 0,
+    "clearing": {
+     "p_claimed": 0.0,
+     "p_free_pickup": 0.0,
+     "mean": null,
+     "p50": null,
+     "p90": null
+    },
+    "curve": [
+     {
+      "bid": 0,
+      "p_win": 1.0,
+      "title": -0.1
      }
     ]
    },
@@ -1190,12 +1189,12 @@
      "Luke Musgrave"
     ],
     "gain_this_week": 0.0,
-    "title_if_free": -0.4,
+    "title_if_free": -0.2,
     "title_if_free_se": 0.1,
     "optimal_bid": 0,
     "planning_gain": 1.48,
     "p_win_at_optimal": 1.0,
-    "title_at_optimal": -0.4,
+    "title_at_optimal": -0.2,
     "break_even_bid": 0,
     "clearing": {
      "p_claimed": 0.0,
@@ -1208,7 +1207,44 @@
      {
       "bid": 0,
       "p_win": 1.0,
-      "title": -0.4
+      "title": -0.2
+     }
+    ]
+   },
+   {
+    "player_id": "8142",
+    "name": "Alec Pierce",
+    "position": "WR",
+    "team": "IND",
+    "injury_status": "Out",
+    "source": "blend",
+    "points_this_week": 0.0,
+    "ros_per_week": 6.82,
+    "waiver_clears": null,
+    "drop": null,
+    "to_reserve": [
+     "Alec Pierce"
+    ],
+    "gain_this_week": 0.0,
+    "title_if_free": -0.9,
+    "title_if_free_se": 0.3,
+    "optimal_bid": 0,
+    "planning_gain": 6.37,
+    "p_win_at_optimal": 1.0,
+    "title_at_optimal": -0.9,
+    "break_even_bid": 0,
+    "clearing": {
+     "p_claimed": 0.0,
+     "p_free_pickup": 0.0,
+     "mean": null,
+     "p50": null,
+     "p90": null
+    },
+    "curve": [
+     {
+      "bid": 0,
+      "p_win": 1.0,
+      "title": -0.9
      }
     ]
    },
@@ -1234,12 +1270,12 @@
     },
     "to_reserve": [],
     "gain_this_week": -13.0,
-    "title_if_free": -3.6,
+    "title_if_free": -3.8,
     "title_if_free_se": 0.2,
     "optimal_bid": 0,
     "planning_gain": 0.02,
     "p_win_at_optimal": 0.271,
-    "title_at_optimal": -1.0,
+    "title_at_optimal": -1.1,
     "break_even_bid": 0,
     "clearing": {
      "p_claimed": 0.06,
@@ -1252,44 +1288,7 @@
      {
       "bid": 0,
       "p_win": 0.271,
-      "title": -1.0
-     }
-    ]
-   },
-   {
-    "player_id": "8142",
-    "name": "Alec Pierce",
-    "position": "WR",
-    "team": "IND",
-    "injury_status": "Out",
-    "source": "blend",
-    "points_this_week": 0.0,
-    "ros_per_week": 6.82,
-    "waiver_clears": null,
-    "drop": null,
-    "to_reserve": [
-     "Alec Pierce"
-    ],
-    "gain_this_week": 0.0,
-    "title_if_free": -1.3,
-    "title_if_free_se": 0.3,
-    "optimal_bid": 0,
-    "planning_gain": 6.37,
-    "p_win_at_optimal": 1.0,
-    "title_at_optimal": -1.3,
-    "break_even_bid": 0,
-    "clearing": {
-     "p_claimed": 0.0,
-     "p_free_pickup": 0.0,
-     "mean": null,
-     "p50": null,
-     "p90": null
-    },
-    "curve": [
-     {
-      "bid": 0,
-      "p_win": 1.0,
-      "title": -1.3
+      "title": -1.1
      }
     ]
    }
@@ -1297,37 +1296,37 @@
   "objective": {
    "chosen": "points",
    "p_title": {
-    "points": 0.1659,
-    "title_weighted": 0.1391
+    "points": 0.1679,
+    "title_weighted": 0.1409
    },
    "title_weights": [
     {
      "week": 3,
-     "weight": 0.157
+     "weight": 0.172
     },
     {
      "week": 4,
-     "weight": 0.141
+     "weight": 0.148
     },
     {
      "week": 5,
-     "weight": 1.685
+     "weight": 1.682
     },
     {
      "week": 6,
-     "weight": 0.233
+     "weight": 0.223
     },
     {
      "week": 7,
-     "weight": 0.201
+     "weight": 0.213
     },
     {
      "week": 8,
-     "weight": 0.262
+     "weight": 0.274
     },
     {
      "week": 9,
-     "weight": 0.126
+     "weight": 0.134
     },
     {
      "week": 10,
@@ -1335,11 +1334,11 @@
     },
     {
      "week": 11,
-     "weight": 0.573
+     "weight": 0.596
     },
     {
      "week": 12,
-     "weight": 0.463
+     "weight": 0.455
     },
     {
      "week": 13,
@@ -1347,23 +1346,24 @@
     },
     {
      "week": 14,
-     "weight": 1.371
+     "weight": 1.364
     },
     {
      "week": 15,
-     "weight": 3.259
+     "weight": 3.304
     },
     {
      "week": 16,
-     "weight": 2.752
+     "weight": 2.705
     },
     {
      "week": 17,
-     "weight": 2.752
+     "weight": 2.705
     }
    ],
    "refill_pool": 203
-  }
+  },
+  "race_title": 0.2637
  },
  "teams": [
   {
@@ -1381,20 +1381,20 @@
    "p_alive_by_week": [
     0.9482,
     0.9316,
-    0.7915,
-    0.769,
-    0.7461,
-    0.7261,
+    0.792,
+    0.7705,
+    0.7471,
+    0.7246,
     0.7192,
-    0.709,
-    0.6704,
-    0.6445,
-    0.6001,
+    0.71,
+    0.6724,
+    0.646,
+    0.605,
     0.543,
-    0.3901
+    0.4043
    ],
-   "p_reach_final": 0.3901,
-   "p_title": 0.2583,
+   "p_reach_final": 0.4043,
+   "p_title": 0.2637,
    "spend_now": 0,
    "p_claim_now": 0.985,
    "budget_entering_week9": 316,
@@ -1472,19 +1472,19 @@
     0.9487,
     0.8999,
     0.8589,
-    0.792,
-    0.7148,
-    0.6582,
-    0.5796,
-    0.5122,
-    0.4399,
-    0.3511,
-    0.2739,
-    0.1567,
-    0.0781
+    0.7935,
+    0.7168,
+    0.6626,
+    0.584,
+    0.5171,
+    0.4429,
+    0.353,
+    0.2725,
+    0.1367,
+    0.0674
    ],
-   "p_reach_final": 0.0781,
-   "p_title": 0.0415,
+   "p_reach_final": 0.0674,
+   "p_title": 0.0381,
    "spend_now": 11,
    "p_claim_now": 0.26,
    "budget_entering_week9": 564,
@@ -1556,23 +1556,23 @@
     0.9897,
     0.9746,
     0.9575,
-    0.9131,
-    0.8901,
-    0.8589,
+    0.915,
+    0.8936,
+    0.8618,
     0.7842,
     0.709,
-    0.6143,
-    0.5186,
-    0.3354,
-    0.2402,
-    0.1294
+    0.6079,
+    0.5146,
+    0.3374,
+    0.2441,
+    0.1318
    ],
-   "p_reach_final": 0.1294,
-   "p_title": 0.0664,
+   "p_reach_final": 0.1318,
+   "p_title": 0.0635,
    "spend_now": 5,
    "p_claim_now": 0.224,
-   "budget_entering_week9": 590,
-   "budget_entering_week13": 261,
+   "budget_entering_week9": 589,
+   "budget_entering_week13": 262,
    "players": [
     {
      "name": "Kyler Murray",
@@ -1645,24 +1645,24 @@
    "p_alive_by_week": [
     0.9756,
     0.9365,
-    0.8862,
-    0.8291,
-    0.7988,
-    0.7661,
-    0.6826,
-    0.6177,
+    0.8857,
+    0.8286,
+    0.7974,
+    0.7627,
+    0.6821,
+    0.6211,
     0.4287,
-    0.3364,
-    0.2695,
-    0.1733,
-    0.0713
+    0.3428,
+    0.2617,
+    0.1577,
+    0.0679
    ],
-   "p_reach_final": 0.0713,
-   "p_title": 0.0308,
+   "p_reach_final": 0.0679,
+   "p_title": 0.0303,
    "spend_now": 9,
    "p_claim_now": 0.298,
    "budget_entering_week9": 579,
-   "budget_entering_week13": 184,
+   "budget_entering_week13": 185,
    "players": [
     {
      "name": "Jaxon Smith-Njigba",
@@ -1735,24 +1735,24 @@
    "p_alive_by_week": [
     0.9214,
     0.8081,
-    0.7134,
-    0.645,
-    0.5991,
-    0.5361,
-    0.4497,
-    0.3589,
-    0.2974,
-    0.2163,
-    0.1479,
-    0.0918,
-    0.042
+    0.7129,
+    0.6416,
+    0.5962,
+    0.5352,
+    0.4482,
+    0.3613,
+    0.3032,
+    0.2266,
+    0.1621,
+    0.1035,
+    0.0391
    ],
-   "p_reach_final": 0.042,
-   "p_title": 0.0186,
+   "p_reach_final": 0.0391,
+   "p_title": 0.0181,
    "spend_now": 8,
    "p_claim_now": 0.26,
    "budget_entering_week9": 569,
-   "budget_entering_week13": 167,
+   "budget_entering_week13": 172,
    "players": [
     {
      "name": "Lamar Jackson",
@@ -1819,24 +1819,24 @@
    "p_alive_by_week": [
     0.8496,
     0.7676,
-    0.6548,
-    0.6138,
-    0.4546,
-    0.3364,
-    0.2905,
-    0.2466,
-    0.2148,
-    0.1558,
-    0.1152,
-    0.0747,
-    0.0317
+    0.6538,
+    0.6094,
+    0.4487,
+    0.3359,
+    0.2881,
+    0.2485,
+    0.2168,
+    0.1582,
+    0.1128,
+    0.0713,
+    0.0303
    ],
-   "p_reach_final": 0.0317,
-   "p_title": 0.0156,
+   "p_reach_final": 0.0303,
+   "p_title": 0.0132,
    "spend_now": 6,
    "p_claim_now": 0.18,
-   "budget_entering_week9": 373,
-   "budget_entering_week13": 164,
+   "budget_entering_week9": 372,
+   "budget_entering_week13": 153,
    "players": [
     {
      "name": "Nico Collins",
@@ -1904,23 +1904,23 @@
     0.9473,
     0.8936,
     0.8682,
-    0.7856,
-    0.7627,
-    0.6816,
-    0.6162,
-    0.5415,
-    0.4917,
-    0.3955,
-    0.2925,
-    0.2075,
-    0.1069
+    0.7861,
+    0.7632,
+    0.6846,
+    0.6206,
+    0.5493,
+    0.4985,
+    0.4043,
+    0.3091,
+    0.2168,
+    0.1118
    ],
-   "p_reach_final": 0.1069,
-   "p_title": 0.0474,
+   "p_reach_final": 0.1118,
+   "p_title": 0.0518,
    "spend_now": 8,
    "p_claim_now": 0.291,
-   "budget_entering_week9": 575,
-   "budget_entering_week13": 259,
+   "budget_entering_week9": 574,
+   "budget_entering_week13": 257,
    "players": [
     {
      "name": "Chase Brown",
@@ -2000,23 +2000,23 @@
     0.9678,
     0.9297,
     0.8989,
-    0.8711,
+    0.8706,
     0.8203,
-    0.7451,
-    0.6738,
-    0.5625,
-    0.4873,
-    0.3936,
-    0.3076,
-    0.1807,
-    0.0854
+    0.7446,
+    0.6763,
+    0.5684,
+    0.4878,
+    0.397,
+    0.3022,
+    0.1924,
+    0.0835
    ],
-   "p_reach_final": 0.0854,
+   "p_reach_final": 0.0835,
    "p_title": 0.0381,
    "spend_now": 10,
    "p_claim_now": 0.287,
    "budget_entering_week9": 560,
-   "budget_entering_week13": 227,
+   "budget_entering_week13": 231,
    "players": [
     {
      "name": "Tyler Shough",
@@ -2084,23 +2084,23 @@
     0.9907,
     0.9854,
     0.981,
-    0.9731,
-    0.9443,
-    0.8931,
-    0.8359,
-    0.7417,
-    0.6577,
-    0.5635,
-    0.4517,
-    0.2964,
-    0.1382
+    0.9736,
+    0.9453,
+    0.8945,
+    0.8379,
+    0.7383,
+    0.6572,
+    0.564,
+    0.4404,
+    0.3037,
+    0.146
    ],
-   "p_reach_final": 0.1382,
-   "p_title": 0.0645,
+   "p_reach_final": 0.146,
+   "p_title": 0.0649,
    "spend_now": 3,
    "p_claim_now": 0.216,
-   "budget_entering_week9": 482,
-   "budget_entering_week13": 220,
+   "budget_entering_week9": 483,
+   "budget_entering_week13": 216,
    "players": [
     {
      "name": "Trevor Lawrence",
@@ -2167,24 +2167,24 @@
    "p_alive_by_week": [
     0.9121,
     0.8149,
-    0.7544,
-    0.6562,
-    0.5293,
-    0.4824,
-    0.4248,
-    0.3711,
-    0.3257,
-    0.2637,
-    0.1909,
-    0.1313,
-    0.0674
+    0.7549,
+    0.6572,
+    0.5322,
+    0.4834,
+    0.4272,
+    0.3789,
+    0.3315,
+    0.2705,
+    0.2007,
+    0.1367,
+    0.0601
    ],
-   "p_reach_final": 0.0674,
-   "p_title": 0.0293,
+   "p_reach_final": 0.0601,
+   "p_title": 0.0269,
    "spend_now": 9,
    "p_claim_now": 0.276,
-   "budget_entering_week9": 490,
-   "budget_entering_week13": 226,
+   "budget_entering_week9": 489,
+   "budget_entering_week13": 229,
    "players": [
     {
      "name": "De'Von Achane",
@@ -2256,21 +2256,21 @@
    "p_cut_now": 0.0034,
    "p_alive_by_week": [
     0.9966,
-    0.9814,
-    0.96,
-    0.9087,
-    0.8931,
-    0.8101,
-    0.7495,
-    0.6943,
-    0.5913,
-    0.4844,
-    0.3618,
-    0.2354,
-    0.1099
+    0.981,
+    0.959,
+    0.9058,
+    0.8906,
+    0.8062,
+    0.7427,
+    0.6924,
+    0.5977,
+    0.4775,
+    0.3638,
+    0.2446,
+    0.1147
    ],
-   "p_reach_final": 0.1099,
-   "p_title": 0.0518,
+   "p_reach_final": 0.1147,
+   "p_title": 0.0576,
    "spend_now": 3,
    "p_claim_now": 0.19,
    "budget_entering_week9": 355,
@@ -2341,24 +2341,24 @@
    "p_alive_by_week": [
     0.9321,
     0.8354,
-    0.7515,
-    0.7085,
-    0.5439,
-    0.4424,
-    0.3721,
-    0.3071,
-    0.231,
-    0.1782,
-    0.1372,
-    0.0874,
-    0.041
+    0.7505,
+    0.7075,
+    0.541,
+    0.4404,
+    0.3652,
+    0.3008,
+    0.2192,
+    0.1631,
+    0.1196,
+    0.0703,
+    0.0356
    ],
-   "p_reach_final": 0.041,
-   "p_title": 0.0195,
+   "p_reach_final": 0.0356,
+   "p_title": 0.0161,
    "spend_now": 6,
    "p_claim_now": 0.163,
-   "budget_entering_week9": 470,
-   "budget_entering_week13": 165,
+   "budget_entering_week9": 472,
+   "budget_entering_week13": 172,
    "players": [
     {
      "name": "Josh Allen",
@@ -2500,25 +2500,25 @@
    "p_cut_now": 0.0625,
    "p_alive_by_week": [
     0.9375,
-    0.8647,
-    0.7959,
-    0.7261,
-    0.6396,
-    0.5283,
-    0.4482,
-    0.3501,
-    0.292,
-    0.2363,
-    0.1763,
-    0.1143,
-    0.0547
+    0.8643,
+    0.7964,
+    0.7305,
+    0.6455,
+    0.5303,
+    0.4502,
+    0.3511,
+    0.293,
+    0.2402,
+    0.1724,
+    0.1167,
+    0.0542
    ],
-   "p_reach_final": 0.0547,
-   "p_title": 0.0229,
+   "p_reach_final": 0.0542,
+   "p_title": 0.021,
    "spend_now": 11,
    "p_claim_now": 0.274,
-   "budget_entering_week9": 542,
-   "budget_entering_week13": 179,
+   "budget_entering_week9": 540,
+   "budget_entering_week13": 178,
    "players": [
     {
      "name": "Jalen Hurts",
@@ -2621,23 +2621,23 @@
     0.9795,
     0.9131,
     0.8652,
-    0.6294,
-    0.5859,
-    0.4648,
-    0.3896,
-    0.3315,
-    0.2446,
-    0.189,
-    0.144,
-    0.0884,
+    0.625,
+    0.5825,
+    0.4653,
+    0.3906,
+    0.332,
+    0.2432,
+    0.1909,
+    0.1392,
+    0.0859,
     0.0391
    ],
    "p_reach_final": 0.0391,
-   "p_title": 0.0176,
+   "p_title": 0.0234,
    "spend_now": 3,
    "p_claim_now": 0.076,
    "budget_entering_week9": 685,
-   "budget_entering_week13": 211,
+   "budget_entering_week13": 212,
    "players": [
     {
      "name": "Jahmyr Gibbs",
@@ -2738,25 +2738,25 @@
    "p_cut_now": 0.0669,
    "p_alive_by_week": [
     0.9331,
-    0.8638,
+    0.8643,
     0.811,
-    0.7632,
-    0.5771,
-    0.5264,
-    0.459,
-    0.3403,
-    0.2339,
-    0.1768,
-    0.1475,
-    0.1006,
-    0.0483
+    0.7637,
+    0.5786,
+    0.5254,
+    0.4585,
+    0.3369,
+    0.2314,
+    0.1787,
+    0.1445,
+    0.1045,
+    0.0557
    ],
-   "p_reach_final": 0.0483,
-   "p_title": 0.0264,
+   "p_reach_final": 0.0557,
+   "p_title": 0.0283,
    "spend_now": 2,
    "p_claim_now": 0.074,
-   "budget_entering_week9": 670,
-   "budget_entering_week13": 196,
+   "budget_entering_week9": 667,
+   "budget_entering_week13": 194,
    "players": [
     {
      "name": "Bijan Robinson",
@@ -2822,25 +2822,25 @@
    "p_cut_now": 0.0908,
    "p_alive_by_week": [
     0.9092,
-    0.7734,
-    0.6841,
-    0.6289,
-    0.5576,
-    0.5088,
+    0.7739,
+    0.6851,
+    0.6279,
+    0.5552,
+    0.5107,
     0.4214,
-    0.3652,
-    0.2881,
-    0.2139,
-    0.1514,
-    0.0811,
-    0.0322
+    0.3662,
+    0.29,
+    0.2163,
+    0.1572,
+    0.0894,
+    0.0356
    ],
-   "p_reach_final": 0.0322,
-   "p_title": 0.0142,
+   "p_reach_final": 0.0356,
+   "p_title": 0.0151,
    "spend_now": 9,
    "p_claim_now": 0.284,
    "budget_entering_week9": 554,
-   "budget_entering_week13": 189,
+   "budget_entering_week13": 187,
    "players": [
     {
      "name": "Dak Prescott",
@@ -2919,24 +2919,24 @@
    "p_alive_by_week": [
     0.895,
     0.7495,
-    0.5928,
-    0.3857,
-    0.2988,
-    0.2554,
-    0.168,
-    0.1431,
-    0.1147,
-    0.0854,
-    0.0483,
-    0.0312,
-    0.0142
+    0.5933,
+    0.3853,
+    0.2983,
+    0.2559,
+    0.1685,
+    0.1436,
+    0.1152,
+    0.083,
+    0.0527,
+    0.0288,
+    0.0078
    ],
-   "p_reach_final": 0.0142,
-   "p_title": 0.0059,
+   "p_reach_final": 0.0078,
+   "p_title": 0.002,
    "spend_now": 4,
    "p_claim_now": 0.071,
-   "budget_entering_week9": 567,
-   "budget_entering_week13": 139,
+   "budget_entering_week9": 563,
+   "budget_entering_week13": 149,
    "players": [
     {
      "name": "Justin Jefferson",
@@ -3003,24 +3003,24 @@
    "p_alive_by_week": [
     0.917,
     0.8228,
-    0.6582,
-    0.6265,
-    0.583,
-    0.4053,
-    0.3398,
-    0.29,
-    0.2212,
-    0.1553,
-    0.105,
-    0.0645,
-    0.0239
+    0.6592,
+    0.6284,
+    0.5845,
+    0.4062,
+    0.3408,
+    0.2886,
+    0.2222,
+    0.1602,
+    0.104,
+    0.0649,
+    0.0264
    ],
-   "p_reach_final": 0.0239,
-   "p_title": 0.0098,
+   "p_reach_final": 0.0264,
+   "p_title": 0.0103,
    "spend_now": 6,
    "p_claim_now": 0.208,
-   "budget_entering_week9": 365,
-   "budget_entering_week13": 121,
+   "budget_entering_week9": 367,
+   "budget_entering_week13": 124,
    "players": [
     {
      "name": "Brock Purdy",
@@ -3088,23 +3088,23 @@
     0.9331,
     0.8818,
     0.8521,
-    0.7671,
-    0.708,
-    0.6641,
-    0.5801,
-    0.501,
-    0.3975,
-    0.291,
-    0.209,
-    0.1152,
-    0.0483
+    0.7676,
+    0.71,
+    0.665,
+    0.5845,
+    0.5073,
+    0.4058,
+    0.2886,
+    0.2075,
+    0.1167,
+    0.0444
    ],
-   "p_reach_final": 0.0483,
-   "p_title": 0.0176,
+   "p_reach_final": 0.0444,
+   "p_title": 0.0156,
    "spend_now": 3,
    "p_claim_now": 0.294,
    "budget_entering_week9": 136,
-   "budget_entering_week13": 52,
+   "budget_entering_week13": 51,
    "players": [
     {
      "name": "Ja'Marr Chase",
@@ -3171,24 +3171,24 @@
    "p_alive_by_week": [
     0.978,
     0.938,
-    0.7993,
+    0.7988,
     0.7036,
-    0.6079,
-    0.5044,
-    0.4238,
-    0.3604,
+    0.6069,
+    0.501,
+    0.4214,
+    0.3564,
     0.2637,
-    0.1929,
-    0.1245,
-    0.0669,
-    0.0254
+    0.1895,
+    0.1294,
+    0.083,
+    0.0308
    ],
-   "p_reach_final": 0.0254,
-   "p_title": 0.0103,
+   "p_reach_final": 0.0308,
+   "p_title": 0.0127,
    "spend_now": 2,
    "p_claim_now": 0.077,
-   "budget_entering_week9": 695,
-   "budget_entering_week13": 211,
+   "budget_entering_week9": 692,
+   "budget_entering_week13": 212,
    "players": [
     {
      "name": "Drake Maye",
@@ -3255,24 +3255,24 @@
    "p_alive_by_week": [
     0.7246,
     0.5366,
-    0.4194,
-    0.3486,
-    0.2041,
-    0.1636,
-    0.104,
-    0.0859,
-    0.0659,
-    0.0498,
+    0.4204,
+    0.3496,
+    0.2061,
+    0.1631,
+    0.1045,
+    0.0825,
+    0.0645,
+    0.0469,
     0.0254,
-    0.0117,
-    0.0039
+    0.0146,
+    0.0068
    ],
-   "p_reach_final": 0.0039,
-   "p_title": 0.0029,
+   "p_reach_final": 0.0068,
+   "p_title": 0.0034,
    "spend_now": 6,
    "p_claim_now": 0.079,
-   "budget_entering_week9": 563,
-   "budget_entering_week13": 148,
+   "budget_entering_week9": 562,
+   "budget_entering_week13": 155,
    "players": [
     {
      "name": "Justin Herbert",
@@ -3338,25 +3338,25 @@
    "p_cut_now": 0.0068,
    "p_alive_by_week": [
     0.9932,
-    0.9648,
+    0.9653,
     0.9482,
-    0.9258,
-    0.9023,
-    0.8364,
-    0.7612,
-    0.6772,
-    0.5591,
-    0.4595,
-    0.3467,
-    0.2466,
-    0.1196
+    0.9272,
+    0.9038,
+    0.8394,
+    0.7617,
+    0.6733,
+    0.5542,
+    0.4546,
+    0.3477,
+    0.2324,
+    0.1143
    ],
-   "p_reach_final": 0.1196,
-   "p_title": 0.0596,
+   "p_reach_final": 0.1143,
+   "p_title": 0.0586,
    "spend_now": 6,
    "p_claim_now": 0.283,
    "budget_entering_week9": 479,
-   "budget_entering_week13": 221,
+   "budget_entering_week13": 215,
    "players": [
     {
      "name": "Baker Mayfield",
@@ -3423,24 +3423,24 @@
    "p_alive_by_week": [
     0.9639,
     0.9224,
-    0.8691,
-    0.7905,
-    0.7495,
-    0.6313,
-    0.54,
-    0.4976,
-    0.4355,
-    0.3452,
-    0.2725,
-    0.186,
-    0.084
+    0.8696,
+    0.791,
+    0.7524,
+    0.6318,
+    0.543,
+    0.498,
+    0.4346,
+    0.3428,
+    0.2749,
+    0.1826,
+    0.082
    ],
-   "p_reach_final": 0.084,
-   "p_title": 0.0337,
+   "p_reach_final": 0.082,
+   "p_title": 0.0332,
    "spend_now": 7,
    "p_claim_now": 0.183,
-   "budget_entering_week9": 634,
-   "budget_entering_week13": 263,
+   "budget_entering_week9": 635,
+   "budget_entering_week13": 261,
    "players": [
     {
      "name": "Christian McCaffrey",
@@ -3513,24 +3513,24 @@
    "p_alive_by_week": [
     0.9785,
     0.9448,
-    0.9194,
-    0.8394,
-    0.8076,
-    0.7417,
-    0.6465,
-    0.5615,
-    0.4873,
-    0.3618,
-    0.2383,
-    0.1309,
-    0.0601
+    0.9189,
+    0.8369,
+    0.8032,
+    0.7373,
+    0.6431,
+    0.5576,
+    0.4795,
+    0.3594,
+    0.2388,
+    0.1348,
+    0.063
    ],
-   "p_reach_final": 0.0601,
-   "p_title": 0.0264,
+   "p_reach_final": 0.063,
+   "p_title": 0.0308,
    "spend_now": 4,
    "p_claim_now": 0.289,
-   "budget_entering_week9": 286,
-   "budget_entering_week13": 123,
+   "budget_entering_week9": 287,
+   "budget_entering_week13": 126,
    "players": [
     {
      "name": "Joe Burrow",
@@ -3604,23 +3604,23 @@
     0.9531,
     0.8701,
     0.7617,
-    0.708,
-    0.6362,
-    0.5361,
-    0.4497,
+    0.7104,
+    0.6392,
+    0.5386,
+    0.4512,
     0.3916,
-    0.3364,
-    0.2646,
-    0.1841,
-    0.1274,
-    0.063
+    0.3369,
+    0.2637,
+    0.1816,
+    0.1216,
+    0.0601
    ],
-   "p_reach_final": 0.063,
-   "p_title": 0.0347,
+   "p_reach_final": 0.0601,
+   "p_title": 0.0288,
    "spend_now": 10,
    "p_claim_now": 0.296,
-   "budget_entering_week9": 502,
-   "budget_entering_week13": 197,
+   "budget_entering_week9": 500,
+   "budget_entering_week13": 194,
    "players": [
     {
      "name": "Patrick Mahomes",
@@ -3687,24 +3687,24 @@
    "p_alive_by_week": [
     0.8579,
     0.7554,
-    0.6768,
+    0.6763,
     0.5005,
-    0.3774,
-    0.3213,
-    0.2456,
-    0.1611,
-    0.1274,
-    0.0898,
-    0.0576,
-    0.0327,
+    0.376,
+    0.3198,
+    0.2466,
+    0.1606,
+    0.1299,
+    0.0928,
+    0.0625,
+    0.0337,
     0.0127
    ],
    "p_reach_final": 0.0127,
-   "p_title": 0.0059,
+   "p_title": 0.0049,
    "spend_now": 2,
    "p_claim_now": 0.078,
-   "budget_entering_week9": 645,
-   "budget_entering_week13": 153,
+   "budget_entering_week9": 638,
+   "budget_entering_week13": 156,
    "players": [
     {
      "name": "Malik Willis",
@@ -3770,25 +3770,25 @@
    "p_cut_now": 0.2993,
    "p_alive_by_week": [
     0.7007,
-    0.5264,
-    0.4028,
-    0.3721,
-    0.3262,
-    0.2925,
-    0.2373,
-    0.1978,
-    0.1519,
-    0.1157,
-    0.0723,
-    0.0454,
-    0.0161
+    0.5259,
+    0.4023,
+    0.3726,
+    0.3247,
+    0.29,
+    0.231,
+    0.1934,
+    0.1489,
+    0.1133,
+    0.0684,
+    0.0396,
+    0.0195
    ],
-   "p_reach_final": 0.0161,
-   "p_title": 0.0054,
+   "p_reach_final": 0.0195,
+   "p_title": 0.0093,
    "spend_now": 23,
    "p_claim_now": 0.193,
-   "budget_entering_week9": 464,
-   "budget_entering_week13": 162,
+   "budget_entering_week9": 469,
+   "budget_entering_week13": 157,
    "players": [
     {
      "name": "Ashton Jeanty",
@@ -3843,24 +3843,24 @@
    "p_alive_by_week": [
     0.9658,
     0.9136,
-    0.8677,
-    0.8193,
-    0.7412,
-    0.6831,
+    0.8682,
+    0.8203,
+    0.7407,
+    0.6836,
     0.6074,
-    0.374,
-    0.3306,
-    0.2715,
-    0.2134,
-    0.1387,
-    0.063
+    0.3657,
+    0.3232,
+    0.2617,
+    0.2065,
+    0.1299,
+    0.0552
    ],
-   "p_reach_final": 0.063,
-   "p_title": 0.0254,
+   "p_reach_final": 0.0552,
+   "p_title": 0.0205,
    "spend_now": 3,
    "p_claim_now": 0.178,
-   "budget_entering_week9": 323,
-   "budget_entering_week13": 85,
+   "budget_entering_week9": 324,
+   "budget_entering_week13": 86,
    "players": [
     {
      "name": "James Cook",
@@ -3925,13 +3925,11 @@
     "sigma": 1.133
    },
    "prior_log_mae": 1.063,
-   "legacy_log_mae": 1.085,
    "fitted_log_mae": 0.892,
    "latest_week_holdout": {
     "test_week": 3,
     "positive_bids_tested": 64,
     "prior_log_mae": 1.309,
-    "legacy_log_mae": 1.218,
     "fitted_log_mae": 0.999,
     "fitted_mean_log_ratio": 0.385
    },
@@ -4829,7 +4827,7 @@
    {
     "week": 4,
     "mean": 49.0,
-    "p10": 39.9,
+    "p10": 40.0,
     "p90": 57.4
    },
    {
@@ -4840,66 +4838,66 @@
    },
    {
     "week": 6,
-    "mean": 50.6,
-    "p10": 40.6,
-    "p90": 60.7
+    "mean": 50.5,
+    "p10": 40.4,
+    "p90": 60.6
    },
    {
     "week": 7,
     "mean": 57.5,
-    "p10": 45.6,
-    "p90": 68.9
+    "p10": 45.5,
+    "p90": 68.8
    },
    {
     "week": 8,
-    "mean": 66.5,
-    "p10": 55.6,
+    "mean": 66.7,
+    "p10": 55.7,
     "p90": 77.0
    },
    {
     "week": 9,
-    "mean": 83.2,
-    "p10": 71.5,
-    "p90": 94.4
+    "mean": 83.3,
+    "p10": 71.7,
+    "p90": 94.6
    },
    {
     "week": 10,
-    "mean": 87.4,
-    "p10": 74.8,
-    "p90": 98.9
+    "mean": 87.5,
+    "p10": 74.9,
+    "p90": 98.8
    },
    {
     "week": 11,
     "mean": 92.5,
     "p10": 79.9,
-    "p90": 104.4
+    "p90": 104.5
    },
    {
     "week": 12,
-    "mean": 117.5,
-    "p10": 105.1,
+    "mean": 117.2,
+    "p10": 105.0,
     "p90": 129.3
    },
    {
     "week": 13,
-    "mean": 123.0,
-    "p10": 108.9,
-    "p90": 136.3
+    "mean": 123.1,
+    "p10": 109.1,
+    "p90": 136.7
    },
    {
     "week": 14,
-    "mean": 157.8,
-    "p10": 141.6,
-    "p90": 173.4
+    "mean": 157.3,
+    "p10": 140.7,
+    "p90": 172.3
    },
    {
     "week": 15,
     "mean": 181.7,
-    "p10": 163.1,
-    "p90": 199.6
+    "p10": 163.3,
+    "p90": 200.2
    }
   ],
-  "champion_bar_mean": 400.5,
+  "champion_bar_mean": 399.4,
   "mean_budget_by_week": [
    {
     "week": 3,
@@ -4931,7 +4929,7 @@
    },
    {
     "week": 10,
-    "budget": 406
+    "budget": 407
    },
    {
     "week": 11,
@@ -4939,23 +4937,23 @@
    },
    {
     "week": 12,
-    "budget": 252
+    "budget": 251
    },
    {
     "week": 13,
-    "budget": 183
+    "budget": 184
    },
    {
     "week": 14,
-    "budget": 138
+    "budget": 136
    },
    {
     "week": 15,
-    "budget": 69
+    "budget": 68
    },
    {
     "week": 16,
-    "budget": 9
+    "budget": 10
    },
    {
     "week": 17,

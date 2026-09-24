@@ -1,6 +1,6 @@
 {
-  "value_input": "pool.json weekly_points (DraftSharks per-week, league scoring), season total blended 2:1 with Sleeper's league-scored projection (ranker/projections.py)",
-  "method": "Roster value is each week's expected optimal legal lineup under that week's starting shape and position-wide availability, combined across weeks 1-17 by the converged guillotine week weights; see rank.py and ranker/*.py.",
+  "value_input": "pool.json weekly_points (DraftSharks per-week, league scoring), season total blended 2:1 with Sleeper's league-scored projection (draft/pool.py)",
+  "method": "Roster value is each week's expected optimal legal lineup under that week's starting shape and position-wide availability, combined across weeks 1-17 by the converged guillotine week weights; see draft/rank.py and draft/*.py.",
   "league": {
     "teams": 32,
     "format": "guillotine: the two lowest weekly scores are eliminated each of weeks 1-15 and their players hit waivers; the last two teams play a week 16-17 total-points championship",
@@ -5133,7 +5133,7 @@
     ]
   },
   "my_next_picks": {
-    "note": "value_now is the candidate's marginal guillotine-weighted lineup value; next_pick_ev is E[best option at my following pick] if I take him. At my first pending pick next_pick_ev comes from conditional opponent redraws, and rollout_ev/rollout_edge/rollout_se score each candidate's best four-pick target plan over the whole remaining draft; `take` is the rollout's recommendation conditional on availability. p_available_if_i_pass is measured from redraws where my slot never takes him. See ranker/rankings.py and ranker/planning.py.",
+    "note": "value_now is the candidate's marginal guillotine-weighted lineup value; next_pick_ev is E[best option at my following pick] if I take him. At my first pending pick next_pick_ev comes from conditional opponent redraws, and rollout_ev/rollout_edge/rollout_se score each candidate's best four-pick target plan over the whole remaining draft; `take` is the rollout's recommendation conditional on availability. p_available_if_i_pass is measured from redraws where my slot never takes him. See draft/rankings.py and draft/planning.py.",
     "option_sims": null,
     "rollout_sims": null,
     "lookahead_picks": 4,
@@ -5576,7 +5576,7 @@
     ]
   },
   "guillotine": {
-    "note": "Elimination race simulated over the opponents' rosters each fixed-point iteration; a week's weight is d log P(title) / d(weekly point). See ranker/guillotine.py.",
+    "note": "Elimination race simulated over the opponents' rosters each fixed-point iteration; a week's weight is d log P(title) / d(weekly point). See draft/guillotine.py.",
     "weekly_shapes": [
       {
         "week": 1,
