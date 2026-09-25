@@ -71,7 +71,7 @@ It refetches projections (DraftSharks weekly for the weeks still to play, Sleepe
 season), fetches the league state (including Sleeper weekly projections), and runs the
 season model. The NFL week comes from Sleeper. Each stage must succeed before the next
 starts; a failure exits nonzero without printing recommendations from an older run.
-The season model takes about three minutes at six workers; `--sims 256` runs it in
+The season model takes about 90 seconds at 8 workers; `--sims 256` runs it in
 under half a minute for a quick check, with correspondingly noisier odds.
 
 The terminal summary shows the remaining budget, any reserve body to activate and the

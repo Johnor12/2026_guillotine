@@ -2,7 +2,7 @@
  "source": "https://www.draftsharks.com/weekly-rankings/1/flex/half-ppr",
  "league_id": "1397662420398247936",
  "season": "2026",
- "fetched_at": "2026-09-23T20:38:01+00:00",
+ "fetched_at": "2026-09-25T12:46:13+00:00",
  "scoring": {
   "pass_yd": 0.04,
   "pass_td": 4.0,
@@ -88,7 +88,7 @@
      "points": 20.0
     },
     "3": {
-     "points": 20.45
+     "points": 20.39
     },
     "4": {
      "points": 19.78
@@ -147,7 +147,7 @@
      "points": 19.01
     },
     "3": {
-     "points": 20.37
+     "points": 19.86
     },
     "4": {
      "points": 19.01
@@ -206,7 +206,7 @@
      "points": 19.28
     },
     "3": {
-     "points": 20.66
+     "points": 20.79
     },
     "4": {
      "points": 19.15
@@ -265,7 +265,7 @@
      "points": 18.42
     },
     "3": {
-     "points": 17.42
+     "points": 17.15
     },
     "4": {
      "points": 19.27
@@ -308,65 +308,6 @@
     },
     "18": {
      "points": 19.27
-    }
-   }
-  },
-  {
-   "player_id": 10748,
-   "name": "Trevor Lawrence",
-   "position": "QB",
-   "team": "JAC",
-   "weeks": {
-    "1": {
-     "points": 19.07
-    },
-    "2": {
-     "points": 17.5
-    },
-    "3": {
-     "points": 18.11
-    },
-    "4": {
-     "points": 19.07
-    },
-    "5": {
-     "points": 19.07
-    },
-    "6": {
-     "points": 19.07
-    },
-    "8": {
-     "points": 19.07
-    },
-    "9": {
-     "points": 19.07
-    },
-    "10": {
-     "points": 19.07
-    },
-    "11": {
-     "points": 19.07
-    },
-    "12": {
-     "points": 19.07
-    },
-    "13": {
-     "points": 19.07
-    },
-    "14": {
-     "points": 19.07
-    },
-    "15": {
-     "points": 19.07
-    },
-    "16": {
-     "points": 19.07
-    },
-    "17": {
-     "points": 19.07
-    },
-    "18": {
-     "points": 19.07
     }
    }
   },
@@ -426,6 +367,65 @@
     },
     "18": {
      "points": 19.09
+    }
+   }
+  },
+  {
+   "player_id": 10748,
+   "name": "Trevor Lawrence",
+   "position": "QB",
+   "team": "JAC",
+   "weeks": {
+    "1": {
+     "points": 19.07
+    },
+    "2": {
+     "points": 17.5
+    },
+    "3": {
+     "points": 17.97
+    },
+    "4": {
+     "points": 19.07
+    },
+    "5": {
+     "points": 19.07
+    },
+    "6": {
+     "points": 19.07
+    },
+    "8": {
+     "points": 19.07
+    },
+    "9": {
+     "points": 19.07
+    },
+    "10": {
+     "points": 19.07
+    },
+    "11": {
+     "points": 19.07
+    },
+    "12": {
+     "points": 19.07
+    },
+    "13": {
+     "points": 19.07
+    },
+    "14": {
+     "points": 19.07
+    },
+    "15": {
+     "points": 19.07
+    },
+    "16": {
+     "points": 19.07
+    },
+    "17": {
+     "points": 19.07
+    },
+    "18": {
+     "points": 19.07
     }
    }
   },
@@ -560,7 +560,7 @@
      "points": 18.32
     },
     "3": {
-     "points": 17.13
+     "points": 17.19
     },
     "4": {
      "points": 18.73
@@ -619,7 +619,7 @@
      "points": 18.32
     },
     "3": {
-     "points": 17.34
+     "points": 16.79
     },
     "4": {
      "points": 18.02
@@ -734,7 +734,7 @@
      "points": 16.64
     },
     "3": {
-     "points": 18.7
+     "points": 18.63
     },
     "4": {
      "points": 18.01
@@ -1085,7 +1085,7 @@
      "points": 16.24
     },
     "3": {
-     "points": 17.32
+     "points": 17.34
     },
     "4": {
      "points": 17.61
@@ -1203,7 +1203,7 @@
      "points": 17.09
     },
     "3": {
-     "points": 16.29
+     "points": 16.1
     },
     "4": {
      "points": 16.72
@@ -1262,7 +1262,7 @@
      "points": 16.06
     },
     "3": {
-     "points": 16.69
+     "points": 16.87
     },
     "4": {
      "points": 16.9
@@ -1495,7 +1495,7 @@
      "points": 15.82
     },
     "3": {
-     "points": 16.52
+     "points": 16.5
     },
     "4": {
      "points": 16.11
@@ -1613,7 +1613,7 @@
      "points": 16.22
     },
     "3": {
-     "points": 14.67
+     "points": 14.66
     },
     "4": {
      "points": 16.08
@@ -1672,7 +1672,7 @@
      "points": 15.7
     },
     "3": {
-     "points": 16.57
+     "points": 16.87
     },
     "4": {
      "points": 15.6
@@ -1731,7 +1731,7 @@
      "points": 16.16
     },
     "3": {
-     "points": 16.68
+     "points": 17.05
     },
     "4": {
      "points": 15.76
@@ -1790,7 +1790,7 @@
      "points": 14.35
     },
     "3": {
-     "points": 13.29
+     "points": 13.39
     },
     "4": {
      "points": 16.02
@@ -1849,7 +1849,7 @@
      "points": 15.95
     },
     "3": {
-     "points": 14.74
+     "points": 15.0
     },
     "4": {
      "points": 15.7
@@ -1908,7 +1908,7 @@
      "points": 16.07
     },
     "3": {
-     "points": 16.33
+     "points": 16.24
     },
     "4": {
      "points": 15.67
@@ -2026,7 +2026,7 @@
      "points": 14.13
     },
     "3": {
-     "points": 14.05
+     "points": 13.9
     },
     "4": {
      "points": 15.66
@@ -2073,65 +2073,6 @@
    }
   },
   {
-   "player_id": 13680,
-   "name": "Puka Nacua",
-   "position": "WR",
-   "team": "LAR",
-   "weeks": {
-    "1": {
-     "points": 16.5
-    },
-    "2": {
-     "points": 15.98
-    },
-    "3": {
-     "points": 12.92
-    },
-    "4": {
-     "points": 15.07
-    },
-    "5": {
-     "points": 15.6
-    },
-    "6": {
-     "points": 15.6
-    },
-    "7": {
-     "points": 15.6
-    },
-    "8": {
-     "points": 15.6
-    },
-    "9": {
-     "points": 15.6
-    },
-    "10": {
-     "points": 15.6
-    },
-    "12": {
-     "points": 15.6
-    },
-    "13": {
-     "points": 15.6
-    },
-    "14": {
-     "points": 15.6
-    },
-    "15": {
-     "points": 15.6
-    },
-    "16": {
-     "points": 15.6
-    },
-    "17": {
-     "points": 15.6
-    },
-    "18": {
-     "points": 15.6
-    }
-   }
-  },
-  {
    "player_id": 13573,
    "name": "Dalton Kincaid",
    "position": "TE",
@@ -2144,7 +2085,7 @@
      "points": 12.66
     },
     "3": {
-     "points": 13.76
+     "points": 13.92
     },
     "4": {
      "points": 16.03
@@ -2321,7 +2262,7 @@
      "points": 14.56
     },
     "3": {
-     "points": 13.19
+     "points": 13.1
     },
     "4": {
      "points": 14.98
@@ -2368,61 +2309,117 @@
    }
   },
   {
-   "player_id": 13563,
-   "name": "De'Von Achane",
-   "position": "RB",
-   "team": "MIA",
+   "player_id": 13680,
+   "name": "Puka Nacua",
+   "position": "WR",
+   "team": "LAR",
    "weeks": {
     "1": {
-     "points": 14.55
+     "points": 16.5
     },
     "2": {
-     "points": 14.31
-    },
-    "3": {
-     "points": 14.24
+     "points": 15.98
     },
     "4": {
-     "points": 14.26
+     "points": 15.07
     },
     "5": {
-     "points": 14.26
+     "points": 15.6
+    },
+    "6": {
+     "points": 15.6
     },
     "7": {
-     "points": 14.26
+     "points": 15.6
     },
     "8": {
-     "points": 14.26
+     "points": 15.6
     },
     "9": {
-     "points": 14.26
+     "points": 15.6
     },
     "10": {
-     "points": 14.26
-    },
-    "11": {
-     "points": 14.26
+     "points": 15.6
     },
     "12": {
-     "points": 14.26
+     "points": 15.6
     },
     "13": {
-     "points": 14.26
+     "points": 15.6
     },
     "14": {
-     "points": 14.26
+     "points": 15.6
     },
     "15": {
-     "points": 14.26
+     "points": 15.6
     },
     "16": {
-     "points": 14.26
+     "points": 15.6
     },
     "17": {
-     "points": 14.26
+     "points": 15.6
     },
     "18": {
-     "points": 14.26
+     "points": 15.6
+    }
+   }
+  },
+  {
+   "player_id": 35310,
+   "name": "Cameron Ward",
+   "position": "QB",
+   "team": "TEN",
+   "weeks": {
+    "1": {
+     "points": 15.12
+    },
+    "2": {
+     "points": 12.69
+    },
+    "3": {
+     "points": 12.8
+    },
+    "4": {
+     "points": 14.24
+    },
+    "5": {
+     "points": 14.46
+    },
+    "6": {
+     "points": 14.46
+    },
+    "7": {
+     "points": 14.46
+    },
+    "8": {
+     "points": 14.46
+    },
+    "10": {
+     "points": 14.46
+    },
+    "11": {
+     "points": 14.46
+    },
+    "12": {
+     "points": 14.46
+    },
+    "13": {
+     "points": 14.46
+    },
+    "14": {
+     "points": 14.46
+    },
+    "15": {
+     "points": 14.46
+    },
+    "16": {
+     "points": 14.46
+    },
+    "17": {
+     "points": 14.46
+    },
+    "18": {
+     "points": 14.46
     }
    }
   },
@@ -2486,61 +2483,61 @@
    }
   },
   {
-   "player_id": 35310,
-   "name": "Cameron Ward",
-   "position": "QB",
-   "team": "TEN",
+   "player_id": 13563,
+   "name": "De'Von Achane",
+   "position": "RB",
+   "team": "MIA",
    "weeks": {
     "1": {
-     "points": 15.12
+     "points": 14.55
     },
     "2": {
-     "points": 12.69
+     "points": 14.31
     },
     "3": {
-     "points": 12.68
+     "points": 14.09
     },
     "4": {
-     "points": 14.24
+     "points": 14.26
     },
     "5": {
-     "points": 14.46
-    },
-    "6": {
-     "points": 14.46
+     "points": 14.26
     },
     "7": {
-     "points": 14.46
+     "points": 14.26
     },
     "8": {
-     "points": 14.46
+     "points": 14.26
+    },
+    "9": {
+     "points": 14.26
     },
     "10": {
-     "points": 14.46
+     "points": 14.26
     },
     "11": {
-     "points": 14.46
+     "points": 14.26
     },
     "12": {
-     "points": 14.46
+     "points": 14.26
     },
     "13": {
-     "points": 14.46
+     "points": 14.26
     },
     "14": {
-     "points": 14.46
+     "points": 14.26
     },
     "15": {
-     "points": 14.46
+     "points": 14.26
     },
     "16": {
-     "points": 14.46
+     "points": 14.26
     },
     "17": {
-     "points": 14.46
+     "points": 14.26
     },
     "18": {
-     "points": 14.46
+     "points": 14.26
     }
    }
   },
@@ -2557,7 +2554,7 @@
      "points": 13.57
     },
     "3": {
-     "points": 14.94
+     "points": 15.06
     },
     "4": {
      "points": 14.14
@@ -2849,7 +2846,7 @@
      "points": 13.09
     },
     "3": {
-     "points": 13.67
+     "points": 13.93
     },
     "4": {
      "points": 13.61
@@ -2908,7 +2905,7 @@
      "points": 13.36
     },
     "3": {
-     "points": 13.06
+     "points": 13.0
     },
     "4": {
      "points": 13.35
@@ -3014,6 +3011,59 @@
    }
   },
   {
+   "player_id": 9963,
+   "name": "Sam Darnold",
+   "position": "QB",
+   "team": "SEA",
+   "weeks": {
+    "1": {
+     "points": 15.04
+    },
+    "3": {
+     "points": 15.09
+    },
+    "4": {
+     "points": 14.82
+    },
+    "6": {
+     "points": 15.04
+    },
+    "7": {
+     "points": 15.04
+    },
+    "8": {
+     "points": 15.04
+    },
+    "9": {
+     "points": 15.04
+    },
+    "10": {
+     "points": 15.04
+    },
+    "12": {
+     "points": 15.04
+    },
+    "13": {
+     "points": 15.04
+    },
+    "14": {
+     "points": 15.04
+    },
+    "15": {
+     "points": 15.04
+    },
+    "16": {
+     "points": 15.04
+    },
+    "17": {
+     "points": 15.04
+    },
+    "18": {
+     "points": 15.04
+    }
+   }
+  },
+  {
    "player_id": 12596,
    "name": "Chris Olave",
    "position": "WR",
@@ -3085,7 +3135,7 @@
      "points": 12.13
     },
     "3": {
-     "points": 12.99
+     "points": 12.96
     },
     "4": {
      "points": 13.64
@@ -3144,7 +3194,7 @@
      "points": 12.27
     },
     "3": {
-     "points": 13.33
+     "points": 13.37
     },
     "4": {
      "points": 12.87
@@ -3203,7 +3253,7 @@
      "points": 11.69
     },
     "3": {
-     "points": 12.45
+     "points": 12.42
     },
     "4": {
      "points": 12.51
@@ -3250,61 +3300,61 @@
    }
   },
   {
-   "player_id": 10747,
-   "name": "Kyle Pitts",
+   "player_id": 12426,
+   "name": "Juwan Johnson",
    "position": "TE",
-   "team": "ATL",
+   "team": "NO",
    "weeks": {
     "1": {
-     "points": 13.12
+     "points": 12.21
     },
     "2": {
-     "points": 10.36
+     "points": 11.99
     },
     "3": {
-     "points": 11.0
+     "points": 10.85
     },
     "4": {
-     "points": 12.4
+     "points": 12.99
     },
     "5": {
-     "points": 12.4
+     "points": 12.99
     },
     "6": {
-     "points": 13.12
+     "points": 12.99
     },
     "7": {
-     "points": 13.12
-    },
-    "8": {
-     "points": 13.12
+     "points": 12.99
     },
     "9": {
-     "points": 13.12
+     "points": 12.99
     },
     "10": {
-     "points": 13.12
+     "points": 12.99
+    },
+    "11": {
+     "points": 12.99
     },
     "12": {
-     "points": 13.12
+     "points": 12.99
     },
     "13": {
-     "points": 13.12
+     "points": 12.99
     },
     "14": {
-     "points": 13.12
+     "points": 12.99
     },
     "15": {
-     "points": 13.12
+     "points": 12.99
     },
     "16": {
-     "points": 13.12
+     "points": 12.99
     },
     "17": {
-     "points": 13.12
+     "points": 12.99
     },
     "18": {
-     "points": 13.12
+     "points": 12.99
     }
    }
   },
@@ -3368,61 +3418,61 @@
    }
   },
   {
-   "player_id": 12426,
-   "name": "Juwan Johnson",
+   "player_id": 10747,
+   "name": "Kyle Pitts",
    "position": "TE",
-   "team": "NO",
+   "team": "ATL",
    "weeks": {
     "1": {
-     "points": 12.21
+     "points": 13.12
     },
     "2": {
-     "points": 11.99
+     "points": 10.36
     },
     "3": {
-     "points": 10.56
+     "points": 10.83
     },
     "4": {
-     "points": 12.99
+     "points": 12.4
     },
     "5": {
-     "points": 12.99
+     "points": 12.4
     },
     "6": {
-     "points": 12.99
+     "points": 13.12
     },
     "7": {
-     "points": 12.99
+     "points": 13.12
+    },
+    "8": {
+     "points": 13.12
     },
     "9": {
-     "points": 12.99
+     "points": 13.12
     },
     "10": {
-     "points": 12.99
-    },
-    "11": {
-     "points": 12.99
+     "points": 13.12
     },
     "12": {
-     "points": 12.99
+     "points": 13.12
     },
     "13": {
-     "points": 12.99
+     "points": 13.12
     },
     "14": {
-     "points": 12.99
+     "points": 13.12
     },
     "15": {
-     "points": 12.99
+     "points": 13.12
     },
     "16": {
-     "points": 12.99
+     "points": 13.12
     },
     "17": {
-     "points": 12.99
+     "points": 13.12
     },
     "18": {
-     "points": 12.99
+     "points": 13.12
     }
    }
   },
@@ -3433,7 +3483,7 @@
    "team": "ATL",
    "weeks": {
     "3": {
-     "points": 12.99
+     "points": 12.96
     },
     "4": {
      "points": 14.53
@@ -3492,7 +3542,7 @@
      "points": 13.13
     },
     "3": {
-     "points": 12.38
+     "points": 12.51
     },
     "4": {
      "points": 12.84
@@ -3551,7 +3601,7 @@
      "points": 11.6
     },
     "3": {
-     "points": 13.37
+     "points": 14.05
     },
     "4": {
      "points": 12.74
@@ -3728,7 +3778,7 @@
      "points": 13.76
     },
     "3": {
-     "points": 15.96
+     "points": 15.88
     },
     "4": {
      "points": 14.01
@@ -3878,7 +3928,7 @@
      "points": 9.82
     },
     "3": {
-     "points": 11.3
+     "points": 11.4
     },
     "4": {
      "points": 12.58
@@ -3921,56 +3971,6 @@
     },
     "18": {
      "points": 12.58
-    }
-   }
-  },
-  {
-   "player_id": 9963,
-   "name": "Sam Darnold",
-   "position": "QB",
-   "team": "SEA",
-   "weeks": {
-    "1": {
-     "points": 15.04
-    },
-    "4": {
-     "points": 14.82
-    },
-    "6": {
-     "points": 15.04
-    },
-    "7": {
-     "points": 15.04
-    },
-    "8": {
-     "points": 15.04
-    },
-    "9": {
-     "points": 15.04
-    },
-    "10": {
-     "points": 15.04
-    },
-    "12": {
-     "points": 15.04
-    },
-    "13": {
-     "points": 15.04
-    },
-    "14": {
-     "points": 15.04
-    },
-    "15": {
-     "points": 15.04
-    },
-    "16": {
-     "points": 15.04
-    },
-    "17": {
-     "points": 15.04
-    },
-    "18": {
-     "points": 15.04
     }
    }
   },
@@ -4034,72 +4034,13 @@
    }
   },
   {
-   "player_id": 13550,
-   "name": "Zay Flowers",
-   "position": "WR",
-   "team": "BAL",
-   "weeks": {
-    "1": {
-     "points": 12.21
-    },
-    "2": {
-     "points": 11.9
-    },
-    "3": {
-     "points": 11.86
-    },
-    "4": {
-     "points": 12.21
-    },
-    "5": {
-     "points": 12.21
-    },
-    "6": {
-     "points": 12.21
-    },
-    "7": {
-     "points": 12.21
-    },
-    "8": {
-     "points": 12.21
-    },
-    "9": {
-     "points": 12.21
-    },
-    "10": {
-     "points": 12.21
-    },
-    "11": {
-     "points": 12.21
-    },
-    "12": {
-     "points": 12.21
-    },
-    "14": {
-     "points": 12.21
-    },
-    "15": {
-     "points": 12.21
-    },
-    "16": {
-     "points": 12.21
-    },
-    "17": {
-     "points": 12.21
-    },
-    "18": {
-     "points": 12.21
-    }
-   }
-  },
-  {
    "player_id": 7203,
    "name": "Jameis Winston",
    "position": "QB",
    "team": "NYG",
    "weeks": {
     "3": {
-     "points": 13.4
+     "points": 13.31
     },
     "4": {
      "points": 13.86
@@ -4276,7 +4217,7 @@
      "points": 12.71
     },
     "3": {
-     "points": 13.56
+     "points": 13.59
     },
     "4": {
      "points": 11.84
@@ -4376,6 +4317,65 @@
    }
   },
   {
+   "player_id": 35323,
+   "name": "TreVeyon Henderson",
+   "position": "RB",
+   "team": "NE",
+   "weeks": {
+    "1": {
+     "points": 9.5
+    },
+    "2": {
+     "points": 8.68
+    },
+    "3": {
+     "points": 9.49
+    },
+    "4": {
+     "points": 12.32
+    },
+    "5": {
+     "points": 12.32
+    },
+    "6": {
+     "points": 12.32
+    },
+    "7": {
+     "points": 12.32
+    },
+    "8": {
+     "points": 12.32
+    },
+    "9": {
+     "points": 12.32
+    },
+    "10": {
+     "points": 12.32
+    },
+    "12": {
+     "points": 12.32
+    },
+    "13": {
+     "points": 12.32
+    },
+    "14": {
+     "points": 12.32
+    },
+    "15": {
+     "points": 12.32
+    },
+    "16": {
+     "points": 12.32
+    },
+    "17": {
+     "points": 12.32
+    },
+    "18": {
+     "points": 12.32
+    }
+   }
+  },
+  {
    "player_id": 7555,
    "name": "Jacoby Brissett",
    "position": "QB",
@@ -4419,65 +4419,6 @@
     },
     "13": {
      "points": 15.51
-    }
-   }
-  },
-  {
-   "player_id": 35323,
-   "name": "TreVeyon Henderson",
-   "position": "RB",
-   "team": "NE",
-   "weeks": {
-    "1": {
-     "points": 9.5
-    },
-    "2": {
-     "points": 8.68
-    },
-    "3": {
-     "points": 9.4
-    },
-    "4": {
-     "points": 12.32
-    },
-    "5": {
-     "points": 12.32
-    },
-    "6": {
-     "points": 12.32
-    },
-    "7": {
-     "points": 12.32
-    },
-    "8": {
-     "points": 12.32
-    },
-    "9": {
-     "points": 12.32
-    },
-    "10": {
-     "points": 12.32
-    },
-    "12": {
-     "points": 12.32
-    },
-    "13": {
-     "points": 12.32
-    },
-    "14": {
-     "points": 12.32
-    },
-    "15": {
-     "points": 12.32
-    },
-    "16": {
-     "points": 12.32
-    },
-    "17": {
-     "points": 12.32
-    },
-    "18": {
-     "points": 12.32
     }
    }
   },
@@ -4553,7 +4494,7 @@
      "points": 11.7
     },
     "3": {
-     "points": 13.26
+     "points": 13.36
     },
     "4": {
      "points": 11.61
@@ -4730,7 +4671,7 @@
      "points": 11.21
     },
     "3": {
-     "points": 12.52
+     "points": 12.44
     },
     "4": {
      "points": 11.45
@@ -4786,7 +4727,7 @@
      "points": 10.64
     },
     "3": {
-     "points": 10.57
+     "points": 10.48
     },
     "4": {
      "points": 10.87
@@ -4845,7 +4786,7 @@
      "points": 12.68
     },
     "3": {
-     "points": 11.32
+     "points": 11.34
     },
     "4": {
      "points": 11.4
@@ -4888,6 +4829,121 @@
     },
     "18": {
      "points": 11.4
+    }
+   }
+  },
+  {
+   "player_id": 13550,
+   "name": "Zay Flowers",
+   "position": "WR",
+   "team": "BAL",
+   "weeks": {
+    "1": {
+     "points": 12.21
+    },
+    "2": {
+     "points": 11.9
+    },
+    "4": {
+     "points": 12.21
+    },
+    "5": {
+     "points": 12.21
+    },
+    "6": {
+     "points": 12.21
+    },
+    "7": {
+     "points": 12.21
+    },
+    "8": {
+     "points": 12.21
+    },
+    "9": {
+     "points": 12.21
+    },
+    "10": {
+     "points": 12.21
+    },
+    "11": {
+     "points": 12.21
+    },
+    "12": {
+     "points": 12.21
+    },
+    "14": {
+     "points": 12.21
+    },
+    "15": {
+     "points": 12.21
+    },
+    "16": {
+     "points": 12.21
+    },
+    "17": {
+     "points": 12.21
+    },
+    "18": {
+     "points": 12.21
+    }
+   }
+  },
+  {
+   "player_id": 10772,
+   "name": "Jaylen Waddle",
+   "position": "WR",
+   "team": "DEN",
+   "weeks": {
+    "1": {
+     "points": 11.35
+    },
+    "2": {
+     "points": 11.01
+    },
+    "3": {
+     "points": 11.4
+    },
+    "4": {
+     "points": 11.35
+    },
+    "5": {
+     "points": 11.35
+    },
+    "6": {
+     "points": 11.35
+    },
+    "7": {
+     "points": 11.35
+    },
+    "8": {
+     "points": 11.35
+    },
+    "9": {
+     "points": 11.35
+    },
+    "11": {
+     "points": 11.35
+    },
+    "12": {
+     "points": 11.35
+    },
+    "13": {
+     "points": 11.35
+    },
+    "14": {
+     "points": 11.35
+    },
+    "15": {
+     "points": 11.35
+    },
+    "16": {
+     "points": 11.35
+    },
+    "17": {
+     "points": 11.35
+    },
+    "18": {
+     "points": 11.35
     }
    }
   },
@@ -4939,65 +4995,6 @@
    }
   },
   {
-   "player_id": 10772,
-   "name": "Jaylen Waddle",
-   "position": "WR",
-   "team": "DEN",
-   "weeks": {
-    "1": {
-     "points": 11.35
-    },
-    "2": {
-     "points": 11.01
-    },
-    "3": {
-     "points": 11.34
-    },
-    "4": {
-     "points": 11.35
-    },
-    "5": {
-     "points": 11.35
-    },
-    "6": {
-     "points": 11.35
-    },
-    "7": {
-     "points": 11.35
-    },
-    "8": {
-     "points": 11.35
-    },
-    "9": {
-     "points": 11.35
-    },
-    "11": {
-     "points": 11.35
-    },
-    "12": {
-     "points": 11.35
-    },
-    "13": {
-     "points": 11.35
-    },
-    "14": {
-     "points": 11.35
-    },
-    "15": {
-     "points": 11.35
-    },
-    "16": {
-     "points": 11.35
-    },
-    "17": {
-     "points": 11.35
-    },
-    "18": {
-     "points": 11.35
-    }
-   }
-  },
-  {
    "player_id": 35320,
    "name": "Quinshon Judkins",
    "position": "RB",
@@ -5010,7 +5007,7 @@
      "points": 10.33
     },
     "3": {
-     "points": 11.72
+     "points": 11.84
     },
     "4": {
      "points": 11.07
@@ -5069,7 +5066,7 @@
      "points": 10.54
     },
     "3": {
-     "points": 10.16
+     "points": 9.97
     },
     "4": {
      "points": 11.28
@@ -5128,7 +5125,7 @@
      "points": 11.11
     },
     "3": {
-     "points": 11.74
+     "points": 11.65
     },
     "4": {
      "points": 11.12
@@ -5175,65 +5172,6 @@
    }
   },
   {
-   "player_id": 10763,
-   "name": "Rhamondre Stevenson",
-   "position": "RB",
-   "team": "NE",
-   "weeks": {
-    "1": {
-     "points": 11.81
-    },
-    "2": {
-     "points": 11.79
-    },
-    "3": {
-     "points": 9.67
-    },
-    "4": {
-     "points": 11.04
-    },
-    "5": {
-     "points": 11.04
-    },
-    "6": {
-     "points": 11.04
-    },
-    "7": {
-     "points": 11.04
-    },
-    "8": {
-     "points": 11.04
-    },
-    "9": {
-     "points": 11.04
-    },
-    "10": {
-     "points": 11.04
-    },
-    "12": {
-     "points": 11.04
-    },
-    "13": {
-     "points": 11.04
-    },
-    "14": {
-     "points": 11.04
-    },
-    "15": {
-     "points": 11.04
-    },
-    "16": {
-     "points": 11.04
-    },
-    "17": {
-     "points": 11.04
-    },
-    "18": {
-     "points": 11.04
-    }
-   }
-  },
-  {
    "player_id": 6973,
    "name": "Davante Adams",
    "position": "WR",
@@ -5246,7 +5184,7 @@
      "points": 10.06
     },
     "3": {
-     "points": 10.31
+     "points": 11.48
     },
     "4": {
      "points": 10.74
@@ -5293,6 +5231,65 @@
    }
   },
   {
+   "player_id": 10763,
+   "name": "Rhamondre Stevenson",
+   "position": "RB",
+   "team": "NE",
+   "weeks": {
+    "1": {
+     "points": 11.81
+    },
+    "2": {
+     "points": 11.79
+    },
+    "3": {
+     "points": 9.78
+    },
+    "4": {
+     "points": 11.04
+    },
+    "5": {
+     "points": 11.04
+    },
+    "6": {
+     "points": 11.04
+    },
+    "7": {
+     "points": 11.04
+    },
+    "8": {
+     "points": 11.04
+    },
+    "9": {
+     "points": 11.04
+    },
+    "10": {
+     "points": 11.04
+    },
+    "12": {
+     "points": 11.04
+    },
+    "13": {
+     "points": 11.04
+    },
+    "14": {
+     "points": 11.04
+    },
+    "15": {
+     "points": 11.04
+    },
+    "16": {
+     "points": 11.04
+    },
+    "17": {
+     "points": 11.04
+    },
+    "18": {
+     "points": 11.04
+    }
+   }
+  },
+  {
    "player_id": 10059,
    "name": "Dalton Schultz",
    "position": "TE",
@@ -5305,7 +5302,7 @@
      "points": 10.95
     },
     "3": {
-     "points": 12.76
+     "points": 12.9
     },
     "4": {
      "points": 10.87
@@ -5541,7 +5538,7 @@
      "points": 10.49
     },
     "3": {
-     "points": 11.82
+     "points": 11.84
     },
     "4": {
      "points": 10.29
@@ -5600,7 +5597,7 @@
      "points": 10.46
     },
     "3": {
-     "points": 12.39
+     "points": 12.35
     },
     "4": {
      "points": 10.42
@@ -5659,7 +5656,7 @@
      "points": 9.74
     },
     "3": {
-     "points": 11.34
+     "points": 11.31
     },
     "4": {
      "points": 11.34
@@ -5836,7 +5833,7 @@
      "points": 10.59
     },
     "3": {
-     "points": 10.01
+     "points": 9.99
     },
     "4": {
      "points": 10.35
@@ -5895,7 +5892,7 @@
      "points": 10.43
     },
     "3": {
-     "points": 9.9
+     "points": 9.77
     },
     "4": {
      "points": 10.68
@@ -5954,7 +5951,7 @@
      "points": 10.29
     },
     "3": {
-     "points": 10.37
+     "points": 10.48
     },
     "4": {
      "points": 10.36
@@ -6131,7 +6128,7 @@
      "points": 10.41
     },
     "3": {
-     "points": 9.48
+     "points": 9.51
     },
     "4": {
      "points": 10.15
@@ -6281,7 +6278,7 @@
      "points": 10.69
     },
     "3": {
-     "points": 10.91
+     "points": 11.1
     },
     "4": {
      "points": 10.66
@@ -6324,6 +6321,65 @@
     },
     "18": {
      "points": 10.69
+    }
+   }
+  },
+  {
+   "player_id": 35926,
+   "name": "Jadarian Price",
+   "position": "RB",
+   "team": "SEA",
+   "weeks": {
+    "1": {
+     "points": 11.16
+    },
+    "2": {
+     "points": 11.09
+    },
+    "3": {
+     "points": 10.03
+    },
+    "4": {
+     "points": 11.42
+    },
+    "5": {
+     "points": 11.03
+    },
+    "6": {
+     "points": 11.03
+    },
+    "7": {
+     "points": 11.03
+    },
+    "8": {
+     "points": 9.64
+    },
+    "9": {
+     "points": 9.64
+    },
+    "10": {
+     "points": 9.64
+    },
+    "12": {
+     "points": 9.64
+    },
+    "13": {
+     "points": 9.64
+    },
+    "14": {
+     "points": 9.64
+    },
+    "15": {
+     "points": 9.14
+    },
+    "16": {
+     "points": 9.14
+    },
+    "17": {
+     "points": 9.14
+    },
+    "18": {
+     "points": 9.14
     }
    }
   },
@@ -6576,7 +6632,7 @@
      "points": 9.89
     },
     "3": {
-     "points": 10.05
+     "points": 10.22
     },
     "4": {
      "points": 9.48
@@ -6682,58 +6738,61 @@
    }
   },
   {
-   "player_id": 35926,
-   "name": "Jadarian Price",
+   "player_id": 10478,
+   "name": "J.K. Dobbins",
    "position": "RB",
-   "team": "SEA",
+   "team": "DEN",
    "weeks": {
     "1": {
-     "points": 11.16
+     "points": 9.68
     },
     "2": {
-     "points": 11.09
+     "points": 9.01
+    },
+    "3": {
+     "points": 8.16
     },
     "4": {
-     "points": 11.42
+     "points": 9.5
     },
     "5": {
-     "points": 11.03
+     "points": 9.5
     },
     "6": {
-     "points": 11.03
+     "points": 9.5
     },
     "7": {
-     "points": 11.03
+     "points": 9.5
     },
     "8": {
-     "points": 9.64
+     "points": 9.5
     },
     "9": {
-     "points": 9.64
+     "points": 9.5
     },
-    "10": {
-     "points": 9.64
+    "11": {
+     "points": 9.5
     },
     "12": {
-     "points": 9.64
+     "points": 9.5
     },
     "13": {
-     "points": 9.64
+     "points": 9.5
     },
     "14": {
-     "points": 9.64
+     "points": 9.5
     },
     "15": {
-     "points": 9.14
+     "points": 9.5
     },
     "16": {
-     "points": 9.14
+     "points": 9.5
     },
     "17": {
-     "points": 9.14
+     "points": 9.5
     },
     "18": {
-     "points": 9.14
+     "points": 9.5
     }
    }
   },
@@ -6797,65 +6856,6 @@
    }
   },
   {
-   "player_id": 10478,
-   "name": "J.K. Dobbins",
-   "position": "RB",
-   "team": "DEN",
-   "weeks": {
-    "1": {
-     "points": 9.68
-    },
-    "2": {
-     "points": 9.01
-    },
-    "3": {
-     "points": 6.89
-    },
-    "4": {
-     "points": 9.5
-    },
-    "5": {
-     "points": 9.5
-    },
-    "6": {
-     "points": 9.5
-    },
-    "7": {
-     "points": 9.5
-    },
-    "8": {
-     "points": 9.5
-    },
-    "9": {
-     "points": 9.5
-    },
-    "11": {
-     "points": 9.5
-    },
-    "12": {
-     "points": 9.5
-    },
-    "13": {
-     "points": 9.5
-    },
-    "14": {
-     "points": 9.5
-    },
-    "15": {
-     "points": 9.5
-    },
-    "16": {
-     "points": 9.5
-    },
-    "17": {
-     "points": 9.5
-    },
-    "18": {
-     "points": 9.5
-    }
-   }
-  },
-  {
    "player_id": 35532,
    "name": "Oronde Gadsden II",
    "position": "TE",
@@ -6868,7 +6868,7 @@
      "points": 3.83
     },
     "3": {
-     "points": 9.77
+     "points": 10.29
     },
     "4": {
      "points": 9.79
@@ -6927,7 +6927,7 @@
      "points": 9.64
     },
     "3": {
-     "points": 7.72
+     "points": 7.51
     },
     "4": {
      "points": 8.85
@@ -6986,7 +6986,7 @@
      "points": 8.97
     },
     "3": {
-     "points": 8.31
+     "points": 8.34
     },
     "4": {
      "points": 9.51
@@ -7045,7 +7045,7 @@
      "points": 8.21
     },
     "3": {
-     "points": 8.37
+     "points": 8.32
     },
     "4": {
      "points": 9.32
@@ -7328,65 +7328,6 @@
    }
   },
   {
-   "player_id": 10364,
-   "name": "Jakobi Meyers",
-   "position": "WR",
-   "team": "JAC",
-   "weeks": {
-    "1": {
-     "points": 9.04
-    },
-    "2": {
-     "points": 8.5
-    },
-    "3": {
-     "points": 8.11
-    },
-    "4": {
-     "points": 9.2
-    },
-    "5": {
-     "points": 9.2
-    },
-    "6": {
-     "points": 9.2
-    },
-    "8": {
-     "points": 9.2
-    },
-    "9": {
-     "points": 9.2
-    },
-    "10": {
-     "points": 9.2
-    },
-    "11": {
-     "points": 9.2
-    },
-    "12": {
-     "points": 9.2
-    },
-    "13": {
-     "points": 9.2
-    },
-    "14": {
-     "points": 9.2
-    },
-    "15": {
-     "points": 9.2
-    },
-    "16": {
-     "points": 9.2
-    },
-    "17": {
-     "points": 9.2
-    },
-    "18": {
-     "points": 9.2
-    }
-   }
-  },
-  {
    "player_id": 10205,
    "name": "Deebo Samuel",
    "position": "WR",
@@ -7446,6 +7387,65 @@
    }
   },
   {
+   "player_id": 10364,
+   "name": "Jakobi Meyers",
+   "position": "WR",
+   "team": "JAC",
+   "weeks": {
+    "1": {
+     "points": 9.04
+    },
+    "2": {
+     "points": 8.5
+    },
+    "3": {
+     "points": 7.96
+    },
+    "4": {
+     "points": 9.2
+    },
+    "5": {
+     "points": 9.2
+    },
+    "6": {
+     "points": 9.2
+    },
+    "8": {
+     "points": 9.2
+    },
+    "9": {
+     "points": 9.2
+    },
+    "10": {
+     "points": 9.2
+    },
+    "11": {
+     "points": 9.2
+    },
+    "12": {
+     "points": 9.2
+    },
+    "13": {
+     "points": 9.2
+    },
+    "14": {
+     "points": 9.2
+    },
+    "15": {
+     "points": 9.2
+    },
+    "16": {
+     "points": 9.2
+    },
+    "17": {
+     "points": 9.2
+    },
+    "18": {
+     "points": 9.2
+    }
+   }
+  },
+  {
    "player_id": 35137,
    "name": "Jalen Coker",
    "position": "WR",
@@ -7458,7 +7458,7 @@
      "points": 9.73
     },
     "3": {
-     "points": 10.81
+     "points": 10.95
     },
     "4": {
      "points": 8.97
@@ -7505,61 +7505,61 @@
    }
   },
   {
-   "player_id": 35973,
-   "name": "Kenyon Sadiq",
+   "player_id": 35364,
+   "name": "Terrance Ferguson",
    "position": "TE",
-   "team": "NYJ",
+   "team": "LAR",
    "weeks": {
     "1": {
-     "points": 6.98
+     "points": 9.01
     },
     "2": {
-     "points": 7.58
+     "points": 6.97
     },
     "3": {
-     "points": 9.54
+     "points": 11.3
     },
     "4": {
-     "points": 9.16
+     "points": 8.75
     },
     "5": {
-     "points": 9.16
+     "points": 9.01
     },
     "6": {
-     "points": 9.16
+     "points": 9.01
     },
     "7": {
-     "points": 9.16
+     "points": 9.01
     },
     "8": {
-     "points": 9.16
+     "points": 9.01
     },
     "9": {
-     "points": 9.16
+     "points": 9.01
     },
     "10": {
-     "points": 9.16
-    },
-    "11": {
-     "points": 9.16
+     "points": 9.01
     },
     "12": {
-     "points": 9.16
+     "points": 9.01
+    },
+    "13": {
+     "points": 9.01
     },
     "14": {
-     "points": 9.16
+     "points": 9.01
     },
     "15": {
-     "points": 9.16
+     "points": 9.01
     },
     "16": {
-     "points": 9.16
+     "points": 9.01
     },
     "17": {
-     "points": 9.16
+     "points": 9.01
     },
     "18": {
-     "points": 9.16
+     "points": 9.01
     }
    }
   },
@@ -7576,7 +7576,7 @@
      "points": 8.65
     },
     "3": {
-     "points": 8.8
+     "points": 9.0
     },
     "4": {
      "points": 9.25
@@ -7619,6 +7619,65 @@
     },
     "18": {
      "points": 8.84
+    }
+   }
+  },
+  {
+   "player_id": 35973,
+   "name": "Kenyon Sadiq",
+   "position": "TE",
+   "team": "NYJ",
+   "weeks": {
+    "1": {
+     "points": 6.98
+    },
+    "2": {
+     "points": 7.58
+    },
+    "3": {
+     "points": 9.62
+    },
+    "4": {
+     "points": 9.16
+    },
+    "5": {
+     "points": 9.16
+    },
+    "6": {
+     "points": 9.16
+    },
+    "7": {
+     "points": 9.16
+    },
+    "8": {
+     "points": 9.16
+    },
+    "9": {
+     "points": 9.16
+    },
+    "10": {
+     "points": 9.16
+    },
+    "11": {
+     "points": 9.16
+    },
+    "12": {
+     "points": 9.16
+    },
+    "14": {
+     "points": 9.16
+    },
+    "15": {
+     "points": 9.16
+    },
+    "16": {
+     "points": 9.16
+    },
+    "17": {
+     "points": 9.16
+    },
+    "18": {
+     "points": 9.16
     }
    }
   },
@@ -7682,62 +7741,6 @@
    }
   },
   {
-   "player_id": 13557,
-   "name": "Jayden Reed",
-   "position": "WR",
-   "team": "GB",
-   "weeks": {
-    "1": {
-     "points": 10.43
-    },
-    "2": {
-     "points": 9.39
-    },
-    "4": {
-     "points": 9.49
-    },
-    "5": {
-     "points": 9.49
-    },
-    "6": {
-     "points": 9.49
-    },
-    "7": {
-     "points": 9.49
-    },
-    "8": {
-     "points": 9.49
-    },
-    "9": {
-     "points": 9.39
-    },
-    "10": {
-     "points": 9.39
-    },
-    "12": {
-     "points": 9.39
-    },
-    "13": {
-     "points": 9.39
-    },
-    "14": {
-     "points": 9.39
-    },
-    "15": {
-     "points": 9.39
-    },
-    "16": {
-     "points": 9.39
-    },
-    "17": {
-     "points": 9.39
-    },
-    "18": {
-     "points": 9.39
-    }
-   }
-  },
-  {
    "player_id": 35009,
    "name": "AJ Barner",
    "position": "TE",
@@ -7750,7 +7753,7 @@
      "points": 8.34
     },
     "3": {
-     "points": 7.83
+     "points": 7.91
     },
     "4": {
      "points": 8.96
@@ -7853,6 +7856,65 @@
    }
   },
   {
+   "player_id": 34990,
+   "name": "Blake Corum",
+   "position": "RB",
+   "team": "LAR",
+   "weeks": {
+    "1": {
+     "points": 8.51
+    },
+    "2": {
+     "points": 8.84
+    },
+    "3": {
+     "points": 8.91
+    },
+    "4": {
+     "points": 9.15
+    },
+    "5": {
+     "points": 8.88
+    },
+    "6": {
+     "points": 8.88
+    },
+    "7": {
+     "points": 8.88
+    },
+    "8": {
+     "points": 8.88
+    },
+    "9": {
+     "points": 8.88
+    },
+    "10": {
+     "points": 8.88
+    },
+    "12": {
+     "points": 8.88
+    },
+    "13": {
+     "points": 8.88
+    },
+    "14": {
+     "points": 8.88
+    },
+    "15": {
+     "points": 8.88
+    },
+    "16": {
+     "points": 8.88
+    },
+    "17": {
+     "points": 8.88
+    },
+    "18": {
+     "points": 8.88
+    }
+   }
+  },
+  {
    "player_id": 7783,
    "name": "Chris Godwin",
    "position": "WR",
@@ -7908,65 +7970,6 @@
     },
     "18": {
      "points": 8.89
-    }
-   }
-  },
-  {
-   "player_id": 34990,
-   "name": "Blake Corum",
-   "position": "RB",
-   "team": "LAR",
-   "weeks": {
-    "1": {
-     "points": 8.51
-    },
-    "2": {
-     "points": 8.84
-    },
-    "3": {
-     "points": 8.78
-    },
-    "4": {
-     "points": 9.15
-    },
-    "5": {
-     "points": 8.88
-    },
-    "6": {
-     "points": 8.88
-    },
-    "7": {
-     "points": 8.88
-    },
-    "8": {
-     "points": 8.88
-    },
-    "9": {
-     "points": 8.88
-    },
-    "10": {
-     "points": 8.88
-    },
-    "12": {
-     "points": 8.88
-    },
-    "13": {
-     "points": 8.88
-    },
-    "14": {
-     "points": 8.88
-    },
-    "15": {
-     "points": 8.88
-    },
-    "16": {
-     "points": 8.88
-    },
-    "17": {
-     "points": 8.88
-    },
-    "18": {
-     "points": 8.88
     }
    }
   },
@@ -8089,65 +8092,6 @@
    }
   },
   {
-   "player_id": 35364,
-   "name": "Terrance Ferguson",
-   "position": "TE",
-   "team": "LAR",
-   "weeks": {
-    "1": {
-     "points": 9.01
-    },
-    "2": {
-     "points": 6.97
-    },
-    "3": {
-     "points": 7.83
-    },
-    "4": {
-     "points": 8.75
-    },
-    "5": {
-     "points": 9.01
-    },
-    "6": {
-     "points": 9.01
-    },
-    "7": {
-     "points": 9.01
-    },
-    "8": {
-     "points": 9.01
-    },
-    "9": {
-     "points": 9.01
-    },
-    "10": {
-     "points": 9.01
-    },
-    "12": {
-     "points": 9.01
-    },
-    "13": {
-     "points": 9.01
-    },
-    "14": {
-     "points": 9.01
-    },
-    "15": {
-     "points": 9.01
-    },
-    "16": {
-     "points": 9.01
-    },
-    "17": {
-     "points": 9.01
-    },
-    "18": {
-     "points": 9.01
-    }
-   }
-  },
-  {
    "player_id": 12606,
    "name": "Romeo Doubs",
    "position": "WR",
@@ -8160,7 +8104,7 @@
      "points": 8.0
     },
     "3": {
-     "points": 8.54
+     "points": 8.46
     },
     "4": {
      "points": 9.62
@@ -8272,7 +8216,7 @@
      "points": 7.35
     },
     "3": {
-     "points": 7.38
+     "points": 7.49
     },
     "4": {
      "points": 8.87
@@ -8331,7 +8275,7 @@
      "points": 8.36
     },
     "3": {
-     "points": 8.58
+     "points": 8.55
     },
     "4": {
      "points": 8.33
@@ -8390,7 +8334,7 @@
      "points": 8.61
     },
     "3": {
-     "points": 9.6
+     "points": 9.47
     },
     "4": {
      "points": 8.38
@@ -8433,6 +8377,65 @@
     },
     "18": {
      "points": 8.48
+    }
+   }
+  },
+  {
+   "player_id": 12615,
+   "name": "Greg Dulcich",
+   "position": "TE",
+   "team": "MIA",
+   "weeks": {
+    "1": {
+     "points": 7.93
+    },
+    "2": {
+     "points": 8.02
+    },
+    "3": {
+     "points": 7.23
+    },
+    "4": {
+     "points": 8.55
+    },
+    "5": {
+     "points": 8.55
+    },
+    "7": {
+     "points": 8.55
+    },
+    "8": {
+     "points": 8.55
+    },
+    "9": {
+     "points": 8.55
+    },
+    "10": {
+     "points": 8.55
+    },
+    "11": {
+     "points": 8.55
+    },
+    "12": {
+     "points": 8.55
+    },
+    "13": {
+     "points": 8.55
+    },
+    "14": {
+     "points": 8.55
+    },
+    "15": {
+     "points": 8.55
+    },
+    "16": {
+     "points": 8.55
+    },
+    "17": {
+     "points": 8.55
+    },
+    "18": {
+     "points": 8.55
     }
    }
   },
@@ -8492,65 +8495,6 @@
     },
     "18": {
      "points": 8.5
-    }
-   }
-  },
-  {
-   "player_id": 12615,
-   "name": "Greg Dulcich",
-   "position": "TE",
-   "team": "MIA",
-   "weeks": {
-    "1": {
-     "points": 7.93
-    },
-    "2": {
-     "points": 8.02
-    },
-    "3": {
-     "points": 6.98
-    },
-    "4": {
-     "points": 8.55
-    },
-    "5": {
-     "points": 8.55
-    },
-    "7": {
-     "points": 8.55
-    },
-    "8": {
-     "points": 8.55
-    },
-    "9": {
-     "points": 8.55
-    },
-    "10": {
-     "points": 8.55
-    },
-    "11": {
-     "points": 8.55
-    },
-    "12": {
-     "points": 8.55
-    },
-    "13": {
-     "points": 8.55
-    },
-    "14": {
-     "points": 8.55
-    },
-    "15": {
-     "points": 8.55
-    },
-    "16": {
-     "points": 8.55
-    },
-    "17": {
-     "points": 8.55
-    },
-    "18": {
-     "points": 8.55
     }
    }
   },
@@ -8626,7 +8570,7 @@
      "points": 8.1
     },
     "3": {
-     "points": 8.22
+     "points": 8.6
     },
     "4": {
      "points": 8.17
@@ -9036,7 +8980,7 @@
      "points": 7.17
     },
     "3": {
-     "points": 8.75
+     "points": 8.7
     },
     "4": {
      "points": 7.51
@@ -9095,7 +9039,7 @@
      "points": 7.08
     },
     "3": {
-     "points": 6.59
+     "points": 6.72
     },
     "4": {
      "points": 7.75
@@ -9251,7 +9195,7 @@
      "points": 6.13
     },
     "3": {
-     "points": 8.01
+     "points": 7.99
     },
     "4": {
      "points": 7.79
@@ -9419,7 +9363,7 @@
      "points": 7.12
     },
     "3": {
-     "points": 7.21
+     "points": 7.26
     },
     "4": {
      "points": 7.34
@@ -9478,7 +9422,7 @@
      "points": 7.29
     },
     "3": {
-     "points": 8.82
+     "points": 8.84
     },
     "4": {
      "points": 7.41
@@ -9537,7 +9481,7 @@
      "points": 7.86
     },
     "3": {
-     "points": 7.34
+     "points": 7.46
     },
     "4": {
      "points": 6.89
@@ -9584,6 +9528,65 @@
    }
   },
   {
+   "player_id": 10776,
+   "name": "Rashod Bateman",
+   "position": "WR",
+   "team": "BAL",
+   "weeks": {
+    "1": {
+     "points": 5.9
+    },
+    "2": {
+     "points": 5.74
+    },
+    "3": {
+     "points": 9.45
+    },
+    "4": {
+     "points": 7.46
+    },
+    "5": {
+     "points": 7.46
+    },
+    "6": {
+     "points": 7.46
+    },
+    "7": {
+     "points": 7.46
+    },
+    "8": {
+     "points": 7.46
+    },
+    "9": {
+     "points": 7.46
+    },
+    "10": {
+     "points": 7.46
+    },
+    "11": {
+     "points": 7.46
+    },
+    "12": {
+     "points": 7.46
+    },
+    "14": {
+     "points": 7.46
+    },
+    "15": {
+     "points": 7.46
+    },
+    "16": {
+     "points": 7.46
+    },
+    "17": {
+     "points": 7.46
+    },
+    "18": {
+     "points": 7.46
+    }
+   }
+  },
+  {
    "player_id": 35328,
    "name": "Woody Marks",
    "position": "RB",
@@ -9596,7 +9599,7 @@
      "points": 7.3
     },
     "3": {
-     "points": 8.41
+     "points": 8.43
     },
     "4": {
      "points": 7.21
@@ -9684,65 +9687,6 @@
    }
   },
   {
-   "player_id": 10776,
-   "name": "Rashod Bateman",
-   "position": "WR",
-   "team": "BAL",
-   "weeks": {
-    "1": {
-     "points": 5.9
-    },
-    "2": {
-     "points": 5.74
-    },
-    "3": {
-     "points": 7.29
-    },
-    "4": {
-     "points": 7.46
-    },
-    "5": {
-     "points": 7.46
-    },
-    "6": {
-     "points": 7.46
-    },
-    "7": {
-     "points": 7.46
-    },
-    "8": {
-     "points": 7.46
-    },
-    "9": {
-     "points": 7.46
-    },
-    "10": {
-     "points": 7.46
-    },
-    "11": {
-     "points": 7.46
-    },
-    "12": {
-     "points": 7.46
-    },
-    "14": {
-     "points": 7.46
-    },
-    "15": {
-     "points": 7.46
-    },
-    "16": {
-     "points": 7.46
-    },
-    "17": {
-     "points": 7.46
-    },
-    "18": {
-     "points": 7.46
-    }
-   }
-  },
-  {
    "player_id": 10622,
    "name": "Colby Parkinson",
    "position": "TE",
@@ -9755,7 +9699,7 @@
      "points": 6.33
     },
     "3": {
-     "points": 6.63
+     "points": 6.61
     },
     "4": {
      "points": 7.12
@@ -9802,60 +9746,13 @@
    }
   },
   {
-   "player_id": 35947,
-   "name": "Jordyn Tyson",
-   "position": "WR",
-   "team": "NO",
-   "weeks": {
-    "5": {
-     "points": 7.95
-    },
-    "6": {
-     "points": 7.95
-    },
-    "7": {
-     "points": 9.46
-    },
-    "9": {
-     "points": 9.46
-    },
-    "10": {
-     "points": 9.46
-    },
-    "11": {
-     "points": 9.46
-    },
-    "12": {
-     "points": 9.46
-    },
-    "13": {
-     "points": 9.46
-    },
-    "14": {
-     "points": 9.46
-    },
-    "15": {
-     "points": 9.46
-    },
-    "16": {
-     "points": 9.46
-    },
-    "17": {
-     "points": 9.46
-    },
-    "18": {
-     "points": 9.46
-    }
-   }
-  },
-  {
    "player_id": 7204,
    "name": "Marcus Mariota",
    "position": "QB",
    "team": "WAS",
    "weeks": {
     "3": {
-     "points": 15.24
+     "points": 15.05
     },
     "4": {
      "points": 19.95
@@ -9875,6 +9772,50 @@
    }
   },
   {
+   "player_id": 35947,
+   "name": "Jordyn Tyson",
+   "position": "WR",
+   "team": "NO",
+   "weeks": {
+    "6": {
+     "points": 7.95
+    },
+    "7": {
+     "points": 9.46
+    },
+    "9": {
+     "points": 9.46
+    },
+    "10": {
+     "points": 9.46
+    },
+    "11": {
+     "points": 9.46
+    },
+    "12": {
+     "points": 9.46
+    },
+    "13": {
+     "points": 9.46
+    },
+    "14": {
+     "points": 9.46
+    },
+    "15": {
+     "points": 9.46
+    },
+    "16": {
+     "points": 9.46
+    },
+    "17": {
+     "points": 9.46
+    },
+    "18": {
+     "points": 9.46
+    }
+   }
+  },
+  {
    "player_id": 13574,
    "name": "Darnell Washington",
    "position": "TE",
@@ -9887,7 +9828,7 @@
      "points": 5.23
     },
     "3": {
-     "points": 4.64
+     "points": 4.65
     },
     "4": {
      "points": 6.78
@@ -10002,7 +9943,7 @@
      "points": 4.7
     },
     "3": {
-     "points": 5.45
+     "points": 5.43
     },
     "4": {
      "points": 6.89
@@ -10235,7 +10176,7 @@
      "points": 5.93
     },
     "3": {
-     "points": 6.91
+     "points": 6.44
     },
     "4": {
      "points": 6.2
@@ -10338,7 +10279,7 @@
      "points": 5.12
     },
     "3": {
-     "points": 4.43
+     "points": 4.42
     },
     "4": {
      "points": 6.29
@@ -10574,7 +10515,7 @@
      "points": 4.37
     },
     "3": {
-     "points": 6.03
+     "points": 6.04
     },
     "4": {
      "points": 6.15
@@ -10633,7 +10574,7 @@
      "points": 6.44
     },
     "3": {
-     "points": 5.25
+     "points": 5.22
     },
     "4": {
      "points": 5.7
@@ -10692,7 +10633,7 @@
      "points": 5.89
     },
     "3": {
-     "points": 6.01
+     "points": 5.92
     },
     "4": {
      "points": 6.12
@@ -10788,65 +10729,6 @@
     },
     "18": {
      "points": 6.52
-    }
-   }
-  },
-  {
-   "player_id": 14231,
-   "name": "Emanuel Wilson",
-   "position": "RB",
-   "team": "SEA",
-   "weeks": {
-    "1": {
-     "points": 4.02
-    },
-    "2": {
-     "points": 2.28
-    },
-    "3": {
-     "points": 10.8
-    },
-    "4": {
-     "points": 10.8
-    },
-    "5": {
-     "points": 10.32
-    },
-    "6": {
-     "points": 10.32
-    },
-    "7": {
-     "points": 10.32
-    },
-    "8": {
-     "points": 10.32
-    },
-    "9": {
-     "points": 10.32
-    },
-    "10": {
-     "points": 5.35
-    },
-    "12": {
-     "points": 2.42
-    },
-    "13": {
-     "points": 2.42
-    },
-    "14": {
-     "points": 2.42
-    },
-    "15": {
-     "points": 1.69
-    },
-    "16": {
-     "points": 1.93
-    },
-    "17": {
-     "points": 1.93
-    },
-    "18": {
-     "points": 1.93
     }
    }
   },
@@ -10984,7 +10866,7 @@
      "points": 5.63
     },
     "4": {
-     "points": 5.95
+     "points": 5.77
     },
     "5": {
      "points": 5.95
@@ -11040,7 +10922,7 @@
      "points": 5.52
     },
     "3": {
-     "points": 4.99
+     "points": 5.03
     },
     "4": {
      "points": 5.58
@@ -11146,65 +11028,6 @@
    }
   },
   {
-   "player_id": 12581,
-   "name": "Brian Robinson Jr.",
-   "position": "RB",
-   "team": "ATL",
-   "weeks": {
-    "1": {
-     "points": 5.68
-    },
-    "2": {
-     "points": 5.69
-    },
-    "3": {
-     "points": 5.5
-    },
-    "4": {
-     "points": 5.61
-    },
-    "5": {
-     "points": 5.61
-    },
-    "6": {
-     "points": 5.61
-    },
-    "7": {
-     "points": 5.61
-    },
-    "8": {
-     "points": 5.61
-    },
-    "9": {
-     "points": 5.61
-    },
-    "10": {
-     "points": 5.61
-    },
-    "12": {
-     "points": 5.61
-    },
-    "13": {
-     "points": 5.61
-    },
-    "14": {
-     "points": 5.61
-    },
-    "15": {
-     "points": 5.61
-    },
-    "16": {
-     "points": 5.61
-    },
-    "17": {
-     "points": 5.61
-    },
-    "18": {
-     "points": 5.61
-    }
-   }
-  },
-  {
    "player_id": 35970,
    "name": "Omar Cooper Jr.",
    "position": "WR",
@@ -11255,6 +11078,124 @@
    }
   },
   {
+   "player_id": 12581,
+   "name": "Brian Robinson Jr.",
+   "position": "RB",
+   "team": "ATL",
+   "weeks": {
+    "1": {
+     "points": 5.68
+    },
+    "2": {
+     "points": 5.69
+    },
+    "3": {
+     "points": 5.38
+    },
+    "4": {
+     "points": 5.61
+    },
+    "5": {
+     "points": 5.61
+    },
+    "6": {
+     "points": 5.61
+    },
+    "7": {
+     "points": 5.61
+    },
+    "8": {
+     "points": 5.61
+    },
+    "9": {
+     "points": 5.61
+    },
+    "10": {
+     "points": 5.61
+    },
+    "12": {
+     "points": 5.61
+    },
+    "13": {
+     "points": 5.61
+    },
+    "14": {
+     "points": 5.61
+    },
+    "15": {
+     "points": 5.61
+    },
+    "16": {
+     "points": 5.61
+    },
+    "17": {
+     "points": 5.61
+    },
+    "18": {
+     "points": 5.61
+    }
+   }
+  },
+  {
+   "player_id": 14231,
+   "name": "Emanuel Wilson",
+   "position": "RB",
+   "team": "SEA",
+   "weeks": {
+    "1": {
+     "points": 4.02
+    },
+    "2": {
+     "points": 2.28
+    },
+    "3": {
+     "points": 6.12
+    },
+    "4": {
+     "points": 10.8
+    },
+    "5": {
+     "points": 10.32
+    },
+    "6": {
+     "points": 10.32
+    },
+    "7": {
+     "points": 10.32
+    },
+    "8": {
+     "points": 10.32
+    },
+    "9": {
+     "points": 10.32
+    },
+    "10": {
+     "points": 5.35
+    },
+    "12": {
+     "points": 2.42
+    },
+    "13": {
+     "points": 2.42
+    },
+    "14": {
+     "points": 2.42
+    },
+    "15": {
+     "points": 1.69
+    },
+    "16": {
+     "points": 1.93
+    },
+    "17": {
+     "points": 1.93
+    },
+    "18": {
+     "points": 1.93
+    }
+   }
+  },
+  {
    "player_id": 9534,
    "name": "Mack Hollins",
    "position": "WR",
@@ -11267,7 +11208,7 @@
      "points": 6.9
     },
     "3": {
-     "points": 7.05
+     "points": 7.02
     },
     "4": {
      "points": 5.57
@@ -11385,7 +11326,7 @@
      "points": 2.38
     },
     "3": {
-     "points": 7.01
+     "points": 6.62
     },
     "4": {
      "points": 3.97
@@ -11562,7 +11503,7 @@
      "points": 5.53
     },
     "3": {
-     "points": 5.3
+     "points": 5.39
     },
     "4": {
      "points": 5.41
@@ -11621,7 +11562,7 @@
      "points": 6.71
     },
     "3": {
-     "points": 7.46
+     "points": 7.47
     },
     "4": {
      "points": 5.01
@@ -12110,7 +12051,7 @@
      "points": 5.76
     },
     "3": {
-     "points": 3.41
+     "points": 4.81
     },
     "4": {
      "points": 5.0
@@ -12169,7 +12110,7 @@
      "points": 3.49
     },
     "3": {
-     "points": 3.46
+     "points": 3.47
     },
     "4": {
      "points": 5.05
@@ -12228,7 +12169,7 @@
      "points": 6.76
     },
     "3": {
-     "points": 6.79
+     "points": 6.76
     },
     "4": {
      "points": 6.15
@@ -12458,7 +12399,7 @@
      "points": 5.34
     },
     "3": {
-     "points": 5.31
+     "points": 5.51
     },
     "4": {
      "points": 4.51
@@ -12753,7 +12694,7 @@
      "points": 5.05
     },
     "3": {
-     "points": 5.39
+     "points": 5.38
     },
     "4": {
      "points": 4.43
@@ -12796,65 +12737,6 @@
     },
     "18": {
      "points": 4.43
-    }
-   }
-  },
-  {
-   "player_id": 35499,
-   "name": "George Holani",
-   "position": "RB",
-   "team": "SEA",
-   "weeks": {
-    "1": {
-     "points": 5.65
-    },
-    "2": {
-     "points": 7.23
-    },
-    "3": {
-     "points": 7.27
-    },
-    "4": {
-     "points": 5.76
-    },
-    "5": {
-     "points": 5.65
-    },
-    "6": {
-     "points": 5.65
-    },
-    "7": {
-     "points": 5.65
-    },
-    "8": {
-     "points": 3.72
-    },
-    "9": {
-     "points": 3.72
-    },
-    "10": {
-     "points": 3.72
-    },
-    "12": {
-     "points": 3.72
-    },
-    "13": {
-     "points": 3.72
-    },
-    "14": {
-     "points": 3.72
-    },
-    "15": {
-     "points": 2.89
-    },
-    "16": {
-     "points": 2.89
-    },
-    "17": {
-     "points": 2.89
-    },
-    "18": {
-     "points": 2.89
     }
    }
   },
@@ -12871,7 +12753,7 @@
      "points": 4.97
     },
     "3": {
-     "points": 6.05
+     "points": 6.06
     },
     "4": {
      "points": 5.08
@@ -12930,7 +12812,7 @@
      "points": 3.6
     },
     "3": {
-     "points": 4.18
+     "points": 4.16
     },
     "4": {
      "points": 5.52
@@ -12977,65 +12859,6 @@
    }
   },
   {
-   "player_id": 35927,
-   "name": "Jonah Coleman",
-   "position": "RB",
-   "team": "DEN",
-   "weeks": {
-    "1": {
-     "points": 4.26
-    },
-    "2": {
-     "points": 2.18
-    },
-    "3": {
-     "points": 3.82
-    },
-    "4": {
-     "points": 4.61
-    },
-    "5": {
-     "points": 4.61
-    },
-    "6": {
-     "points": 4.61
-    },
-    "7": {
-     "points": 4.61
-    },
-    "8": {
-     "points": 4.61
-    },
-    "9": {
-     "points": 4.61
-    },
-    "11": {
-     "points": 4.61
-    },
-    "12": {
-     "points": 4.61
-    },
-    "13": {
-     "points": 4.61
-    },
-    "14": {
-     "points": 4.61
-    },
-    "15": {
-     "points": 4.61
-    },
-    "16": {
-     "points": 4.61
-    },
-    "17": {
-     "points": 4.61
-    },
-    "18": {
-     "points": 4.61
-    }
-   }
-  },
-  {
    "player_id": 10886,
    "name": "Noah Gray",
    "position": "TE",
@@ -13048,7 +12871,7 @@
      "points": 3.67
     },
     "3": {
-     "points": 3.34
+     "points": 3.33
     },
     "4": {
      "points": 4.48
@@ -13166,7 +12989,7 @@
      "points": 14.33
     },
     "3": {
-     "points": 15.04
+     "points": 14.96
     },
     "4": {
      "points": 14.15
@@ -13236,6 +13059,65 @@
    }
   },
   {
+   "player_id": 35499,
+   "name": "George Holani",
+   "position": "RB",
+   "team": "SEA",
+   "weeks": {
+    "1": {
+     "points": 5.65
+    },
+    "2": {
+     "points": 7.23
+    },
+    "3": {
+     "points": 3.24
+    },
+    "4": {
+     "points": 5.76
+    },
+    "5": {
+     "points": 5.65
+    },
+    "6": {
+     "points": 5.65
+    },
+    "7": {
+     "points": 5.65
+    },
+    "8": {
+     "points": 3.72
+    },
+    "9": {
+     "points": 3.72
+    },
+    "10": {
+     "points": 3.72
+    },
+    "12": {
+     "points": 3.72
+    },
+    "13": {
+     "points": 3.72
+    },
+    "14": {
+     "points": 3.72
+    },
+    "15": {
+     "points": 2.89
+    },
+    "16": {
+     "points": 2.89
+    },
+    "17": {
+     "points": 2.89
+    },
+    "18": {
+     "points": 2.89
+    }
+   }
+  },
+  {
    "player_id": 35371,
    "name": "Travis Hunter",
    "position": "WR",
@@ -13248,7 +13130,7 @@
      "points": 3.36
     },
     "3": {
-     "points": 1.66
+     "points": 1.65
     },
     "4": {
      "points": 4.5
@@ -13307,7 +13189,7 @@
      "points": 4.88
     },
     "3": {
-     "points": 4.33
+     "points": 4.32
     },
     "4": {
      "points": 4.05
@@ -13578,6 +13460,62 @@
    }
   },
   {
+   "player_id": 35927,
+   "name": "Jonah Coleman",
+   "position": "RB",
+   "team": "DEN",
+   "weeks": {
+    "1": {
+     "points": 4.26
+    },
+    "2": {
+     "points": 2.18
+    },
+    "4": {
+     "points": 4.61
+    },
+    "5": {
+     "points": 4.61
+    },
+    "6": {
+     "points": 4.61
+    },
+    "7": {
+     "points": 4.61
+    },
+    "8": {
+     "points": 4.61
+    },
+    "9": {
+     "points": 4.61
+    },
+    "11": {
+     "points": 4.61
+    },
+    "12": {
+     "points": 4.61
+    },
+    "13": {
+     "points": 4.61
+    },
+    "14": {
+     "points": 4.61
+    },
+    "15": {
+     "points": 4.61
+    },
+    "16": {
+     "points": 4.61
+    },
+    "17": {
+     "points": 4.61
+    },
+    "18": {
+     "points": 4.61
+    }
+   }
+  },
+  {
    "player_id": 35955,
    "name": "Ja'Kobi Lane",
    "position": "WR",
@@ -13637,7 +13575,7 @@
      "points": 5.03
     },
     "3": {
-     "points": 4.75
+     "points": 4.73
     },
     "4": {
      "points": 4.79
@@ -13755,7 +13693,7 @@
      "points": 3.85
     },
     "3": {
-     "points": 3.73
+     "points": 3.72
     },
     "4": {
      "points": 4.02
@@ -13814,7 +13752,7 @@
      "points": 4.17
     },
     "3": {
-     "points": 4.29
+     "points": 4.28
     },
     "4": {
      "points": 3.84
@@ -13932,7 +13870,7 @@
      "points": 2.72
     },
     "3": {
-     "points": 2.93
+     "points": 2.92
     },
     "4": {
      "points": 4.08
@@ -13991,7 +13929,7 @@
      "points": 2.19
     },
     "3": {
-     "points": 2.41
+     "points": 2.37
     },
     "4": {
      "points": 3.97
@@ -14221,7 +14159,7 @@
      "points": 3.57
     },
     "3": {
-     "points": 6.03
+     "points": 6.04
     },
     "4": {
      "points": 3.76
@@ -14457,7 +14395,7 @@
      "points": 0.92
     },
     "3": {
-     "points": 0.98
+     "points": 0.91
     },
     "4": {
      "points": 4.02
@@ -14516,7 +14454,7 @@
      "points": 2.69
     },
     "3": {
-     "points": 2.24
+     "points": 2.25
     },
     "4": {
      "points": 3.74
@@ -14575,7 +14513,7 @@
      "points": 2.48
     },
     "3": {
-     "points": 2.68
+     "points": 2.67
     },
     "4": {
      "points": 3.67
@@ -14707,26 +14645,6 @@
    }
   },
   {
-   "player_id": 10218,
-   "name": "Drew Lock",
-   "position": "QB",
-   "team": "SEA",
-   "weeks": {
-    "2": {
-     "points": 14.1
-    },
-    "3": {
-     "points": 14.64
-    },
-    "4": {
-     "points": 14.82
-    },
-    "5": {
-     "points": 15.04
-    }
-   }
-  },
-  {
    "player_id": 35035,
    "name": "Isaiah Williams",
    "position": "WR",
@@ -14739,7 +14657,7 @@
      "points": 3.92
     },
     "3": {
-     "points": 5.0
+     "points": 5.02
     },
     "4": {
      "points": 3.29
@@ -14782,6 +14700,32 @@
     },
     "18": {
      "points": 3.29
+    }
+   }
+  },
+  {
+   "player_id": 13557,
+   "name": "Jayden Reed",
+   "position": "WR",
+   "team": "GB",
+   "weeks": {
+    "1": {
+     "points": 10.43
+    },
+    "2": {
+     "points": 9.39
+    },
+    "15": {
+     "points": 9.39
+    },
+    "16": {
+     "points": 9.39
+    },
+    "17": {
+     "points": 9.39
+    },
+    "18": {
+     "points": 9.39
     }
    }
   },
@@ -14857,7 +14801,7 @@
      "points": 3.7
     },
     "3": {
-     "points": 3.91
+     "points": 4.04
     },
     "4": {
      "points": 3.3
@@ -15308,7 +15252,7 @@
      "points": 3.21
     },
     "3": {
-     "points": 2.88
+     "points": 2.72
     },
     "4": {
      "points": 3.24
@@ -15367,7 +15311,7 @@
      "points": 3.15
     },
     "3": {
-     "points": 3.19
+     "points": 3.18
     },
     "4": {
      "points": 3.18
@@ -15426,7 +15370,7 @@
      "points": 5.49
     },
     "3": {
-     "points": 5.23
+     "points": 5.22
     },
     "4": {
      "points": 2.88
@@ -15637,7 +15581,7 @@
      "points": 2.72
     },
     "3": {
-     "points": 3.3
+     "points": 3.31
     },
     "4": {
      "points": 2.95
@@ -15796,7 +15740,7 @@
      "points": 5.11
     },
     "3": {
-     "points": 4.39
+     "points": 4.38
     },
     "4": {
      "points": 2.97
@@ -16206,7 +16150,7 @@
      "points": 2.42
     },
     "3": {
-     "points": 2.08
+     "points": 2.07
     },
     "4": {
      "points": 2.93
@@ -16554,7 +16498,7 @@
      "points": 2.68
     },
     "3": {
-     "points": 3.45
+     "points": 3.38
     },
     "4": {
      "points": 2.7
@@ -16666,7 +16610,7 @@
      "points": 1.7
     },
     "3": {
-     "points": 1.36
+     "points": 1.35
     },
     "4": {
      "points": 2.78
@@ -17045,6 +16989,23 @@
     },
     "18": {
      "points": 1.1
+    }
+   }
+  },
+  {
+   "player_id": 10218,
+   "name": "Drew Lock",
+   "position": "QB",
+   "team": "SEA",
+   "weeks": {
+    "2": {
+     "points": 14.1
+    },
+    "4": {
+     "points": 14.82
+    },
+    "5": {
+     "points": 15.04
     }
    }
   },
@@ -17971,7 +17932,7 @@
      "points": 1.39
     },
     "3": {
-     "points": 1.16
+     "points": 1.15
     },
     "4": {
      "points": 2.91
@@ -18195,7 +18156,7 @@
      "points": 1.53
     },
     "3": {
-     "points": 3.36
+     "points": 3.17
     },
     "4": {
      "points": 2.14
@@ -18251,7 +18212,7 @@
      "points": 2.32
     },
     "3": {
-     "points": 1.72
+     "points": 1.89
     },
     "4": {
      "points": 2.28
@@ -18294,6 +18255,65 @@
     },
     "18": {
      "points": 2.32
+    }
+   }
+  },
+  {
+   "player_id": 36008,
+   "name": "Kevin Coleman Jr.",
+   "position": "WR",
+   "team": "MIA",
+   "weeks": {
+    "1": {
+     "points": 1.43
+    },
+    "2": {
+     "points": 2.47
+    },
+    "3": {
+     "points": 3.5
+    },
+    "4": {
+     "points": 2.08
+    },
+    "5": {
+     "points": 2.08
+    },
+    "7": {
+     "points": 2.08
+    },
+    "8": {
+     "points": 2.08
+    },
+    "9": {
+     "points": 2.08
+    },
+    "10": {
+     "points": 2.08
+    },
+    "11": {
+     "points": 2.08
+    },
+    "12": {
+     "points": 2.08
+    },
+    "13": {
+     "points": 2.08
+    },
+    "14": {
+     "points": 2.08
+    },
+    "15": {
+     "points": 2.08
+    },
+    "16": {
+     "points": 2.08
+    },
+    "17": {
+     "points": 2.08
+    },
+    "18": {
+     "points": 2.08
     }
    }
   },
@@ -18353,65 +18373,6 @@
     },
     "18": {
      "points": 2.09
-    }
-   }
-  },
-  {
-   "player_id": 36008,
-   "name": "Kevin Coleman Jr.",
-   "position": "WR",
-   "team": "MIA",
-   "weeks": {
-    "1": {
-     "points": 1.43
-    },
-    "2": {
-     "points": 2.47
-    },
-    "3": {
-     "points": 2.73
-    },
-    "4": {
-     "points": 2.08
-    },
-    "5": {
-     "points": 2.08
-    },
-    "7": {
-     "points": 2.08
-    },
-    "8": {
-     "points": 2.08
-    },
-    "9": {
-     "points": 2.08
-    },
-    "10": {
-     "points": 2.08
-    },
-    "11": {
-     "points": 2.08
-    },
-    "12": {
-     "points": 2.08
-    },
-    "13": {
-     "points": 2.08
-    },
-    "14": {
-     "points": 2.08
-    },
-    "15": {
-     "points": 2.08
-    },
-    "16": {
-     "points": 2.08
-    },
-    "17": {
-     "points": 2.08
-    },
-    "18": {
-     "points": 2.08
     }
    }
   },
@@ -18554,7 +18515,7 @@
      "points": 1.78
     },
     "3": {
-     "points": 2.07
+     "points": 2.06
     },
     "4": {
      "points": 2.09
@@ -18656,6 +18617,62 @@
     },
     "18": {
      "points": 2.07
+    }
+   }
+  },
+  {
+   "player_id": 35016,
+   "name": "Devontez Walker",
+   "position": "WR",
+   "team": "BAL",
+   "weeks": {
+    "1": {
+     "points": 2.05
+    },
+    "3": {
+     "points": 4.0
+    },
+    "4": {
+     "points": 2.05
+    },
+    "5": {
+     "points": 2.05
+    },
+    "6": {
+     "points": 2.05
+    },
+    "7": {
+     "points": 2.05
+    },
+    "8": {
+     "points": 2.05
+    },
+    "9": {
+     "points": 2.05
+    },
+    "10": {
+     "points": 2.05
+    },
+    "11": {
+     "points": 2.05
+    },
+    "12": {
+     "points": 2.05
+    },
+    "14": {
+     "points": 2.05
+    },
+    "15": {
+     "points": 2.05
+    },
+    "16": {
+     "points": 2.05
+    },
+    "17": {
+     "points": 2.05
+    },
+    "18": {
+     "points": 2.05
     }
    }
   },
@@ -18817,62 +18834,6 @@
      "points": 2.05
     },
     "13": {
-     "points": 2.05
-    },
-    "14": {
-     "points": 2.05
-    },
-    "15": {
-     "points": 2.05
-    },
-    "16": {
-     "points": 2.05
-    },
-    "17": {
-     "points": 2.05
-    },
-    "18": {
-     "points": 2.05
-    }
-   }
-  },
-  {
-   "player_id": 35016,
-   "name": "Devontez Walker",
-   "position": "WR",
-   "team": "BAL",
-   "weeks": {
-    "1": {
-     "points": 2.05
-    },
-    "3": {
-     "points": 3.8
-    },
-    "4": {
-     "points": 2.05
-    },
-    "5": {
-     "points": 2.05
-    },
-    "6": {
-     "points": 2.05
-    },
-    "7": {
-     "points": 2.05
-    },
-    "8": {
-     "points": 2.05
-    },
-    "9": {
-     "points": 2.05
-    },
-    "10": {
-     "points": 2.05
-    },
-    "11": {
-     "points": 2.05
-    },
-    "12": {
      "points": 2.05
     },
     "14": {
@@ -19138,7 +19099,7 @@
      "points": 3.74
     },
     "3": {
-     "points": 1.39
+     "points": 1.33
     },
     "4": {
      "points": 2.04
@@ -19946,6 +19907,65 @@
    }
   },
   {
+   "player_id": 35230,
+   "name": "Xavier Smith",
+   "position": "WR",
+   "team": "LAR",
+   "weeks": {
+    "1": {
+     "points": 1.56
+    },
+    "2": {
+     "points": 1.74
+    },
+    "3": {
+     "points": 2.49
+    },
+    "4": {
+     "points": 1.48
+    },
+    "5": {
+     "points": 1.56
+    },
+    "6": {
+     "points": 1.56
+    },
+    "7": {
+     "points": 1.56
+    },
+    "8": {
+     "points": 1.56
+    },
+    "9": {
+     "points": 1.56
+    },
+    "10": {
+     "points": 1.56
+    },
+    "12": {
+     "points": 1.56
+    },
+    "13": {
+     "points": 1.56
+    },
+    "14": {
+     "points": 1.56
+    },
+    "15": {
+     "points": 1.56
+    },
+    "16": {
+     "points": 1.56
+    },
+    "17": {
+     "points": 1.56
+    },
+    "18": {
+     "points": 1.56
+    }
+   }
+  },
+  {
    "player_id": 12601,
    "name": "Jalen Tolbert",
    "position": "WR",
@@ -20084,7 +20104,7 @@
      "points": 1.45
     },
     "3": {
-     "points": 4.17
+     "points": 4.16
     },
     "4": {
      "points": 1.42
@@ -20127,65 +20147,6 @@
     },
     "18": {
      "points": 1.42
-    }
-   }
-  },
-  {
-   "player_id": 35230,
-   "name": "Xavier Smith",
-   "position": "WR",
-   "team": "LAR",
-   "weeks": {
-    "1": {
-     "points": 1.56
-    },
-    "2": {
-     "points": 1.74
-    },
-    "3": {
-     "points": 1.83
-    },
-    "4": {
-     "points": 1.48
-    },
-    "5": {
-     "points": 1.56
-    },
-    "6": {
-     "points": 1.56
-    },
-    "7": {
-     "points": 1.56
-    },
-    "8": {
-     "points": 1.56
-    },
-    "9": {
-     "points": 1.56
-    },
-    "10": {
-     "points": 1.56
-    },
-    "12": {
-     "points": 1.56
-    },
-    "13": {
-     "points": 1.56
-    },
-    "14": {
-     "points": 1.56
-    },
-    "15": {
-     "points": 1.56
-    },
-    "16": {
-     "points": 1.56
-    },
-    "17": {
-     "points": 1.56
-    },
-    "18": {
-     "points": 1.56
     }
    }
   },
@@ -20576,6 +20537,65 @@
    }
   },
   {
+   "player_id": 36040,
+   "name": "Riley Nowakowski",
+   "position": "TE",
+   "team": "PIT",
+   "weeks": {
+    "1": {
+     "points": 0.88
+    },
+    "2": {
+     "points": 1.14
+    },
+    "3": {
+     "points": 1.13
+    },
+    "4": {
+     "points": 1.46
+    },
+    "5": {
+     "points": 1.46
+    },
+    "6": {
+     "points": 1.46
+    },
+    "7": {
+     "points": 1.46
+    },
+    "8": {
+     "points": 1.46
+    },
+    "10": {
+     "points": 1.46
+    },
+    "11": {
+     "points": 1.46
+    },
+    "12": {
+     "points": 1.46
+    },
+    "13": {
+     "points": 1.46
+    },
+    "14": {
+     "points": 1.46
+    },
+    "15": {
+     "points": 1.46
+    },
+    "16": {
+     "points": 1.46
+    },
+    "17": {
+     "points": 1.46
+    },
+    "18": {
+     "points": 1.53
+    }
+   }
+  },
+  {
    "player_id": 35544,
    "name": "Dont'e Thornton Jr.",
    "position": "WR",
@@ -20676,61 +20696,58 @@
    }
   },
   {
-   "player_id": 36040,
-   "name": "Riley Nowakowski",
+   "player_id": 36012,
+   "name": "Josh Cuevas",
    "position": "TE",
-   "team": "PIT",
+   "team": "BAL",
    "weeks": {
     "1": {
-     "points": 0.88
-    },
-    "2": {
-     "points": 1.14
+     "points": 1.49
     },
     "3": {
-     "points": 0.98
+     "points": 0.88
     },
     "4": {
-     "points": 1.46
+     "points": 1.49
     },
     "5": {
-     "points": 1.46
+     "points": 1.49
     },
     "6": {
-     "points": 1.46
+     "points": 1.49
     },
     "7": {
-     "points": 1.46
+     "points": 1.49
     },
     "8": {
-     "points": 1.46
+     "points": 1.49
+    },
+    "9": {
+     "points": 1.49
     },
     "10": {
-     "points": 1.46
+     "points": 1.49
     },
     "11": {
-     "points": 1.46
+     "points": 1.49
     },
     "12": {
-     "points": 1.46
-    },
-    "13": {
-     "points": 1.46
+     "points": 1.49
     },
     "14": {
-     "points": 1.46
+     "points": 1.49
     },
     "15": {
-     "points": 1.46
+     "points": 1.49
     },
     "16": {
-     "points": 1.46
+     "points": 1.49
     },
     "17": {
-     "points": 1.46
+     "points": 1.49
     },
     "18": {
-     "points": 1.53
+     "points": 1.49
     }
    }
   },
@@ -20835,6 +20852,65 @@
    }
   },
   {
+   "player_id": 35543,
+   "name": "Konata Mumpfield",
+   "position": "WR",
+   "team": "LAR",
+   "weeks": {
+    "1": {
+     "points": 1.25
+    },
+    "2": {
+     "points": 1.45
+    },
+    "3": {
+     "points": 2.82
+    },
+    "4": {
+     "points": 1.22
+    },
+    "5": {
+     "points": 1.25
+    },
+    "6": {
+     "points": 1.25
+    },
+    "7": {
+     "points": 1.25
+    },
+    "8": {
+     "points": 1.25
+    },
+    "9": {
+     "points": 1.25
+    },
+    "10": {
+     "points": 1.25
+    },
+    "12": {
+     "points": 1.25
+    },
+    "13": {
+     "points": 1.25
+    },
+    "14": {
+     "points": 1.25
+    },
+    "15": {
+     "points": 1.25
+    },
+    "16": {
+     "points": 1.25
+    },
+    "17": {
+     "points": 1.25
+    },
+    "18": {
+     "points": 1.25
+    }
+   }
+  },
+  {
    "player_id": 10632,
    "name": "Charlie Woerner",
    "position": "TE",
@@ -20890,59 +20966,6 @@
     },
     "18": {
      "points": 1.3
-    }
-   }
-  },
-  {
-   "player_id": 36012,
-   "name": "Josh Cuevas",
-   "position": "TE",
-   "team": "BAL",
-   "weeks": {
-    "1": {
-     "points": 1.49
-    },
-    "4": {
-     "points": 1.49
-    },
-    "5": {
-     "points": 1.49
-    },
-    "6": {
-     "points": 1.49
-    },
-    "7": {
-     "points": 1.49
-    },
-    "8": {
-     "points": 1.49
-    },
-    "9": {
-     "points": 1.49
-    },
-    "10": {
-     "points": 1.49
-    },
-    "11": {
-     "points": 1.49
-    },
-    "12": {
-     "points": 1.49
-    },
-    "14": {
-     "points": 1.49
-    },
-    "15": {
-     "points": 1.49
-    },
-    "16": {
-     "points": 1.49
-    },
-    "17": {
-     "points": 1.49
-    },
-    "18": {
-     "points": 1.49
     }
    }
   },
@@ -21112,65 +21135,6 @@
    }
   },
   {
-   "player_id": 35543,
-   "name": "Konata Mumpfield",
-   "position": "WR",
-   "team": "LAR",
-   "weeks": {
-    "1": {
-     "points": 1.25
-    },
-    "2": {
-     "points": 1.45
-    },
-    "3": {
-     "points": 1.67
-    },
-    "4": {
-     "points": 1.22
-    },
-    "5": {
-     "points": 1.25
-    },
-    "6": {
-     "points": 1.25
-    },
-    "7": {
-     "points": 1.25
-    },
-    "8": {
-     "points": 1.25
-    },
-    "9": {
-     "points": 1.25
-    },
-    "10": {
-     "points": 1.25
-    },
-    "12": {
-     "points": 1.25
-    },
-    "13": {
-     "points": 1.25
-    },
-    "14": {
-     "points": 1.25
-    },
-    "15": {
-     "points": 1.25
-    },
-    "16": {
-     "points": 1.25
-    },
-    "17": {
-     "points": 1.25
-    },
-    "18": {
-     "points": 1.25
-    }
-   }
-  },
-  {
    "player_id": 12701,
    "name": "Jeremy Ruckert",
    "position": "TE",
@@ -21183,7 +21147,7 @@
      "points": 1.37
     },
     "3": {
-     "points": 3.33
+     "points": 3.34
     },
     "4": {
      "points": 1.15
@@ -23345,6 +23309,23 @@
    }
   },
   {
+   "player_id": 12795,
+   "name": "Chris Moore",
+   "position": "WR",
+   "team": "BAL",
+   "weeks": {
+    "2": {
+     "points": 2.87
+    },
+    "3": {
+     "points": 3.93
+    },
+    "4": {
+     "points": 3.01
+    }
+   }
+  },
+  {
    "player_id": 36122,
    "name": "CJ Williams",
    "position": "WR",
@@ -23476,13 +23457,24 @@
    }
   },
   {
+   "player_id": 10331,
+   "name": "Darius Slayton",
+   "position": "WR",
+   "team": "NYG",
+   "weeks": {
+    "1": {
+     "points": 6.53
+    }
+   }
+  },
+  {
    "player_id": 12610,
    "name": "Pierre Strong Jr.",
    "position": "RB",
    "team": "GB",
    "weeks": {
     "4": {
-     "points": 0.49
+     "points": 0.14
     },
     "5": {
      "points": 0.49
@@ -23526,17 +23518,6 @@
    }
   },
   {
-   "player_id": 10331,
-   "name": "Darius Slayton",
-   "position": "WR",
-   "team": "NYG",
-   "weeks": {
-    "1": {
-     "points": 6.53
-    }
-   }
-  },
-  {
    "player_id": 10053,
    "name": "Ian Thomas",
    "position": "TE",
@@ -23554,27 +23535,13 @@
    }
   },
   {
-   "player_id": 12795,
-   "name": "Chris Moore",
-   "position": "WR",
-   "team": "BAL",
-   "weeks": {
-    "2": {
-     "points": 2.87
-    },
-    "4": {
-     "points": 3.01
-    }
-   }
-  },
-  {
    "player_id": 35526,
    "name": "Jared Wayne",
    "position": "WR",
    "team": "HOU",
    "weeks": {
     "3": {
-     "points": 3.8
+     "points": 3.81
     },
     "4": {
      "points": 1.9
@@ -23642,6 +23609,17 @@
     },
     "2": {
      "points": 0.32
+    }
+   }
+  },
+  {
+   "player_id": 35564,
+   "name": "LaJohntay Wester",
+   "position": "WR",
+   "team": "BAL",
+   "weeks": {
+    "3": {
+     "points": 3.3
     }
    }
   },
@@ -23971,17 +23949,6 @@
    "team": "RK",
    "weeks": {
     "1": {
-     "points": 1.43
-    }
-   }
-  },
-  {
-   "player_id": 35564,
-   "name": "LaJohntay Wester",
-   "position": "WR",
-   "team": "BAL",
-   "weeks": {
-    "3": {
      "points": 1.43
     }
    }
