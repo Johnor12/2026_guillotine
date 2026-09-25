@@ -230,7 +230,7 @@
 
     <section id="outlook">
       <h2>Season outlook</h2>
-      <p class="hint">The elimination bar the model expects each week against your current roster's projected lineup with no further moves. The band is the bar's 10th–90th percentile. Survival odds assume you keep adding players under the better FAAB policy.</p>
+      <p class="hint">The elimination bar the model expects each week against your current roster's projected lineup with no further moves. The band is the bar's 10th–90th percentile. Survival odds assume you keep adding players at the future spending level that replays best.</p>
       <div class="card chart chart-wrap" id="chart"></div>
     </section>
 
@@ -397,17 +397,16 @@ function renderClaims(d) {
   });
   document.getElementById("claimsBody").replaceChildren(...rows);
 
-  const policyNames = { value: "No reserve", balanced: "Balanced saving", patient: "Patient saving" };
-  const full = pol => c.baseline[pol].find(r => r.budget === c.budget) || c.baseline[pol][c.baseline[pol].length - 1];
+  const full = level => level.budgets.find(r => r.budget === c.budget) || level.budgets[level.budgets.length - 1];
   document.getElementById("policyCard").replaceChildren(
-    h("h3", {}, "Future bidding policy"),
-    h("table", {}, h("tbody", {}, ...Object.keys(c.baseline).map(pol => h("tr", {},
-      h("td", {}, policyNames[pol] || pol, pol === c.policy ? " (used)" : ""),
-      h("td", { class: "num" }, `title ${pct1(full(pol).p_title)}`),
-      h("td", { class: "num" }, `final ${pct1(full(pol).p_reach_final)}`),
-      h("td", { class: `num ${relClass(full(pol).relative)}` }, rel(full(pol).relative)))))),
-    h("p", { style: "margin:8px 0 0" }, `Your saving plan is chosen by comparing outcomes through Week 17. Opponents keep sampled spending habits, with observed bid tendencies and noise. Replay title odds (${pct1(c.base.p_title)}) are approximate because opponents retain players your replay acquires; the full race reports ${pct1(c.race_title)}.`));
-  const room = c.baseline[c.policy];
+    h("h3", {}, "Future bids, as a multiple of the guide price"),
+    h("table", {}, h("tbody", {}, ...c.baseline.map(level => h("tr", {},
+      h("td", {}, `${level.spending}× guide`, level.spending === c.spending ? " (used)" : ""),
+      h("td", { class: "num" }, `title ${pct1(full(level).p_title)}`),
+      h("td", { class: "num" }, `final ${pct1(full(level).p_reach_final)}`),
+      h("td", { class: `num ${relClass(full(level).relative)}` }, rel(full(level).relative)))))),
+    h("p", { style: "margin:8px 0 0" }, `No saving plan is imposed: your future self bids each improving player at this multiple of its guide price, and the multiple that replays to the best title odds through Week 17 is used (below 1× holds cash for later, above 1× spends it sooner). Opponents keep sampled saving habits, with observed bid tendencies and noise. Replay title odds (${pct1(c.base.p_title)}) are approximate because opponents retain players your replay acquires; the full race reports ${pct1(c.race_title)}.`));
+  const room = c.baseline.find(level => level.spending === c.spending).budgets;
   document.getElementById("budgetCard").replaceChildren(
     h("h3", {}, "What budget is worth"),
     room.length > 1
@@ -416,7 +415,7 @@ function renderClaims(d) {
           h("td", { class: `num ${relClass(r.relative)}` }, rel(r.relative))))))
       : h("p", { style: "margin:0" }, "Priced once claims are pending: your title odds at each remaining budget, if you stood pat this week."));
   document.getElementById("claimsNote").textContent =
-    `Acquisitions and drops consider all ${d.model.bid_lookahead_weeks} remaining weeks through Week 17, including byes and superflex. Each roster and cash variant compares spending and saving plans across ${d.model.race_sims} opponent seasons. Winning and losing outcomes retain their connection to that season's future opportunities. This compares continuation plans, not every possible future decision. The ceiling is the modeled break-even: the most a win is worth to your title odds. Claims are alternatives, not a combined spending plan. Opponents mix spending and saving habits; participation and bid sizes learn from submitted bids, including losses.`;
+    `Acquisitions and drops consider all ${d.model.bid_lookahead_weeks} remaining weeks through Week 17, including byes and superflex. Each roster and cash variant is replayed across ${d.model.race_sims} opponent seasons at the future spending level that replays best for that cash. Winning and losing outcomes retain their connection to that season's future opportunities. This compares continuation plans, not every possible future decision. The ceiling is the modeled break-even: the most a win is worth to your title odds. Claims are alternatives, not a combined spending plan. Opponents mix spending and saving habits; participation and bid sizes learn from submitted bids, including losses.`;
 }
 
 function renderChart(d) {

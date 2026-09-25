@@ -55,8 +55,10 @@ ELITE_RANK = (4, 6, 6, 3)
 REFILL_DEPTH = 3  # untaken bodies ranked per position, in case the best are already held
 CONTEXT_CACHE = 8192  # (roster, week) contexts kept per Bidding before the cache is cleared
 
-# Desired cash entering each week (zero-based). These are strategy priors, not fits
-# to one auction. The patient plan keeps half its cash for week-14 superflex.
+# Opponents' saving habits: desired cash entering each week (zero-based), one plan per
+# manager for the season, a uniform prior rather than a fit to one auction. The patient
+# plan keeps half its cash for week-14 superflex. My own agent does not use these: it
+# bids a multiple of the guide ceiling that the replays choose (race.SPENDING).
 SAVING_PLANS = {
     "value": ((0, 0.0), (17, 0.0)),
     "balanced": ((0, 1.0), (4, 0.9), (8, 0.75), (12, 0.25), (13, 0.2), (15, 0.05), (17, 0.0)),
@@ -78,6 +80,7 @@ def reserve_fraction(policy: str, w: int) -> float:
 
 def spending_allowance(budget: int, initial_budget: int, start: int, w: int,
                        policy: str, risk: float) -> int:
+    """An opponent's cash available to this auction under its saving plan."""
     if policy == "value":
         return budget
     reserve = initial_budget * reserve_fraction(policy, w + 1) / reserve_fraction(policy, start)
@@ -528,18 +531,21 @@ class Bidding:
                 ctx.memo[j] = (gain, None if drop == _NONE else drop)
         return [ctx.memo[j] for j in candidates]
 
-    def _offer(self, j: int, drop: int | None, gain: float, budget: int, w: int, risk: float) -> Offer:
+    def _offer(self, j: int, drop: int | None, gain: float, budget: int, w: int, risk: float,
+               spending: float) -> Offer:
         if w == WEEKS - 1:
             return Offer(j, drop, gain, budget)  # Unspent FAAB has no value after the final game.
-        scale = budget * (WEEKS - 1) / (WEEKS - w) * (1.0 + 2.0 * risk)
+        scale = spending * budget * (WEEKS - 1) / (WEEKS - w) * (1.0 + 2.0 * risk)
         return Offer(j, drop, gain, min(budget, scale * self.shares[w][j] * min(1.5, gain / 5.0)))
 
-    def offers(self, roster, candidates, budget: int, w: int, risk: float = 0.0) -> list[Offer]:
-        """An offer for every candidate that improves the roster, with the drop that goes."""
+    def offers(self, roster, candidates, budget: int, w: int, risk: float = 0.0,
+               spending: float = 1.0) -> list[Offer]:
+        """An offer for every candidate that improves the roster, with the drop that goes,
+        at `spending` times the guide's price."""
         owned = set(roster)
         wanted = [j for j in candidates if j not in owned]
         return [
-            self._offer(j, drop, gain, budget, w, risk)
+            self._offer(j, drop, gain, budget, w, risk, spending)
             for j, (gain, drop) in zip(wanted, self.evaluate(roster, wanted, w))
             if gain > 0.0
         ]
@@ -551,10 +557,10 @@ class Bidding:
         span = WEEKS - w
         gains, _, fits, nets = self._core(ctx, [j], False)
         if fits[0]:
-            return [self._offer(j, None, float(gains[0]), budget, w, risk)] if gains[0] > 0 else []
+            return [self._offer(j, None, float(gains[0]), budget, w, risk, 1.0)] if gains[0] > 0 else []
         order = np.lexsort((ctx.drops, self.ros[w, ctx.drops], -nets[:, 0]))
         return [
-            self._offer(j, int(ctx.drops[o]), float(nets[o, 0]) / span, budget, w, risk)
+            self._offer(j, int(ctx.drops[o]), float(nets[o, 0]) / span, budget, w, risk, 1.0)
             for o in order[:k] if nets[o, 0] > 0.0
         ]
 

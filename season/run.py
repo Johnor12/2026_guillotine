@@ -211,7 +211,7 @@ def report(payload: dict) -> None:
         f"\nweek {payload['week']}: {payload['alive']} alive; {me['name']} FAAB ${me['faab_left']}; "
         f"P(cut this week) {me['p_cut_now']:.1%}, P(final) {me['p_reach_final']:.1%}, "
         f"P(title) {me['p_title']:.1%} (replay {payload['claims']['base']['p_title']:.1%}, "
-        f"policy {payload['claims']['policy']})",
+        f"future bids at {payload['claims']['spending']}x guide)",
         file=sys.stderr,
     )
     lu = me["lineup"]
@@ -224,9 +224,10 @@ def report(payload: dict) -> None:
     if objective:
         print(f"objective {objective['chosen']} (replay P(title): points {objective['p_title']['points']:.1%}, "
               f"title-weighted {objective['p_title']['title_weighted']:.1%})", file=sys.stderr)
-    print("Budget value under the future bidding policy (relative to standing pat):", file=sys.stderr)
-    for pol, rows in payload["claims"]["baseline"].items():
-        print("  " + pol + ": " + ", ".join(f"${r['budget']} {r['relative']:+.0f}%" for r in rows), file=sys.stderr)
+    print("Budget value by future spending level, x guide ceiling (relative to standing pat):", file=sys.stderr)
+    for level in payload["claims"]["baseline"]:
+        print(f"  {level['spending']}x: " + ", ".join(f"${r['budget']} {r['relative']:+.0f}%" for r in level["budgets"]),
+              file=sys.stderr)
     mode = ("weekly run pending" if not payload["waivers_ran"] else
             "off-cycle: players dropped since the run need a claim" if payload["claims"]["pending"] else "free agents only")
     print(f"claims ({mode}):", file=sys.stderr)
@@ -284,7 +285,7 @@ def main(argv: list[str] | None = None) -> int:
     decisions["objective"] = objective
     if args.report:
         print(f"[claims {time.perf_counter() - t0:.1f}s]", file=sys.stderr)
-    inputs = dataclasses.replace(inputs, policy=decisions["policy"])
+    inputs = dataclasses.replace(inputs, spending=decisions["spending"])
     t0 = time.perf_counter()
     full = run_race(inputs, args.sims, SEED, exclude_me=False)
     teams = league_odds(state, inputs, full)
@@ -344,11 +345,11 @@ def main(argv: list[str] | None = None) -> int:
         "model": {
             "bid_guide": GUIDE_URL,
             "bid_lookahead_weeks": WEEKS - w0,
-            "bid_policy": decisions["policy"],
+            "my_future_spending_x_guide": decisions["spending"],
             "opponent_saving_plans": {
-                policy: {"probability": 1 / len(SAVING_PLANS),
-                         "reserve_fraction_entering_week": {str(w + 1): share for w, share in anchors}}
-                for policy, anchors in SAVING_PLANS.items()
+                plan: {"probability": 1 / len(SAVING_PLANS),
+                       "reserve_fraction_entering_week": {str(w + 1): share for w, share in anchors}}
+                for plan, anchors in SAVING_PLANS.items()
             },
             "race_sims": args.sims,
             "weekly_sigma": WEEKLY_SIGMA,

@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Validate bid sizes with held-out players and compare saving plans on new seeds.
+"""Validate bid sizes with held-out players and compare future spending levels on new seeds.
 
     uv run -m season.evaluate_waivers            # -> bidding_evaluation.json
     uv run -m season.evaluate_waivers --sims 256
 
-The plan comparison uses paired opponent seasons, including a sensitivity run where
-every opponent participates immediately. Absolute replay odds are approximate because
+The spending comparison replays my roster bidding each multiple of the guide ceiling
+(race.SPENDING) on paired opponent seasons, including a sensitivity run where every
+opponent participates immediately. Absolute replay odds are approximate because
 opponents retain players our replay buys. A few observed auctions cannot validate future
 activity; held-out bid-size errors (per player, and the latest auction from earlier ones)
 are conditional on a manager submitting a positive bid, using current projections for
@@ -26,7 +27,7 @@ from shared.noise import SEED
 from shared.paths import BIDDING_EVALUATION, LEAGUE, POOL, WEEKLY_PROJECTIONS
 
 from .claims import claims, title_objective
-from .race import POLICIES, RACE_SIMS, race_inputs, run_race, run_replays
+from .race import RACE_SIMS, SPENDING, race_inputs, run_race, run_replays
 from .state import load_season
 
 
@@ -60,21 +61,23 @@ def counterfactual(state, sims):
 
 
 def compare(inputs, records, roster, budget):
-    runs = run_replays(inputs, records, [(tuple(roster), budget, p) for p in POLICIES])
+    """My roster replayed at each future spending level, each paired against the guide level."""
+    runs = dict(zip(SPENDING, run_replays(inputs, records, [(tuple(roster), budget, s) for s in SPENDING])))
     output = {}
-    for policy, run in zip(POLICIES, runs):
+    for spending, run in runs.items():
         path = run["budget_by_week"]
-        output[policy] = {"p_title": run["p_title"], "p_reach_final": run["p_reach_final"],
-                          "budget_by_week": [{"week": inputs.week0 + k + 1, "budget": round(b) if b is not None else None}
-                                             for k, b in enumerate(path)],
-                          "mean_week9_spend": round(path[8 - inputs.week0] - run["budget_after_claims"][8 - inputs.week0])
-                          if inputs.week0 <= 8 and path[8 - inputs.week0] is not None else None}
-    for policy, run in zip(POLICIES[1:], runs[1:]):
-        differences = [a - b for a, b in zip(runs[0]["title_by_record"], run["title_by_record"])]
+        differences = [a - b for a, b in zip(run["title_by_record"], runs[1.0]["title_by_record"])]
         delta = statistics.fmean(differences)
         se = statistics.stdev(differences) / math.sqrt(len(differences))
-        output[policy]["value_advantage_percentage_points"] = round(delta * 100, 3)
-        output[policy]["paired_95_percent_interval"] = [round((delta + sign * 1.96 * se) * 100, 3) for sign in (-1, 1)]
+        output[f"{spending}x_guide"] = {
+            "p_title": run["p_title"], "p_reach_final": run["p_reach_final"],
+            "budget_by_week": [{"week": inputs.week0 + k + 1, "budget": round(b) if b is not None else None}
+                               for k, b in enumerate(path)],
+            "mean_week9_spend": round(path[8 - inputs.week0] - run["budget_after_claims"][8 - inputs.week0])
+            if inputs.week0 <= 8 and path[8 - inputs.week0] is not None else None,
+            "advantage_over_guide_percentage_points": round(delta * 100, 3),
+            "paired_95_percent_interval": [round((delta + sign * 1.96 * se) * 100, 3) for sign in (-1, 1)],
+        }
     return output
 
 

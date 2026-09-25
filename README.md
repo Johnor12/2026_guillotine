@@ -137,8 +137,9 @@ Before and after changing the draft opponent model, compare
 `draft.evaluate_opponents`'s replay accuracy. `season.evaluate_waivers` holds out every
 bid on a player before predicting that player's positive submitted bids, and predicts
 the latest auction from the earlier ones alone, comparing the guide prior with the
-fitted price curve by mean absolute log error. It also compares the no-reserve,
-balanced and patient saving plans on paired opponent seasons with a separate seed, then
+fitted price curve by mean absolute log error. It also compares my future spending
+levels (multiples of the guide ceiling, `race.SPENDING`) on paired opponent seasons
+with a separate seed, then
 repeats with every opponent active, and reconstructs the current week's pre-auction
 rosters to exercise paid claim pricing with the learned model (a diagnostic using
 observed bids, not an ex-ante backtest). A few observed auctions cannot establish
@@ -314,14 +315,14 @@ weights: the standing roster's replay through the recorded opponent races, the
 per-week survival hazard and championship term weighted by each season's title
 probability, normalized to average 1. My bidding weights weeks by them only if that
 replays the standing roster to better title odds than weighting every week alike.
-In the week-3 state it did not (14.1% against 16.8%): the weights are a first-order
+In the week-3 state it did not (16.2% against 17.1%): the weights are a first-order
 fit computed once, so a policy on them gives up points in weeks that look safe until
 they are not. The chosen objective screens this week's candidates, ranks each one's
-drops, sets the guide ceiling's gain, and drives my future policy and roster cuts in
+drops, sets the guide ceiling's gain, and drives my future bidding and roster cuts in
 the replays. Opponents keep the points behavior above, with their current-week
-weight. The guide ceiling scales with remaining cash and weeks, but a separate saving
-plan limits total auction spending. Terminal-week improvements can use all remaining
-money.
+weight. The guide ceiling scales with remaining cash and weeks; my future bids are a
+multiple of it chosen by replay (below), with no separate saving plan. Terminal-week
+improvements can use all remaining money.
 
 This week's claims are decided by replay, not by that heuristic. Each candidate's
 three best drops by the heuristic are replayed and the best by title odds is kept: the
@@ -350,8 +351,9 @@ Earlier bids use current projections as a proxy for historical player value. The
 participation estimates and held-out bid-size errors (per player, and the latest auction
 predicted from the earlier ones alone) are published in `season.json` under `market`.
 
-Opponent saving habits are a uniform prior over three persistent season-long plans:
-no reserve, balanced saving, and patient saving. The balanced plan targets 75% of
+Opponents' saving habits are a uniform prior over three persistent season-long plans:
+no reserve, balanced saving, and patient saving (`waivers.SAVING_PLANS`; my own agent
+does not use them). The balanced plan targets 75% of
 cash entering Week 9, 25% entering Week 13, and 20% entering Week 14, informed by
 [Charchian's month-by-month guidance](https://www.fantasylife.com/articles/guillotine-leagues/how-to-manage-your-faab-in-guillotine-league-fantasy-football).
 The patient plan targets 85%, 55%, and 50%, respectively, to preserve buying power
@@ -363,8 +365,11 @@ These habits and their equal prior weights are assumptions, not inferred from on
 auction or optimized for opponents. Participation, target noise and observed bid
 tendencies still distinguish managers.
 
-Our future policy submits offers for every candidate improving the chosen objective
-within a team-specific ceiling and saving allowance, including early bargains. Total
+Our future bidding, inside the replays and the full race, submits an offer for every
+candidate improving the chosen objective at a fixed multiple of its guide ceiling,
+including early bargains, with no saving allowance: the multiple is chosen by replayed
+title odds (below), so holding cash back happens only when the simulated seasons
+reward it rather than by a chosen tactic. Total
 paid spending in an auction is also limited to its largest individual bid. Claims
 naming the same drop are alternatives; open spots, remaining cash and redundant
 upgrades are checked as claims resolve (a claim that no longer improves the roster
@@ -383,18 +388,23 @@ windows clear at different times, but they are modeled as one auction.
 
 The race excluding us records opponent markets and cut bars. Our roster/budget
 variants are replayed through those same seasons to choose this week's best modeled
-bid (`season/claims.py`). The standing roster is replayed at several budgets under
-all three saving plans; that grid is the value of cash, and the plan that replays
-best at each budget is the future policy every variant at that budget is priced
-under. A plan is chosen by its average outcome across seasons, never separately using
-a record's future prices or scores. This searches a small family of continuation
-strategies, not every possible sequence of future auction decisions. Winning and
+bid (`season/claims.py`). The standing roster is replayed at several budgets at every
+future spending level in `race.SPENDING`; that grid is the value of cash, and the
+level that replays best at each budget is what every variant at that budget is priced
+under. A level is chosen by its average outcome across seasons, never separately using
+a record's future prices or scores. This searches a one-dimensional family of
+continuation strategies (how much of the guide price to pay from next week on), not
+every possible sequence of future auction decisions; the guide ceiling's shape by
+position, cash, weeks left and cut risk is still a modeling assumption. In the week-3
+state the replays chose half the guide price (17.1% against 16.5% at the guide price,
+a paired advantage of 0.6 points in `season.evaluate_waivers`): this room clears
+depth above the guide and stars below it, so full guide bids overpay. Winning and
 losing outcomes are evaluated per recorded season, preserving their connection to
 future opportunity. These are individual alternatives, not an optimized simultaneous
 claim portfolio. Replay title odds are approximate: opponents retain players taken by
 our replay. Championship weeks are scored with the roster held in each week; a Week 17
-pickup cannot improve Week 16 retroactively. The full race uses our selected saving
-plan when reporting league odds.
+pickup cannot improve Week 16 retroactively. The full race uses our selected spending
+level when reporting league odds.
 
 Sleeper documents its [suggested bid ranges](https://support.sleeper.com/en/articles/12111984-suggested-faab-bids),
 but its [public API](https://docs.sleeper.com/) does not document an endpoint for them.

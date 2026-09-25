@@ -10,15 +10,15 @@
   "roster_id": 1,
   "name": "Guh-football",
   "faab_left": 998,
-  "p_cut_now": 0.0215,
-  "p_reach_final": 0.4043,
-  "p_title": 0.269,
+  "p_cut_now": 0.019,
+  "p_reach_final": 0.4111,
+  "p_title": 0.2954,
   "rank_by_title": 1,
   "bar_now": {
-   "mean": 40.9,
-   "p10": 32.4,
-   "p50": 40.8,
-   "p90": 49.6
+   "mean": 41.0,
+   "p10": 31.5,
+   "p50": 41.1,
+   "p90": 49.7
   },
   "lineup": {
    "total": 79.5,
@@ -133,318 +133,380 @@
    {
     "week": 3,
     "my_points": 79.5,
-    "bar_mean": 40.9,
-    "p_alive": 0.9815,
+    "bar_mean": 41.0,
+    "p_alive": 0.9808,
     "budget": 998
    },
    {
     "week": 4,
     "my_points": 86.4,
-    "bar_mean": 48.5,
-    "p_alive": 0.9657,
+    "bar_mean": 48.7,
+    "p_alive": 0.963,
     "budget": 998
    },
    {
     "week": 5,
     "my_points": 62.3,
-    "bar_mean": 50.8,
-    "p_alive": 0.7987,
-    "budget": 917
+    "bar_mean": 50.9,
+    "p_alive": 0.765,
+    "budget": 979
    },
    {
     "week": 6,
     "my_points": 86.2,
-    "bar_mean": 50.9,
-    "p_alive": 0.7777,
-    "budget": 771
+    "bar_mean": 50.6,
+    "p_alive": 0.7428,
+    "budget": 933
    },
    {
     "week": 7,
     "my_points": 74.7,
     "bar_mean": 57.6,
-    "p_alive": 0.7625,
-    "budget": 644
+    "p_alive": 0.7209,
+    "budget": 869
    },
    {
     "week": 8,
     "my_points": 85.0,
-    "bar_mean": 66.9,
-    "p_alive": 0.7427,
-    "budget": 426
+    "bar_mean": 67.1,
+    "p_alive": 0.695,
+    "budget": 738
    },
    {
     "week": 9,
     "my_points": 85.2,
-    "bar_mean": 83.8,
-    "p_alive": 0.7332,
-    "budget": 321
+    "bar_mean": 83.7,
+    "p_alive": 0.6815,
+    "budget": 651
    },
    {
     "week": 10,
     "my_points": 77.5,
-    "bar_mean": 87.4,
-    "p_alive": 0.7201,
-    "budget": 227
+    "bar_mean": 87.6,
+    "p_alive": 0.6663,
+    "budget": 550
    },
    {
     "week": 11,
     "my_points": 74.2,
     "bar_mean": 93.2,
-    "p_alive": 0.6731,
-    "budget": 176
+    "p_alive": 0.625,
+    "budget": 477
    },
    {
     "week": 12,
     "my_points": 93.2,
-    "bar_mean": 118.0,
-    "p_alive": 0.6426,
-    "budget": 114
+    "bar_mean": 118.2,
+    "p_alive": 0.5967,
+    "budget": 382
    },
    {
     "week": 13,
     "my_points": 92.2,
-    "bar_mean": 124.1,
-    "p_alive": 0.5879,
-    "budget": 70
+    "bar_mean": 123.5,
+    "p_alive": 0.5532,
+    "budget": 288
    },
    {
     "week": 14,
     "my_points": 107.9,
     "bar_mean": 158.4,
-    "p_alive": 0.5077,
-    "budget": 31
+    "p_alive": 0.482,
+    "budget": 196
    },
    {
     "week": 15,
     "my_points": 107.1,
-    "bar_mean": 182.2,
-    "p_alive": 0.3256,
-    "budget": 9
+    "bar_mean": 182.4,
+    "p_alive": 0.3211,
+    "budget": 118
    },
    {
     "week": 16,
     "my_points": 108.1,
     "bar_mean": null,
     "p_alive": null,
-    "budget": 1
+    "budget": 45
    },
    {
     "week": 17,
     "my_points": 109.1,
     "bar_mean": null,
     "p_alive": null,
-    "budget": 0
+    "budget": 21
    }
   ]
  },
  "claims": {
   "pending": true,
-  "policy": "value",
+  "spending": 0.5,
   "budget": 998,
-  "baseline": {
-   "value": [
-    {
-     "budget": 0,
-     "p_title": 0.022,
-     "p_reach_final": 0.047,
-     "relative": -87.0
-    },
-    {
-     "budget": 298,
-     "p_title": 0.1105,
-     "p_reach_final": 0.2174,
-     "relative": -34.7
-    },
-    {
-     "budget": 598,
-     "p_title": 0.1435,
-     "p_reach_final": 0.2786,
-     "relative": -15.2
-    },
-    {
-     "budget": 798,
-     "p_title": 0.1568,
-     "p_reach_final": 0.3021,
-     "relative": -7.3
-    },
-    {
-     "budget": 898,
-     "p_title": 0.1632,
-     "p_reach_final": 0.3138,
-     "relative": -3.5
-    },
-    {
-     "budget": 948,
-     "p_title": 0.1669,
-     "p_reach_final": 0.321,
-     "relative": -1.3
-    },
-    {
-     "budget": 973,
-     "p_title": 0.168,
-     "p_reach_final": 0.3231,
-     "relative": -0.7
-    },
-    {
-     "budget": 998,
-     "p_title": 0.1691,
-     "p_reach_final": 0.3256,
-     "relative": 0.0
-    }
-   ],
-   "balanced": [
-    {
-     "budget": 0,
-     "p_title": 0.022,
-     "p_reach_final": 0.047,
-     "relative": -87.0
-    },
-    {
-     "budget": 298,
-     "p_title": 0.0957,
-     "p_reach_final": 0.1847,
-     "relative": -43.4
-    },
-    {
-     "budget": 598,
-     "p_title": 0.1193,
-     "p_reach_final": 0.2287,
-     "relative": -29.4
-    },
-    {
-     "budget": 798,
-     "p_title": 0.1301,
-     "p_reach_final": 0.2465,
-     "relative": -23.1
-    },
-    {
-     "budget": 898,
-     "p_title": 0.1383,
-     "p_reach_final": 0.2609,
-     "relative": -18.2
-    },
-    {
-     "budget": 948,
-     "p_title": 0.1422,
-     "p_reach_final": 0.2677,
-     "relative": -15.9
-    },
-    {
-     "budget": 973,
-     "p_title": 0.144,
-     "p_reach_final": 0.2712,
-     "relative": -14.9
-    },
-    {
-     "budget": 998,
-     "p_title": 0.1466,
-     "p_reach_final": 0.2757,
-     "relative": -13.3
-    }
-   ],
-   "patient": [
-    {
-     "budget": 0,
-     "p_title": 0.022,
-     "p_reach_final": 0.047,
-     "relative": -87.0
-    },
-    {
-     "budget": 298,
-     "p_title": 0.086,
-     "p_reach_final": 0.1666,
-     "relative": -49.1
-    },
-    {
-     "budget": 598,
-     "p_title": 0.0991,
-     "p_reach_final": 0.1902,
-     "relative": -41.4
-    },
-    {
-     "budget": 798,
-     "p_title": 0.1037,
-     "p_reach_final": 0.1981,
-     "relative": -38.7
-    },
-    {
-     "budget": 898,
-     "p_title": 0.1095,
-     "p_reach_final": 0.208,
-     "relative": -35.3
-    },
-    {
-     "budget": 948,
-     "p_title": 0.1118,
-     "p_reach_final": 0.2125,
-     "relative": -33.9
-    },
-    {
-     "budget": 973,
-     "p_title": 0.1126,
-     "p_reach_final": 0.2141,
-     "relative": -33.4
-    },
-    {
-     "budget": 998,
-     "p_title": 0.1151,
-     "p_reach_final": 0.218,
-     "relative": -32.0
-    }
-   ]
-  },
+  "baseline": [
+   {
+    "spending": 0.25,
+    "budgets": [
+     {
+      "budget": 0,
+      "p_title": 0.0215,
+      "p_reach_final": 0.0453,
+      "relative": -87.4
+     },
+     {
+      "budget": 298,
+      "p_title": 0.0883,
+      "p_reach_final": 0.171,
+      "relative": -48.4
+     },
+     {
+      "budget": 598,
+      "p_title": 0.1064,
+      "p_reach_final": 0.2019,
+      "relative": -37.9
+     },
+     {
+      "budget": 798,
+      "p_title": 0.1229,
+      "p_reach_final": 0.2315,
+      "relative": -28.2
+     },
+     {
+      "budget": 898,
+      "p_title": 0.1306,
+      "p_reach_final": 0.2451,
+      "relative": -23.7
+     },
+     {
+      "budget": 948,
+      "p_title": 0.1341,
+      "p_reach_final": 0.2513,
+      "relative": -21.7
+     },
+     {
+      "budget": 973,
+      "p_title": 0.1363,
+      "p_reach_final": 0.2552,
+      "relative": -20.4
+     },
+     {
+      "budget": 998,
+      "p_title": 0.1383,
+      "p_reach_final": 0.2585,
+      "relative": -19.2
+     }
+    ]
+   },
+   {
+    "spending": 0.5,
+    "budgets": [
+     {
+      "budget": 0,
+      "p_title": 0.0215,
+      "p_reach_final": 0.0453,
+      "relative": -87.4
+     },
+     {
+      "budget": 298,
+      "p_title": 0.1004,
+      "p_reach_final": 0.1917,
+      "relative": -41.3
+     },
+     {
+      "budget": 598,
+      "p_title": 0.1361,
+      "p_reach_final": 0.2576,
+      "relative": -20.5
+     },
+     {
+      "budget": 798,
+      "p_title": 0.1545,
+      "p_reach_final": 0.2913,
+      "relative": -9.8
+     },
+     {
+      "budget": 898,
+      "p_title": 0.1631,
+      "p_reach_final": 0.3074,
+      "relative": -4.7
+     },
+     {
+      "budget": 948,
+      "p_title": 0.1674,
+      "p_reach_final": 0.3145,
+      "relative": -2.2
+     },
+     {
+      "budget": 973,
+      "p_title": 0.1694,
+      "p_reach_final": 0.3178,
+      "relative": -1.1
+     },
+     {
+      "budget": 998,
+      "p_title": 0.1712,
+      "p_reach_final": 0.3211,
+      "relative": 0.0
+     }
+    ]
+   },
+   {
+    "spending": 1.0,
+    "budgets": [
+     {
+      "budget": 0,
+      "p_title": 0.0215,
+      "p_reach_final": 0.0453,
+      "relative": -87.4
+     },
+     {
+      "budget": 298,
+      "p_title": 0.108,
+      "p_reach_final": 0.214,
+      "relative": -36.9
+     },
+     {
+      "budget": 598,
+      "p_title": 0.1392,
+      "p_reach_final": 0.2735,
+      "relative": -18.7
+     },
+     {
+      "budget": 798,
+      "p_title": 0.1521,
+      "p_reach_final": 0.2961,
+      "relative": -11.2
+     },
+     {
+      "budget": 898,
+      "p_title": 0.1587,
+      "p_reach_final": 0.3086,
+      "relative": -7.3
+     },
+     {
+      "budget": 948,
+      "p_title": 0.1617,
+      "p_reach_final": 0.3146,
+      "relative": -5.5
+     },
+     {
+      "budget": 973,
+      "p_title": 0.1632,
+      "p_reach_final": 0.3175,
+      "relative": -4.7
+     },
+     {
+      "budget": 998,
+      "p_title": 0.1649,
+      "p_reach_final": 0.321,
+      "relative": -3.7
+     }
+    ]
+   },
+   {
+    "spending": 2.0,
+    "budgets": [
+     {
+      "budget": 0,
+      "p_title": 0.0215,
+      "p_reach_final": 0.0453,
+      "relative": -87.4
+     },
+     {
+      "budget": 298,
+      "p_title": 0.0774,
+      "p_reach_final": 0.1643,
+      "relative": -54.8
+     },
+     {
+      "budget": 598,
+      "p_title": 0.0904,
+      "p_reach_final": 0.1914,
+      "relative": -47.2
+     },
+     {
+      "budget": 798,
+      "p_title": 0.0973,
+      "p_reach_final": 0.2066,
+      "relative": -43.2
+     },
+     {
+      "budget": 898,
+      "p_title": 0.1006,
+      "p_reach_final": 0.2141,
+      "relative": -41.2
+     },
+     {
+      "budget": 948,
+      "p_title": 0.1023,
+      "p_reach_final": 0.2178,
+      "relative": -40.3
+     },
+     {
+      "budget": 973,
+      "p_title": 0.1027,
+      "p_reach_final": 0.2186,
+      "relative": -40.0
+     },
+     {
+      "budget": 998,
+      "p_title": 0.1029,
+      "p_reach_final": 0.2192,
+      "relative": -39.9
+     }
+    ]
+   }
+  ],
   "base": {
-   "p_title": 0.1691,
-   "p_reach_final": 0.3256,
-   "p_cut_now": 0.0185,
+   "p_title": 0.1712,
+   "p_reach_final": 0.3211,
+   "p_cut_now": 0.0192,
    "p_alive_by_week": [
-    0.9815,
-    0.9657,
-    0.7987,
-    0.7777,
-    0.7625,
-    0.7427,
-    0.7332,
-    0.7201,
-    0.6731,
-    0.6426,
-    0.5879,
-    0.5077,
-    0.3256
+    0.9808,
+    0.963,
+    0.765,
+    0.7428,
+    0.7209,
+    0.695,
+    0.6815,
+    0.6663,
+    0.625,
+    0.5967,
+    0.5532,
+    0.482,
+    0.3211
    ],
    "budget_by_week": [
     998,
     998,
-    917,
-    771,
-    644,
-    426,
-    321,
-    227,
-    176,
-    114,
-    70,
-    31,
-    9,
-    1,
-    0
+    979,
+    933,
+    869,
+    738,
+    651,
+    550,
+    477,
+    382,
+    288,
+    196,
+    118,
+    45,
+    21
    ],
    "budget_after_claims": [
     998,
-    918,
-    785,
-    644,
-    427,
-    322,
-    227,
-    176,
-    114,
-    70,
-    31,
-    9,
-    1,
-    0,
-    0
+    979,
+    938,
+    869,
+    740,
+    652,
+    551,
+    478,
+    381,
+    289,
+    197,
+    118,
+    46,
+    21,
+    3
    ]
   },
   "roster_size": 9,
@@ -466,10 +528,47 @@
      "Alec Pierce"
     ],
     "gain_this_week": 0.0,
-    "title_if_free": 0.2,
-    "title_if_free_se": 0.3,
+    "title_if_free": 0.5,
+    "title_if_free_se": 0.2,
     "optimal_bid": 0,
     "planning_gain": 5.81,
+    "p_win_at_optimal": 1.0,
+    "title_at_optimal": 0.5,
+    "break_even_bid": 0,
+    "clearing": {
+     "p_claimed": 0.0,
+     "p_free_pickup": 0.0,
+     "mean": null,
+     "p50": null,
+     "p90": null
+    },
+    "curve": [
+     {
+      "bid": 0,
+      "p_win": 1.0,
+      "title": 0.5
+     }
+    ]
+   },
+   {
+    "player_id": "10226",
+    "name": "Andrei Iosivas",
+    "position": "WR",
+    "team": "CIN",
+    "injury_status": "Out",
+    "source": "blend",
+    "points_this_week": 0.0,
+    "ros_per_week": 2.53,
+    "waiver_clears": null,
+    "drop": null,
+    "to_reserve": [
+     "Andrei Iosivas"
+    ],
+    "gain_this_week": 0.0,
+    "title_if_free": 0.2,
+    "title_if_free_se": 0.1,
+    "optimal_bid": 0,
+    "planning_gain": 2.53,
     "p_win_at_optimal": 1.0,
     "title_at_optimal": 0.2,
     "break_even_bid": 0,
@@ -489,26 +588,26 @@
     ]
    },
    {
-    "player_id": "10226",
-    "name": "Andrei Iosivas",
+    "player_id": "13293",
+    "name": "Ja'Kobi Lane",
     "position": "WR",
-    "team": "CIN",
-    "injury_status": "Out",
+    "team": "BAL",
+    "injury_status": "IR",
     "source": "blend",
     "points_this_week": 0.0,
-    "ros_per_week": 2.53,
+    "ros_per_week": 3.61,
     "waiver_clears": null,
     "drop": null,
     "to_reserve": [
-     "Andrei Iosivas"
+     "Ja'Kobi Lane"
     ],
     "gain_this_week": 0.0,
-    "title_if_free": 0.1,
+    "title_if_free": -0.1,
     "title_if_free_se": 0.2,
     "optimal_bid": 0,
-    "planning_gain": 2.53,
+    "planning_gain": 3.28,
     "p_win_at_optimal": 1.0,
-    "title_at_optimal": 0.1,
+    "title_at_optimal": -0.1,
     "break_even_bid": 0,
     "clearing": {
      "p_claimed": 0.0,
@@ -521,7 +620,7 @@
      {
       "bid": 0,
       "p_win": 1.0,
-      "title": 0.1
+      "title": -0.1
      }
     ]
    },
@@ -541,7 +640,7 @@
     ],
     "gain_this_week": 0.0,
     "title_if_free": -0.3,
-    "title_if_free_se": 0.2,
+    "title_if_free_se": 0.1,
     "optimal_bid": 0,
     "planning_gain": 1.5,
     "p_win_at_optimal": 1.0,
@@ -563,24 +662,24 @@
     ]
    },
    {
-    "player_id": "13293",
-    "name": "Ja'Kobi Lane",
+    "player_id": "13276",
+    "name": "Omar Cooper",
     "position": "WR",
-    "team": "BAL",
+    "team": "NYJ",
     "injury_status": "IR",
     "source": "blend",
     "points_this_week": 0.0,
-    "ros_per_week": 3.61,
+    "ros_per_week": 4.77,
     "waiver_clears": null,
     "drop": null,
     "to_reserve": [
-     "Ja'Kobi Lane"
+     "Omar Cooper"
     ],
     "gain_this_week": 0.0,
     "title_if_free": -0.7,
     "title_if_free_se": 0.2,
     "optimal_bid": 0,
-    "planning_gain": 3.28,
+    "planning_gain": 4.36,
     "p_win_at_optimal": 1.0,
     "title_at_optimal": -0.7,
     "break_even_bid": 0,
@@ -598,116 +697,79 @@
       "title": -0.7
      }
     ]
-   },
-   {
-    "player_id": "13276",
-    "name": "Omar Cooper",
-    "position": "WR",
-    "team": "NYJ",
-    "injury_status": "IR",
-    "source": "blend",
-    "points_this_week": 0.0,
-    "ros_per_week": 4.77,
-    "waiver_clears": null,
-    "drop": null,
-    "to_reserve": [
-     "Omar Cooper"
-    ],
-    "gain_this_week": 0.0,
-    "title_if_free": -1.5,
-    "title_if_free_se": 0.3,
-    "optimal_bid": 0,
-    "planning_gain": 4.36,
-    "p_win_at_optimal": 1.0,
-    "title_at_optimal": -1.5,
-    "break_even_bid": 0,
-    "clearing": {
-     "p_claimed": 0.0,
-     "p_free_pickup": 0.0,
-     "mean": null,
-     "p50": null,
-     "p90": null
-    },
-    "curve": [
-     {
-      "bid": 0,
-      "p_win": 1.0,
-      "title": -1.5
-     }
-    ]
    }
   ],
   "objective": {
    "chosen": "points",
    "p_title": {
-    "points": 0.1691,
-    "title_weighted": 0.1432
+    "points": 0.1712,
+    "title_weighted": 0.1623
    },
    "title_weights": [
     {
      "week": 3,
-     "weight": 0.167
+     "weight": 0.162
     },
     {
      "week": 4,
-     "weight": 0.135
+     "weight": 0.153
     },
     {
      "week": 5,
-     "weight": 1.652
+     "weight": 1.935
     },
     {
      "week": 6,
-     "weight": 0.284
+     "weight": 0.329
     },
     {
      "week": 7,
-     "weight": 0.19
+     "weight": 0.31
     },
     {
      "week": 8,
-     "weight": 0.271
+     "weight": 0.359
     },
     {
      "week": 9,
-     "weight": 0.136
+     "weight": 0.194
     },
     {
      "week": 10,
-     "weight": 0.197
+     "weight": 0.22
     },
     {
      "week": 11,
-     "weight": 0.622
+     "weight": 0.606
     },
     {
      "week": 12,
-     "weight": 0.476
+     "weight": 0.486
     },
     {
      "week": 13,
-     "weight": 0.878
+     "weight": 0.772
     },
     {
      "week": 14,
-     "weight": 1.371
+     "weight": 1.235
     },
     {
      "week": 15,
-     "weight": 3.244
+     "weight": 3.111
     },
     {
      "week": 16,
-     "weight": 2.688
+     "weight": 2.564
     },
     {
      "week": 17,
-     "weight": 2.688
+     "weight": 2.564
     }
    ],
    "refill_pool": 197
   },
-  "race_title": 0.269
+  "race_title": 0.2954
  },
  "teams": [
   {
@@ -721,28 +783,28 @@
    "points_this_week": 0.0,
    "roster_size": 9,
    "projected_now": 79.5,
-   "p_cut_now": 0.0215,
+   "p_cut_now": 0.019,
    "p_alive_by_week": [
-    0.9785,
-    0.9614,
-    0.811,
-    0.7896,
-    0.7739,
-    0.7539,
-    0.748,
-    0.7397,
-    0.708,
-    0.6807,
-    0.6348,
-    0.5684,
-    0.4043
+    0.981,
+    0.9634,
+    0.7666,
+    0.7437,
+    0.7246,
+    0.6997,
+    0.6836,
+    0.6704,
+    0.6357,
+    0.6162,
+    0.5796,
+    0.5273,
+    0.4111
    ],
-   "p_reach_final": 0.4043,
-   "p_title": 0.269,
+   "p_reach_final": 0.4111,
+   "p_title": 0.2954,
    "spend_now": 0,
    "p_claim_now": 0.0,
-   "budget_entering_week9": 333,
-   "budget_entering_week13": 81,
+   "budget_entering_week9": 664,
+   "budget_entering_week13": 309,
    "players": [
     {
      "name": "Caleb Williams",
@@ -811,28 +873,28 @@
    "points_this_week": 2.1,
    "roster_size": 8,
    "projected_now": 73.8,
-   "p_cut_now": 0.0396,
+   "p_cut_now": 0.0425,
    "p_alive_by_week": [
-    0.9604,
-    0.9077,
-    0.8638,
-    0.7925,
-    0.71,
-    0.6582,
-    0.5742,
-    0.5103,
-    0.4292,
-    0.3521,
-    0.2666,
-    0.1504,
-    0.0791
+    0.9575,
+    0.9014,
+    0.8628,
+    0.8027,
+    0.7217,
+    0.6685,
+    0.5845,
+    0.5083,
+    0.4258,
+    0.3481,
+    0.2627,
+    0.1426,
+    0.0684
    ],
-   "p_reach_final": 0.0791,
-   "p_title": 0.04,
-   "spend_now": 4,
-   "p_claim_now": 0.275,
-   "budget_entering_week9": 583,
-   "budget_entering_week13": 235,
+   "p_reach_final": 0.0684,
+   "p_title": 0.0322,
+   "spend_now": 5,
+   "p_claim_now": 0.272,
+   "budget_entering_week9": 575,
+   "budget_entering_week13": 223,
    "players": [
     {
      "name": "Trey McBride",
@@ -895,28 +957,28 @@
    "points_this_week": 8.6,
    "roster_size": 9,
    "projected_now": 84.4,
-   "p_cut_now": 0.0049,
+   "p_cut_now": 0.0063,
    "p_alive_by_week": [
-    0.9951,
-    0.9775,
-    0.9644,
-    0.9316,
-    0.9126,
-    0.8809,
-    0.8213,
-    0.7407,
-    0.6343,
-    0.5317,
-    0.3369,
-    0.2422,
-    0.1304
+    0.9937,
+    0.9829,
+    0.9683,
+    0.9351,
+    0.9185,
+    0.8867,
+    0.8306,
+    0.748,
+    0.6372,
+    0.5303,
+    0.3384,
+    0.2349,
+    0.1152
    ],
-   "p_reach_final": 0.1304,
-   "p_title": 0.0684,
+   "p_reach_final": 0.1152,
+   "p_title": 0.0493,
    "spend_now": 0,
    "p_claim_now": 0.0,
-   "budget_entering_week9": 598,
-   "budget_entering_week13": 257,
+   "budget_entering_week9": 603,
+   "budget_entering_week13": 265,
    "players": [
     {
      "name": "Kyler Murray",
@@ -985,28 +1047,28 @@
    "points_this_week": 0.0,
    "roster_size": 9,
    "projected_now": 76.4,
-   "p_cut_now": 0.0298,
+   "p_cut_now": 0.0254,
    "p_alive_by_week": [
-    0.9702,
-    0.9272,
-    0.8774,
-    0.8071,
-    0.7759,
-    0.7324,
-    0.6431,
-    0.5962,
-    0.4087,
-    0.335,
-    0.2637,
-    0.168,
-    0.0781
+    0.9746,
+    0.9395,
+    0.8848,
+    0.812,
+    0.7812,
+    0.7456,
+    0.6738,
+    0.6118,
+    0.4248,
+    0.3389,
+    0.2578,
+    0.1641,
+    0.0923
    ],
-   "p_reach_final": 0.0781,
-   "p_title": 0.0303,
+   "p_reach_final": 0.0923,
+   "p_title": 0.0381,
    "spend_now": 4,
-   "p_claim_now": 0.26,
-   "budget_entering_week9": 598,
-   "budget_entering_week13": 168,
+   "p_claim_now": 0.271,
+   "budget_entering_week9": 595,
+   "budget_entering_week13": 185,
    "players": [
     {
      "name": "Jaxon Smith-Njigba",
@@ -1075,28 +1137,28 @@
    "points_this_week": 0.0,
    "roster_size": 8,
    "projected_now": 68.1,
-   "p_cut_now": 0.0771,
+   "p_cut_now": 0.0747,
    "p_alive_by_week": [
-    0.9229,
-    0.7988,
-    0.7139,
-    0.6416,
-    0.5981,
-    0.5405,
-    0.4434,
-    0.354,
-    0.291,
-    0.2158,
-    0.1431,
-    0.0962,
-    0.0493
+    0.9253,
+    0.8159,
+    0.7383,
+    0.6685,
+    0.6162,
+    0.5469,
+    0.4375,
+    0.3472,
+    0.2915,
+    0.2173,
+    0.1543,
+    0.0986,
+    0.0435
    ],
-   "p_reach_final": 0.0493,
-   "p_title": 0.0225,
+   "p_reach_final": 0.0435,
+   "p_title": 0.0171,
    "spend_now": 2,
-   "p_claim_now": 0.188,
-   "budget_entering_week9": 567,
-   "budget_entering_week13": 183,
+   "p_claim_now": 0.183,
+   "budget_entering_week9": 561,
+   "budget_entering_week13": 174,
    "players": [
     {
      "name": "Lamar Jackson",
@@ -1159,28 +1221,28 @@
    "points_this_week": 0.0,
    "roster_size": 8,
    "projected_now": 59.6,
-   "p_cut_now": 0.1724,
+   "p_cut_now": 0.1743,
    "p_alive_by_week": [
-    0.8276,
-    0.7539,
-    0.6367,
+    0.8257,
+    0.7505,
+    0.6411,
     0.5913,
-    0.4365,
-    0.3379,
-    0.2876,
-    0.2495,
-    0.2095,
-    0.1479,
-    0.1084,
-    0.0645,
-    0.0249
+    0.4243,
+    0.3198,
+    0.2793,
+    0.2441,
+    0.2085,
+    0.1567,
+    0.1138,
+    0.0732,
+    0.0303
    ],
-   "p_reach_final": 0.0249,
-   "p_title": 0.0112,
+   "p_reach_final": 0.0303,
+   "p_title": 0.0132,
    "spend_now": 3,
-   "p_claim_now": 0.173,
-   "budget_entering_week9": 410,
-   "budget_entering_week13": 165,
+   "p_claim_now": 0.175,
+   "budget_entering_week9": 380,
+   "budget_entering_week13": 163,
    "players": [
     {
      "name": "Nico Collins",
@@ -1243,28 +1305,28 @@
    "points_this_week": 0.0,
    "roster_size": 10,
    "projected_now": 63.9,
-   "p_cut_now": 0.1157,
+   "p_cut_now": 0.1187,
    "p_alive_by_week": [
-    0.8843,
-    0.8335,
-    0.8022,
-    0.7456,
-    0.7188,
-    0.6401,
-    0.5688,
-    0.5093,
-    0.4546,
-    0.3735,
-    0.2734,
-    0.1895,
-    0.0933
+    0.8813,
+    0.8359,
+    0.7935,
+    0.7388,
+    0.7163,
+    0.6328,
+    0.5684,
+    0.5122,
+    0.4604,
+    0.3818,
+    0.2871,
+    0.2026,
+    0.104
    ],
-   "p_reach_final": 0.0933,
-   "p_title": 0.0479,
+   "p_reach_final": 0.104,
+   "p_title": 0.0469,
    "spend_now": 6,
-   "p_claim_now": 0.294,
-   "budget_entering_week9": 583,
-   "budget_entering_week13": 264,
+   "p_claim_now": 0.292,
+   "budget_entering_week9": 572,
+   "budget_entering_week13": 258,
    "players": [
     {
      "name": "Chase Brown",
@@ -1339,28 +1401,28 @@
    "points_this_week": 2.9,
    "roster_size": 8,
    "projected_now": 77.2,
-   "p_cut_now": 0.0273,
+   "p_cut_now": 0.0327,
    "p_alive_by_week": [
-    0.9727,
-    0.9341,
-    0.9009,
-    0.8779,
-    0.8306,
-    0.7646,
-    0.6899,
-    0.5752,
-    0.4922,
-    0.3857,
-    0.3022,
-    0.1826,
-    0.0781
+    0.9673,
+    0.9233,
+    0.8931,
+    0.8604,
+    0.8115,
+    0.7412,
+    0.6665,
+    0.5664,
+    0.4824,
+    0.3862,
+    0.3003,
+    0.1899,
+    0.0908
    ],
-   "p_reach_final": 0.0781,
-   "p_title": 0.0288,
+   "p_reach_final": 0.0908,
+   "p_title": 0.0415,
    "spend_now": 3,
-   "p_claim_now": 0.268,
-   "budget_entering_week9": 579,
-   "budget_entering_week13": 244,
+   "p_claim_now": 0.261,
+   "budget_entering_week9": 582,
+   "budget_entering_week13": 251,
    "players": [
     {
      "name": "Tyler Shough",
@@ -1423,28 +1485,28 @@
    "points_this_week": 19.1,
    "roster_size": 8,
    "projected_now": 79.7,
-   "p_cut_now": 0.02,
+   "p_cut_now": 0.0205,
    "p_alive_by_week": [
-    0.98,
-    0.9712,
-    0.9653,
-    0.9585,
-    0.9331,
-    0.8931,
-    0.8311,
-    0.7256,
-    0.6401,
-    0.5469,
-    0.4375,
-    0.2861,
-    0.1372
+    0.9795,
+    0.9731,
+    0.96,
+    0.9536,
+    0.9253,
+    0.8799,
+    0.8091,
+    0.7021,
+    0.6226,
+    0.5361,
+    0.4185,
+    0.29,
+    0.1367
    ],
-   "p_reach_final": 0.1372,
-   "p_title": 0.061,
+   "p_reach_final": 0.1367,
+   "p_title": 0.0532,
    "spend_now": 0,
    "p_claim_now": 0.0,
-   "budget_entering_week9": 495,
-   "budget_entering_week13": 221,
+   "budget_entering_week9": 497,
+   "budget_entering_week13": 226,
    "players": [
     {
      "name": "Trevor Lawrence",
@@ -1507,28 +1569,28 @@
    "points_this_week": 2.8,
    "roster_size": 9,
    "projected_now": 67.0,
-   "p_cut_now": 0.0938,
+   "p_cut_now": 0.0884,
    "p_alive_by_week": [
-    0.9062,
-    0.8081,
-    0.7544,
-    0.6504,
-    0.5317,
-    0.4771,
-    0.4141,
-    0.3633,
-    0.3228,
-    0.2534,
-    0.189,
-    0.1279,
-    0.0596
+    0.9116,
+    0.8105,
+    0.7466,
+    0.6406,
+    0.5103,
+    0.4697,
+    0.4033,
+    0.3604,
+    0.3101,
+    0.2383,
+    0.1802,
+    0.1108,
+    0.0498
    ],
-   "p_reach_final": 0.0596,
-   "p_title": 0.0229,
+   "p_reach_final": 0.0498,
+   "p_title": 0.021,
    "spend_now": 2,
-   "p_claim_now": 0.239,
-   "budget_entering_week9": 495,
-   "budget_entering_week13": 220,
+   "p_claim_now": 0.229,
+   "budget_entering_week9": 498,
+   "budget_entering_week13": 217,
    "players": [
     {
      "name": "De'Von Achane",
@@ -1597,28 +1659,28 @@
    "points_this_week": 23.9,
    "roster_size": 8,
    "projected_now": 90.8,
-   "p_cut_now": 0.0015,
+   "p_cut_now": 0.0,
    "p_alive_by_week": [
-    0.9985,
-    0.9854,
-    0.9629,
-    0.9141,
-    0.8994,
-    0.7939,
-    0.7285,
-    0.6675,
-    0.5742,
-    0.4648,
-    0.3589,
-    0.2349,
-    0.1138
+    1.0,
+    0.9795,
+    0.9512,
+    0.9062,
+    0.8911,
+    0.7915,
+    0.7402,
+    0.6885,
+    0.6084,
+    0.4902,
+    0.3823,
+    0.2456,
+    0.1108
    ],
-   "p_reach_final": 0.1138,
-   "p_title": 0.0557,
+   "p_reach_final": 0.1108,
+   "p_title": 0.0479,
    "spend_now": 0,
    "p_claim_now": 0.0,
-   "budget_entering_week9": 362,
-   "budget_entering_week13": 167,
+   "budget_entering_week9": 353,
+   "budget_entering_week13": 161,
    "players": [
     {
      "name": "Matthew Stafford",
@@ -1681,28 +1743,28 @@
    "points_this_week": 0.0,
    "roster_size": 9,
    "projected_now": 70.0,
-   "p_cut_now": 0.0547,
+   "p_cut_now": 0.0747,
    "p_alive_by_week": [
-    0.9453,
-    0.8535,
-    0.7783,
-    0.7275,
-    0.5474,
-    0.4297,
-    0.354,
-    0.3003,
-    0.2295,
-    0.1772,
-    0.1367,
-    0.083,
-    0.0405
+    0.9253,
+    0.835,
+    0.769,
+    0.7183,
+    0.5405,
+    0.4287,
+    0.3604,
+    0.3135,
+    0.2383,
+    0.1792,
+    0.1396,
+    0.0884,
+    0.042
    ],
-   "p_reach_final": 0.0405,
-   "p_title": 0.0161,
-   "spend_now": 3,
-   "p_claim_now": 0.196,
-   "budget_entering_week9": 492,
-   "budget_entering_week13": 185,
+   "p_reach_final": 0.042,
+   "p_title": 0.0195,
+   "spend_now": 2,
+   "p_claim_now": 0.176,
+   "budget_entering_week9": 499,
+   "budget_entering_week13": 180,
    "players": [
     {
      "name": "Josh Allen",
@@ -1841,28 +1903,28 @@
    "points_this_week": 0.0,
    "roster_size": 8,
    "projected_now": 74.5,
-   "p_cut_now": 0.0391,
+   "p_cut_now": 0.0415,
    "p_alive_by_week": [
-    0.9609,
-    0.8955,
-    0.8423,
-    0.7783,
-    0.7061,
-    0.5884,
-    0.5029,
-    0.4185,
-    0.3467,
-    0.2607,
-    0.1904,
-    0.1284,
-    0.0474
+    0.9585,
+    0.9028,
+    0.8462,
+    0.7998,
+    0.7139,
+    0.5972,
+    0.5034,
+    0.4136,
+    0.3408,
+    0.271,
+    0.2124,
+    0.1372,
+    0.0498
    ],
-   "p_reach_final": 0.0474,
-   "p_title": 0.02,
+   "p_reach_final": 0.0498,
+   "p_title": 0.019,
    "spend_now": 1,
-   "p_claim_now": 0.111,
-   "budget_entering_week9": 525,
-   "budget_entering_week13": 192,
+   "p_claim_now": 0.108,
+   "budget_entering_week9": 521,
+   "budget_entering_week13": 171,
    "players": [
     {
      "name": "Jalen Hurts",
@@ -1960,28 +2022,28 @@
    "points_this_week": 18.5,
    "roster_size": 8,
    "projected_now": 79.3,
-   "p_cut_now": 0.0205,
+   "p_cut_now": 0.0259,
    "p_alive_by_week": [
-    0.9795,
-    0.9087,
-    0.855,
-    0.6274,
-    0.5908,
-    0.4824,
-    0.4048,
-    0.3433,
-    0.2534,
-    0.1973,
-    0.147,
-    0.0894,
-    0.0425
+    0.9741,
+    0.9019,
+    0.8516,
+    0.6016,
+    0.5693,
+    0.4697,
+    0.3794,
+    0.3232,
+    0.2339,
+    0.1782,
+    0.1328,
+    0.0825,
+    0.0444
    ],
-   "p_reach_final": 0.0425,
-   "p_title": 0.019,
+   "p_reach_final": 0.0444,
+   "p_title": 0.0239,
    "spend_now": 1,
-   "p_claim_now": 0.069,
-   "budget_entering_week9": 691,
-   "budget_entering_week13": 249,
+   "p_claim_now": 0.054,
+   "budget_entering_week9": 700,
+   "budget_entering_week13": 222,
    "players": [
     {
      "name": "Jahmyr Gibbs",
@@ -2079,28 +2141,28 @@
    "points_this_week": 35.5,
    "roster_size": 8,
    "projected_now": 69.5,
-   "p_cut_now": 0.0645,
+   "p_cut_now": 0.0684,
    "p_alive_by_week": [
-    0.9355,
-    0.8779,
-    0.8149,
-    0.772,
-    0.5542,
-    0.4951,
-    0.4214,
-    0.3096,
-    0.2148,
-    0.1665,
-    0.1318,
-    0.0884,
-    0.0488
+    0.9316,
+    0.8647,
+    0.8076,
+    0.7632,
+    0.5605,
+    0.5117,
+    0.4365,
+    0.3179,
+    0.2227,
+    0.165,
+    0.1353,
+    0.0942,
+    0.0444
    ],
-   "p_reach_final": 0.0488,
-   "p_title": 0.021,
-   "spend_now": 2,
-   "p_claim_now": 0.079,
-   "budget_entering_week9": 706,
-   "budget_entering_week13": 211,
+   "p_reach_final": 0.0444,
+   "p_title": 0.0195,
+   "spend_now": 1,
+   "p_claim_now": 0.067,
+   "budget_entering_week9": 707,
+   "budget_entering_week13": 214,
    "players": [
     {
      "name": "Bijan Robinson",
@@ -2163,28 +2225,28 @@
    "points_this_week": 0.0,
    "roster_size": 10,
    "projected_now": 67.6,
-   "p_cut_now": 0.0854,
+   "p_cut_now": 0.083,
    "p_alive_by_week": [
-    0.9146,
-    0.7622,
-    0.6763,
-    0.6162,
-    0.5352,
-    0.4829,
-    0.4038,
-    0.3491,
-    0.2671,
-    0.1992,
-    0.1436,
-    0.083,
-    0.0366
+    0.917,
+    0.7695,
+    0.6738,
+    0.6133,
+    0.54,
+    0.5005,
+    0.4302,
+    0.374,
+    0.2891,
+    0.2124,
+    0.1577,
+    0.0962,
+    0.0488
    ],
-   "p_reach_final": 0.0366,
-   "p_title": 0.0176,
+   "p_reach_final": 0.0488,
+   "p_title": 0.0244,
    "spend_now": 4,
-   "p_claim_now": 0.27,
-   "budget_entering_week9": 557,
-   "budget_entering_week13": 170,
+   "p_claim_now": 0.276,
+   "budget_entering_week9": 524,
+   "budget_entering_week13": 165,
    "players": [
     {
      "name": "Dak Prescott",
@@ -2259,28 +2321,28 @@
    "points_this_week": 0.0,
    "roster_size": 8,
    "projected_now": 66.1,
-   "p_cut_now": 0.105,
+   "p_cut_now": 0.1128,
    "p_alive_by_week": [
-    0.895,
-    0.7539,
-    0.5889,
-    0.3838,
-    0.2959,
-    0.2417,
-    0.1577,
-    0.1313,
-    0.1074,
-    0.0781,
-    0.0459,
-    0.0288,
-    0.0132
+    0.8872,
+    0.7373,
+    0.5996,
+    0.3853,
+    0.3096,
+    0.2588,
+    0.1724,
+    0.1519,
+    0.1216,
+    0.0874,
+    0.0518,
+    0.0317,
+    0.0122
    ],
-   "p_reach_final": 0.0132,
-   "p_title": 0.0068,
+   "p_reach_final": 0.0122,
+   "p_title": 0.0044,
    "spend_now": 2,
-   "p_claim_now": 0.075,
-   "budget_entering_week9": 563,
-   "budget_entering_week13": 162,
+   "p_claim_now": 0.071,
+   "budget_entering_week9": 577,
+   "budget_entering_week13": 144,
    "players": [
     {
      "name": "Justin Jefferson",
@@ -2343,28 +2405,28 @@
    "points_this_week": 0.0,
    "roster_size": 8,
    "projected_now": 65.9,
-   "p_cut_now": 0.0923,
+   "p_cut_now": 0.0869,
    "p_alive_by_week": [
-    0.9077,
-    0.7993,
-    0.6123,
-    0.5684,
-    0.479,
-    0.3169,
-    0.2627,
-    0.2119,
-    0.1655,
-    0.1201,
-    0.0845,
-    0.0532,
-    0.0176
+    0.9131,
+    0.7861,
+    0.5991,
+    0.562,
+    0.4844,
+    0.3105,
+    0.2578,
+    0.209,
+    0.1631,
+    0.1133,
+    0.0737,
+    0.0425,
+    0.0156
    ],
-   "p_reach_final": 0.0176,
-   "p_title": 0.0088,
-   "spend_now": 4,
-   "p_claim_now": 0.183,
-   "budget_entering_week9": 299,
-   "budget_entering_week13": 111,
+   "p_reach_final": 0.0156,
+   "p_title": 0.0078,
+   "spend_now": 3,
+   "p_claim_now": 0.17,
+   "budget_entering_week9": 312,
+   "budget_entering_week13": 115,
    "players": [
     {
      "name": "Brock Purdy",
@@ -2427,28 +2489,28 @@
    "points_this_week": 18.5,
    "roster_size": 8,
    "projected_now": 69.5,
-   "p_cut_now": 0.0625,
+   "p_cut_now": 0.0562,
    "p_alive_by_week": [
-    0.9375,
-    0.9033,
-    0.8833,
-    0.7896,
-    0.7402,
-    0.6885,
-    0.6094,
-    0.522,
-    0.3955,
-    0.2866,
-    0.2114,
-    0.126,
-    0.0493
+    0.9438,
+    0.9067,
+    0.8857,
+    0.7812,
+    0.7261,
+    0.6694,
+    0.5796,
+    0.5083,
+    0.3823,
+    0.2837,
+    0.2021,
+    0.1128,
+    0.0449
    ],
-   "p_reach_final": 0.0493,
-   "p_title": 0.0176,
+   "p_reach_final": 0.0449,
+   "p_title": 0.0195,
    "spend_now": 2,
-   "p_claim_now": 0.269,
-   "budget_entering_week9": 143,
-   "budget_entering_week13": 55,
+   "p_claim_now": 0.278,
+   "budget_entering_week9": 142,
+   "budget_entering_week13": 53,
    "players": [
     {
      "name": "Ja'Marr Chase",
@@ -2511,28 +2573,28 @@
    "points_this_week": 0.0,
    "roster_size": 8,
    "projected_now": 79.6,
-   "p_cut_now": 0.0215,
+   "p_cut_now": 0.0166,
    "p_alive_by_week": [
-    0.9785,
-    0.9355,
-    0.8369,
-    0.7456,
-    0.6699,
-    0.5825,
-    0.4917,
-    0.4365,
-    0.3535,
-    0.2651,
-    0.1875,
-    0.1143,
-    0.0483
+    0.9834,
+    0.9395,
+    0.8428,
+    0.7666,
+    0.6831,
+    0.5938,
+    0.5107,
+    0.4468,
+    0.3613,
+    0.2715,
+    0.1919,
+    0.1226,
+    0.0527
    ],
-   "p_reach_final": 0.0483,
-   "p_title": 0.0229,
+   "p_reach_final": 0.0527,
+   "p_title": 0.0254,
    "spend_now": 1,
-   "p_claim_now": 0.112,
-   "budget_entering_week9": 648,
-   "budget_entering_week13": 234,
+   "p_claim_now": 0.12,
+   "budget_entering_week9": 627,
+   "budget_entering_week13": 238,
    "players": [
     {
      "name": "Drake Maye",
@@ -2595,28 +2657,28 @@
    "points_this_week": 11.0,
    "roster_size": 8,
    "projected_now": 53.3,
-   "p_cut_now": 0.2847,
+   "p_cut_now": 0.2817,
    "p_alive_by_week": [
-    0.7153,
-    0.5522,
-    0.4282,
-    0.3579,
-    0.2183,
-    0.1714,
-    0.1045,
-    0.084,
-    0.0659,
-    0.0464,
-    0.0298,
-    0.019,
-    0.0103
+    0.7183,
+    0.5503,
+    0.4326,
+    0.3447,
+    0.2163,
+    0.1802,
+    0.1123,
+    0.0864,
+    0.0679,
+    0.0498,
+    0.0234,
+    0.0122,
+    0.0054
    ],
-   "p_reach_final": 0.0103,
-   "p_title": 0.0034,
+   "p_reach_final": 0.0054,
+   "p_title": 0.002,
    "spend_now": 3,
-   "p_claim_now": 0.077,
-   "budget_entering_week9": 536,
-   "budget_entering_week13": 126,
+   "p_claim_now": 0.083,
+   "budget_entering_week9": 544,
+   "budget_entering_week13": 112,
    "players": [
     {
      "name": "Justin Herbert",
@@ -2679,28 +2741,28 @@
    "points_this_week": 0.0,
    "roster_size": 8,
    "projected_now": 77.0,
-   "p_cut_now": 0.0293,
+   "p_cut_now": 0.0308,
    "p_alive_by_week": [
-    0.9707,
-    0.9487,
-    0.9346,
-    0.9165,
-    0.8999,
-    0.8374,
-    0.7651,
-    0.6733,
-    0.562,
-    0.4683,
-    0.3604,
-    0.2427,
-    0.1152
+    0.9692,
+    0.9448,
+    0.9312,
+    0.9126,
+    0.8921,
+    0.8359,
+    0.7744,
+    0.6831,
+    0.5791,
+    0.4814,
+    0.3647,
+    0.2358,
+    0.1084
    ],
-   "p_reach_final": 0.1152,
-   "p_title": 0.0645,
+   "p_reach_final": 0.1084,
+   "p_title": 0.0498,
    "spend_now": 1,
-   "p_claim_now": 0.11,
-   "budget_entering_week9": 495,
-   "budget_entering_week13": 211,
+   "p_claim_now": 0.116,
+   "budget_entering_week9": 503,
+   "budget_entering_week13": 228,
    "players": [
     {
      "name": "Baker Mayfield",
@@ -2763,28 +2825,28 @@
    "points_this_week": 0.0,
    "roster_size": 9,
    "projected_now": 75.4,
-   "p_cut_now": 0.0312,
+   "p_cut_now": 0.0269,
    "p_alive_by_week": [
-    0.9688,
-    0.9219,
-    0.8687,
-    0.7871,
-    0.7529,
+    0.9731,
+    0.9355,
+    0.8867,
+    0.8018,
+    0.7588,
     0.6343,
-    0.5396,
-    0.4912,
-    0.4297,
-    0.332,
-    0.2563,
-    0.1768,
-    0.0864
+    0.5381,
+    0.4937,
+    0.4302,
+    0.3442,
+    0.2603,
+    0.1797,
+    0.0752
    ],
-   "p_reach_final": 0.0864,
-   "p_title": 0.0366,
+   "p_reach_final": 0.0752,
+   "p_title": 0.0327,
    "spend_now": 1,
-   "p_claim_now": 0.059,
-   "budget_entering_week9": 638,
-   "budget_entering_week13": 279,
+   "p_claim_now": 0.066,
+   "budget_entering_week9": 625,
+   "budget_entering_week13": 261,
    "players": [
     {
      "name": "Christian McCaffrey",
@@ -2853,28 +2915,28 @@
    "points_this_week": 0.0,
    "roster_size": 9,
    "projected_now": 78.7,
-   "p_cut_now": 0.0171,
+   "p_cut_now": 0.021,
    "p_alive_by_week": [
-    0.9829,
-    0.9468,
-    0.9204,
-    0.8457,
-    0.8071,
-    0.7446,
-    0.6587,
-    0.5718,
-    0.4951,
-    0.3755,
-    0.2437,
-    0.1401,
-    0.0562
+    0.979,
+    0.9443,
+    0.9209,
+    0.8477,
+    0.8037,
+    0.7295,
+    0.6382,
+    0.543,
+    0.4727,
+    0.3481,
+    0.2383,
+    0.1372,
+    0.0601
    ],
-   "p_reach_final": 0.0562,
-   "p_title": 0.0259,
+   "p_reach_final": 0.0601,
+   "p_title": 0.0308,
    "spend_now": 2,
-   "p_claim_now": 0.297,
-   "budget_entering_week9": 298,
-   "budget_entering_week13": 123,
+   "p_claim_now": 0.283,
+   "budget_entering_week9": 297,
+   "budget_entering_week13": 118,
    "players": [
     {
      "name": "Joe Burrow",
@@ -2943,28 +3005,28 @@
    "points_this_week": 0.0,
    "roster_size": 8,
    "projected_now": 76.8,
-   "p_cut_now": 0.0327,
+   "p_cut_now": 0.0293,
    "p_alive_by_week": [
-    0.9673,
-    0.9092,
-    0.8101,
-    0.7534,
-    0.686,
-    0.5796,
-    0.5098,
-    0.4434,
-    0.373,
-    0.293,
-    0.2026,
-    0.1245,
-    0.0537
+    0.9707,
+    0.9072,
+    0.813,
+    0.7656,
+    0.7046,
+    0.5981,
+    0.5234,
+    0.4614,
+    0.3945,
+    0.3096,
+    0.2046,
+    0.1382,
+    0.0601
    ],
-   "p_reach_final": 0.0537,
-   "p_title": 0.0264,
+   "p_reach_final": 0.0601,
+   "p_title": 0.0278,
    "spend_now": 4,
-   "p_claim_now": 0.296,
-   "budget_entering_week9": 503,
-   "budget_entering_week13": 209,
+   "p_claim_now": 0.28,
+   "budget_entering_week9": 491,
+   "budget_entering_week13": 202,
    "players": [
     {
      "name": "Patrick Mahomes",
@@ -3021,28 +3083,28 @@
    "points_this_week": 0.0,
    "roster_size": 8,
    "projected_now": 63.1,
-   "p_cut_now": 0.1265,
+   "p_cut_now": 0.1211,
    "p_alive_by_week": [
-    0.8735,
-    0.7344,
-    0.6504,
-    0.4673,
-    0.3516,
-    0.2988,
-    0.2305,
-    0.1406,
-    0.1133,
-    0.0811,
-    0.0522,
-    0.0288,
-    0.0146
+    0.8789,
+    0.748,
+    0.6562,
+    0.4873,
+    0.3774,
+    0.3237,
+    0.2515,
+    0.1572,
+    0.1201,
+    0.0879,
+    0.0581,
+    0.0308,
+    0.0107
    ],
-   "p_reach_final": 0.0146,
-   "p_title": 0.0059,
+   "p_reach_final": 0.0107,
+   "p_title": 0.0068,
    "spend_now": 1,
-   "p_claim_now": 0.073,
-   "budget_entering_week9": 638,
-   "budget_entering_week13": 154,
+   "p_claim_now": 0.071,
+   "budget_entering_week9": 666,
+   "budget_entering_week13": 175,
    "players": [
     {
      "name": "Malik Willis",
@@ -3105,27 +3167,27 @@
    "points_this_week": 0.0,
    "roster_size": 8,
    "projected_now": 51.2,
-   "p_cut_now": 0.2915,
+   "p_cut_now": 0.2866,
    "p_alive_by_week": [
-    0.7085,
-    0.5322,
-    0.3921,
-    0.355,
-    0.311,
-    0.2812,
-    0.2314,
-    0.1919,
-    0.1479,
-    0.1089,
-    0.0654,
-    0.0356,
-    0.0166
+    0.7134,
+    0.5459,
+    0.418,
+    0.3809,
+    0.3276,
+    0.291,
+    0.2295,
+    0.1855,
+    0.1401,
+    0.1055,
+    0.0664,
+    0.0391,
+    0.0161
    ],
-   "p_reach_final": 0.0166,
-   "p_title": 0.0093,
+   "p_reach_final": 0.0161,
+   "p_title": 0.0083,
    "spend_now": 12,
-   "p_claim_now": 0.179,
-   "budget_entering_week9": 459,
+   "p_claim_now": 0.186,
+   "budget_entering_week9": 439,
    "budget_entering_week13": 154,
    "players": [
     {
@@ -3177,28 +3239,28 @@
    "points_this_week": 4.6,
    "roster_size": 8,
    "projected_now": 74.4,
-   "p_cut_now": 0.0381,
+   "p_cut_now": 0.0342,
    "p_alive_by_week": [
-    0.9619,
-    0.9058,
-    0.8545,
-    0.8081,
-    0.7339,
-    0.6719,
-    0.6021,
-    0.3501,
-    0.3149,
-    0.2563,
-    0.1963,
-    0.1274,
-    0.0547
+    0.9658,
+    0.9043,
+    0.8599,
+    0.8154,
+    0.751,
+    0.6846,
+    0.6255,
+    0.3721,
+    0.335,
+    0.2715,
+    0.2119,
+    0.1392,
+    0.0562
    ],
-   "p_reach_final": 0.0547,
-   "p_title": 0.0205,
-   "spend_now": 1,
+   "p_reach_final": 0.0562,
+   "p_title": 0.0225,
+   "spend_now": 2,
    "p_claim_now": 0.169,
-   "budget_entering_week9": 342,
-   "budget_entering_week13": 96,
+   "budget_entering_week9": 331,
+   "budget_entering_week13": 92,
    "players": [
     {
      "name": "James Cook",
@@ -4302,84 +4364,84 @@
   "bars_by_week": [
    {
     "week": 3,
-    "mean": 40.9,
-    "p10": 32.4,
-    "p90": 49.6
+    "mean": 41.0,
+    "p10": 31.5,
+    "p90": 49.7
    },
    {
     "week": 4,
-    "mean": 48.5,
-    "p10": 39.5,
-    "p90": 57.1
+    "mean": 48.7,
+    "p10": 40.0,
+    "p90": 57.2
    },
    {
     "week": 5,
-    "mean": 50.8,
-    "p10": 41.1,
-    "p90": 59.7
+    "mean": 50.9,
+    "p10": 41.5,
+    "p90": 60.3
    },
    {
     "week": 6,
-    "mean": 50.9,
-    "p10": 40.9,
-    "p90": 60.0
+    "mean": 50.6,
+    "p10": 41.0,
+    "p90": 60.2
    },
    {
     "week": 7,
     "mean": 57.6,
-    "p10": 45.5,
-    "p90": 68.8
+    "p10": 45.8,
+    "p90": 68.4
    },
    {
     "week": 8,
-    "mean": 66.9,
-    "p10": 56.5,
-    "p90": 76.8
+    "mean": 67.1,
+    "p10": 56.0,
+    "p90": 78.2
    },
    {
     "week": 9,
-    "mean": 83.8,
+    "mean": 83.7,
     "p10": 72.5,
-    "p90": 94.8
+    "p90": 94.4
    },
    {
     "week": 10,
-    "mean": 87.4,
-    "p10": 74.8,
-    "p90": 99.2
+    "mean": 87.6,
+    "p10": 74.9,
+    "p90": 99.4
    },
    {
     "week": 11,
     "mean": 93.2,
-    "p10": 80.8,
-    "p90": 105.7
+    "p10": 80.2,
+    "p90": 105.4
    },
    {
     "week": 12,
-    "mean": 118.0,
+    "mean": 118.2,
     "p10": 105.2,
-    "p90": 130.2
+    "p90": 130.0
    },
    {
     "week": 13,
-    "mean": 124.1,
-    "p10": 110.4,
-    "p90": 137.5
+    "mean": 123.5,
+    "p10": 109.5,
+    "p90": 137.1
    },
    {
     "week": 14,
     "mean": 158.4,
-    "p10": 142.8,
-    "p90": 173.3
+    "p10": 142.5,
+    "p90": 174.4
    },
    {
     "week": 15,
-    "mean": 182.2,
-    "p10": 163.1,
-    "p90": 200.9
+    "mean": 182.4,
+    "p10": 164.3,
+    "p90": 200.5
    }
   ],
-  "champion_bar_mean": 402.8,
+  "champion_bar_mean": 403.4,
   "mean_budget_by_week": [
    {
     "week": 3,
@@ -4391,106 +4453,106 @@
    },
    {
     "week": 5,
-    "budget": 801
+    "budget": 802
    },
    {
     "week": 6,
-    "budget": 726
+    "budget": 729
    },
    {
     "week": 7,
-    "budget": 652
+    "budget": 657
    },
    {
     "week": 8,
-    "budget": 570
+    "budget": 578
    },
    {
     "week": 9,
-    "budget": 499
+    "budget": 512
    },
    {
     "week": 10,
-    "budget": 416
+    "budget": 431
    },
    {
     "week": 11,
-    "budget": 337
+    "budget": 353
    },
    {
     "week": 12,
-    "budget": 259
+    "budget": 274
    },
    {
     "week": 13,
-    "budget": 188
+    "budget": 205
    },
    {
     "week": 14,
-    "budget": 141
+    "budget": 156
    },
    {
     "week": 15,
-    "budget": 68
+    "budget": 84
    },
    {
     "week": 16,
-    "budget": 10
+    "budget": 20
    },
    {
     "week": 17,
-    "budget": 7
+    "budget": 11
    }
   ],
   "simulated_claims_now": [
    {
     "name": "Michael Penix",
     "position": "QB",
-    "p_taken": 0.973,
-    "mean_bid": 18,
-    "max_bid": 701
+    "p_taken": 0.97,
+    "mean_bid": 19,
+    "max_bid": 286
    },
    {
     "name": "Emmett Johnson",
     "position": "RB",
-    "p_taken": 0.968,
-    "mean_bid": 17,
-    "max_bid": 280
+    "p_taken": 0.962,
+    "mean_bid": 18,
+    "max_bid": 416
    },
    {
     "name": "Darnell Washington",
     "position": "TE",
-    "p_taken": 0.961,
+    "p_taken": 0.951,
     "mean_bid": 13,
-    "max_bid": 448
-   },
-   {
-    "name": "Chris Rodriguez",
-    "position": "RB",
-    "p_taken": 0.844,
-    "mean_bid": 9,
-    "max_bid": 205
+    "max_bid": 438
    },
    {
     "name": "Roman Wilson",
     "position": "WR",
-    "p_taken": 0.873,
-    "mean_bid": 7,
-    "max_bid": 144
+    "p_taken": 0.868,
+    "mean_bid": 8,
+    "max_bid": 164
+   },
+   {
+    "name": "Chris Rodriguez",
+    "position": "RB",
+    "p_taken": 0.838,
+    "mean_bid": 8,
+    "max_bid": 185
    },
    {
     "name": "Noah Gray",
     "position": "TE",
-    "p_taken": 0.615,
-    "mean_bid": 6,
-    "max_bid": 97
+    "p_taken": 0.599,
+    "mean_bid": 7,
+    "max_bid": 236
    },
    {
     "name": "Chris Bell",
     "position": "WR",
-    "p_taken": 0.743,
-    "mean_bid": 5,
-    "max_bid": 109
+    "p_taken": 0.732,
+    "mean_bid": 4,
+    "max_bid": 89
    }
   ],
   "observed": [
@@ -8285,7 +8347,7 @@
  "model": {
   "bid_guide": "https://www.fantasylife.com/articles/guillotine-leagues/guillotine-league-fantasy-football-waiver-wire-guide-for-week-2",
   "bid_lookahead_weeks": 15,
-  "bid_policy": "value",
+  "my_future_spending_x_guide": 0.5,
   "opponent_saving_plans": {
    "value": {
     "probability": 0.3333333333333333,

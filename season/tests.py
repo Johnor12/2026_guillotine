@@ -184,7 +184,7 @@ class WaiverTests(unittest.TestCase):
         bars[2] = lineup_points(self.roster, self.points, self.positions, 2)
         record = {"seed": 1, "my_bias": 0., "bars": bars, "forecast_bars": [0.] * WEEKS,
                   "alive": [2] * WEEKS, "champ_bar": 0., "auctions": [None] * WEEKS}
-        leverage = replay([record], inputs, self.roster, 1000, "value")["leverage"]
+        leverage = replay([record], inputs, self.roster, 1000, 1.0)["leverage"]
         self.assertEqual(leverage[0], 0., "A week cleared in every season carries no weight")
         self.assertGreater(leverage[1], 0.)
 
@@ -267,7 +267,7 @@ class WaiverTests(unittest.TestCase):
         expected += lineup_points(self.roster + [9], self.points, self.positions, 16)
         record = {"seed": 1, "my_bias": 0., "bars": [0.] * WEEKS, "forecast_bars": [0.] * WEEKS,
                   "alive": [2] * WEEKS, "champ_bar": expected, "auctions": auctions}
-        result = replay([record], inputs, self.roster, 1000, "value")
+        result = replay([record], inputs, self.roster, 1000, 1.0)
         self.assertAlmostEqual(result["p_title"], 0.5)
 
     def test_pending_claim_bid_follows_title_odds_past_the_guide_ceiling(self):
@@ -286,7 +286,7 @@ class WaiverTests(unittest.TestCase):
 
         def values(inputs, records, variants):
             out = []
-            for roster, budget, policy in variants:
+            for roster, budget, spending in variants:
                 title = budget * 0.00001 + (0.008 if 9 in roster else 0.)
                 out.append({"p_title": title, "title_by_record": [title, title], "p_reach_final": title,
                             "p_cut_now": 0., "p_alive_by_week": [1.] * 14, "budget_by_week": [budget] * 16,
@@ -448,7 +448,7 @@ class WaiverTests(unittest.TestCase):
         auctions[16] = ([9], [1])
         record = {"seed": 1, "my_bias": 0., "bars": [0.] * WEEKS, "forecast_bars": [0.] * WEEKS,
                   "alive": [2] * WEEKS, "champ_bar": 0., "auctions": auctions}
-        result = replay([record], inputs, self.roster, 317, "patient")
+        result = replay([record], inputs, self.roster, 317, 1.0)
         self.assertEqual(result["budget_by_week"], [1000, 317])
         self.assertEqual(result["budget_after_claims"], [317, 0])
 
@@ -465,7 +465,7 @@ class WaiverTests(unittest.TestCase):
             records.append({"seed": 1, "my_bias": 0., "bars": [-1000. if survives else 1000.] * WEEKS,
                             "forecast_bars": [0.] * WEEKS, "alive": [2] * WEEKS,
                             "champ_bar": 0., "auctions": auctions})
-        result = replay(records, inputs, self.roster, 1000, "value")
+        result = replay(records, inputs, self.roster, 1000, 1.0)
         self.assertEqual(result["p_reach_final"], .5)
         self.assertEqual(result["budget_by_week"][-1], 0,
                          "Cash retained in a season where we were cut is not a survivor's budget")

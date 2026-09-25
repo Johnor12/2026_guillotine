@@ -6,16 +6,17 @@ starters Sleeper currently has set for me.
 Objective: a drop's spot can be refilled from the wire the room leaves untaken, and my
 bidding values each week's points alike or by d log P(title) / d(points), whichever
 replays to better title odds (title_objective). Screening, drops, ceilings and my future
-policy use it; this week's bids are chosen by replayed title odds.
+bidding use it; this week's bids are chosen by replayed title odds.
 
 Claims: every candidate's drop is chosen by replay among the few that waivers.Bidding
 ranks best (the heuristic prices a fixed roster, where a future lineup expansion is an
 empty seat, so its favorite can give up a starter today for depth the wire would supply
 anyway), and the bid is whatever maximizes replayed title odds anywhere in the budget.
 The guide-based ceiling caps only my future bids inside the replays and the room's.
-The standing roster is replayed at several budgets under every saving plan; that grid is
-the value of cash, and the plan that replays best at each budget is the future policy
-every variant at that budget is priced under. After this week's run, only players
+The standing roster is replayed at several budgets under every future spending level
+(race.SPENDING, multiples of the guide ceiling); that grid is the value of cash, and the
+level that replays best at each budget is what every variant at that budget is priced
+under, so saving or spending is whatever the seasons reward. After this week's run, only players
 dropped since are still on waivers and take a bid; everyone else is a free add. A
 variant that only fits with a body moved onto reserve names that move. A record
 contributes the acquired roster's title value if the bid wins, and standing pat
@@ -33,7 +34,7 @@ from collections import Counter
 
 from shared.league import WEEK_ROSTER_SIZE, WEEKS
 
-from .race import CLAIM_CANDIDATES, POLICIES, RaceInputs, apply_offer, cut_risk, fit_roster, run_replays
+from .race import CLAIM_CANDIDATES, SPENDING, RaceInputs, apply_offer, cut_risk, fit_roster, run_replays
 from .state import SeasonState, lineup
 
 BUDGET_STEPS = (0, 25, 50, 100, 200, 400, 700)
@@ -51,7 +52,7 @@ def title_objective(inputs: RaceInputs, records: list[dict]) -> tuple[RaceInputs
     The refill pool is today's free agents the room takes (claim or free pickup) in
     fewer than UNTAKEN of its seasons by the next weekly auction, counting any off-cycle
     auction before it; they are assumed to stay available. Title weights come from the
-    points objective's replay under its best saving plan, normalized to average 1 so
+    points objective's replay at its best spending level, normalized to average 1 so
     gains keep the guide ceiling's points-a-week scale. They are a first-order fit
     computed once, so a policy on them can give up points in weeks that only look safe;
     the replay decides.
@@ -68,12 +69,12 @@ def title_objective(inputs: RaceInputs, records: list[dict]) -> tuple[RaceInputs
         pool = [j for j in inputs.free_agents if taken[j] < UNTAKEN * len(records)]
     roster, budget = tuple(inputs.rosters[inputs.me]), inputs.budgets[inputs.me]
     points = dataclasses.replace(inputs, my_bidding=inputs.my_bidding.objective(inputs.my_bidding.weights, pool))
-    runs = run_replays(points, records, [(roster, budget, pol) for pol in POLICIES])
-    policy, points_run = max(zip(POLICIES, runs), key=lambda item: item[1]["p_title"])
+    runs = run_replays(points, records, [(roster, budget, s) for s in SPENDING])
+    spending, points_run = max(zip(SPENDING, runs), key=lambda item: item[1]["p_title"])
     scale = len(points_run["leverage"]) / sum(points_run["leverage"])
     weights = [0.0] * w + [x * scale for x in points_run["leverage"]]
     titled = dataclasses.replace(inputs, my_bidding=points.my_bidding.objective(weights, pool))
-    titled_run = run_replays(titled, records, [(roster, budget, policy)])[0]
+    titled_run = run_replays(titled, records, [(roster, budget, spending)])[0]
     chosen = "title_weighted" if titled_run["p_title"] > points_run["p_title"] else "points"
     return (titled if chosen == "title_weighted" else points), {
         "chosen": chosen,
@@ -170,15 +171,15 @@ def claims(state: SeasonState, inputs: RaceInputs, records: list[dict]) -> dict:
                 outcomes[j].append(seen.get(j, -1))  # absent from a record's list: nobody there wanted him
     pending = auction is not None
 
-    # The standing roster at every budget under every saving plan: the value of cash,
-    # and the plan every variant at that budget is priced under.
+    # The standing roster at every budget under every future spending level: the value
+    # of cash, and the level every variant at that budget is priced under.
     budgets = sorted({max(0, budget - step) for step in BUDGET_STEPS} | {0, budget}) if pending else [budget]
-    baseline_runs = run_replays(inputs, records, [(roster, b, pol) for pol in POLICIES for b in budgets])
-    baseline = {pol: list(zip(budgets, baseline_runs[k * len(budgets):(k + 1) * len(budgets)]))
-                for k, pol in enumerate(POLICIES)}
-    policy_at = {b: max(POLICIES, key=lambda pol: baseline[pol][k][1]["p_title"]) for k, b in enumerate(budgets)}
-    policy = policy_at[budget]
-    base = baseline[policy][-1][1]
+    baseline_runs = run_replays(inputs, records, [(roster, b, s) for s in SPENDING for b in budgets])
+    baseline = {s: list(zip(budgets, baseline_runs[k * len(budgets):(k + 1) * len(budgets)]))
+                for k, s in enumerate(SPENDING)}
+    spending_at = {b: max(SPENDING, key=lambda s: baseline[s][k][1]["p_title"]) for k, b in enumerate(budgets)}
+    spending = spending_at[budget]
+    base = baseline[spending][-1][1]
     v0 = base["p_title"]
 
     def with_offer(offer) -> tuple[int, ...]:
@@ -191,14 +192,14 @@ def claims(state: SeasonState, inputs: RaceInputs, records: list[dict]) -> dict:
     # worth paying for: a player who does not help for free does not help for money.
     swaps = [offer for j in candidates for offer in choices[j]]
     free_value, offers = {}, {}
-    for offer, run in zip(swaps, run_replays(inputs, records, [(with_offer(o), budget, policy) for o in swaps])):
+    for offer, run in zip(swaps, run_replays(inputs, records, [(with_offer(o), budget, spending) for o in swaps])):
         if offer.player not in free_value or run["p_title"] > free_value[offer.player]["p_title"]:
             free_value[offer.player], offers[offer.player] = run, offer
     variant_rosters = {j: with_offer(offers[j]) for j in candidates}
     priced = [j for j in candidates if not inputs.waivers_ran or j in inputs.on_waivers]
     paid = [j for j in sorted(priced, key=lambda j: -free_value[j]["p_title"]) if free_value[j]["p_title"] > v0][:PRICED_CANDIDATES]
     tasks = [(j, b) for j in paid for b in budgets if b < budget]
-    paid_runs = dict(zip(tasks, run_replays(inputs, records, [(variant_rosters[j], b, policy_at[b]) for j, b in tasks])))
+    paid_runs = dict(zip(tasks, run_replays(inputs, records, [(variant_rosters[j], b, spending_at[b]) for j, b in tasks])))
     grids: dict[int, list[tuple[int, float]]] = {}
     record_grids = {}
     for j in candidates:
@@ -290,20 +291,23 @@ def claims(state: SeasonState, inputs: RaceInputs, records: list[dict]) -> dict:
 
     return {
         "pending": pending,
-        "policy": policy,
+        "spending": spending,
         "budget": budget,
-        "baseline": {
-            pol: [
-                {
-                    "budget": b,
-                    "p_title": round(res["p_title"], 4),
-                    "p_reach_final": round(res["p_reach_final"], 4),
-                    "relative": _relative(res["p_title"], v0),
-                }
-                for b, res in baseline[pol]
-            ]
-            for pol in POLICIES
-        },
+        "baseline": [
+            {
+                "spending": s,
+                "budgets": [
+                    {
+                        "budget": b,
+                        "p_title": round(res["p_title"], 4),
+                        "p_reach_final": round(res["p_reach_final"], 4),
+                        "relative": _relative(res["p_title"], v0),
+                    }
+                    for b, res in baseline[s]
+                ],
+            }
+            for s in SPENDING
+        ],
         "base": {
             "p_title": round(v0, 4),
             "p_reach_final": round(base["p_reach_final"], 4),

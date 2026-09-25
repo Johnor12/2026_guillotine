@@ -9,8 +9,10 @@ join the free-agent pool, and before the next week's games the survivors bid on 
 Bids use season-long roster values, guide ceilings and manager behavior from
 waivers.py. Opponents have per-manager participation and the room's price curve, both
 learned from submitted bids, and persistent sampled saving habits; my agent submits an
-offer for every candidate improving my objective (claims.title_objective) within its
-guide ceiling and saving allowance. Claims naming the same drop are alternatives, open
+offer for every candidate improving my objective (claims.title_objective) at a multiple
+of its guide ceiling (SPENDING) that the replays choose by title odds: no saving plan of
+its own, since holding cash back is only right when the replayed seasons say the later
+market rewards it. Claims naming the same drop are alternatives, open
 spots and remaining cash are checked as claims resolve, and a claim that no longer
 improves the roster after an earlier win is passed over. The reserve slots hold
 Out/IR/PUP bodies while their projection is zero; when one resumes, the team cuts its
@@ -49,7 +51,11 @@ from .waivers import (ROOM_CURRENT_WEEK_WEIGHT, SAVING_PLANS, Bidding, Manager, 
 RACE_SIMS = 2048
 CLAIMS_PER_TEAM = 3  # an opponent's claims per auction
 CLAIM_CANDIDATES = 80  # free agents in play each week, by rest-of-season points
-POLICIES = tuple(SAVING_PLANS)
+# My future bids as multiples of the guide ceiling; claims.py keeps whichever replays to
+# the best title odds at each budget. Below 1 saves cash for later weeks, above 1 spends
+# it sooner. Widen the grid if the chosen level sits at an end.
+SPENDING = (0.25, 0.5, 1.0, 2.0)
+OPPONENT_PLANS = tuple(SAVING_PLANS)
 
 
 @dataclass(slots=True)
@@ -68,7 +74,7 @@ class RaceInputs:
     managers: list[Manager]
     market_fit: dict
     opening_budgets: list[int]  # actual cash entering the current week, before completed claims
-    policy: str = "value"
+    spending: float = 1.0  # my future bids as a multiple of the guide ceiling (SPENDING)
     my_bidding: Bidding | None = None  # mine, without the room's current-week weight; claims.title_objective sets its weeks
     price_curve: PriceCurve = PriceCurve()  # the room's bid for a guide reference
     # After the weekly run: players still on waivers -> when they clear, and opponents'
@@ -137,18 +143,20 @@ def cut_risk(inputs, roster, w, bar):
     return projected_risk(roster, inputs.weekly[w], inputs.positions, w, bar)
 
 
-def claim_plan(inputs, bidding, roster, candidates, budget, w, risk, rng, opponent=False,
-               policy="value", initial_budget=None):
+def claim_plan(inputs, bidding, roster, candidates, budget, w, risk, rng, saving_plan=None,
+               spending=1.0, initial_budget=None):
     """(bid, offer) pairs, largest bid first, and the auction's spending allowance. My
-    agent offers on every improving candidate at its ceiling; an opponent picks its best
-    few by noisy gain and bids the room's price for each."""
-    offers = bidding.offers(roster, candidates, budget, w, risk)
-    allowance = spending_allowance(budget, budget if initial_budget is None else initial_budget,
-                                   inputs.week0, w, policy, risk)
-    if not opponent:
-        plan = [(min(allowance, int(o.ceiling)), o) for o in offers]
+    agent (no `saving_plan`) offers on every improving candidate at `spending` times its
+    ceiling; an opponent picks its best few by noisy gain and bids the room's price for
+    each within its saving plan's allowance."""
+    if saving_plan is None:
+        offers = bidding.offers(roster, candidates, budget, w, risk, spending)
+        plan = [(int(o.ceiling), o) for o in offers]
         allowance = max((bid for bid, _ in plan), default=0)
     else:
+        offers = bidding.offers(roster, candidates, budget, w, risk)
+        allowance = spending_allowance(budget, budget if initial_budget is None else initial_budget,
+                                       inputs.week0, w, saving_plan, risk)
         chosen = heapq.nlargest(CLAIMS_PER_TEAM, offers,
                                key=lambda o: o.gain * math.exp(rng.gauss(0, 0.5)))
         curve = inputs.price_curve
@@ -191,9 +199,10 @@ def _resolve(bidding, roster, plan, budget, allowance, w, won) -> tuple[int, int
     return budget, allowance
 
 
-def _auction(inputs, w, rosters, budgets, alive, free, rng, skip, bar, policies, pool=None, attention=1.0):
-    """One week's claims, then free pickups. An off-cycle auction limits the players in
-    play to `pool` and scales opponents' participation by `attention`."""
+def _auction(inputs, w, rosters, budgets, alive, free, rng, skip, bar, plans, pool=None, attention=1.0):
+    """One week's claims, then free pickups, under each opponent's saving plan (`plans`,
+    by team). An off-cycle auction limits the players in play to `pool` and scales
+    opponents' participation by `attention`."""
     candidates = heapq.nlargest(CLAIM_CANDIDATES, free if pool is None else pool, key=lambda i: (inputs.ros[w][i], -i))
     bids = []
     allowances = list(budgets)
@@ -207,8 +216,8 @@ def _auction(inputs, w, rosters, budgets, alive, free, rng, skip, bar, policies,
         active.append(team)
         plan, allowances[team] = claim_plan(
             inputs, inputs.bidding_for(team), roster, candidates, budgets[team], w,
-            cut_risk(inputs, roster, w, bar), rng, not mine,
-            policies[team], inputs.budgets[team])
+            cut_risk(inputs, roster, w, bar), rng, None if mine else plans[team],
+            inputs.spending, inputs.budgets[team])
         for bid, offer in plan:
             bids.append((bid, rng.random(), team, offer))
     bids.sort(key=lambda row: (-row[0], row[1]))
@@ -277,7 +286,7 @@ def simulate(inputs: RaceInputs, seed: int, exclude_me: bool) -> dict:
     positions = inputs.positions
 
     # A manager keeps one saving strategy for the season, independent of bid noise.
-    policies = [inputs.policy if i == inputs.me else rng.choice(POLICIES) for i in range(n)]
+    plans = [rng.choice(OPPONENT_PLANS) for _ in range(n)]
     forecast_bars = [0.0] * WEEKS
     cut_week = [None if live else w0 - 1 for live in alive]
     alive_count: list[int] = [0] * WEEKS
@@ -297,7 +306,7 @@ def simulate(inputs: RaceInputs, seed: int, exclude_me: bool) -> dict:
         off_cycle = w == w0 and inputs.waivers_ran
         if not off_cycle or inputs.on_waivers:
             candidates, winning, wins = _auction(
-                inputs, w, rosters, budgets, alive, free, rng, skip, forecast_bars[w], policies,
+                inputs, w, rosters, budgets, alive, free, rng, skip, forecast_bars[w], plans,
                 list(inputs.on_waivers) if off_cycle else None, inputs.off_cycle_share if off_cycle else 1.0)
             auctions[w] = (candidates, winning)
             claims[w] = wins
@@ -346,11 +355,11 @@ def simulate(inputs: RaceInputs, seed: int, exclude_me: bool) -> dict:
 # --- my replay through a recorded race ---------------------------------------------
 
 
-def replay(records: list[dict], inputs: RaceInputs, roster: list[int], budget: int, policy: str) -> dict:
+def replay(records: list[dict], inputs: RaceInputs, roster: list[int], budget: int, spending: float) -> dict:
     """P(title) and the weekly survival profile for a roster-and-budget variant of my
     team, against every recorded opponent race. The variant already reflects this
-    week's claim outcome, so my agent bids only from next week on, under `policy`
-    (POLICIES); each week's survival is Phi over that record's bar. `leverage` is
+    week's claim outcome, so my agent bids only from next week on, at `spending` times
+    its guide ceiling; each week's survival is Phi over that record's bar. `leverage` is
     d log P(title) / d(my expected points) per week, as the draft's week weights."""
     bidding = inputs.my_bidding
     w0 = inputs.week0
@@ -394,8 +403,7 @@ def replay(records: list[dict], inputs: RaceInputs, roster: list[int], budget: i
 
                 plan, allowance = claim_plan(
                     inputs, bidding, mine, auction[0], left, w,
-                    cut_risk(inputs, mine, w, rec["forecast_bars"][w]), rng,
-                    policy=policy, initial_budget=budget)
+                    cut_risk(inputs, mine, w, rec["forecast_bars"][w]), rng, spending=spending)
                 left, _ = _resolve(bidding, mine, plan, left, allowance, w, won)
                 offers = bidding.offers(mine, [j for j, outcome in outcomes.items()
                                                if outcome < 0 and open_to_me(outcome)], left, w)
@@ -463,9 +471,9 @@ def _simulate_task(task: tuple[int, bool]) -> dict:
     return simulate(_INPUTS, seed, exclude_me)
 
 
-def _replay_task(task: tuple[tuple[int, ...], int, str]) -> dict:
-    roster, budget, policy = task
-    return replay(_RECORDS, _INPUTS, list(roster), budget, policy)
+def _replay_task(task: tuple[tuple[int, ...], int, float]) -> dict:
+    roster, budget, spending = task
+    return replay(_RECORDS, _INPUTS, list(roster), budget, spending)
 
 
 def run_race(inputs: RaceInputs, sims: int, seed: int, exclude_me: bool) -> list[dict]:
@@ -474,9 +482,9 @@ def run_race(inputs: RaceInputs, sims: int, seed: int, exclude_me: bool) -> list
 
 
 def run_replays(
-    inputs: RaceInputs, records: list[dict], variants: list[tuple[tuple[int, ...], int, str]]
+    inputs: RaceInputs, records: list[dict], variants: list[tuple[tuple[int, ...], int, float]]
 ) -> list[dict]:
-    """One replay per (roster, budget, policy) variant, in parallel."""
+    """One replay per (roster, budget, spending) variant, in parallel."""
     if not variants:
         return []
     with multiprocessing.Pool(worker_count(), initializer=_init, initargs=(inputs, records)) as pool:
