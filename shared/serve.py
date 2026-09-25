@@ -8,17 +8,17 @@ Usage:
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
-from .paths import ROOT
+from .paths import OUT
 
 ADDRESS = ("127.0.0.1", 8123)
 
 
 def main() -> None:
-    handler = partial(SimpleHTTPRequestHandler, directory=ROOT)
+    handler = partial(SimpleHTTPRequestHandler, directory=OUT)
     with ThreadingHTTPServer(ADDRESS, handler) as server:
         print(
-            f"Serving the draft board at http://{ADDRESS[0]}:{ADDRESS[1]}/, "
-            "the season desk at /season.html and the source investigator at /sources.html"
+            f"Serving the season desk at http://{ADDRESS[0]}:{ADDRESS[1]}/, "
+            "the draft board at /draft.html and the source investigator at /sources.html"
         )
         try:
             server.serve_forever()

@@ -15,10 +15,11 @@ Sleeper ("Gnosis Guillotine", league 1397662420398247936). The code is three pac
   lineup, the FAAB bidding model, the agent-based elimination race, and this week's
   claims priced by replayed title odds.
 
-Artifacts stay at the repository root (`pool.json`, `draft.json`, `rankings.json`,
+Generated artifacts live in `out/` (`pool.json`, `draft.json`, `rankings.json`,
 `data_source_matches.json`, `league.json`, `season.json`, `bidding_evaluation.json`)
-next to the three dashboards that read them (`index.html`, `season.html`,
-`sources.html`). Provider snapshots live with the code that reads them
+next to the three dashboards that read them (`index.html` is the season desk,
+`draft.html` the draft board, `sources.html` the source investigator); `shared/serve.py`
+serves that directory. Provider snapshots live with the code that reads them
 (`shared/data/`, `draft/sources/data/`).
 
 ## League assumptions
@@ -84,8 +85,8 @@ pickup to add now. Enter the recommended claims and lineup on Sleeper yourself. 
 `--report` for detailed model diagnostics and league odds. The season model alone is
 `uv run -m season.run`, with the same flags.
 
-Results are saved to `league.json` and `season.json`; `uv run -m shared.serve`
-displays them at http://127.0.0.1:8123/season.html. The season model reads refreshed
+Results are saved to `out/league.json` and `out/season.json`; `uv run -m shared.serve`
+displays them at http://127.0.0.1:8123/. The season model reads refreshed
 weekly projections directly and uses the existing `pool.json` only to join player
 IDs, so this workflow does not need a pool rebuild or a new hand-saved DraftSharks
 page.
@@ -401,11 +402,11 @@ The model does not depend on those suggestions or on future-week guide publicati
 
 ## Dashboards
 
-`uv run -m shared.serve` serves the repository at http://127.0.0.1:8123 (direct
-`file://` access cannot fetch the JSON). `/` renders `rankings.json`, including the
-live board state embedded in it and when that snapshot was taken; `/season.html`
-renders `season.json`: this week's lineup, the waiver claims with their optimal bids,
-the elimination bar by week, every team's odds and budget outlook, and the waiver
-market; `/sources.html` renders `data_source_matches.json` as a team-by-source fit
-heatmap with pick-level evidence. Re-run `season.refresh` or `draft.refresh` and
+`uv run -m shared.serve` serves `out/` at http://127.0.0.1:8123 (direct `file://`
+access cannot fetch the JSON). `/` renders `season.json`: this week's lineup, the
+waiver claims with their optimal bids, the elimination bar by week, every team's odds
+and budget outlook, and the waiver market; `/draft.html` renders `rankings.json`,
+including the live board state embedded in it and when that snapshot was taken;
+`/sources.html` renders `data_source_matches.json` as a team-by-source fit heatmap
+with pick-level evidence. Re-run `season.refresh` or `draft.refresh` and
 reload to advance.

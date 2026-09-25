@@ -11,7 +11,7 @@ failure:
 No manual input: everything comes from Sleeper's and DraftSharks' public endpoints.
 Run before the week's waiver deadline and before games start. The season step prints
 recommended bids, drops, and the optimal lineup; these are recommendations to enter on
-Sleeper. The dashboard at /season.html also reads the resulting season.json.
+Sleeper. The dashboard at / also reads the resulting season.json.
 
 Usage:
     uv run -m season.refresh            # refresh + this week's bids and lineup
@@ -50,7 +50,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"refresh failed at step '{name}' (exit {code})", file=sys.stderr)
             return code
         print(f"--- {name} ok in {time.monotonic() - started:.1f}s", file=sys.stderr)
-    print("\nrefresh complete -> league.json + season.json (shared.serve, then /season.html)", file=sys.stderr)
+    print("\nrefresh complete -> league.json + season.json (shared.serve, then /)", file=sys.stderr)
     return 0
 
 

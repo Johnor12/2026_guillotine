@@ -4,20 +4,24 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
+# Generated artifacts and the dashboards that read them; shared/serve.py serves this
+# directory, so the dashboards fetch the JSON by bare filename.
+OUT = ROOT / "out"
+
 # Shared inputs and the pool built from them.
 PROJECTIONS_HTML = ROOT / "shared/data/projections.html"  # hand-saved DraftSharks page
 SLEEPER_PROJECTIONS = ROOT / "shared/data/sleeper_projections.json"
 WEEKLY_PROJECTIONS = ROOT / "shared/data/weekly_projections.json"
-POOL = ROOT / "pool.json"
+POOL = OUT / "pool.json"
 
 # Draft.
-DRAFT = ROOT / "draft.json"
+DRAFT = OUT / "draft.json"
 BOARDS = ROOT / "draft/sources/data/boards.json"
 RAW_BOARDS = ROOT / "draft/sources/data/raw"
-SOURCE_MATCHES = ROOT / "data_source_matches.json"
-RANKINGS = ROOT / "rankings.json"
+SOURCE_MATCHES = OUT / "data_source_matches.json"
+RANKINGS = OUT / "rankings.json"
 
 # Season.
-LEAGUE = ROOT / "league.json"
-SEASON = ROOT / "season.json"
-BIDDING_EVALUATION = ROOT / "bidding_evaluation.json"
+LEAGUE = OUT / "league.json"
+SEASON = OUT / "season.json"
+BIDDING_EVALUATION = OUT / "bidding_evaluation.json"

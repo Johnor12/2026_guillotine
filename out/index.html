@@ -175,14 +175,14 @@
       <h1>Season desk</h1>
       <p class="sub" id="subline">Loading season.json…</p>
     </div>
-    <nav class="nav"><a href="./">draft board</a> · <a href="sources.html">sources</a></nav>
+    <nav class="nav"><a href="draft.html">draft board</a> · <a href="sources.html">sources</a></nav>
   </header>
 
   <div class="strip" id="strip"><strong id="stripWeek">Loading…</strong><span id="stripAlive"></span><span id="stripFaab"></span><span id="stripWaivers"></span></div>
 
   <div class="card" id="error">
     <strong>Couldn't load <code>season.json</code>!</strong>
-    <p>Run <code>uv run -m season.refresh</code>, then serve the repository root: <code>uv run -m shared.serve</code> → <code>http://127.0.0.1:8123/season.html</code>.</p>
+    <p>Run <code>uv run -m season.refresh</code>, then <code>uv run -m shared.serve</code> → <code>http://127.0.0.1:8123/</code>.</p>
   </div>
 
   <div id="app" hidden>
