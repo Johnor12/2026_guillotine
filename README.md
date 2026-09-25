@@ -379,11 +379,11 @@ bid wins in (a paid bid beats every lower price and any free pickup; a $0 claim 
 lands a player nobody wanted). The table pools every recorded season, so a season's
 own price is one draw in thousands rather than a peek. A claim's value also counts
 what it takes from the team I would meet in the final: each recorded season scores
-its survivor's final lineup with and without every player he acquired, capped by his
-margin over the last teams cut (a survivor a star made can be replaced by the next
-team up), and `Market.denial` averages that loss over the seasons where the player was
-in play; the replay charges the same loss to that season's championship bar when my
-agent takes the player first. The price per point is chosen by replayed title odds
+every acquisition's lineup with and without the player, week by week while its buyer
+holds him, and for the survivor's final lineup that loss, capped by his margin over
+the last teams cut (a survivor a star made can be replaced by the next team up), is
+what `Market.denial` averages over the seasons where the player was in play. The
+price per point is chosen by replayed title odds
 (below), so holding cash back happens only when the simulated seasons reward it
 rather than by a chosen tactic. Total
 paid spending in an auction is also limited to its largest individual bid. Claims
@@ -413,9 +413,10 @@ continuation strategies (what a point of gain is worth from next week on), not e
 possible sequence of future auction decisions; the shape of my bids across players
 comes from the recorded market, but valuing gain in weeks of remaining cash is still a
 modeling assumption. In the week-3 state the replays chose 0.7 weeks of cash per
-point per week. On the same recorded seasons this policy replays a little better than
-the best multiple of the guide ceiling it replaced (26.6% against 25.1% with the
-denial accounting, 17.3% against 17.1% without); valuing gain at a constant price per
+point per week. On the same recorded seasons, under the earlier accounting of what my
+claims take from the room (below), this policy replayed a little better than the best
+multiple of the guide ceiling it replaced (26.6% against 25.1% with the survivor's
+denial, 17.3% against 17.1% without); valuing gain at a constant price per
 point, or in cash alone, or in weeks alone, replayed worse, and bidding the value
 itself with no shading against the market replayed far worse, since this room prices
 depth above its gain, so paying full value for it wins only depth that earns nothing.
@@ -425,15 +426,37 @@ its noise. The guide's positional curve (money for the elite by rank, almost non
 anyone else) and its unshaded bids each account for about half of it; the cut-risk
 kicker, the value's time profile, the objective's week weights, in-sample fitting of
 the shaded bids and measuring gain beyond the free pickup were each tested and do not
-explain it. The replay cannot see what the race does when my agent wins a claim (the
-rival keeps his cash and takes another player, my drop enters the pool), so the race
-is the check on any change to this family, and the discrepancy is open. Winning and
-losing outcomes are evaluated per recorded season, preserving their connection to
-future opportunity. These are individual alternatives, not an optimized simultaneous
-claim portfolio. Replay title odds are approximate: opponents retain the players my
-replay takes, less the denial above. Championship weeks are scored with the roster
-held in each week; a Week 17 pickup cannot improve Week 16 retroactively. The full
-race uses our selected bid value when reporting league odds.
+explain it. The replay's account of what a claim of mine does to the room is first
+order (below), so the race is the check on any change to this family, and the
+discrepancy is open. Winning and losing outcomes are evaluated per recorded season,
+preserving their connection to future opportunity. These are individual alternatives,
+not an optimized simultaneous claim portfolio. Championship weeks are scored with the
+roster held in each week; a Week 17 pickup cannot improve Week 16 retroactively. The
+full race uses our selected bid value when reporting league odds.
+
+A player my replay takes is one the recorded room never got. Each recorded season
+carries every opponent acquisition's weekly lineup loss while he holds the player
+with the best body nobody took in his place, and every week's opponent scores.
+Whoever bought the player after my agent did plays without him while I hold him: the
+week's bar is the second-lowest of the lowered scores, a lowered team that falls into
+the bottom two is cut then and lowered no further (the recorded field stands in for
+the team cut in his place), and the survivor's championship total loses the same
+way, no more than his margin over the last teams cut. What the buyer would have done
+with his cash, and the drop he keeps, are not replayed, and neither is the room's
+response to a stronger rival, so replay levels stay approximate and optimistic. In
+the week-3 state (after the run) the standing roster replays to 27.5% for the title
+and 42.4% to reach the final against 23.5% and 38.6% in the full race. The earlier
+accounting, under which every recorded buyer kept the player and only the survivor's
+final lineup was charged, replayed to 26.6% and 34.7%: an optimistic final masking a
+pessimistic survival profile. Charging each buyer the player's whole lineup value
+replayed to 39.0% and 53.2%, so the substitute is first order too. On the pre-auction
+week-3 decision, paired full races (8,192 seasons, score noise shared across roster
+variants, 22.2% for the standing roster against 27.2% replayed) valued the free
+pickups of Luther Burden, Saquon Barkley, Alec Pierce and Carnell Tate at +6.5%,
++14.0%, +5.5% and +5.2% of title odds (±2.2), where this accounting replays +5.7%,
++9.7%, +2.4% and +3.9% and the earlier one +5.6%, +10.2%, +2.3% and +3.9%: the
+accounting moves the level, not the relative values, and the race's higher marks,
+about two of its standard errors on average, are part of the open discrepancy.
 
 Sleeper documents its [suggested bid ranges](https://support.sleeper.com/en/articles/12111984-suggested-faab-bids),
 but its [public API](https://docs.sleeper.com/) does not document an endpoint for them.

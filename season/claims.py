@@ -20,9 +20,9 @@ dropped since are still on waivers and take a bid; everyone else is a free add. 
 variant that only fits with a body moved onto reserve names that move. A record
 contributes the acquired roster's title value if the bid wins, and standing pat
 otherwise, which keeps the dependence between prices and future opportunities. Odds
-are relative to standing pat; replay levels are approximate because opponents retain
-players acquired by our variant, except what the record's survivor loses to them
-(race.survivor_loss).
+are relative to standing pat. A player the variant holds comes off the recorded
+roster of the opponent who bought him (race.replay); what that opponent would have
+done with the cash instead is not replayed.
 """
 
 from __future__ import annotations

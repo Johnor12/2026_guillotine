@@ -1,6 +1,6 @@
 {
   "fetched_at": "2026-09-25T12:46:24+00:00",
-  "simulations_per_scenario": 256,
+  "simulations_per_scenario": 2048,
   "seed": 20360804,
   "bid_calibration": {
     "method": "leave-one-player-out; current projections proxy historical player value",
@@ -861,8 +861,8 @@
   "scenarios": {
     "fitted_activity": {
       "price_0.35": {
-        "p_title": 0.2493822162757653,
-        "p_reach_final": 0.32773049618804245,
+        "p_title": 0.257582134409957,
+        "p_reach_final": 0.39816144210118487,
         "budget_by_week": [
           {
             "week": 3,
@@ -874,67 +874,67 @@
           },
           {
             "week": 5,
-            "budget": 930
+            "budget": 937
           },
           {
             "week": 6,
-            "budget": 887
+            "budget": 898
           },
           {
             "week": 7,
-            "budget": 843
+            "budget": 857
           },
           {
             "week": 8,
-            "budget": 706
+            "budget": 715
           },
           {
             "week": 9,
-            "budget": 648
+            "budget": 663
           },
           {
             "week": 10,
-            "budget": 515
+            "budget": 537
           },
           {
             "week": 11,
-            "budget": 485
+            "budget": 504
           },
           {
             "week": 12,
-            "budget": 460
+            "budget": 480
           },
           {
             "week": 13,
-            "budget": 415
+            "budget": 436
           },
           {
             "week": 14,
-            "budget": 374
+            "budget": 401
           },
           {
             "week": 15,
-            "budget": 361
+            "budget": 388
           },
           {
             "week": 16,
-            "budget": 348
+            "budget": 373
           },
           {
             "week": 17,
-            "budget": 346
+            "budget": 372
           }
         ],
-        "mean_week9_spend": 132,
-        "shortfall_to_best_percentage_points": -1.863,
+        "mean_week9_spend": 126,
+        "shortfall_to_best_percentage_points": -2.036,
         "paired_95_percent_interval": [
-          -2.683,
-          -1.043
+          -2.343,
+          -1.73
         ]
       },
       "price_0.5": {
-        "p_title": 0.2638471754961823,
-        "p_reach_final": 0.34535599090262237,
+        "p_title": 0.27454426086776634,
+        "p_reach_final": 0.4241054117493051,
         "budget_by_week": [
           {
             "week": 3,
@@ -946,67 +946,67 @@
           },
           {
             "week": 5,
-            "budget": 910
+            "budget": 911
           },
           {
             "week": 6,
-            "budget": 840
+            "budget": 845
           },
           {
             "week": 7,
-            "budget": 771
+            "budget": 781
           },
           {
             "week": 8,
-            "budget": 606
+            "budget": 619
           },
           {
             "week": 9,
-            "budget": 533
+            "budget": 554
           },
           {
             "week": 10,
-            "budget": 385
+            "budget": 408
           },
           {
             "week": 11,
-            "budget": 350
+            "budget": 370
           },
           {
             "week": 12,
-            "budget": 323
+            "budget": 343
           },
           {
             "week": 13,
-            "budget": 277
+            "budget": 300
           },
           {
             "week": 14,
-            "budget": 238
+            "budget": 266
           },
           {
             "week": 15,
-            "budget": 228
+            "budget": 256
           },
           {
             "week": 16,
-            "budget": 217
+            "budget": 244
           },
           {
             "week": 17,
-            "budget": 215
+            "budget": 242
           }
         ],
-        "mean_week9_spend": 148,
-        "shortfall_to_best_percentage_points": -0.417,
+        "mean_week9_spend": 145,
+        "shortfall_to_best_percentage_points": -0.34,
         "paired_95_percent_interval": [
-          -1.164,
-          0.331
+          -0.593,
+          -0.087
         ]
       },
       "price_0.7": {
-        "p_title": 0.26801279136990175,
-        "p_reach_final": 0.35117182453771234,
+        "p_title": 0.2779464139281136,
+        "p_reach_final": 0.4330822124235044,
         "budget_by_week": [
           {
             "week": 3,
@@ -1018,58 +1018,58 @@
           },
           {
             "week": 5,
-            "budget": 882
+            "budget": 883
           },
           {
             "week": 6,
-            "budget": 791
+            "budget": 794
           },
           {
             "week": 7,
-            "budget": 694
+            "budget": 707
           },
           {
             "week": 8,
-            "budget": 499
+            "budget": 513
           },
           {
             "week": 9,
-            "budget": 420
+            "budget": 436
           },
           {
             "week": 10,
-            "budget": 265
+            "budget": 280
           },
           {
             "week": 11,
-            "budget": 231
+            "budget": 246
           },
           {
             "week": 12,
-            "budget": 213
+            "budget": 223
           },
           {
             "week": 13,
-            "budget": 172
+            "budget": 187
           },
           {
             "week": 14,
-            "budget": 143
+            "budget": 160
           },
           {
             "week": 15,
-            "budget": 136
+            "budget": 152
           },
           {
             "week": 16,
-            "budget": 126
+            "budget": 144
           },
           {
             "week": 17,
-            "budget": 124
+            "budget": 143
           }
         ],
-        "mean_week9_spend": 154,
+        "mean_week9_spend": 155,
         "shortfall_to_best_percentage_points": 0.0,
         "paired_95_percent_interval": [
           0.0,
@@ -1077,8 +1077,8 @@
         ]
       },
       "price_1.0": {
-        "p_title": 0.26151293695135563,
-        "p_reach_final": 0.3431509970007737,
+        "p_title": 0.27059977508290123,
+        "p_reach_final": 0.4263089529812936,
         "budget_by_week": [
           {
             "week": 3,
@@ -1090,19 +1090,381 @@
           },
           {
             "week": 5,
-            "budget": 796
+            "budget": 809
           },
           {
             "week": 6,
-            "budget": 667
+            "budget": 685
           },
           {
             "week": 7,
-            "budget": 561
+            "budget": 578
           },
           {
             "week": 8,
-            "budget": 339
+            "budget": 355
+          },
+          {
+            "week": 9,
+            "budget": 282
+          },
+          {
+            "week": 10,
+            "budget": 143
+          },
+          {
+            "week": 11,
+            "budget": 121
+          },
+          {
+            "week": 12,
+            "budget": 109
+          },
+          {
+            "week": 13,
+            "budget": 88
+          },
+          {
+            "week": 14,
+            "budget": 71
+          },
+          {
+            "week": 15,
+            "budget": 68
+          },
+          {
+            "week": 16,
+            "budget": 65
+          },
+          {
+            "week": 17,
+            "budget": 64
+          }
+        ],
+        "mean_week9_spend": 138,
+        "shortfall_to_best_percentage_points": -0.735,
+        "paired_95_percent_interval": [
+          -1.025,
+          -0.444
+        ]
+      },
+      "price_1.4": {
+        "p_title": 0.23527793137162256,
+        "p_reach_final": 0.38422681042985274,
+        "budget_by_week": [
+          {
+            "week": 3,
+            "budget": 998
+          },
+          {
+            "week": 4,
+            "budget": 998
+          },
+          {
+            "week": 5,
+            "budget": 721
+          },
+          {
+            "week": 6,
+            "budget": 553
+          },
+          {
+            "week": 7,
+            "budget": 435
+          },
+          {
+            "week": 8,
+            "budget": 198
+          },
+          {
+            "week": 9,
+            "budget": 146
+          },
+          {
+            "week": 10,
+            "budget": 59
+          },
+          {
+            "week": 11,
+            "budget": 51
+          },
+          {
+            "week": 12,
+            "budget": 46
+          },
+          {
+            "week": 13,
+            "budget": 38
+          },
+          {
+            "week": 14,
+            "budget": 29
+          },
+          {
+            "week": 15,
+            "budget": 28
+          },
+          {
+            "week": 16,
+            "budget": 27
+          },
+          {
+            "week": 17,
+            "budget": 26
+          }
+        ],
+        "mean_week9_spend": 86,
+        "shortfall_to_best_percentage_points": -4.267,
+        "paired_95_percent_interval": [
+          -4.677,
+          -3.857
+        ]
+      }
+    },
+    "all_opponents_active": {
+      "price_0.35": {
+        "p_title": 0.21482821471297406,
+        "p_reach_final": 0.33613800136166133,
+        "budget_by_week": [
+          {
+            "week": 3,
+            "budget": 998
+          },
+          {
+            "week": 4,
+            "budget": 998
+          },
+          {
+            "week": 5,
+            "budget": 933
+          },
+          {
+            "week": 6,
+            "budget": 898
+          },
+          {
+            "week": 7,
+            "budget": 858
+          },
+          {
+            "week": 8,
+            "budget": 716
+          },
+          {
+            "week": 9,
+            "budget": 659
+          },
+          {
+            "week": 10,
+            "budget": 526
+          },
+          {
+            "week": 11,
+            "budget": 491
+          },
+          {
+            "week": 12,
+            "budget": 466
+          },
+          {
+            "week": 13,
+            "budget": 421
+          },
+          {
+            "week": 14,
+            "budget": 385
+          },
+          {
+            "week": 15,
+            "budget": 372
+          },
+          {
+            "week": 16,
+            "budget": 360
+          },
+          {
+            "week": 17,
+            "budget": 359
+          }
+        ],
+        "mean_week9_spend": 132,
+        "shortfall_to_best_percentage_points": -2.188,
+        "paired_95_percent_interval": [
+          -2.475,
+          -1.901
+        ]
+      },
+      "price_0.5": {
+        "p_title": 0.23079229697472606,
+        "p_reach_final": 0.36148031065036795,
+        "budget_by_week": [
+          {
+            "week": 3,
+            "budget": 998
+          },
+          {
+            "week": 4,
+            "budget": 998
+          },
+          {
+            "week": 5,
+            "budget": 908
+          },
+          {
+            "week": 6,
+            "budget": 845
+          },
+          {
+            "week": 7,
+            "budget": 781
+          },
+          {
+            "week": 8,
+            "budget": 612
+          },
+          {
+            "week": 9,
+            "budget": 541
+          },
+          {
+            "week": 10,
+            "budget": 390
+          },
+          {
+            "week": 11,
+            "budget": 351
+          },
+          {
+            "week": 12,
+            "budget": 327
+          },
+          {
+            "week": 13,
+            "budget": 284
+          },
+          {
+            "week": 14,
+            "budget": 250
+          },
+          {
+            "week": 15,
+            "budget": 240
+          },
+          {
+            "week": 16,
+            "budget": 229
+          },
+          {
+            "week": 17,
+            "budget": 228
+          }
+        ],
+        "mean_week9_spend": 150,
+        "shortfall_to_best_percentage_points": -0.592,
+        "paired_95_percent_interval": [
+          -0.832,
+          -0.351
+        ]
+      },
+      "price_0.7": {
+        "p_title": 0.23670776023639642,
+        "p_reach_final": 0.3713514693227827,
+        "budget_by_week": [
+          {
+            "week": 3,
+            "budget": 998
+          },
+          {
+            "week": 4,
+            "budget": 998
+          },
+          {
+            "week": 5,
+            "budget": 875
+          },
+          {
+            "week": 6,
+            "budget": 783
+          },
+          {
+            "week": 7,
+            "budget": 695
+          },
+          {
+            "week": 8,
+            "budget": 492
+          },
+          {
+            "week": 9,
+            "budget": 413
+          },
+          {
+            "week": 10,
+            "budget": 259
+          },
+          {
+            "week": 11,
+            "budget": 226
+          },
+          {
+            "week": 12,
+            "budget": 206
+          },
+          {
+            "week": 13,
+            "budget": 173
+          },
+          {
+            "week": 14,
+            "budget": 145
+          },
+          {
+            "week": 15,
+            "budget": 138
+          },
+          {
+            "week": 16,
+            "budget": 132
+          },
+          {
+            "week": 17,
+            "budget": 130
+          }
+        ],
+        "mean_week9_spend": 153,
+        "shortfall_to_best_percentage_points": 0.0,
+        "paired_95_percent_interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "price_1.0": {
+        "p_title": 0.22707677084190497,
+        "p_reach_final": 0.3608473929577445,
+        "budget_by_week": [
+          {
+            "week": 3,
+            "budget": 998
+          },
+          {
+            "week": 4,
+            "budget": 998
+          },
+          {
+            "week": 5,
+            "budget": 802
+          },
+          {
+            "week": 6,
+            "budget": 673
+          },
+          {
+            "week": 7,
+            "budget": 567
+          },
+          {
+            "week": 8,
+            "budget": 336
           },
           {
             "week": 9,
@@ -1110,7 +1472,7 @@
           },
           {
             "week": 10,
-            "budget": 132
+            "budget": 131
           },
           {
             "week": 11,
@@ -1118,39 +1480,39 @@
           },
           {
             "week": 12,
-            "budget": 99
+            "budget": 102
           },
           {
             "week": 13,
-            "budget": 79
+            "budget": 84
           },
           {
             "week": 14,
-            "budget": 61
+            "budget": 67
           },
           {
             "week": 15,
-            "budget": 58
+            "budget": 63
           },
           {
             "week": 16,
-            "budget": 54
+            "budget": 60
           },
           {
             "week": 17,
-            "budget": 53
+            "budget": 59
           }
         ],
-        "mean_week9_spend": 131,
-        "shortfall_to_best_percentage_points": -0.65,
+        "mean_week9_spend": 133,
+        "shortfall_to_best_percentage_points": -0.963,
         "paired_95_percent_interval": [
-          -1.367,
-          0.067
+          -1.242,
+          -0.684
         ]
       },
       "price_1.4": {
-        "p_title": 0.22300956371945316,
-        "p_reach_final": 0.30030173675601,
+        "p_title": 0.18792723521419794,
+        "p_reach_final": 0.3130679946628436,
         "budget_by_week": [
           {
             "week": 3,
@@ -1162,19 +1524,19 @@
           },
           {
             "week": 5,
-            "budget": 704
+            "budget": 688
           },
           {
             "week": 6,
-            "budget": 543
+            "budget": 522
           },
           {
             "week": 7,
-            "budget": 426
+            "budget": 409
           },
           {
             "week": 8,
-            "budget": 180
+            "budget": 175
           },
           {
             "week": 9,
@@ -1182,19 +1544,19 @@
           },
           {
             "week": 10,
-            "budget": 52
+            "budget": 50
           },
           {
             "week": 11,
-            "budget": 45
+            "budget": 44
           },
           {
             "week": 12,
-            "budget": 40
+            "budget": 41
           },
           {
             "week": 13,
-            "budget": 32
+            "budget": 35
           },
           {
             "week": 14,
@@ -1206,380 +1568,18 @@
           },
           {
             "week": 16,
-            "budget": 22
+            "budget": 24
           },
           {
             "week": 17,
-            "budget": 21
-          }
-        ],
-        "mean_week9_spend": 74,
-        "shortfall_to_best_percentage_points": -4.5,
-        "paired_95_percent_interval": [
-          -5.54,
-          -3.461
-        ]
-      }
-    },
-    "all_opponents_active": {
-      "price_0.35": {
-        "p_title": 0.221779810370156,
-        "p_reach_final": 0.28585648310752454,
-        "budget_by_week": [
-          {
-            "week": 3,
-            "budget": 998
-          },
-          {
-            "week": 4,
-            "budget": 998
-          },
-          {
-            "week": 5,
-            "budget": 934
-          },
-          {
-            "week": 6,
-            "budget": 890
-          },
-          {
-            "week": 7,
-            "budget": 846
-          },
-          {
-            "week": 8,
-            "budget": 696
-          },
-          {
-            "week": 9,
-            "budget": 641
-          },
-          {
-            "week": 10,
-            "budget": 515
-          },
-          {
-            "week": 11,
-            "budget": 479
-          },
-          {
-            "week": 12,
-            "budget": 449
-          },
-          {
-            "week": 13,
-            "budget": 401
-          },
-          {
-            "week": 14,
-            "budget": 361
-          },
-          {
-            "week": 15,
-            "budget": 348
-          },
-          {
-            "week": 16,
-            "budget": 336
-          },
-          {
-            "week": 17,
-            "budget": 333
-          }
-        ],
-        "mean_week9_spend": 125,
-        "shortfall_to_best_percentage_points": -1.378,
-        "paired_95_percent_interval": [
-          -2.006,
-          -0.75
-        ]
-      },
-      "price_0.5": {
-        "p_title": 0.23386335754478998,
-        "p_reach_final": 0.30226897463654323,
-        "budget_by_week": [
-          {
-            "week": 3,
-            "budget": 998
-          },
-          {
-            "week": 4,
-            "budget": 998
-          },
-          {
-            "week": 5,
-            "budget": 909
-          },
-          {
-            "week": 6,
-            "budget": 843
-          },
-          {
-            "week": 7,
-            "budget": 772
-          },
-          {
-            "week": 8,
-            "budget": 607
-          },
-          {
-            "week": 9,
-            "budget": 538
-          },
-          {
-            "week": 10,
-            "budget": 391
-          },
-          {
-            "week": 11,
-            "budget": 345
-          },
-          {
-            "week": 12,
-            "budget": 315
-          },
-          {
-            "week": 13,
-            "budget": 270
-          },
-          {
-            "week": 14,
-            "budget": 231
-          },
-          {
-            "week": 15,
-            "budget": 221
-          },
-          {
-            "week": 16,
-            "budget": 210
-          },
-          {
-            "week": 17,
-            "budget": 208
-          }
-        ],
-        "mean_week9_spend": 146,
-        "shortfall_to_best_percentage_points": -0.17,
-        "paired_95_percent_interval": [
-          -0.786,
-          0.446
-        ]
-      },
-      "price_0.7": {
-        "p_title": 0.23555964519717001,
-        "p_reach_final": 0.30749822788689885,
-        "budget_by_week": [
-          {
-            "week": 3,
-            "budget": 998
-          },
-          {
-            "week": 4,
-            "budget": 998
-          },
-          {
-            "week": 5,
-            "budget": 869
-          },
-          {
-            "week": 6,
-            "budget": 768
-          },
-          {
-            "week": 7,
-            "budget": 676
-          },
-          {
-            "week": 8,
-            "budget": 479
-          },
-          {
-            "week": 9,
-            "budget": 401
-          },
-          {
-            "week": 10,
-            "budget": 245
-          },
-          {
-            "week": 11,
-            "budget": 210
-          },
-          {
-            "week": 12,
-            "budget": 188
-          },
-          {
-            "week": 13,
-            "budget": 154
-          },
-          {
-            "week": 14,
-            "budget": 124
-          },
-          {
-            "week": 15,
-            "budget": 116
-          },
-          {
-            "week": 16,
-            "budget": 110
-          },
-          {
-            "week": 17,
-            "budget": 108
-          }
-        ],
-        "mean_week9_spend": 156,
-        "shortfall_to_best_percentage_points": 0.0,
-        "paired_95_percent_interval": [
-          0.0,
-          0.0
-        ]
-      },
-      "price_1.0": {
-        "p_title": 0.22839390779522215,
-        "p_reach_final": 0.29943106273802755,
-        "budget_by_week": [
-          {
-            "week": 3,
-            "budget": 998
-          },
-          {
-            "week": 4,
-            "budget": 998
-          },
-          {
-            "week": 5,
-            "budget": 797
-          },
-          {
-            "week": 6,
-            "budget": 663
-          },
-          {
-            "week": 7,
-            "budget": 553
-          },
-          {
-            "week": 8,
-            "budget": 333
-          },
-          {
-            "week": 9,
-            "budget": 257
-          },
-          {
-            "week": 10,
-            "budget": 122
-          },
-          {
-            "week": 11,
-            "budget": 100
-          },
-          {
-            "week": 12,
-            "budget": 90
-          },
-          {
-            "week": 13,
-            "budget": 69
-          },
-          {
-            "week": 14,
-            "budget": 53
-          },
-          {
-            "week": 15,
-            "budget": 48
-          },
-          {
-            "week": 16,
-            "budget": 45
-          },
-          {
-            "week": 17,
-            "budget": 44
-          }
-        ],
-        "mean_week9_spend": 134,
-        "shortfall_to_best_percentage_points": -0.717,
-        "paired_95_percent_interval": [
-          -1.319,
-          -0.114
-        ]
-      },
-      "price_1.4": {
-        "p_title": 0.18612903981458007,
-        "p_reach_final": 0.25661429822194104,
-        "budget_by_week": [
-          {
-            "week": 3,
-            "budget": 998
-          },
-          {
-            "week": 4,
-            "budget": 998
-          },
-          {
-            "week": 5,
-            "budget": 701
-          },
-          {
-            "week": 6,
-            "budget": 523
-          },
-          {
-            "week": 7,
-            "budget": 403
-          },
-          {
-            "week": 8,
-            "budget": 175
-          },
-          {
-            "week": 9,
-            "budget": 125
-          },
-          {
-            "week": 10,
-            "budget": 49
-          },
-          {
-            "week": 11,
-            "budget": 41
-          },
-          {
-            "week": 12,
-            "budget": 38
-          },
-          {
-            "week": 13,
-            "budget": 32
-          },
-          {
-            "week": 14,
             "budget": 23
-          },
-          {
-            "week": 15,
-            "budget": 21
-          },
-          {
-            "week": 16,
-            "budget": 20
-          },
-          {
-            "week": 17,
-            "budget": 20
           }
         ],
-        "mean_week9_spend": 76,
-        "shortfall_to_best_percentage_points": -4.943,
+        "mean_week9_spend": 77,
+        "shortfall_to_best_percentage_points": -4.878,
         "paired_95_percent_interval": [
-          -6.022,
-          -3.864
+          -5.29,
+          -4.466
         ]
       }
     }
@@ -1594,78 +1594,78 @@
     "candidates": [
       {
         "name": "Luther Burden",
-        "optimal_bid": 27,
-        "break_even_bid": 144,
-        "p_win_at_optimal": 0.766,
-        "title_at_optimal": 3.6,
-        "gain_this_week": -1.0
+        "optimal_bid": 37,
+        "break_even_bid": 117,
+        "p_win_at_optimal": 0.822,
+        "title_at_optimal": 3.2,
+        "gain_this_week": 1.3
       },
       {
         "name": "Carnell Tate",
         "optimal_bid": 27,
-        "break_even_bid": 97,
-        "p_win_at_optimal": 0.879,
-        "title_at_optimal": 2.2,
-        "gain_this_week": 0.9
-      },
-      {
-        "name": "Alec Pierce",
-        "optimal_bid": 14,
-        "break_even_bid": 68,
-        "p_win_at_optimal": 0.754,
-        "title_at_optimal": 2.0,
-        "gain_this_week": 0.0
+        "break_even_bid": 96,
+        "p_win_at_optimal": 0.902,
+        "title_at_optimal": 2.6,
+        "gain_this_week": -1.4
       },
       {
         "name": "Michael Wilson",
-        "optimal_bid": 27,
-        "break_even_bid": 128,
-        "p_win_at_optimal": 0.605,
-        "title_at_optimal": 1.9,
+        "optimal_bid": 29,
+        "break_even_bid": 117,
+        "p_win_at_optimal": 0.632,
+        "title_at_optimal": 2.4,
         "gain_this_week": -0.0
       },
       {
-        "name": "Saquon Barkley",
-        "optimal_bid": 100,
-        "break_even_bid": 203,
-        "p_win_at_optimal": 0.094,
-        "title_at_optimal": 1.0,
-        "gain_this_week": 4.4
+        "name": "Alec Pierce",
+        "optimal_bid": 19,
+        "break_even_bid": 63,
+        "p_win_at_optimal": 0.821,
+        "title_at_optimal": 1.4,
+        "gain_this_week": 0.0
       },
       {
         "name": "Deebo Samuel",
-        "optimal_bid": 54,
-        "break_even_bid": 108,
-        "p_win_at_optimal": 0.695,
-        "title_at_optimal": 0.8,
+        "optimal_bid": 27,
+        "break_even_bid": 93,
+        "p_win_at_optimal": 0.565,
+        "title_at_optimal": 1.3,
         "gain_this_week": 0.5
       },
       {
+        "name": "Andrei Iosivas",
+        "optimal_bid": 1,
+        "break_even_bid": 20,
+        "p_win_at_optimal": 0.971,
+        "title_at_optimal": 1.0,
+        "gain_this_week": 0.0
+      },
+      {
         "name": "Derrick Henry",
-        "optimal_bid": 231,
-        "break_even_bid": 327,
-        "p_win_at_optimal": 0.047,
-        "title_at_optimal": 0.3,
+        "optimal_bid": 189,
+        "break_even_bid": 337,
+        "p_win_at_optimal": 0.04,
+        "title_at_optimal": 0.4,
         "gain_this_week": 7.4
       },
       {
-        "name": "Luke Musgrave",
-        "optimal_bid": 0,
-        "break_even_bid": 0,
-        "p_win_at_optimal": 0.0,
-        "title_at_optimal": 0.0,
-        "gain_this_week": 0.0
-      },
-      {
-        "name": "Andrei Iosivas",
-        "optimal_bid": 0,
-        "break_even_bid": 0,
-        "p_win_at_optimal": 0.0,
-        "title_at_optimal": 0.0,
-        "gain_this_week": 0.0
+        "name": "Saquon Barkley",
+        "optimal_bid": 91,
+        "break_even_bid": 218,
+        "p_win_at_optimal": 0.098,
+        "title_at_optimal": 0.3,
+        "gain_this_week": 4.4
       },
       {
         "name": "Omar Cooper",
+        "optimal_bid": 2,
+        "break_even_bid": 4,
+        "p_win_at_optimal": 0.846,
+        "title_at_optimal": 0.1,
+        "gain_this_week": 0.0
+      },
+      {
+        "name": "Luke Musgrave",
         "optimal_bid": 0,
         "break_even_bid": 0,
         "p_win_at_optimal": 0.0,

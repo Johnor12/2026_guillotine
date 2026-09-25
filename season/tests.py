@@ -10,6 +10,7 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 from shared.league import WEEKS
+from shared.noise import SIGMA_WEEK, cdf
 
 from .claims import _record_values, claims, title_objective
 from .fetch_league import processing_week
@@ -46,8 +47,9 @@ class WaiverTests(unittest.TestCase):
         """A recorded opponent season whose only auction is `week`'s, at `outcomes`."""
         auctions = [None] * WEEKS
         auctions[week] = (list(outcomes), list(outcomes.values()))
-        return {"seed": 1, "my_bias": 0., "bars": [0.] * WEEKS, "forecast_bars": [0.] * WEEKS,
-                "alive": [2] * WEEKS, "champ_bar": 0., "runner_up_bar": 0., "auctions": auctions, "survivor_buys": {}}
+        return {"seed": 1, "my_bias": 0., "bars": [0.] * WEEKS, "scores": [[]] * WEEKS, "forecast_bars": [0.] * WEEKS,
+                "alive": [2] * WEEKS, "champ_bar": 0., "runner_up_bar": 0., "auctions": auctions, "champion": 0,
+                "tenures": {}}
 
     def test_buy_before_expansion(self):
         early = self.bidding.offers(self.roster, [8], 1000, 1)
@@ -191,8 +193,7 @@ class WaiverTests(unittest.TestCase):
         inputs = self.inputs()
         bars = [-1000.] * WEEKS
         bars[2] = lineup_points(self.roster, self.points, self.positions, 2)
-        record = {"seed": 1, "my_bias": 0., "bars": bars, "forecast_bars": [0.] * WEEKS,
-                  "alive": [2] * WEEKS, "champ_bar": 0., "runner_up_bar": 0., "auctions": [None] * WEEKS, "survivor_buys": {}}
+        record = {**self.record(1, {}), "bars": bars, "auctions": [None] * WEEKS}
         leverage = replay([record], inputs, self.roster, 1000, 0.4)["leverage"]
         self.assertEqual(leverage[0], 0., "A week cleared in every season carries no weight")
         self.assertGreater(leverage[1], 0.)
@@ -206,7 +207,7 @@ class WaiverTests(unittest.TestCase):
                 flat = set(inputs.my_bidding.weights) == {1.}
                 return [{"p_title": .1 if flat else weighted_title, "leverage": [2.] + [1.] * (WEEKS - 2)}] * 3
             with patch("season.claims.run_replays", side_effect=runs):
-                mine, summary = title_objective(inputs, [{"auctions": auctions, "survivor_buys": {}}])
+                mine, summary = title_objective(inputs, [{"auctions": auctions, "tenures": {}, "champion": 0}])
             self.assertEqual(summary["chosen"], chosen)
             self.assertEqual({r for col in mine.my_bidding.refills[1] for r in col}, {9})
             self.assertIs(mine.bidding, inputs.bidding, "The room keeps its own objective")
@@ -427,7 +428,7 @@ class WaiverTests(unittest.TestCase):
         auctions[2] = ([8, 9], [-1, -1])
         runs = [{"p_title": .1, "leverage": [1.] * (WEEKS - 1)}] * 3
         with patch("season.claims.run_replays", return_value=runs):
-            mine, _ = title_objective(inputs, [{"auctions": auctions, "survivor_buys": {}}])
+            mine, _ = title_objective(inputs, [{"auctions": auctions, "tenures": {}, "champion": 0}])
         self.assertEqual({r for col in mine.my_bidding.refills[1] for r in col}, {8})
 
     def test_replay_chooses_among_the_best_drops(self):
@@ -479,13 +480,36 @@ class WaiverTests(unittest.TestCase):
         for points in self.weekly:
             points[9] = 25.
         base = {**self.record(2, {9: 3}), "champ_bar": 200., "runner_up_bar": 185.}
-        record = {**base, "survivor_buys": {9: (2, [10., 10.])}}
+        record = {**base, "tenures": {9: [(0, 2, [0.] * 13 + [10., 10.])]}}
         inputs = self.inputs(self.weekly[:], market=[record])
         self.assertAlmostEqual(inputs.market.denial[2, 9], 15., msg="Capped by the margin over the runner-up")
         def title(rec):
             return replay([rec], inputs, self.roster, 1000, 0.7)["p_title"]
         self.assertGreater(title(record), title(base), "Denying the finalist lowers his bar")
         self.assertGreater(title({**record, "runner_up_bar": 100.}), title(record), "A wider margin lets the whole loss count")
+
+    def test_taking_a_player_lowers_the_bar_his_buyer_set(self):
+        # Opponent 1 bought 9 at week 3 and his lineup loses 10 a week without him. He set
+        # week 4's bar five points over my lineup; with 9 mine, that bar is his score less
+        # ten. In week 3 he was far from the bottom, so that bar stands.
+        for points in self.weekly:
+            points[9] = 25.
+        mine = self.roster[:7] + [9]
+        mu = lineup_points(mine, self.weekly[3], self.positions, 3)
+        record = {**self.record(2, {}), "bars": [-1000.] * WEEKS, "runner_up_bar": 100.}
+        record["scores"] = [[] for _ in range(WEEKS)]
+        record["scores"][2], record["bars"][2] = [(mu - 5., 7), (mu, 8), (mu + 50., 1)], mu
+        record["scores"][3], record["bars"][3] = [(mu - 5., 7), (mu + 5., 1), (mu + 50., 8)], mu + 5.
+        held = {**record, "tenures": {9: [(1, 2, [10., 10.])]}}
+        inputs = self.inputs(self.weekly[:], market=[record])
+        untouched = replay([record], inputs, mine, 1000, 0.7)["p_alive_by_week"]
+        lowered = replay([held], inputs, mine, 1000, 0.7)["p_alive_by_week"]
+        self.assertEqual(lowered[1], untouched[1], "A buyer far from the cut moves no bar")
+        self.assertGreater(lowered[2], untouched[2])
+        self.assertAlmostEqual(lowered[2] / lowered[1], cdf(5. / SIGMA_WEEK[3]))
+        self.assertEqual(replay([held], inputs, self.roster, 1000, 0.7)["p_alive_by_week"],
+                         replay([record], inputs, self.roster, 1000, 0.7)["p_alive_by_week"],
+                         "Without the player, the buyer keeps his score")
 
     def test_replay_budget_conditions_on_survival(self):
         for points in self.weekly:

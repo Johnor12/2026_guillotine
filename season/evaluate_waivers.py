@@ -6,8 +6,9 @@
 
 The price comparison replays my roster bidding each price per point of season gain
 (race.PRICES) on paired opponent seasons, including a sensitivity run where every
-opponent participates immediately. Absolute replay odds are approximate because
-opponents retain players our replay buys. A few observed auctions cannot validate future
+opponent participates immediately. Replay odds are approximate: a player my agent buys
+comes off the recorded buyer's roster, but the cash he keeps is not respent. A few
+observed auctions cannot validate future
 activity; held-out bid-size errors (per player, and the latest auction from earlier ones)
 are conditional on a manager submitting a positive bid, using current projections for
 historical values. The pre-auction counterfactual reconstructs this week's rosters

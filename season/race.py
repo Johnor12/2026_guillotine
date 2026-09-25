@@ -28,8 +28,11 @@ opponents race among themselves and the record carries, per week, the eliminatio
 finalist's championship score, and the market: which free agents were in play and what
 each cleared for. `replay` then walks my roster through that record under my own claim
 policy, so any roster-and-budget variant is priced against the same seasons, in closed
-form per week (Phi over the bar) exactly as the draft valuation did. Including me, all
-32 race and every team's elimination and title odds are just frequencies.
+form per week (Phi over the bar) exactly as the draft valuation did; a player my agent
+takes comes off the recorded roster of whoever bought him after that, lowering the bars
+he set and the survivor's total, since the record also carries each acquisition's
+weekly lineup loss to its buyer. Including me, all 32 race and every team's
+elimination and title odds are just frequencies.
 """
 
 from __future__ import annotations
@@ -82,12 +85,16 @@ class Market:
         outcomes: dict[tuple[int, int], list[int]] = {}
         denied: Counter = Counter()
         for rec in records:
-            buys = rec["survivor_buys"]
+            final = {}  # player -> (week the survivor acquired him, his final lineup's loss without him by week)
+            for j, tenures in rec["tenures"].items():
+                for team, start, losses in tenures:
+                    if team == rec["champion"] and start + len(losses) > REGULAR_WEEKS:
+                        final[j] = (start, [0.0] * max(0, start - REGULAR_WEEKS) + losses[max(0, REGULAR_WEEKS - start):])
             for w, auction in enumerate(rec["auctions"]):
                 if auction is not None:
                     for j, outcome in zip(*auction):
                         outcomes.setdefault((w, j), []).append(outcome)
-                        bought = buys.get(j)
+                        bought = final.get(j)
                         if bought is not None and bought[0] >= w:
                             denied[w, j] += survivor_loss(rec, bought[1], w)
         self.envelopes = {key: _envelope(rows) for key, rows in outcomes.items()}
@@ -389,8 +396,14 @@ def simulate(inputs: RaceInputs, seed: int, exclude_me: bool) -> dict:
     cut_week = [None if live else w0 - 1 for live in alive]
     alive_count: list[int] = [0] * WEEKS
     bars: list[float] = [0.0] * WEEKS
+    scores: list[list[tuple[float, int]]] = [[] for _ in range(WEEKS)]  # opponents' (score, team), lowest first
     auctions: list[tuple[list[int], list[int]] | None] = [None] * WEEKS
     claims: list[list[tuple[int, int, int]]] = [[] for _ in range(WEEKS)]
+    # Every acquisition and the lineup points its team loses each week while it holds
+    # the player with the best body nobody took in his place: what the replay charges
+    # when my agent takes him first.
+    tenures: dict[int, list[tuple[int, int, list[float]]]] = {}
+    holding: dict[tuple[int, int], tuple[int | None, list[float]]] = {}
     budget_path: list[list[int]] = []
     budget_after_claims: list[list[int]] = []
     championship = [0.0] * n
@@ -408,23 +421,40 @@ def simulate(inputs: RaceInputs, seed: int, exclude_me: bool) -> dict:
                 list(inputs.on_waivers) if off_cycle else None, inputs.off_cycle_share if off_cycle else 1.0)
             auctions[w] = (candidates, winning)
             claims[w] = wins
+            untaken = [j for j, outcome in zip(candidates, winning) if outcome == -1]
+            for j, team, _ in wins:
+                without = [i for i in rosters[team] if i != j]
+                gains = inputs.bidding_for(team).evaluate(without, untaken, w) if untaken else []
+                (gain, _), instead = max(zip(gains, untaken), key=lambda item: (item[0][0], -item[1]),
+                                         default=((0.0, None), None))
+                losses: list[float] = []
+                holding[team, j] = (instead if gain > 0.0 else None, losses)
+                tenures.setdefault(j, []).append((team, w, losses))
         budget_after_claims.append(list(budgets))
         alive_count[w] = sum(alive)
+        points = inputs.weekly[w]
+        expected = {i: lineup_points(rosters[i], points, positions, w) for i in range(n) if alive[i]}
+        for (team, j), (instead, losses) in list(holding.items()):
+            if j not in rosters[team]:
+                del holding[team, j]  # dropped, or cut with the rest of the roster
+                continue
+            without = [i for i in rosters[team] if i != j]
+            if instead is not None and instead not in without:
+                without.append(instead)
+            losses.append(round(expected[team] - lineup_points(without, points, positions, w), 2))
         if w >= REGULAR_WEEKS:
-            for i in range(n):
-                if alive[i]:
-                    championship[i] += lineup_points(rosters[i], inputs.weekly[w], positions, w)
+            for i, mu in expected.items():
+                championship[i] += mu
             continue
         sigma = SIGMA_WEEK[w]
         floor = SCORE_FLOOR_Z * math.hypot(TEAM_SEASON_SIGMA, sigma)
-        points = inputs.weekly[w]
         scored = sorted(
-            (lineup_points(rosters[i], points, positions, w) + max(bias[i] + rng.gauss(0.0, sigma), floor), i)
+            (expected[i] + max(bias[i] + rng.gauss(0.0, sigma), floor), i)
             for i in range(n)
             if alive[i]
         )
-        opponents = [s for s, i in scored if i != inputs.me]
-        bars[w] = opponents[1] if len(opponents) > 1 else opponents[0]
+        scores[w] = [(s, i) for s, i in scored if i != inputs.me]
+        bars[w] = scores[w][1][0] if len(scores[w]) > 1 else scores[w][0][0]
         if w == REGULAR_WEEKS - 1:
             # The last teams cut, scored through the final: the bar a finalist falls to
             # when a claim of mine costs him a starter (the replay's denial cap).
@@ -440,29 +470,19 @@ def simulate(inputs: RaceInputs, seed: int, exclude_me: bool) -> dict:
     finalists = [i for i in range(n) if alive[i]]
     totals = {i: championship[i] + 2.0 * bias[i] + rng.gauss(0.0, SIGMA_CHAMP) for i in finalists}
     champion = max(finalists, key=lambda i: (totals[i], -i))
-    # What the champion's final lineup loses without each player he acquired, by
-    # championship week, and when he got him: what a claim of mine would have denied him.
-    final = rosters[champion]
-    with_all = [lineup_points(final, inputs.weekly[v], positions, v) for v in range(REGULAR_WEEKS, WEEKS)]
-    survivor_buys: dict[int, tuple[int, list[float]]] = {}
-    for w in range(w0, WEEKS):
-        for j, team, _ in claims[w]:
-            if team == champion and j in final and j not in survivor_buys:
-                without = [i for i in final if i != j]
-                survivor_buys[j] = (w, [round(full - lineup_points(without, inputs.weekly[v], positions, v), 2)
-                                        for full, v in zip(with_all, range(REGULAR_WEEKS, WEEKS))])
     return {
         "seed": seed,
         "my_bias": bias[inputs.me],
         "forecast_bars": forecast_bars,
         "bars": bars,
+        "scores": scores,
         "alive": alive_count,
         "champ_bar": totals[champion] if exclude_me else None,
         "auctions": auctions,
         "claims": claims,
         "cut_week": cut_week,
         "champion": champion,
-        "survivor_buys": survivor_buys,
+        "tenures": tenures,
         "runner_up_bar": runner_up if w0 < REGULAR_WEEKS else None,
         "budget_path": budget_path,
         "budget_after_claims": budget_after_claims,
@@ -476,10 +496,14 @@ def replay(records: list[dict], inputs: RaceInputs, roster: list[int], budget: i
     """P(title) and the weekly survival profile for a roster-and-budget variant of my
     team, against every recorded opponent race. The variant already reflects this
     week's claim outcome, so my agent bids only from next week on, valuing gain at
-    `price` (my_bid); each week's survival is Phi over that record's bar, and a player
-    the record's survivor acquired comes off his championship total when my agent takes
-    him first (survivor_loss; the rest of the record stands). `leverage` is
-    d log P(title) / d(my expected points) per week, as the draft's week weights."""
+    `price` (my_bid). A player my agent holds is one the record's opponents never got:
+    whoever acquired him after I did plays without him while I hold him (his recorded
+    tenure's lineup loss, rec["tenures"]), so each week's survival is Phi over that
+    record's bar with those scores lowered, and the survivor's championship total
+    drops the same way, no more than his margin over the last teams cut. The rest of
+    the record stands: the loser keeps neither his cash nor his drop, and the teams
+    cut are the recorded ones. `leverage` is d log P(title) / d(my expected points)
+    per week, as the draft's week weights."""
     bidding = inputs.my_bidding
     w0 = inputs.week0
     positions = inputs.positions
@@ -498,6 +522,11 @@ def replay(records: list[dict], inputs: RaceInputs, roster: list[int], budget: i
         surv = 1.0
         champ = 0.0
         denied = 0.0  # championship points my acquisitions take from the record's survivor
+        tenures = rec["tenures"]
+        taken = {j: w0 for j in mine if j in tenures}  # player -> week my agent first took him
+        # Opponents my takings cut earlier than recorded: from then on the recorded field
+        # stands in for the teams they would have been cut instead of.
+        cut: set[int] = set()
         rates = [0.0] * WEEKS  # d log P(title in this record) / d(points in week w)
         for w in range(w0, WEEKS):
             fit_roster(bidding, mine, w)
@@ -537,21 +566,33 @@ def replay(records: list[dict], inputs: RaceInputs, roster: list[int], budget: i
                     apply_offer(mine, best)
                     acquired.append(best.player)
                 for j in acquired:
-                    bought = rec["survivor_buys"].get(j)
-                    if bought is not None and bought[0] >= w:
-                        denied += survivor_loss(rec, bought[1], w)
+                    if j in tenures:
+                        taken.setdefault(j, w)
             budget_after_claims[w] += surv * left
+            # Opponents' scores this week without the players I hold that they acquired after I did.
+            loss: dict[int, float] = {}
+            for j, since in taken.items():
+                if j in mine:
+                    for team, start, losses in tenures[j]:
+                        if since <= start <= w < start + len(losses) and losses[w - start]:
+                            loss[team] = loss.get(team, 0.0) + losses[w - start]
             if w >= REGULAR_WEEKS:
                 champ += lineup_points(mine, inputs.weekly[w], positions, w)
+                denied += loss.get(rec["champion"], 0.0)
                 continue
+            bar = rec["bars"][w]
+            if any(t not in cut for t in loss):
+                lowered = sorted((s - (0.0 if t in cut else loss.get(t, 0.0)), t) for s, t in rec["scores"][w])
+                bar = lowered[1][0] if len(lowered) > 1 else lowered[0][0]
+                cut.update(t for _, t in lowered[:2] if t in loss)
             mu = lineup_points(mine, inputs.weekly[w], positions, w)
             # The same floored deviation the race gives every team: a blowup week
             # bottoms out at SCORE_FLOOR_Z, so a margin wider than that is safe.
             sigma = SIGMA_WEEK[w]
-            if mu + SCORE_FLOOR_Z * math.hypot(TEAM_SEASON_SIGMA, sigma) >= rec["bars"][w]:
+            if mu + SCORE_FLOOR_Z * math.hypot(TEAM_SEASON_SIGMA, sigma) >= bar:
                 p = 1.0
             else:
-                z = (mu + rec["my_bias"] - rec["bars"][w]) / sigma
+                z = (mu + rec["my_bias"] - bar) / sigma
                 p = cdf(z)
                 if p > 0.0:
                     rates[w] = phi(z) / (sigma * p)
