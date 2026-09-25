@@ -1,6 +1,8 @@
-"""Guillotine bidding: a published price prior, roster needs, and observed managers.
+"""Guillotine bidding: roster needs, the room's price reference, and observed managers.
 
-Charchian's early-season guide supplies the scale, not player-specific predictions:
+Charchian's early-season guide supplies the scale of the reference the room's bids are
+regressed on (guide_reference), not player-specific predictions and not my own bids
+(race.my_bid prices my claims by their gain alone):
 https://www.fantasylife.com/articles/guillotine-leagues/guillotine-league-fantasy-football-waiver-wire-guide-for-week-2
 Elite / ordinary starters / depth: 15-20% / 2.5-5% / 0.1-1% of $1,000. Our positional
 rank curve, season-long roster valuation and uncertainty priors are modeling assumptions
@@ -58,7 +60,7 @@ CONTEXT_CACHE = 8192  # (roster, week) contexts kept per Bidding before the cach
 # Opponents' saving habits: desired cash entering each week (zero-based), one plan per
 # manager for the season, a uniform prior rather than a fit to one auction. The patient
 # plan keeps half its cash for week-14 superflex. My own agent does not use these: it
-# bids a multiple of the guide ceiling that the replays choose (race.SPENDING).
+# bids a price per point of season gain that the replays choose (race.PRICES).
 SAVING_PLANS = {
     "value": ((0, 0.0), (17, 0.0)),
     "balanced": ((0, 1.0), (4, 0.9), (8, 0.75), (12, 0.25), (13, 0.2), (15, 0.05), (17, 0.0)),
@@ -152,7 +154,7 @@ class Offer:
     player: int
     drop: int | None
     gain: float  # net weighted lineup points per remaining week
-    ceiling: float  # the guide's price for it
+    ceiling: float  # the guide's price for it, the room's bid reference
 
 
 
@@ -531,21 +533,19 @@ class Bidding:
                 ctx.memo[j] = (gain, None if drop == _NONE else drop)
         return [ctx.memo[j] for j in candidates]
 
-    def _offer(self, j: int, drop: int | None, gain: float, budget: int, w: int, risk: float,
-               spending: float) -> Offer:
+    def _offer(self, j: int, drop: int | None, gain: float, budget: int, w: int, risk: float) -> Offer:
         if w == WEEKS - 1:
             return Offer(j, drop, gain, budget)  # Unspent FAAB has no value after the final game.
-        scale = spending * budget * (WEEKS - 1) / (WEEKS - w) * (1.0 + 2.0 * risk)
+        scale = budget * (WEEKS - 1) / (WEEKS - w) * (1.0 + 2.0 * risk)
         return Offer(j, drop, gain, min(budget, scale * self.shares[w][j] * min(1.5, gain / 5.0)))
 
-    def offers(self, roster, candidates, budget: int, w: int, risk: float = 0.0,
-               spending: float = 1.0) -> list[Offer]:
+    def offers(self, roster, candidates, budget: int, w: int, risk: float = 0.0) -> list[Offer]:
         """An offer for every candidate that improves the roster, with the drop that goes,
-        at `spending` times the guide's price."""
+        and the guide's price for it."""
         owned = set(roster)
         wanted = [j for j in candidates if j not in owned]
         return [
-            self._offer(j, drop, gain, budget, w, risk, spending)
+            self._offer(j, drop, gain, budget, w, risk)
             for j, (gain, drop) in zip(wanted, self.evaluate(roster, wanted, w))
             if gain > 0.0
         ]
@@ -557,10 +557,10 @@ class Bidding:
         span = WEEKS - w
         gains, _, fits, nets = self._core(ctx, [j], False)
         if fits[0]:
-            return [self._offer(j, None, float(gains[0]), budget, w, risk, 1.0)] if gains[0] > 0 else []
+            return [self._offer(j, None, float(gains[0]), budget, w, risk)] if gains[0] > 0 else []
         order = np.lexsort((ctx.drops, self.ros[w, ctx.drops], -nets[:, 0]))
         return [
-            self._offer(j, int(ctx.drops[o]), float(nets[o, 0]) / span, budget, w, risk, 1.0)
+            self._offer(j, int(ctx.drops[o]), float(nets[o, 0]) / span, budget, w, risk)
             for o in order[:k] if nets[o, 0] > 0.0
         ]
 

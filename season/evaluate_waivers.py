@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Validate bid sizes with held-out players and compare future spending levels on new seeds.
+"""Validate bid sizes with held-out players and compare future bid prices on new seeds.
 
     uv run -m season.evaluate_waivers            # -> bidding_evaluation.json
     uv run -m season.evaluate_waivers --sims 256
 
-The spending comparison replays my roster bidding each multiple of the guide ceiling
-(race.SPENDING) on paired opponent seasons, including a sensitivity run where every
+The price comparison replays my roster bidding each price per point of season gain
+(race.PRICES) on paired opponent seasons, including a sensitivity run where every
 opponent participates immediately. Absolute replay odds are approximate because
 opponents retain players our replay buys. A few observed auctions cannot validate future
 activity; held-out bid-size errors (per player, and the latest auction from earlier ones)
@@ -27,7 +27,7 @@ from shared.noise import SEED
 from shared.paths import BIDDING_EVALUATION, LEAGUE, POOL, WEEKLY_PROJECTIONS
 
 from .claims import claims, title_objective
-from .race import RACE_SIMS, SPENDING, race_inputs, run_race, run_replays
+from .race import PRICES, RACE_SIMS, race_inputs, run_race, run_replays
 from .state import load_season
 
 
@@ -61,21 +61,22 @@ def counterfactual(state, sims):
 
 
 def compare(inputs, records, roster, budget):
-    """My roster replayed at each future spending level, each paired against the guide level."""
-    runs = dict(zip(SPENDING, run_replays(inputs, records, [(tuple(roster), budget, s) for s in SPENDING])))
+    """My roster replayed at each future bid price, each paired against the best price."""
+    runs = dict(zip(PRICES, run_replays(inputs, records, [(tuple(roster), budget, s) for s in PRICES])))
+    best = max(runs.values(), key=lambda run: run["p_title"])
     output = {}
-    for spending, run in runs.items():
+    for price, run in runs.items():
         path = run["budget_by_week"]
-        differences = [a - b for a, b in zip(run["title_by_record"], runs[1.0]["title_by_record"])]
+        differences = [a - b for a, b in zip(run["title_by_record"], best["title_by_record"])]
         delta = statistics.fmean(differences)
         se = statistics.stdev(differences) / math.sqrt(len(differences))
-        output[f"{spending}x_guide"] = {
+        output[f"price_{price}"] = {
             "p_title": run["p_title"], "p_reach_final": run["p_reach_final"],
             "budget_by_week": [{"week": inputs.week0 + k + 1, "budget": round(b) if b is not None else None}
                                for k, b in enumerate(path)],
             "mean_week9_spend": round(path[8 - inputs.week0] - run["budget_after_claims"][8 - inputs.week0])
             if inputs.week0 <= 8 and path[8 - inputs.week0] is not None else None,
-            "advantage_over_guide_percentage_points": round(delta * 100, 3),
+            "shortfall_to_best_percentage_points": round(delta * 100, 3),
             "paired_95_percent_interval": [round((delta + sign * 1.96 * se) * 100, 3) for sign in (-1, 1)],
         }
     return output

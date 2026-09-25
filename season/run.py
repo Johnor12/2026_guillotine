@@ -11,8 +11,9 @@ the model diagnostics and league odds on stderr.
 The value input is per-week: DraftSharks' weekly projection blended 2:1 with Sleeper's
 for the same week (season/state.py). The engine is an agent-based race (season/race.py):
 every alive team fields its optimal lineup each week under the draft model's noise, the
-bottom two are cut, their players hit the wire, and the survivors bid under guide-based
-ceilings and learned tendencies (season/waivers.py). Run once without me it is the
+bottom two are cut, their players hit the wire, and the survivors bid: opponents at
+learned prices around a guide-based reference (season/waivers.py), my agent at a price
+per point of season gain the replays choose. Run once without me it is the
 market and the elimination bars I face, which price my roster variants
 (season/claims.py: this week's lineup, and for each free agent the bid that maximizes
 modeled title odds, with the drop that replays best among those the bidding heuristic
@@ -211,7 +212,7 @@ def report(payload: dict) -> None:
         f"\nweek {payload['week']}: {payload['alive']} alive; {me['name']} FAAB ${me['faab_left']}; "
         f"P(cut this week) {me['p_cut_now']:.1%}, P(final) {me['p_reach_final']:.1%}, "
         f"P(title) {me['p_title']:.1%} (replay {payload['claims']['base']['p_title']:.1%}, "
-        f"future bids at {payload['claims']['spending']}x guide)",
+        f"future bids at {payload['claims']['price']} weeks of cash per point per week)",
         file=sys.stderr,
     )
     lu = me["lineup"]
@@ -224,9 +225,10 @@ def report(payload: dict) -> None:
     if objective:
         print(f"objective {objective['chosen']} (replay P(title): points {objective['p_title']['points']:.1%}, "
               f"title-weighted {objective['p_title']['title_weighted']:.1%})", file=sys.stderr)
-    print("Budget value by future spending level, x guide ceiling (relative to standing pat):", file=sys.stderr)
+    print("Budget value by future bid price, weeks of cash per point per week of gain (relative to standing pat):",
+          file=sys.stderr)
     for level in payload["claims"]["baseline"]:
-        print(f"  {level['spending']}x: " + ", ".join(f"${r['budget']} {r['relative']:+.0f}%" for r in level["budgets"]),
+        print(f"  {level['price']}: " + ", ".join(f"${r['budget']} {r['relative']:+.0f}%" for r in level["budgets"]),
               file=sys.stderr)
     mode = ("weekly run pending" if not payload["waivers_ran"] else
             "off-cycle: players dropped since the run need a claim" if payload["claims"]["pending"] else "free agents only")
@@ -285,7 +287,7 @@ def main(argv: list[str] | None = None) -> int:
     decisions["objective"] = objective
     if args.report:
         print(f"[claims {time.perf_counter() - t0:.1f}s]", file=sys.stderr)
-    inputs = dataclasses.replace(inputs, spending=decisions["spending"])
+    inputs = dataclasses.replace(inputs, price=decisions["price"])
     t0 = time.perf_counter()
     full = run_race(inputs, args.sims, SEED, exclude_me=False)
     teams = league_odds(state, inputs, full)
@@ -345,7 +347,7 @@ def main(argv: list[str] | None = None) -> int:
         "model": {
             "bid_guide": GUIDE_URL,
             "bid_lookahead_weeks": WEEKS - w0,
-            "my_future_spending_x_guide": decisions["spending"],
+            "my_future_bid_price_weeks_of_cash_per_point_per_week": decisions["price"],
             "opponent_saving_plans": {
                 plan: {"probability": 1 / len(SAVING_PLANS),
                        "reserve_fraction_entering_week": {str(w + 1): share for w, share in anchors}}

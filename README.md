@@ -72,7 +72,7 @@ It refetches projections (DraftSharks weekly for the weeks still to play, Sleepe
 season), fetches the league state (including Sleeper weekly projections), and runs the
 season model. The NFL week comes from Sleeper. Each stage must succeed before the next
 starts; a failure exits nonzero without printing recommendations from an older run.
-The season model takes about 90 seconds at 8 workers; `--sims 256` runs it in
+The season model takes about two minutes at 8 workers; `--sims 256` runs it in
 under half a minute for a quick check, with correspondingly noisier odds.
 
 The terminal summary shows the remaining budget, any reserve body to activate and the
@@ -137,9 +137,9 @@ Before and after changing the draft opponent model, compare
 `draft.evaluate_opponents`'s replay accuracy. `season.evaluate_waivers` holds out every
 bid on a player before predicting that player's positive submitted bids, and predicts
 the latest auction from the earlier ones alone, comparing the guide prior with the
-fitted price curve by mean absolute log error. It also compares my future spending
-levels (multiples of the guide ceiling, `race.SPENDING`) on paired opponent seasons
-with a separate seed, then
+fitted price curve by mean absolute log error. It also compares my future bid values
+(`race.PRICES`, what a point of season gain is worth) on paired opponent seasons with
+a separate seed, each against the best, then
 repeats with every opponent active, and reconstructs the current week's pre-auction
 rosters to exercise paid claim pricing with the learned model (a diagnostic using
 observed bids, not an ex-ante backtest). A few observed auctions cannot establish
@@ -280,15 +280,17 @@ outside the draft pool, such as a backup who became a starter, joins `league.jso
 directory by normalized name and position when that names exactly one player.
 Each simulated week every alive team fields its optimal lineup under the draft model's
 noise, the two lowest are cut, and their players hit the wire. `season/waivers.py`
-prices acquisitions from [Paul Charchian's guillotine FAAB guide](https://www.fantasylife.com/articles/guillotine-leagues/guillotine-league-fantasy-football-waiver-wire-guide-for-week-2):
+values a claim by its projected net lineup points through Week 17, per remaining week,
+and gives the room's bids a reference price from [Paul Charchian's guillotine FAAB guide](https://www.fantasylife.com/articles/guillotine-leagues/guillotine-league-fantasy-football-waiver-wire-guide-for-week-2):
 early elite players about 15–20% of the starting budget, ordinary starters 2.5–5%,
-and depth 0.1–1%. This is an 18-team guide, not a fitted rule for our 32-team format.
-Our adaptation uses league-scored positional ranks by points per game played for the
-rest of the season (elite anchors QB4/RB6/WR6/TE3, then an inverse-square price
-curve), the claim's projected net lineup points through Week 17, per remaining week,
-and projected cut risk. Ranking by games played keeps a player returning from an
-absence from being charged twice: the net lineup points already count only the weeks
-he plays. Opponents weight the week they are bidding for 32 times each later week, in
+and depth 0.1–1%. This is an 18-team guide, not a fitted rule for our 32-team format,
+and it prices nothing on my side (my bids are below). The room's reference uses
+league-scored positional ranks by points per game played for the rest of the season
+(elite anchors QB4/RB6/WR6/TE3, then an inverse-square price curve), the claim's net
+lineup points, remaining cash and weeks, and projected cut risk. Ranking by games
+played keeps a player returning from an absence from being charged twice: the net
+lineup points already count only the weeks he plays. Opponents weight the week they
+are bidding for 32 times each later week, in
 both the ranks and the net lineup points (`ROOM_CURRENT_WEEK_WEIGHT`): the room pays for
 this week's fill-ins and passes on injured stashes. In an ex-ante backtest of the
 week-3 auction, fit on week-2 bids from the Tuesday state, bid sizes, who got claimed
@@ -318,22 +320,21 @@ replays the standing roster to better title odds than weighting every week alike
 In the week-3 state it did not (16.2% against 17.1%): the weights are a first-order
 fit computed once, so a policy on them gives up points in weeks that look safe until
 they are not. The chosen objective screens this week's candidates, ranks each one's
-drops, sets the guide ceiling's gain, and drives my future bidding and roster cuts in
-the replays. Opponents keep the points behavior above, with their current-week
-weight. The guide ceiling scales with remaining cash and weeks; my future bids are a
-multiple of it chosen by replay (below), with no separate saving plan. Terminal-week
-improvements can use all remaining money.
+drops, values my future claims, and drives my roster cuts in the replays. Opponents
+keep the points behavior above, with their current-week weight. My future bids
+(below) take nothing from the guide: a claim is worth a price per point of its gain
+that the replays choose, and the bid is shaded against the recorded market, with no
+separate saving plan.
 
 This week's claims are decided by replay, not by that heuristic. Each candidate's
 three best drops by the heuristic are replayed and the best by title odds is kept: the
 heuristic prices a fixed roster, where a future lineup expansion is an empty seat
 worth a body's full points, so in the week-3 state it would have dropped Michael
 Penix, the week's starting QB, for a receiver the wire could supply by week 7. The bid
-is then whatever maximizes replayed title odds anywhere in the budget. The guide
-ceiling caps only the future bids inside the replays: applied to this week's claim, it
-held a depth receiver upgrade to $0 when the simulated room claimed him in more than
-nine seasons in ten at a median of $25. The break-even ("worth up to") is the bid at
-which winning no longer beats standing pat.
+is then whatever maximizes replayed title odds anywhere in the budget, with no
+ceiling from the future policy: each candidate bid is scored per recorded season, won
+or lost at that season's price. The break-even ("worth up to") is the bid at which
+winning no longer beats standing pat.
 
 Opponents' bids follow one room-wide price curve fit to every submitted bid, including
 losses: log bid = a + b log(guide reference), the reference being the guide ceiling for
@@ -366,10 +367,25 @@ auction or optimized for opponents. Participation, target noise and observed bid
 tendencies still distinguish managers.
 
 Our future bidding, inside the replays and the full race, submits an offer for every
-candidate improving the chosen objective at a fixed multiple of its guide ceiling,
-including early bargains, with no saving allowance: the multiple is chosen by replayed
-title odds (below), so holding cash back happens only when the simulated seasons
-reward it rather than by a chosen tactic. Total
+candidate improving the chosen objective, including early bargains, with no saving
+allowance and no price guide (`race.my_bid`). A claim is worth `race.PRICES` weeks of
+remaining cash per point per week of its gain, so a permanent upgrade is worth a fixed
+share of cash and a rental more as the weeks run out, and anything at the final
+auction, after which cash is worthless. The bid is what the simulated market makes
+that worth paying: the race excluding us records what every free agent cleared for in
+every week of every season, and `race.Market` turns those prices into the bid that
+maximizes the claim's expected surplus, value minus bid times the share of seasons the
+bid wins in (a paid bid beats every lower price and any free pickup; a $0 claim only
+lands a player nobody wanted). The table pools every recorded season, so a season's
+own price is one draw in thousands rather than a peek. A claim's value also counts
+what it takes from the team I would meet in the final: each recorded season scores
+its survivor's final lineup with and without every player he acquired, capped by his
+margin over the last teams cut (a survivor a star made can be replaced by the next
+team up), and `Market.denial` averages that loss over the seasons where the player was
+in play; the replay charges the same loss to that season's championship bar when my
+agent takes the player first. The price per point is chosen by replayed title odds
+(below), so holding cash back happens only when the simulated seasons reward it
+rather than by a chosen tactic. Total
 paid spending in an auction is also limited to its largest individual bid. Claims
 naming the same drop are alternatives; open spots, remaining cash and redundant
 upgrades are checked as claims resolve (a claim that no longer improves the roster
@@ -389,22 +405,35 @@ windows clear at different times, but they are modeled as one auction.
 The race excluding us records opponent markets and cut bars. Our roster/budget
 variants are replayed through those same seasons to choose this week's best modeled
 bid (`season/claims.py`). The standing roster is replayed at several budgets at every
-future spending level in `race.SPENDING`; that grid is the value of cash, and the
-level that replays best at each budget is what every variant at that budget is priced
-under. A level is chosen by its average outcome across seasons, never separately using
-a record's future prices or scores. This searches a one-dimensional family of
-continuation strategies (how much of the guide price to pay from next week on), not
-every possible sequence of future auction decisions; the guide ceiling's shape by
-position, cash, weeks left and cut risk is still a modeling assumption. In the week-3
-state the replays chose half the guide price (17.1% against 16.5% at the guide price,
-a paired advantage of 0.6 points in `season.evaluate_waivers`): this room clears
-depth above the guide and stars below it, so full guide bids overpay. Winning and
+future bid value in `race.PRICES`; that grid is the value of cash, and the value that
+replays best at each budget is what every variant at that budget is priced under. A
+value is chosen by its average outcome across seasons, never separately using a
+record's future prices or scores. This searches a one-dimensional family of
+continuation strategies (what a point of gain is worth from next week on), not every
+possible sequence of future auction decisions; the shape of my bids across players
+comes from the recorded market, but valuing gain in weeks of remaining cash is still a
+modeling assumption. In the week-3 state the replays chose 0.7 weeks of cash per
+point per week. On the same recorded seasons this policy replays a little better than
+the best multiple of the guide ceiling it replaced (26.6% against 25.1% with the
+denial accounting, 17.3% against 17.1% without); valuing gain at a constant price per
+point, or in cash alone, or in weeks alone, replayed worse, and bidding the value
+itself with no shading against the market replayed far worse, since this room prices
+depth above its gain, so paying full value for it wins only depth that earns nothing.
+The full race disagrees: with my agent bidding live against the simulated room it
+reports 24% for this policy against 28–29% for the guide multiple, a gap well outside
+its noise. The guide's positional curve (money for the elite by rank, almost none for
+anyone else) and its unshaded bids each account for about half of it; the cut-risk
+kicker, the value's time profile, the objective's week weights, in-sample fitting of
+the shaded bids and measuring gain beyond the free pickup were each tested and do not
+explain it. The replay cannot see what the race does when my agent wins a claim (the
+rival keeps his cash and takes another player, my drop enters the pool), so the race
+is the check on any change to this family, and the discrepancy is open. Winning and
 losing outcomes are evaluated per recorded season, preserving their connection to
 future opportunity. These are individual alternatives, not an optimized simultaneous
-claim portfolio. Replay title odds are approximate: opponents retain players taken by
-our replay. Championship weeks are scored with the roster held in each week; a Week 17
-pickup cannot improve Week 16 retroactively. The full race uses our selected spending
-level when reporting league odds.
+claim portfolio. Replay title odds are approximate: opponents retain the players my
+replay takes, less the denial above. Championship weeks are scored with the roster
+held in each week; a Week 17 pickup cannot improve Week 16 retroactively. The full
+race uses our selected bid value when reporting league odds.
 
 Sleeper documents its [suggested bid ranges](https://support.sleeper.com/en/articles/12111984-suggested-faab-bids),
 but its [public API](https://docs.sleeper.com/) does not document an endpoint for them.
