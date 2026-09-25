@@ -18,16 +18,20 @@ spots and remaining cash are checked as claims resolve, and a claim that no long
 improves the roster after an earlier win is passed over. The reserve slots hold
 Out/IR/PUP bodies while their projection is zero; when one resumes, the team cuts its
 least valuable body to make room before that week's claims. Week 1 is free agency.
-After this week's run, the players dropped since are still on waivers: they are
-auctioned off-cycle, among opponents at the observed mid-week share of their
-participation (waivers.off_cycle_share), and everyone else stays free.
+Each week's run is followed by a cascade (CASCADE_ROUNDS): the players the round's
+winners and free pickups dropped sit on waivers until they clear, and the room bids on
+them in a further round, at the observed mid-week share of its participation
+(waivers.off_cycle_share); that round's drops feed the next. After this week's run,
+the players dropped since are still on waivers and take that off-cycle round's place
+before the cascade, and everyone else stays free.
 
 Two runs of the same race answer two questions. Excluding me (`exclude_me`), the 31
 opponents race among themselves and the record carries, per week, the elimination bar
 (the second-lowest surviving opponent: beat it and I survive, whoever I am), the
 finalist's championship score, and the market: which free agents were in play and what
 each cleared for. `replay` then walks my roster through that record under my own claim
-policy, so any roster-and-budget variant is priced against the same seasons, in closed
+policy, bidding in every recorded round of every week, so any roster-and-budget variant
+is priced against the same seasons, in closed
 form per week (Phi over the bar) exactly as the draft valuation did; a player my agent
 takes comes off the recorded roster of whoever bought him after that, lowering the bars
 he set and the survivor's total, since the record also carries each acquisition's
@@ -63,6 +67,10 @@ CLAIM_CANDIDATES = 80  # free agents in play each week, by rest-of-season points
 # if the chosen price sits at an end.
 PRICES = (0.35, 0.5, 0.7, 1.0, 1.4)
 OPPONENT_PLANS = tuple(SAVING_PLANS)
+# Mid-week bidding rounds after each week's run, each on the previous round's drops. The
+# week-2 and week-3 logs each show a round on the run's drops, and week 3 a second round
+# on that round's drops ($45 claims); a third round has not drawn a bid.
+CASCADE_ROUNDS = 2
 
 
 class Market:
@@ -90,9 +98,9 @@ class Market:
                 for team, start, losses in tenures:
                     if team == rec["champion"] and start + len(losses) > REGULAR_WEEKS:
                         final[j] = (start, [0.0] * max(0, start - REGULAR_WEEKS) + losses[max(0, REGULAR_WEEKS - start):])
-            for w, auction in enumerate(rec["auctions"]):
-                if auction is not None:
-                    for j, outcome in zip(*auction):
+            for w, rounds in enumerate(rec["auctions"]):
+                for candidates, winning in rounds:
+                    for j, outcome in zip(candidates, winning):
                         outcomes.setdefault((w, j), []).append(outcome)
                         bought = final.get(j)
                         if bought is not None and bought[0] >= w:
@@ -166,8 +174,9 @@ class RaceInputs:
     market: Market | None = None  # the recorded market my future bids are shaded against
     my_bidding: Bidding | None = None  # mine, without the room's current-week weight; claims.title_objective sets its weeks
     price_curve: PriceCurve = PriceCurve()  # the room's bid for a guide reference
-    # After the weekly run: players still on waivers -> when they clear, and opponents'
-    # participation in that off-cycle auction relative to a weekly run's.
+    # After the weekly run: players still on waivers -> when they clear. Opponents'
+    # participation in a mid-week round (that off-cycle auction, and every cascade
+    # round) relative to a weekly run's.
     on_waivers: dict[int, str] = field(default_factory=dict)
     off_cycle_share: float = 0.0
 
@@ -210,7 +219,7 @@ def race_inputs(state: SeasonState) -> RaceInputs:
         opening_budgets=[t.faab_left + spent[t.roster_id] for t in state.teams],
         price_curve=curve,
         on_waivers=dict(state.on_waivers),
-        off_cycle_share=off_cycle_share(state) if state.on_waivers else 0.0,
+        off_cycle_share=off_cycle_share(state),
     )
 
 
@@ -305,13 +314,16 @@ def _resolve(bidding, roster, plan, budget, allowance, w, won) -> tuple[int, int
 
 
 def _auction(inputs, w, rosters, budgets, alive, free, rng, skip, bar, plans, pool=None, attention=1.0):
-    """One week's claims, then free pickups, under each opponent's saving plan (`plans`,
-    by team). An off-cycle auction limits the players in play to `pool` and scales
-    opponents' participation by `attention`."""
+    """One round of claims, then free pickups, under each opponent's saving plan
+    (`plans`, by team). A mid-week round limits the players in play to `pool` and scales
+    opponents' participation by `attention`. Returns the players in play with each one's
+    outcome (a winning bid, -1 untaken, -2 - k for the k-th free pickup), the wins as
+    (player, team, bid), and the players dropped along the way, who sit on waivers."""
     candidates = heapq.nlargest(CLAIM_CANDIDATES, free if pool is None else pool, key=lambda i: (inputs.ros[w][i], -i))
     bids = []
     allowances = list(budgets)
     active = []
+    dropped = []
     for team, roster in enumerate(rosters):
         if not alive[team] or team == skip:
             continue
@@ -352,6 +364,7 @@ def _auction(inputs, w, rosters, budgets, alive, free, rng, skip, bar, plans, po
         free.remove(j)
         if offer.drop is not None:
             free.add(offer.drop)
+            dropped.append(offer.drop)
         winning[j] = bid
         wins.append((j, team, bid))
         later = [p for p in queue[team] if winning[p] == -1]
@@ -368,10 +381,11 @@ def _auction(inputs, w, rosters, budgets, alive, free, rng, skip, bar, plans, po
         free.discard(offer.player)
         if offer.drop is not None:
             free.add(offer.drop)
+            dropped.append(offer.drop)
         winning[offer.player] = -2 - taken
         taken += 1
         wins.append((offer.player, team, 0))
-    return candidates, [winning[j] for j in candidates], wins
+    return candidates, [winning[j] for j in candidates], wins, dropped
 
 
 def simulate(inputs: RaceInputs, seed: int, exclude_me: bool) -> dict:
@@ -397,7 +411,9 @@ def simulate(inputs: RaceInputs, seed: int, exclude_me: bool) -> dict:
     alive_count: list[int] = [0] * WEEKS
     bars: list[float] = [0.0] * WEEKS
     scores: list[list[tuple[float, int]]] = [[] for _ in range(WEEKS)]  # opponents' (score, team), lowest first
-    auctions: list[tuple[list[int], list[int]] | None] = [None] * WEEKS
+    # Each week's bidding rounds, the run (or the off-cycle auction) first, then the
+    # cascade: (players in play, their outcomes) per round.
+    auctions: list[list[tuple[list[int], list[int]]]] = [[] for _ in range(WEEKS)]
     claims: list[list[tuple[int, int, int]]] = [[] for _ in range(WEEKS)]
     # Every acquisition and the lineup points its team loses each week while it holds
     # the player with the best body nobody took in his place: what the replay charges
@@ -415,21 +431,27 @@ def simulate(inputs: RaceInputs, seed: int, exclude_me: bool) -> dict:
         forecast_bars[w] = forecast_bar(inputs, w, rosters, alive)
         # Once this week's run is done, only players dropped since are auctioned, as they clear.
         off_cycle = w == w0 and inputs.waivers_ran
-        if not off_cycle or inputs.on_waivers:
-            candidates, winning, wins = _auction(
-                inputs, w, rosters, budgets, alive, free, rng, skip, forecast_bars[w], plans,
-                list(inputs.on_waivers) if off_cycle else None, inputs.off_cycle_share if off_cycle else 1.0)
-            auctions[w] = (candidates, winning)
-            claims[w] = wins
-            untaken = [j for j, outcome in zip(candidates, winning) if outcome == -1]
-            for j, team, _ in wins:
-                without = [i for i in rosters[team] if i != j]
-                gains = inputs.bidding_for(team).evaluate(without, untaken, w) if untaken else []
-                (gain, _), instead = max(zip(gains, untaken), key=lambda item: (item[0][0], -item[1]),
-                                         default=((0.0, None), None))
-                losses: list[float] = []
-                holding[team, j] = (instead if gain > 0.0 else None, losses)
-                tenures.setdefault(j, []).append((team, w, losses))
+        pool = list(inputs.on_waivers) if off_cycle else None
+        attention = inputs.off_cycle_share if off_cycle else 1.0
+        untaken: list[int] = []
+        for _ in range(1 + CASCADE_ROUNDS):
+            if pool is not None and not pool:
+                break
+            candidates, winning, wins, dropped = _auction(
+                inputs, w, rosters, budgets, alive, free, rng, skip, forecast_bars[w], plans, pool, attention)
+            auctions[w].append((candidates, winning))
+            claims[w].extend(wins)
+            untaken.extend(j for j, outcome in zip(candidates, winning) if outcome == -1)
+            # The round's drops clear mid-week, when the room's attention is thinner.
+            pool, attention = dropped, inputs.off_cycle_share
+        for j, team, _ in claims[w]:
+            without = [i for i in rosters[team] if i != j]
+            gains = inputs.bidding_for(team).evaluate(without, untaken, w) if untaken else []
+            (gain, _), instead = max(zip(gains, untaken), key=lambda item: (item[0][0], -item[1]),
+                                     default=((0.0, None), None))
+            losses: list[float] = []
+            holding[team, j] = (instead if gain > 0.0 else None, losses)
+            tenures.setdefault(j, []).append((team, w, losses))
         budget_after_claims.append(list(budgets))
         alive_count[w] = sum(alive)
         points = inputs.weekly[w]
@@ -492,10 +514,43 @@ def simulate(inputs: RaceInputs, seed: int, exclude_me: bool) -> dict:
 # --- my replay through a recorded race ---------------------------------------------
 
 
+def _bid_round(inputs, bidding, mine, candidates, winning, left, w, price, bar, alive, rng, acquired) -> int:
+    """My agent in one recorded bidding round: claims against the recorded outcomes, then
+    a free pickup from what nobody took. Returns the cash left; `acquired` collects the
+    players won."""
+    # My place in the free-pickup queue: the k-th free pickup of the record is still
+    # there for me if I am ahead of the team that took him.
+    place = rng.randrange(alive + 1)
+    outcomes = dict(zip(candidates, winning))
+
+    def open_to_me(outcome: int) -> bool:
+        return outcome == -1 or (outcome <= -2 and -2 - outcome >= place)
+
+    def won(bid: int, offer) -> bool:
+        outcome = outcomes[offer.player]
+        # A paid claim beats any free pickup; a $0 claim is a free pickup.
+        ok = (bid > outcome) if outcome >= 0 else (bid > 0 or open_to_me(outcome))
+        if ok:
+            acquired.append(offer.player)
+        return ok
+
+    plan, allowance = claim_plan(inputs, bidding, mine, candidates, left, w, cut_risk(inputs, mine, w, bar), rng,
+                                 price=price)
+    left, _ = _resolve(bidding, mine, plan, left, allowance, w, won)
+    offers = bidding.offers(mine, [j for j, outcome in outcomes.items() if outcome < 0 and open_to_me(outcome)],
+                            left, w)
+    if offers:
+        best = max(offers, key=lambda o: (o.gain, -o.player))
+        apply_offer(mine, best)
+        acquired.append(best.player)
+    return left
+
+
 def replay(records: list[dict], inputs: RaceInputs, roster: list[int], budget: int, price: float) -> dict:
     """P(title) and the weekly survival profile for a roster-and-budget variant of my
     team, against every recorded opponent race. The variant already reflects this
-    week's claim outcome, so my agent bids only from next week on, valuing gain at
+    week's claim outcome, so my agent bids only from next week on, in every recorded
+    round of the week, valuing gain at
     `price` (my_bid). A player my agent holds is one the record's opponents never got:
     whoever acquired him after I did plays without him while I hold him (his recorded
     tenure's lineup loss, rec["tenures"]), so each week's survival is Phi over that
@@ -532,39 +587,14 @@ def replay(records: list[dict], inputs: RaceInputs, roster: list[int], budget: i
             fit_roster(bidding, mine, w)
             budget_left[w] += surv * (inputs.opening_budgets[inputs.me] if w == w0 else left)
             budget_weight[w] += surv
-            auction = rec["auctions"][w]
-            if w > w0 and auction is not None:
+            if w > w0 and rec["auctions"][w]:
                 # Reseeded per week so roster variants share their bid draws: the
                 # difference between two variants is then roster, not dice.
                 rng = random.Random(rec["seed"] * WEEKS + w)
-                # My place in the free-pickup queue: the k-th free pickup of the record
-                # is still there for me if I am ahead of the team that took him.
-                place = rng.randrange(rec["alive"][w] + 1)
-                outcomes = dict(zip(*auction))
-
-                def open_to_me(outcome: int) -> bool:
-                    return outcome == -1 or (outcome <= -2 and -2 - outcome >= place)
-
-                acquired = []
-
-                def won(bid: int, offer) -> bool:
-                    outcome = outcomes[offer.player]
-                    # A paid claim beats any free pickup; a $0 claim is a free pickup.
-                    ok = (bid > outcome) if outcome >= 0 else (bid > 0 or open_to_me(outcome))
-                    if ok:
-                        acquired.append(offer.player)
-                    return ok
-
-                plan, allowance = claim_plan(
-                    inputs, bidding, mine, auction[0], left, w,
-                    cut_risk(inputs, mine, w, rec["forecast_bars"][w]), rng, price=price)
-                left, _ = _resolve(bidding, mine, plan, left, allowance, w, won)
-                offers = bidding.offers(mine, [j for j, outcome in outcomes.items()
-                                               if outcome < 0 and open_to_me(outcome)], left, w)
-                if offers:
-                    best = max(offers, key=lambda o: (o.gain, -o.player))
-                    apply_offer(mine, best)
-                    acquired.append(best.player)
+                acquired: list[int] = []
+                for candidates, winning in rec["auctions"][w]:
+                    left = _bid_round(inputs, bidding, mine, candidates, winning, left, w, price,
+                                      rec["forecast_bars"][w], rec["alive"][w], rng, acquired)
                 for j in acquired:
                     if j in tenures:
                         taken.setdefault(j, w)

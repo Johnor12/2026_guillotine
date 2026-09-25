@@ -38,7 +38,7 @@ from shared.noise import SEED, TEAM_SEASON_SIGMA, WEEKLY_SIGMA
 from shared.paths import LEAGUE, POOL, SEASON, WEEKLY_PROJECTIONS
 
 from .claims import claims, my_lineup, title_objective
-from .race import CLAIM_CANDIDATES, CLAIMS_PER_TEAM, RACE_SIMS, race_inputs, run_race
+from .race import CASCADE_ROUNDS, CLAIM_CANDIDATES, CLAIMS_PER_TEAM, RACE_SIMS, race_inputs, run_race
 from .state import lineup_points, load_season
 from .waivers import GUIDE_URL, SAVING_PLANS
 
@@ -358,6 +358,7 @@ def main(argv: list[str] | None = None) -> int:
             "team_season_sigma": TEAM_SEASON_SIGMA,
             "bid_noise_sigma": round(inputs.price_curve.sigma, 3),
             "off_cycle_share": round(inputs.off_cycle_share, 3),
+            "cascade_rounds": CASCADE_ROUNDS,
             "claims_per_team": CLAIMS_PER_TEAM,
             "claim_candidates": CLAIM_CANDIDATES,
             "roster_size_by_week": list(WEEK_ROSTER_SIZE),

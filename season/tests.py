@@ -14,7 +14,7 @@ from shared.noise import SIGMA_WEEK, cdf
 
 from .claims import _record_values, claims, title_objective
 from .fetch_league import processing_week
-from .race import Market, RaceInputs, _auction, claim_plan, fit_roster, race_inputs, replay
+from .race import Market, RaceInputs, _auction, claim_plan, fit_roster, race_inputs, replay, simulate
 from .run import league_odds, market
 from .state import draftsharks_by_sleeper, lineup_points, waiver_clears
 from .waivers import (ROOM_CURRENT_WEEK_WEIGHT, Bidding, Manager, PriceCurve, calibration, fit_managers, fit_price_curve,
@@ -45,8 +45,8 @@ class WaiverTests(unittest.TestCase):
     @staticmethod
     def record(week, outcomes):
         """A recorded opponent season whose only auction is `week`'s, at `outcomes`."""
-        auctions = [None] * WEEKS
-        auctions[week] = (list(outcomes), list(outcomes.values()))
+        auctions = [[] for _ in range(WEEKS)]
+        auctions[week] = [(list(outcomes), list(outcomes.values()))]
         return {"seed": 1, "my_bias": 0., "bars": [0.] * WEEKS, "scores": [[]] * WEEKS, "forecast_bars": [0.] * WEEKS,
                 "alive": [2] * WEEKS, "champ_bar": 0., "runner_up_bar": 0., "auctions": auctions, "champion": 0,
                 "tenures": {}}
@@ -193,15 +193,15 @@ class WaiverTests(unittest.TestCase):
         inputs = self.inputs()
         bars = [-1000.] * WEEKS
         bars[2] = lineup_points(self.roster, self.points, self.positions, 2)
-        record = {**self.record(1, {}), "bars": bars, "auctions": [None] * WEEKS}
+        record = {**self.record(1, {}), "bars": bars, "auctions": [[] for _ in range(WEEKS)]}
         leverage = replay([record], inputs, self.roster, 1000, 0.4)["leverage"]
         self.assertEqual(leverage[0], 0., "A week cleared in every season carries no weight")
         self.assertGreater(leverage[1], 0.)
 
     def test_title_objective_keeps_what_replays_better(self):
         inputs = self.inputs()
-        auctions = [None] * WEEKS
-        auctions[1] = ([8, 9], [5, -1])
+        auctions = [[] for _ in range(WEEKS)]
+        auctions[1] = [([8, 9], [5, -1])]
         for weighted_title, chosen in ((.2, "title_weighted"), (.05, "points")):
             def runs(inputs, records, variants):
                 flat = set(inputs.my_bidding.weights) == {1.}
@@ -305,8 +305,8 @@ class WaiverTests(unittest.TestCase):
                                                          team="T", injury_status=None, source="test") for j in range(10)])
         records = []
         for price in (300, 400):
-            auctions = [None] * WEEKS
-            auctions[1] = ([9], [price])
+            auctions = [[] for _ in range(WEEKS)]
+            auctions[1] = [([9], [price])]
             records.append({"auctions": auctions, "forecast_bars": [0.] * WEEKS})
 
         def values(inputs, records, variants):
@@ -336,7 +336,7 @@ class WaiverTests(unittest.TestCase):
         state = SimpleNamespace(me=0, my_team=SimpleNamespace(roster=roster, faab_left=1000, reserve=[8]),
                                 players=[SimpleNamespace(sleeper_id=str(j), name=str(j), position="WR",
                                                          team="T", injury_status=None, source="test") for j in range(10)])
-        records = [{"auctions": [None] * WEEKS, "forecast_bars": [0.] * WEEKS}] * 2
+        records = [{"auctions": [[] for _ in range(WEEKS)], "forecast_bars": [0.] * WEEKS}] * 2
 
         def values(inputs, records, variants):
             return [{"p_title": (t := 0.01 + (0.004 if 9 in r else 0.)), "title_by_record": [t, t], "p_reach_final": t,
@@ -381,7 +381,7 @@ class WaiverTests(unittest.TestCase):
         def tx(week, bid, status, created):
             return {"week": week, "bid": bid, "status": status, "created": created,
                     "type": "waiver", "roster_id": 1, "adds": {"9": 1}, "drops": {}}
-        state = SimpleNamespace(week=2, players=players, teams=[team], me=0, free_agents=[8, 9],
+        state = SimpleNamespace(week=2, players=players, teams=[team], me=0, my_team=team, free_agents=[8, 9],
                                  waivers_ran=True, on_waivers={}, transactions=[tx(1, 50, "complete", "a"),
                                                                tx(2, 100, "complete", "b"),
                                                                tx(2, 300, "failed", "c")])
@@ -402,13 +402,68 @@ class WaiverTests(unittest.TestCase):
 
     def test_off_cycle_auction_plays_only_players_on_waivers(self):
         inputs = self.inputs()
-        candidates, _, _ = _auction(inputs, 1, [self.roster[:]], [1000], [True], {8, 9}, random.Random(7),
-                                    None, 40, ["value"], pool=[9])
+        candidates, _, _, _ = _auction(inputs, 1, [self.roster[:]], [1000], [True], {8, 9}, random.Random(7),
+                                       None, 40, ["value"], pool=[9])
         self.assertEqual(candidates, [9])
         inputs.me = -1
-        candidates, winning, wins = _auction(inputs, 1, [self.roster[:4]], [1000], [True], {8, 9}, random.Random(7),
-                                             None, 40, ["value"], pool=[9], attention=0.)
-        self.assertEqual((winning, wins), ([-1], []), "An inattentive room neither claims nor picks up")
+        candidates, winning, wins, dropped = _auction(inputs, 1, [self.roster[:4]], [1000], [True], {8, 9},
+                                                      random.Random(7), None, 40, ["value"], pool=[9], attention=0.)
+        self.assertEqual((winning, wins, dropped), ([-1], [], []), "An inattentive room neither claims nor picks up")
+
+    def test_auction_returns_the_drops_its_wins_make(self):
+        # My claim on 9 beats the recorded $10; the $0 claim on 8 names the same drop and
+        # loses, and with 9 aboard he no longer improves the roster as a free pickup.
+        inputs = self.inputs(market=[self.record(1, {9: 10})])
+        rosters, free = [self.roster[:]], {8, 9}
+        candidates, winning, wins, dropped = _auction(inputs, 1, rosters, [1000], [True], free,
+                                                      random.Random(7), None, 40, ["value"])
+        self.assertEqual((candidates, winning, wins), ([9, 8], [11, -1], [(9, 0, 11)]))
+        self.assertEqual(dropped, [4], "The receiver 9 displaces sits on waivers")
+        self.assertEqual(free, {4, 8})
+
+    def test_cascade_rounds_bid_on_the_previous_rounds_drops(self):
+        inputs = self.inputs()
+        inputs.rosters, inputs.budgets, inputs.alive = [self.roster[:] for _ in range(3)], [1000] * 3, [True] * 3
+        inputs.managers, inputs.opening_budgets, inputs.week0, inputs.off_cycle_share = [Manager()] * 3, [1000] * 3, 14, .25
+        rounds = []
+
+        def auction(inputs, w, rosters, budgets, alive, free, rng, skip, bar, plans, pool=None, attention=1.):
+            rounds.append((w, pool, attention))
+            if w == 14 and pool is None:
+                return [9], [3], [(9, 1, 3)], [4]  # the run: team 1 buys 9 and drops 4
+            if w == 14 and pool == [4]:
+                return [4], [-2], [(4, 2, 0)], [7]  # the cascade: team 2 picks 4 up free and drops 7
+            return list(pool or []), [-1] * len(pool or []), [], []
+
+        with patch("season.race._auction", side_effect=auction):
+            rec = simulate(inputs, 1, exclude_me=False)
+        self.assertEqual(rounds[:4], [(14, None, 1.), (14, [4], .25), (14, [7], .25), (15, None, 1.)],
+                         "Two cascade rounds a week, at mid-week attention")
+        self.assertEqual(rec["auctions"][14], [([9], [3]), ([4], [-2]), ([7], [-1])])
+        self.assertEqual(rec["claims"][14], [(9, 1, 3), (4, 2, 0)])
+        self.assertEqual(rec["auctions"][15], [([], [])], "No drops, no cascade")
+
+        rounds.clear()
+        inputs.waivers_ran, inputs.on_waivers = True, {5: "later"}
+        with patch("season.race._auction", side_effect=auction):
+            simulate(inputs, 1, exclude_me=False)
+        self.assertEqual(rounds[0], (14, [5], .25), "After the run, the players still on waivers open the week")
+        self.assertEqual(rounds[1][0], 15)
+
+    def test_replay_bids_in_the_cascade_round(self):
+        # 9 is dropped mid-week in the record and nobody takes him; my agent should.
+        for points in self.weekly:
+            points[9] = 13.
+        mine = self.roster[:7] + [9]
+        bars = [-1000.] * WEEKS
+        bars[3] = lineup_points(mine, self.weekly[3], self.positions, 3)
+        run_only = {**self.record(2, {8: 5}), "bars": bars}
+        cascade = {**run_only, "auctions": [*run_only["auctions"][:2], [([8], [5]), ([9], [-1])], *run_only["auctions"][3:]]}
+        inputs = self.inputs(self.weekly[:], market=[cascade])
+        without = replay([run_only], inputs, self.roster, 1000, 0.4)["p_alive_by_week"]
+        with_cascade = replay([cascade], inputs, self.roster, 1000, 0.4)["p_alive_by_week"]
+        self.assertAlmostEqual(with_cascade[2], .5)
+        self.assertLess(without[2], with_cascade[2])
 
     def test_off_cycle_share_pools_completed_weeks(self):
         def claim(week, team, at):
@@ -423,9 +478,9 @@ class WaiverTests(unittest.TestCase):
     def test_refill_pool_waits_for_the_weekly_auction(self):
         inputs = self.inputs()
         inputs.waivers_ran = True
-        auctions = [None] * WEEKS
-        auctions[1] = ([9], [5])  # off-cycle: 9 is claimed
-        auctions[2] = ([8, 9], [-1, -1])
+        auctions = [[] for _ in range(WEEKS)]
+        auctions[1] = [([9], [5])]  # off-cycle: 9 is claimed
+        auctions[2] = [([8, 9], [-1, -1])]
         runs = [{"p_title": .1, "leverage": [1.] * (WEEKS - 1)}] * 3
         with patch("season.claims.run_replays", return_value=runs):
             mine, _ = title_objective(inputs, [{"auctions": auctions, "tenures": {}, "champion": 0}])
@@ -448,7 +503,7 @@ class WaiverTests(unittest.TestCase):
                      "budget_by_week": [b] * 16, "budget_after_claims": [b] * 16} for r, b, _ in variants]
 
         with patch("season.claims.run_replays", side_effect=values):
-            result = claims(state, inputs, [{"auctions": [None] * WEEKS, "forecast_bars": [0.] * WEEKS}] * 2)
+            result = claims(state, inputs, [{"auctions": [[] for _ in range(WEEKS)], "forecast_bars": [0.] * WEEKS}] * 2)
         self.assertEqual(result["candidates"][0]["drop"]["name"], str(runner_up))
 
     def test_room_values_the_week_it_bids_for(self):

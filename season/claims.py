@@ -64,10 +64,10 @@ def title_objective(inputs: RaceInputs, records: list[dict]) -> tuple[RaceInputs
     w = inputs.week0
     pool = []
     weekly = w + 1 if inputs.waivers_ran else w
-    auction = next((v for v in range(weekly, WEEKS) if records[0]["auctions"][v] is not None), None)
+    auction = next((v for v in range(weekly, WEEKS) if records[0]["auctions"][v]), None)
     if auction is not None:
-        taken = Counter(j for rec in records for v in range(w, auction + 1) if rec["auctions"][v] is not None
-                        for j, outcome in zip(*rec["auctions"][v]) if outcome != -1)
+        taken = Counter(j for rec in records for v in range(w, auction + 1) for candidates, winning in rec["auctions"][v]
+                        for j, outcome in zip(candidates, winning) if outcome != -1)
         pool = [j for j in inputs.free_agents if taken[j] < UNTAKEN * len(records)]
     roster, budget = tuple(inputs.rosters[inputs.me]), inputs.budgets[inputs.me]
     points = dataclasses.replace(inputs, my_bidding=inputs.my_bidding.objective(inputs.my_bidding.weights, pool))
@@ -164,14 +164,15 @@ def claims(state: SeasonState, inputs: RaceInputs, records: list[dict]) -> dict:
     risk = cut_risk(inputs, roster, w, statistics.fmean(r["forecast_bars"][w] for r in records))
     choices = {j: inputs.my_bidding.swaps(roster, j, budget, w, risk, DROP_CHOICES) for j in candidates}
     candidates = [j for j in candidates if choices[j]]
-    auction = records[0]["auctions"][w] if records else None
+    # This week's run (or the off-cycle auction on the players still on waivers) is the
+    # round my claims enter; the cascade rounds after it are the room's alone.
+    pending = bool(records) and bool(records[0]["auctions"][w])
     outcomes: dict[int, list[int]] = {j: [] for j in candidates}
-    if auction is not None:
+    if pending:
         for rec in records:
-            seen = dict(zip(*rec["auctions"][w]))
+            seen = dict(zip(*rec["auctions"][w][0]))
             for j in candidates:
                 outcomes[j].append(seen.get(j, -1))  # absent from a record's list: nobody there wanted him
-    pending = auction is not None
 
     # The standing roster at every budget under every future bid price: the value of
     # cash, and the price every variant at that budget is priced under.

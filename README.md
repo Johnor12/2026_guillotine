@@ -402,6 +402,28 @@ claimed off-cycle per opponent in that week's run, pooled over completed weeks (
 5 of 15). Bids follow the same price curve, and every other free agent stays free. The
 windows clear at different times, but they are modeled as one auction.
 
+Every simulated week's auction is followed by a cascade (`race.CASCADE_ROUNDS`, two
+rounds): the players its winners and free pickups dropped sit on waivers until they
+clear, the room bids on them in a further round at the off-cycle share of its
+participation, and that round's drops feed one more. The week-2 and week-3 logs each
+show a round on the run's drops, and week 3 a second round on that round's drops (Tyjae
+Spears and Romeo Doubs at $45 each); a third round has not drawn a bid. Simulated from
+the reconstructed pre-run week-3 rosters, the room's cascade matches the log in volume,
+about four paid claims on fifteen players in play in the first round and two on five in
+the second, against four on about twenty and two on six observed, at prices between the
+two observed weeks ($55 and $27 a round against week 3's $129 and $90 and week 2's $24
+and $0); it makes fewer free pickups of the drops than the log (one or two a round
+against four to eight), since only the attentive share of the room picks up at all. The
+record carries every round, so my replayed agent bids in each, and the market table
+pools a player's clearing prices across rounds. The off-cycle share is pooled over
+completed weeks only, so week 3's busier cascade (12 opponents bidding off-cycle
+against 20 in the run) enters it next week. In the week-3 state (after the run) the
+cascade lowers the standing roster's replayed title odds from 27.5% to 26.7% (one round
+26.2%) and the full race's from 23.5% to 22.0%: the room gets a little more out of the
+wire mid-week and the early bars rise by up to a point and a half. The chosen price,
+the objective and this week's free adds are unchanged, and a run takes about a fifth
+longer.
+
 The race excluding us records opponent markets and cut bars. Our roster/budget
 variants are replayed through those same seasons to choose this week's best modeled
 bid (`season/claims.py`). The standing roster is replayed at several budgets at every
@@ -444,7 +466,7 @@ the team cut in his place), and the survivor's championship total loses the same
 way, no more than his margin over the last teams cut. What the buyer would have done
 with his cash, and the drop he keeps, are not replayed, and neither is the room's
 response to a stronger rival, so replay levels stay approximate and optimistic. In
-the week-3 state (after the run) the standing roster replays to 27.5% for the title
+the week-3 state (after the run, before the cascade above) the standing roster replays to 27.5% for the title
 and 42.4% to reach the final against 23.5% and 38.6% in the full race. The earlier
 accounting, under which every recorded buyer kept the player and only the survivor's
 final lineup was charged, replayed to 26.6% and 34.7%: an optimistic final masking a
