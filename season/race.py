@@ -36,7 +36,11 @@ form per week (Phi over the bar) exactly as the draft valuation did; a player my
 takes comes off the recorded roster of whoever bought him after that, lowering the bars
 he set and the survivor's total, since the record also carries each acquisition's
 weekly lineup loss to its buyer. Including me, all 32 race and every team's
-elimination and title odds are just frequencies.
+elimination and title odds are just frequencies; my team enters this week's card
+(`my_card`, the claims chosen by replay) and my agent bids from next week on, as in the
+replay. My agent's one offer per candidate values a fixed roster's season total, so left
+to itself this week it would trade the week's starting quarterback for a bench back
+while the other quarterback is out, a swap the replay rejects.
 """
 
 from __future__ import annotations
@@ -54,7 +58,7 @@ from shared.noise import SCORE_FLOOR_Z, SIGMA_CHAMP, SIGMA_WEEK, TEAM_SEASON_SIG
 from shared.workers import worker_count
 
 from .state import POS_CODE, SeasonState, lineup_points
-from .waivers import (ROOM_CURRENT_WEEK_WEIGHT, SAVING_PLANS, Bidding, Manager, PriceCurve, bid_observations,
+from .waivers import (ROOM_CURRENT_WEEK_WEIGHT, SAVING_PLANS, Bidding, Manager, Offer, PriceCurve, bid_observations,
                       calibration, fit_managers, guide_reference, off_cycle_share, projected_bar,
                       projected_risk, spending_allowance)
 
@@ -179,6 +183,9 @@ class RaceInputs:
     # round) relative to a weekly run's.
     on_waivers: dict[int, str] = field(default_factory=dict)
     off_cycle_share: float = 0.0
+    # This week's claims for my team in the full race: the card in processing order
+    # (card.Claim), processed as Sleeper would. None leaves the week to my agent's offers.
+    my_card: list | None = None
 
     def __post_init__(self):
         if self.my_bidding is None:
@@ -312,13 +319,18 @@ def _resolve(bidding, roster, plan, budget, allowance, w, won) -> tuple[int, int
     return budget, allowance
 
 
-def _auction(inputs, w, rosters, budgets, alive, free, rng, skip, bar, plans, pool=None, attention=1.0):
+def _auction(inputs, w, rosters, budgets, alive, free, rng, skip, bar, plans, pool=None, attention=1.0,
+             my_plan=None):
     """One round of claims, then free pickups, under each opponent's saving plan
     (`plans`, by team). A mid-week round limits the players in play to `pool` and scales
-    opponents' participation by `attention`. Returns the players in play with each one's
-    outcome (a winning bid, -1 untaken, -2 - k for the k-th free pickup), the wins as
-    (player, team, bid), and the players dropped along the way, who sit on waivers."""
+    opponents' participation by `attention`. `my_plan`, (bid, offer) pairs, stands in
+    for my agent's offers: this week's card, whose claims Sleeper processes as entered,
+    with no free pickup after. Returns the players in play with each one's outcome (a
+    winning bid, -1 untaken, -2 - k for the k-th free pickup), the wins as (player,
+    team, bid), and the players dropped along the way, who sit on waivers."""
     candidates = heapq.nlargest(CLAIM_CANDIDATES, free if pool is None else pool, key=lambda i: (inputs.ros[w][i], -i))
+    if my_plan:
+        candidates = list(dict.fromkeys(candidates + [offer.player for _, offer in my_plan]))
     bids = []
     allowances = list(budgets)
     active = []
@@ -327,6 +339,9 @@ def _auction(inputs, w, rosters, budgets, alive, free, rng, skip, bar, plans, po
         if not alive[team] or team == skip:
             continue
         mine = team == inputs.me
+        if mine and my_plan is not None:
+            bids.extend((bid, rng.random(), team, offer) for bid, offer in my_plan)
+            continue
         if not mine and rng.random() >= attention * inputs.managers[team].participation(w, inputs.week0):
             continue
         active.append(team)
@@ -366,6 +381,8 @@ def _auction(inputs, w, rosters, budgets, alive, free, rng, skip, bar, plans, po
             dropped.append(offer.drop)
         winning[j] = bid
         wins.append((j, team, bid))
+        if team == inputs.me and my_plan is not None:
+            continue  # The card's later claims stand as entered.
         later = [p for p in queue[team] if winning[p] == -1]
         still_improves[team] = {p for p, (gain, _) in zip(later, bidding.evaluate(rosters[team], later, w)) if gain > 0.0}
     rng.shuffle(active)
@@ -432,17 +449,40 @@ def simulate(inputs: RaceInputs, seed: int, exclude_me: bool) -> dict:
         off_cycle = w == w0 and inputs.waivers_ran
         pool = list(inputs.on_waivers) if off_cycle else None
         attention = inputs.off_cycle_share if off_cycle else 1.0
+        # This week my team enters its card: free adds now, ahead of every claim, each
+        # while still valid (Sleeper's rules); paid claims in the run, none in the cascade.
+        my_plan = None
+        if w == w0 and not exclude_me and inputs.my_card is not None:
+            mine = rosters[inputs.me]
+            for claim in inputs.my_card:
+                if not claim.free or claim.player not in free or claim.player in mine:
+                    continue
+                if claim.drop is None and not inputs.my_bidding.fits(mine, claim.player, w):
+                    continue
+                if claim.drop is not None and claim.drop not in mine:
+                    continue
+                apply_offer(mine, Offer(claim.player, claim.drop, 0.0, 0.0))
+                free.discard(claim.player)
+                claims[w].append((claim.player, inputs.me, 0))
+                if claim.drop is not None:
+                    free.add(claim.drop)
+                    if pool is not None:
+                        pool.append(claim.drop)
+            my_plan = [(claim.bid, Offer(claim.player, claim.drop, 0.0, 0.0)) for claim in inputs.my_card
+                       if not claim.free]
         untaken: list[int] = []
         for _ in range(1 + CASCADE_ROUNDS):
             if pool is not None and not pool:
                 break
             candidates, winning, wins, dropped = _auction(
-                inputs, w, rosters, budgets, alive, free, rng, skip, forecast_bars[w], plans, pool, attention)
+                inputs, w, rosters, budgets, alive, free, rng, skip, forecast_bars[w], plans, pool, attention, my_plan)
             auctions[w].append((candidates, winning))
             claims[w].extend(wins)
             untaken.extend(j for j, outcome in zip(candidates, winning) if outcome == -1)
             # The round's drops clear mid-week, when the room's attention is thinner.
             pool, attention = dropped, inputs.off_cycle_share
+            if my_plan is not None:
+                my_plan = []  # the cascade rounds are the room's alone
         for j, team, _ in claims[w]:
             without = [i for i in rosters[team] if i != j]
             gains = inputs.bidding_for(team).evaluate(without, untaken, w) if untaken else []

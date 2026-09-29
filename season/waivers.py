@@ -11,12 +11,14 @@ that adapt that 18-team guide to our scoring and expanding lineups.
 A claim is a pickup and a drop together: for each candidate the drop is the body whose
 loss leaves the best remaining-season roster with the candidate on it, so a backup QB
 goes when a better QB arrives and a bench RB goes for a receiver. The claim's gain is
-that swap's net lineup points through week 17. The pickup may be held only for its
-useful weeks, after which the vacated spot is refilled from the wire week by week
-(`Bidding.objective`, on the expected best body the room leaves at each position each
-week in the recorded seasons, claims.wire_stream): the drop is charged what that
-refill cannot restore. With no wire the drop's whole remaining season is charged, so a
-returning starter is not a free placeholder. `weights` value each week's points (opponents:
+that swap's net lineup points through week 17. My roster is valued as it will be
+managed, not as it stands: from next week on its lineup may also start the wire's best
+body at each position (`Bidding.objective`, on the expected best body the room leaves
+untaken at each position each week in the recorded seasons, claims.wire_stream), so a
+body the wire matches is a free drop, a pickup counts only his margin over the wire,
+and a seat a later lineup expansion opens is worth the wire, not a body's full points.
+The room has no wire: a drop's whole remaining season is charged, so a returning
+starter is not a free placeholder. `weights` value each week's points (opponents:
 every week alike; mine: alike or by title leverage, whichever replays better,
 claims.title_objective), and opponents also multiply the week they are bidding for by
 ROOM_CURRENT_WEEK_WEIGHT. Guide prices rank players by points per game played,
@@ -262,76 +264,15 @@ def _lineups(points, pos, dedicated, flex):
 
 
 @njit(cache=True)
-def _refill(lost, floors, rest_floors, weights, refill_points, refill_pos):
-    """What the wire restores once a pickup leaves a vacated spot.
-
-    lost (n, span) per drop per week; floors (4, span) with no drop; rest_floors
-    (n, 4, span) after each drop; refill_points (m, span-1) the wire's expected best body
-    at each of m positions, per week from next week on; refill_pos (m,). The credit is
-    only what the wire adds after the drop beyond what it would add anyway: the same
-    body upgrades the undropped roster too (an open seat, or the body he outscores), so
-    his margin over the pre-drop floor is not the drop's to claim. Returns after (n,
-    span), the loss the best refill cannot restore once a pickup held through week
-    offset i leaves, cost (n,), the cheapest way to vacate the spot for at least one
-    week, and refillable (n,).
-    """
-    n, span = lost.shape
-    m = refill_points.shape[0]
-    after = np.zeros((n, span))
-    cost = np.zeros(n)
-    refillable = np.zeros(n, np.bool_)
-    restored = np.zeros(span - 1)
-    anyway = np.zeros((m, span - 1))  # the wire's weighted margin over the pre-drop floors
-    for k in range(m):
-        for i in range(span - 1):
-            margin = refill_points[k, i] - floors[refill_pos[k], i + 1]
-            if margin > 0.0:
-                anyway[k, i] = weights[i + 1] * margin
-    for d in range(n):
-        best = 0.0
-        best_k = -1
-        for k in range(m):
-            gained = 0.0
-            for i in range(span - 1):
-                diff = refill_points[k, i] - rest_floors[d, refill_pos[k], i + 1]
-                if diff > 0.0:
-                    gained += weights[i + 1] * diff - anyway[k, i]
-            if gained > best:
-                best = gained
-                best_k = k
-        held = 0.0
-        if best_k < 0:
-            for i in range(span):
-                held += lost[d, i]
-            cost[d] = held
-            continue
-        refillable[d] = True
-        for i in range(span - 1):
-            diff = refill_points[best_k, i] - rest_floors[d, refill_pos[best_k], i + 1]
-            restored[i] = weights[i + 1] * diff - anyway[best_k, i] if diff > 0.0 else 0.0
-        tail = 0.0
-        for h in range(span - 1, 0, -1):
-            tail += lost[d, h] - restored[h - 1]
-            after[d, h - 1] = tail if tail > 0.0 else 0.0
-        cheapest = np.inf
-        for h in range(span):
-            held += lost[d, h]
-            if held + after[d, h] < cheapest:
-                cheapest = held + after[d, h]
-        cost[d] = cheapest
-    return after, cost, refillable
-
-
-@njit(cache=True)
 def _evaluate(candidates, points, pos, ir_until, ros, w, weights, floors, floor_min, size, reserve_slots,
-              eligible, drops, drop_eligible, loss, cost, rest_floors, lost, after, refillable, prune):
+              eligible, drops, drop_eligible, loss, rest_floors, prune):
     """For each candidate: (gain per remaining week, drop, fits without a drop), plus his
     net against every drop when `prune` is off (for ranking drops).
 
-    Options are in cost order: no swap nets more than the candidate's gain against the
-    kindest thresholds less the drop's vacate cost, so the loop stops once that bound
-    cannot beat the best swap (with slack for rounding, so ties settle by the same key).
-    Among equal nets the drop with the lower rest-of-season points, then index, goes.
+    Options are in loss order: no swap nets more than the candidate's gain against the
+    kindest thresholds less the drop's loss, so the loop stops once that bound cannot
+    beat the best swap (with slack for rounding, so ties settle by the same key). Among
+    equal nets the drop with the lower rest-of-season points, then index, goes.
     """
     span = weights.shape[0]
     c = candidates.shape[0]
@@ -361,27 +302,16 @@ def _evaluate(candidates, points, pos, ir_until, ros, w, weights, floors, floor_
         best = -np.inf
         best_o = -1
         for o in range(n):
-            if prune and best_o >= 0 and most - cost[o] < best - 1e-9:
+            if prune and best_o >= 0 and most - loss[o] < best - 1e-9:
                 break
             eligible_d = 1 if drop_eligible[o] else 0
             if n - min(reserve_slots, eligible - eligible_d + eligible_j) > size:
                 continue
-            if refillable[o]:
-                held = 0.0
-                net = -np.inf
-                for i in range(span):
-                    x = points[w + i, j]
-                    if x > rest_floors[o, p, i]:
-                        held += weights[i] * (x - rest_floors[o, p, i])
-                    held -= lost[o, i]
-                    if held - after[o, i] > net:
-                        net = held - after[o, i]
-            else:
-                net = -loss[o]
-                for i in range(span):
-                    x = points[w + i, j]
-                    if x > rest_floors[o, p, i]:
-                        net += weights[i] * (x - rest_floors[o, p, i])
+            net = -loss[o]
+            for i in range(span):
+                x = points[w + i, j]
+                if x > rest_floors[o, p, i]:
+                    net += weights[i] * (x - rest_floors[o, p, i])
             nets[o, ci] = net
             if best_o < 0 or net > best or (net == best and (
                     ros[drops[o]] < ros[drops[best_o]]
@@ -398,8 +328,9 @@ def _evaluate(candidates, points, pos, ir_until, ros, w, weights, floors, floor_
 class Context:
     """One roster before one week's claims, shared by every candidate evaluated on it.
 
-    Week offset i is week w + i. The drop arrays are in cost order, cheapest to vacate
-    first, so the compiled evaluation can stop early.
+    Week offset i is week w + i. The drop arrays are in loss order, cheapest first, so
+    the compiled evaluation can stop early. Lineups from next week on include the wire's
+    best body at each position (Bidding.stream), so a loss is net of the wire.
     """
     roster: tuple[int, ...]
     w: int
@@ -409,11 +340,7 @@ class Context:
     drops: np.ndarray  # (n,) player indexes
     drop_eligible: np.ndarray  # (n,) reserve-eligible this week
     loss: np.ndarray  # (n,) weighted lineup points lost over the season by dropping him
-    cost: np.ndarray  # (n,) the cheapest way to vacate his spot for at least one week
-    lost: np.ndarray  # (n, span) the loss per week
     rest_floors: np.ndarray  # (n, 4, span) thresholds after the drop
-    after: np.ndarray  # (n, span) loss the wire cannot restore once a pickup held i + 1 weeks leaves
-    refillable: np.ndarray  # (n,) whether the wire refills him at all
     memo: dict[int, tuple[float, int | None]] = field(default_factory=dict)
 
 
@@ -427,7 +354,7 @@ class Bidding:
         self.weights = np.ones(WEEKS)
         self.final_weight = 1.0  # the championship weeks' mean weight (race.my_bid's denial term)
         self.current_weight = current_weight  # multiplies the week being decided
-        self.stream = np.zeros((4, WEEKS))  # [pos][week] expected best free body; none for the room
+        self.stream = np.zeros((4, WEEKS))  # [pos][week] expected best body on the wire; none for the room
         self.contexts: dict[tuple[tuple[int, ...], int], Context] = {}
         # Guide price share by positional rank of weighted points per game played from
         # each week on, so a returning player is not charged twice for missed weeks.
@@ -446,9 +373,9 @@ class Bidding:
             self.shares.append(shares)
 
     def objective(self, weights, stream) -> "Bidding":
-        """A copy valuing week v's points at weights[v] whose vacated spots the wire
-        refills from the next week on: `stream[p, v]` is the expected points of the best
-        free body at position p in week v (claims.wire_stream)."""
+        """A copy valuing week v's points at weights[v] whose lineups from next week on
+        may start the wire's best body at each position: `stream[p, v]` is the expected
+        points of the best free body at position p in week v (claims.wire_stream)."""
         other = copy.copy(self)
         other.weights = np.asarray(weights, dtype=np.float64)
         other.final_weight = float(other.weights[REGULAR_WEEKS:].mean())
@@ -498,26 +425,27 @@ class Bidding:
     def _build(self, roster: tuple[int, ...], w: int) -> Context:
         weights = self.week_weights(w)
         ids = np.asarray(roster, dtype=np.int64)
-        total, floors, totals_without, floors_without = _lineups(
-            self.points[w:, ids], self.pos[ids], _DEDICATED[:, w:], _FLEX[w:]
-        )
-        lost = weights * (total - totals_without)
-        # The wire's refill of a vacated spot, from next week on, at each position.
-        after, cost, refillable = _refill(lost, floors, floors_without, weights,
-                                          np.ascontiguousarray(self.stream[:, w + 1:]), np.arange(4, dtype=np.int64))
-        order = np.lexsort((ids, self.ros[w, ids], cost))
+        n = len(ids)
+        # The wire's best body at each position joins the lineup from next week on; this
+        # week's wire is the choice being made. Virtual bodies take no roster spot and
+        # cannot be dropped.
+        wire = self.stream[:, w:].T.copy()
+        wire[0] = 0.0
+        points = np.concatenate([self.points[w:, ids], wire], axis=1)
+        pos = np.concatenate([self.pos[ids], np.arange(4, dtype=np.int64)])
+        total, floors, totals_without, floors_without = _lineups(points, pos, _DEDICATED[:, w:], _FLEX[w:])
+        loss = (weights * (total - totals_without[:n])).sum(1)
+        order = np.lexsort((ids, self.ros[w, ids], loss))
         return Context(
-            roster, w, int((self.ir_until[ids] > w).sum()), floors, floors_without.min(0),
-            ids[order], self.ir_until[ids][order] > w, lost.sum(1)[order], cost[order], lost[order],
-            floors_without[order], after[order], refillable[order],
+            roster, w, int((self.ir_until[ids] > w).sum()), floors, floors_without[:n].min(0),
+            ids[order], self.ir_until[ids][order] > w, loss[order], floors_without[order],
         )
 
     def _core(self, ctx: Context, candidates: list[int], prune: bool):
         return _evaluate(
             np.asarray(candidates, dtype=np.int64), self.points, self.pos, self.ir_until, self.ros[ctx.w],
             ctx.w, self.week_weights(ctx.w), ctx.floors, ctx.floor_min, WEEK_ROSTER_SIZE[ctx.w], RESERVE_SLOTS,
-            ctx.eligible, ctx.drops, ctx.drop_eligible, ctx.loss, ctx.cost, ctx.rest_floors, ctx.lost, ctx.after,
-            ctx.refillable, prune,
+            ctx.eligible, ctx.drops, ctx.drop_eligible, ctx.loss, ctx.rest_floors, prune,
         )
 
     def evaluate(self, roster, candidates, w: int) -> list[tuple[float, int | None]]:

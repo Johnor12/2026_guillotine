@@ -17,8 +17,9 @@ per point of season gain the replays choose. Run once without me it is the
 market and the elimination bars I face, which price my roster variants
 (season/claims.py: this week's lineup, and for each free agent the bid that maximizes
 modeled title odds, with the drop that replays best among those the bidding heuristic
-ranks highest); run with all 32 it is every team's chance of being cut this week, of
-reaching the final, and of the title, along with its expected spend and budget path.
+ranks highest); run with all 32, my team entering this week's card, it is every team's
+chance of being cut this week, of reaching the final, and of the title, along with its
+expected spend and budget path.
 
 Deterministic: the race is seeded.
 """
@@ -37,6 +38,7 @@ from shared.league import REGULAR_WEEKS, WEEK_ROSTER_SIZE, WEEKS
 from shared.noise import SEED, TEAM_SEASON_SIGMA, WEEKLY_SIGMA
 from shared.paths import LEAGUE, POOL, SEASON, WEEKLY_PROJECTIONS
 
+from .card import Claim
 from .claims import claims, my_lineup, title_objective
 from .race import CASCADE_ROUNDS, CLAIM_CANDIDATES, CLAIMS_PER_TEAM, RACE_SIMS, race_inputs, run_race
 from .state import lineup_points, load_season
@@ -296,7 +298,11 @@ def main(argv: list[str] | None = None) -> int:
     decisions["objective"] = objective
     if args.report:
         print(f"[claims {time.perf_counter() - t0:.1f}s]", file=sys.stderr)
-    inputs = dataclasses.replace(inputs, price=decisions["price"])
+    # The full race plays this week's card for my team; my agent bids from next week on.
+    by_id = {p.sleeper_id: p.index for p in state.players}
+    card = [Claim(by_id[c["player"]["player_id"]], by_id[c["drop"]["player_id"]] if c["drop"] else None,
+                  c["bid"] or 0, free=c["bid"] is None) for c in decisions["card"]["claims"]]
+    inputs = dataclasses.replace(inputs, price=decisions["price"], my_card=card)
     t0 = time.perf_counter()
     full = run_race(inputs, args.sims, SEED, exclude_me=False)
     teams = league_odds(state, inputs, full)

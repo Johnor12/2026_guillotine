@@ -3,11 +3,12 @@
 Lineup: the greedy optimum on this week's projections (state.lineup), compared with the
 starters Sleeper currently has set for me.
 
-Objective: a drop's spot is refilled week by week from what the room leaves on the wire
-in the recorded seasons (wire_stream), and my bidding values each week's points alike
-or by d log P(title) / d(points), whichever replays to better title odds
-(title_objective). Screening, drops, ceilings and my future bidding use it; this week's
-bids are chosen by replayed title odds.
+Objective: my roster is valued as it will be managed: from next week on its lineup may
+start the wire's best body at each position, what the room leaves untaken in the
+recorded seasons (wire_stream), and my bidding values each week's points alike or by
+d log P(title) / d(points), whichever replays to better title odds (title_objective).
+Screening, drops and my future bidding use it; this week's bids are chosen by replayed
+title odds.
 
 Claims: every candidate's drop is chosen by replay among the few that waivers.Bidding
 ranks best (the heuristic prices a fixed roster, where a future lineup expansion is an
@@ -56,7 +57,8 @@ PRICED_CANDIDATES = 12  # free agents whose value is priced across the whole bid
 def wire_stream(inputs: RaceInputs, records: list[dict]) -> np.ndarray:
     """Expected points, by position and week, of the best body the room leaves on the
     wire that week: listed at that week's auctions (in play, race.CLAIM_CANDIDATES by
-    rest-of-season points) and untaken, which is what my replayed agent can pick up.
+    rest-of-season points) and untaken, which is what my replayed agent can pick up and
+    what my bidding lets its lineups start from next week on (waivers.Bidding.objective).
     The mean over the recorded seasons of each season's best, so a wire that always
     holds some starter counts even when it is a different one every season. A free
     agent the auctions never list is not counted, since the replay never offers him."""
@@ -78,9 +80,9 @@ def wire_stream(inputs: RaceInputs, records: list[dict]) -> np.ndarray:
 
 def title_objective(inputs: RaceInputs, records: list[dict]) -> tuple[RaceInputs, dict | None]:
     """`inputs` with the recorded market my future bids are shaded against, and my
-    bidding refilling drops from the recorded wire and weighting weeks by whichever
-    objective replays the standing roster to better title odds, plus a summary of that
-    choice.
+    bidding starting the recorded wire's best bodies from next week on and weighting
+    weeks by whichever objective replays the standing roster to better title odds, plus
+    a summary of that choice.
 
     Title weights come from the points objective's replay at its best price, normalized
     to average 1 so gains keep their points-a-week scale. They are a first-order fit

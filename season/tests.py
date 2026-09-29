@@ -131,11 +131,10 @@ class WaiverTests(unittest.TestCase):
         self.assertAlmostEqual(cheap[0].gain, (15. - 0.5 * (WEEKS - 2)) / (WEEKS - 1))
         self.assertFalse(offers(2.), "Thirty points of cover outweigh one fifteen-point week")
 
-    def test_untaken_wire_refills_the_cover(self):
+    def test_untaken_wire_makes_the_cover_a_free_drop(self):
         # RB7 covers RB1's weeks 3-6 for two points a week and is worthless after; an
-        # equal RB sits on the wire: hold the streamer his one week, then refill the spot.
-        # From week 7 the roster grows, so the wire's back would fill an open seat anyway
-        # and restores nothing there.
+        # equal RB sits on the wire, so the lineup has that cover without him and the
+        # streamer's one week costs nothing.
         positions = [0, 1, 1, 2, 2, 2, 3, 1, 0, 1]
         weekly = [[20., 15., 14., 12., 11., 10., 14., 2. if w < 6 else 0., 0., 2.] for w in range(WEEKS)]
         weekly[1][0] = 0.
@@ -440,7 +439,8 @@ class WaiverTests(unittest.TestCase):
         inputs.managers, inputs.opening_budgets, inputs.week0, inputs.off_cycle_share = [Manager()] * 3, [1000] * 3, 14, .25
         rounds = []
 
-        def auction(inputs, w, rosters, budgets, alive, free, rng, skip, bar, plans, pool=None, attention=1.):
+        def auction(inputs, w, rosters, budgets, alive, free, rng, skip, bar, plans, pool=None, attention=1.,
+                    my_plan=None):
             rounds.append((w, pool, attention))
             if w == 14 and pool is None:
                 return [9], [3], [(9, 1, 3)], [4]  # the run: team 1 buys 9 and drops 4
@@ -534,6 +534,27 @@ class WaiverTests(unittest.TestCase):
 
         self.assertEqual(favorite(1.), 9)
         self.assertEqual(favorite(ROOM_CURRENT_WEEK_WEIGHT), 8)
+
+    def test_full_race_plays_my_card(self):
+        # The last regular week, two cashless opponents: the card's free add lands first,
+        # its paid claims process as entered (the second names the first's drop and is
+        # passed over), and my agent makes no offer of its own this week.
+        inputs = self.inputs(market=[self.record(14, {8: 5, 9: 5})])  # so my agent's own bids beat $0
+        inputs.rosters, inputs.budgets, inputs.alive = [self.roster[:] for _ in range(3)], [1000, 0, 0], [True] * 3
+        inputs.managers, inputs.opening_budgets, inputs.week0 = [Manager()] * 3, [1000, 0, 0], 14
+        inputs.my_card = [Claim(9, 4, 0, free=True), Claim(8, 4, 30), Claim(8, 7, 20)]
+
+        def mine(record):
+            return [c for c in record["claims"][14] if c[1] == 0]
+
+        record = simulate(inputs, 3, exclude_me=False)
+        self.assertEqual(inputs.rosters[0], self.roster, "The card is applied to the race's copy")
+        self.assertEqual(mine(record), [(9, 0, 0), (8, 0, 20)])
+        self.assertEqual(record["budget_after_claims"][0][0], 980)
+        inputs.my_card = []
+        self.assertEqual(mine(simulate(inputs, 3, exclude_me=False)), [], "An empty card stands pat")
+        inputs.my_card = None
+        self.assertTrue(mine(simulate(inputs, 3, exclude_me=False)), "Without a card my agent's own offers bid")
 
     def test_replay_budget_is_before_claims(self):
         for points in self.weekly:

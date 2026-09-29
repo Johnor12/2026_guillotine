@@ -238,8 +238,8 @@ season/  run ──────────────────────�
   after that cut), which objective my bidding uses (points alike every week or
   title-weighted, by replayed title odds) with the per-week title weights, every team's
   chance of being cut this week, of reaching the final and of the title, its expected
-  spend and budget path, the elimination bar by week, and the observed versus simulated
-  waiver market. Budget paths show cash entering each week, before that week's claims,
+  spend and budget path (mine with this week's card entered), the elimination bar by
+  week, and the observed versus simulated waiver market. Budget paths show cash entering each week, before that week's claims,
   conditional on surviving to that week. The current week's opening cash adds back
   completed claims to the live balance. Post-claim cash is recorded separately. Already
   eliminated teams have zero survival odds and no future budget estimates, and are
@@ -314,26 +314,31 @@ projection resumes he needs a regular spot, and every simulated team cuts its le
 valuable body to make room before that week's claims; a cut is charged its whole
 loss, since no spot is left to refill.
 
-My own bidding is chosen for title odds (`season/claims.py` `title_objective`). A
-pickup may be held only for its useful weeks: afterwards the vacated spot is refilled
-week by week from the wire the recorded seasons leave, the expected points of the best
-body at each position the room has not taken that week (a free agent today nobody has
-acquired by then, or a player listed at that week's auctions and untaken;
-`claims.wire_stream`, published in `season.json` under the objective as `wire`), and
-the drop is charged only what that refill cannot restore. The credit is incremental:
-the wire's best body would upgrade the undropped roster too, so only what he adds
-beyond that belongs to the drop. Crediting his whole margin over the post-drop floor
-instead let every drop claim the same body, inflated pickup gains and so my bids, and
-replayed the standing roster 0.9 points of title probability worse than no refill on
-the same 1,024 seasons; with the incremental credit the stream, today's untaken pool and
-no refill all replay within a third of a point of each other, the stream surviving the
-regular season most often. A one-week starter can then
-displace depth the wire replaces for free, while a returning starter nothing on the
-wire replaces is still charged in full. The wire is rich in quarterbacks late: by week
-11 the room leaves a starter untaken every week, so a backup quarterback held for the
-week-14 superflex is charged little; the modeled room does not stash quarterbacks
-before week 14 (it weights the current week 32 times any later one), so the late wire
-may be richer here than in reality. Each run
+My own bidding is chosen for title odds (`season/claims.py` `title_objective`). My
+roster is valued as it will be managed, not as it stands: from next week on its lineup
+may also start the wire's best body at each position, the expected points of the best
+body the room leaves listed and untaken at that week's auctions in the recorded
+seasons (`claims.wire_stream`, published in `season.json` under the objective as
+`wire`), which is what my replayed agent picks up for free. So a body the wire
+matches is a free drop, a pickup counts only his margin over the wire, and a seat a
+later lineup expansion opens is worth the wire rather than a body's full points; this
+week's lineup is exact, since this week's wire is the choice being made. The wire
+bodies take no roster spot, which stands in for cutting the least valuable body to
+add one. The earlier accounting priced a fixed roster and refilled only a vacated spot
+from the wire (crediting the drop what the refill added beyond what the wire would
+have added anyway): it valued an expansion seat at a body's full points, so in the
+week-4 state it had Sam Darnold, the week's only healthy quarterback, and Chris Bell,
+a bench receiver, tied as the drop for Ollie Gordon (2.28 against 2.27 points a week),
+and it offered Darnold for four bench bodies at a 15-point cost this week. Valued as
+managed, Bell is the drop for every pickup (Gordon: Bell 0.75, Darnold 0.06), and the
+standing roster replays to 32.0% for the title against 29.2% on the same 512 seasons,
+with the full race, my agent bidding live, at 29.9% against 24.6%; on the 2,048-season
+run the standing roster replays to 33.4% against 28.1% and the full race, playing this
+week's card, to 31.4% against 23.3%, with my agent's cash lasting longer. The wire is rich in
+quarterbacks late: by week 11 the room leaves a starter untaken every week, so a
+backup quarterback held for the week-14 superflex is charged little; the modeled room
+does not stash quarterbacks before week 14 (it weights the current week 32 times any
+later one), so the late wire may be richer here than in reality. Each run
 also derives per-week title weights, d log P(title) / d(points), the draft's week
 weights: the standing roster's replay through the recorded opponent races, the
 per-week survival hazard and championship term weighted by each season's title
@@ -341,7 +346,8 @@ probability, normalized to average 1. My bidding weights weeks by them only if t
 replays the standing roster to better title odds than weighting every week alike.
 In the week-3 state it did not (16.2% against 17.1%): the weights are a first-order
 fit computed once, so a policy on them gives up points in weeks that look safe until
-they are not. The chosen objective screens this week's candidates, ranks each one's
+they are not. In the week-4 state, with the roster valued as managed, it did (31.9%
+against 31.2%). The chosen objective screens this week's candidates, ranks each one's
 drops, values my future claims, and drives my roster cuts in the replays. Opponents
 keep the points behavior above, with their current-week weight. My future bids
 (below) take nothing from the guide: a claim is worth a price per point of its gain
@@ -350,9 +356,10 @@ separate saving plan.
 
 This week's claims are decided by replay, not by that heuristic. Each candidate's
 three best drops by the heuristic are replayed and the best by title odds is kept: the
-heuristic prices a fixed roster, where a future lineup expansion is an empty seat
-worth a body's full points, so in the week-3 state it would have dropped Michael
-Penix, the week's starting QB, for a receiver the wire could supply by week 7. The bid
+heuristic is a season total of expected lineup points, blind to the survival odds a
+swing this week moves, so under the earlier fixed-roster accounting it would have
+dropped Michael Penix, the week's starting QB, in the week-3 state for a receiver the
+wire could supply by week 7. The bid
 is then whatever maximizes replayed title odds anywhere in the budget, with no
 ceiling from the future policy: each candidate bid is scored per recorded season, won
 or lost at that season's price. The break-even ("worth up to") is the bid at which
@@ -510,23 +517,41 @@ two paired standard errors across the seasons joins; the card is done when none 
 four best options' extensions does. Claims the card does no
 worse without are pruned, the final bids are settled over every clearing price, and an
 equal bid ahead of a claim that depends on it is raised a dollar so the order does not
-rest on Sleeper's tie rule. In the week-4 state the card holds six claims for an
-expected $88: DeVonta Smith, Davante Adams and Rome Odunze each for Chris Bell, the
-first to win taking the spot, Omarion Hampton for Cade Otton, Alec Pierce for the
-reserve spot Zach Charbonnet holds, and Odunze again for Wan'Dale Robinson when Bell is
-gone, and it replays to +8.9% (±0.6) relative title odds against +3.0% for the best
-single claim, at 89 replays beyond the single valuations. On 2,048 fresh simulated
+rest on Sleeper's tie rule. In the week-4 state, under the fixed-roster accounting, the
+card held six claims for an expected $88: DeVonta Smith, Davante Adams and Rome Odunze
+each for Chris Bell, the first to win taking the spot, Omarion Hampton for Cade Otton,
+Alec Pierce for the reserve spot Zach Charbonnet holds, and Odunze again for Wan'Dale
+Robinson when Bell is gone, and it replayed to +8.9% (±0.6) relative title odds against
++3.0% for the best single claim, at 89 replays beyond the single valuations. Valued as
+managed, the same state gives five claims for an expected $27 (Adams for Bell $35,
+Hampton for Otton $22, Odunze for Xavier Worthy $13, Pierce for Charbonnet's spot $4
+and Jaylen Wright for Bell $1), replaying to +8.0% (±0.7) at 98 replays: cash is worth
+more to a future self that values the wire, so the same players are bid for at lower
+prices. On 2,048 fresh simulated
 seasons, with every roster reached replayed, a card built this way scored +8.3% relative
 title odds against +7.7% for the five-claim card the additive valuation built, two paired
 standard errors apart; the drop swap alone, Bell for Robinson with the Odunze fallback,
 is worth a tenth of that. This is a greedy search over a screened
 set, not every card, and the room is not replayed around my wins; only my side bids
 this way, since the room and my replayed future self keep one offer per candidate.
-That one-offer heuristic is blind to this week's cut risk: with the wire refilling a
-backup quarterback cheaply it will offer a running back for the week's starting
-quarterback while the other is still out, which the card never does (it is scored by
-replay) but the full race's agent sometimes does, so the race's cut-this-week odds for
-my roster run a few points above the card's.
+That one-offer heuristic is a season total of expected lineup points, so it is blind
+to the survival odds a swing this week moves: under the earlier fixed-roster
+accounting, in the week-4 state, it rated Ollie Gordon for Sam Darnold, the week's
+only healthy quarterback while Caleb Williams is out, a hair above Gordon for Chris
+Bell, and that 15-point hit lifts the week's cut risk from 2.8% to 14.0%, which the
+replay prices at -3.4% relative title odds against +4.5% for the Bell swap. Valuing
+the roster as managed (above) removed that tie, since Bell is a free drop against the
+wire, but not the blindness itself, so the full race plays this week's card for my
+team (`race.RaceInputs.my_card`, processed as Sleeper would, free adds first, no free
+pickup after, the cascade rounds the room's alone) and my agent bids only from next
+week on, as in the replay; my cut-this-week odds in the race then describe the card
+(1.6% against 5.8% with the fixed-roster agent's own offers on the same 2,048 seasons,
+about 2.3% standing pat). The heuristic still decides every later week for my
+replayed self and for the room, where its blindness lowers every variant alike.
+Weighting the week being decided, as the room does, is not a fix on my side: the
+replays reward it (31.4% against 29.2% for the standing roster at the best weight and
+price under the fixed-roster accounting), but a constant weight has no meaning in the
+model.
 
 A player my replay takes is one the recorded room never got. Each recorded season
 carries every opponent acquisition's weekly lineup loss while he holds the player
