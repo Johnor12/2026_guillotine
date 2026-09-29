@@ -289,6 +289,12 @@ class WaiverTests(unittest.TestCase):
         self.assertAlmostEqual(curve.price(1.), 5., delta=0.2)
         self.assertEqual(fit_price_curve(obs[:1]), PriceCurve(), "Nothing to fit: the guide itself")
         self.assertEqual(PriceCurve().price(40.), 40.)
+        # Flyers scatter around a cheap reference; real money clusters around a dear one.
+        spread = ([{"bid": b, "reference": 2.} for b in (1, 2, 4, 8, 16, 32)]
+                  + [{"bid": b, "reference": 200.} for b in (250, 270, 300, 320, 350, 380)])
+        curve = fit_price_curve(spread)
+        self.assertGreater(curve.noise(2.), 1.0)
+        self.assertLess(curve.noise(200.), 0.3)
 
     def test_latest_duplicate_bid_and_pending_not_training_data(self):
         def tx(bid, created, status="failed"):
@@ -386,7 +392,8 @@ class WaiverTests(unittest.TestCase):
         opening = [[400, 200, 1000]] + [[300 - k * 10, 150 - k * 5, 1000] for k in range(8)]
         after = opening[1:] + [[220, 110, 1000]]
         record = {"cut_week": [None, 12, None], "budget_path": opening, "budget_after_claims": after,
-                  "champion": 0, "claims": [[] for _ in range(WEEKS)], "bars": [0.] * WEEKS, "champ_bar": 0.}
+                  "champion": 0, "claims": [[] for _ in range(WEEKS)], "bars": [0.] * WEEKS, "champ_bar": 0.,
+                  "auctions": [[] for _ in range(WEEKS)]}
         rows = league_odds(state, inputs, [record])
         self.assertEqual(rows[0]["budget_entering_week9"], 400)
         self.assertEqual(rows[0]["spend_now"], 100)
@@ -397,6 +404,23 @@ class WaiverTests(unittest.TestCase):
         self.assertEqual(budgets[0]["budget"], 300)
         self.assertEqual(budgets[4]["budget"], round((270 + 135) / 2))
         self.assertEqual(budgets[5]["budget"], 260, "The team cut in week 13 is absent in week 14")
+
+    def test_simulated_claims_report_the_run_round_only(self):
+        players = [SimpleNamespace(name=str(j), sleeper_id=str(j), position="WR") for j in range(3)]
+        state = SimpleNamespace(teams=[], players=players, transactions=[])
+        inputs = SimpleNamespace(week0=3, budgets=[], positions=[], weekly=[[]] * WEEKS, managers=[], market_fit={})
+
+        def record(run, cascade):
+            auctions = [[] for _ in range(WEEKS)]
+            auctions[3] = [run, cascade]
+            return {"cut_week": [], "budget_path": [[]], "budget_after_claims": [[]], "champion": 0,
+                    "claims": [[] for _ in range(WEEKS)], "bars": [0.] * WEEKS, "champ_bar": 0., "auctions": auctions}
+
+        # Player 2 goes for $500 in a cascade round only; player 1 is a free pickup once.
+        records = [record(([0, 1, 2], [40, -2, -1]), ([2], [500])), record(([0, 1, 2], [60, 10, -1]), ([], []))]
+        rows = market(state, inputs, records, records)["simulated_claims_now"]
+        self.assertEqual([(r["name"], r["p_taken"], r["p_claimed"], r["p50"], r["p90"]) for r in rows],
+                         [("0", 1.0, 1.0, 60, 60), ("1", 1.0, 0.5, 10, 10), ("2", 0.0, 0.0, None, None)])
 
     def test_opening_cash_restores_only_completed_current_week_bids(self):
         players = [SimpleNamespace(index=j, sleeper_id=str(j), name=str(j), ir_until=0,

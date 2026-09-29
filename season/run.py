@@ -124,24 +124,31 @@ def market(state, inputs, excluded: list[dict], full: list[dict]) -> dict:
         }
         for tx in reversed(state.transactions)
     ]
-    # This week's simulated claims by the room, as a check against the observed ones.
-    claimed: dict[int, list[int]] = {}
+    # The room's claims in this week's run (or the pending off-cycle auction), as a check
+    # against the observed ones: how often each player in play is taken, by a paid claim
+    # or a free pickup, and what a paid claim wins him for. The cascade rounds are left
+    # out, as are the winning bids' extremes: the highest of thousands of seasons' draws
+    # says nothing about the price to expect.
+    outcomes: dict[int, list[int]] = {}
     for r in excluded:
-        for j, _, bid in r["claims"][w0]:
-            claimed.setdefault(j, []).append(bid)
-    simulated = sorted(
-        (
+        if r["auctions"][w0]:
+            for j, outcome in zip(*r["auctions"][w0][0]):
+                outcomes.setdefault(j, []).append(outcome)
+    simulated = []
+    for j, outs in outcomes.items():
+        paid = sorted(o for o in outs if o >= 0)
+        simulated.append(
             {
                 "name": state.players[j].name,
                 "position": state.players[j].position,
-                "p_taken": round(len(bids) / n, 3),
-                "mean_bid": round(statistics.fmean(bids)),
-                "max_bid": max(bids),
+                "p_taken": round(sum(1 for o in outs if o != -1) / n, 3),
+                "p_claimed": round(len(paid) / n, 3),
+                "p50": paid[len(paid) // 2] if paid else None,
+                "p90": paid[min(len(paid) - 1, int(0.9 * len(paid)))] if paid else None,
             }
-            for j, bids in claimed.items()
-        ),
-        key=lambda r: (-r["mean_bid"], -r["p_taken"]),
-    )[:40]
+        )
+    simulated.sort(key=lambda r: (-r["p_taken"], -r["p_claimed"], -(r["p50"] or 0), r["name"]))
+    simulated = simulated[:40]
     return {
         "calibration": inputs.market_fit,
         "managers": [
@@ -371,7 +378,6 @@ def main(argv: list[str] | None = None) -> int:
             "race_sims": args.sims,
             "weekly_sigma": WEEKLY_SIGMA,
             "team_season_sigma": TEAM_SEASON_SIGMA,
-            "bid_noise_sigma": round(inputs.price_curve.sigma, 3),
             "off_cycle_share": round(inputs.off_cycle_share, 3),
             "cascade_rounds": CASCADE_ROUNDS,
             "claims_per_team": CLAIMS_PER_TEAM,

@@ -130,13 +130,22 @@ def guide_reference(bidding, player: int, ceiling: float, budget: int, w: int) -
 class PriceCurve:
     """The room's bid for a guide reference: log bid = intercept + slope * log reference.
     This room is flatter than the guide (slope below 1): depth and fill-ins sell for
-    several times their guide price, stars for less."""
+    several times their guide price, stars for less.
+
+    The spread of bids around the curve narrows with the stake: log sd about 1.4 among
+    bids on a $5 reference (a $2 flyer and a $40 bid are both ordinary) and 0.8 at $150
+    and up (the twelve bids on Ja'Marr Chase ran $156-$750). One pooled sd would hand
+    stars the flyers' spread, and the highest of a dozen such draws is the whole budget."""
     intercept: float = 0.0
     slope: float = 1.0
-    sigma: float = BID_SIGMA  # residual log noise of one submitted bid
+    sigma: float = BID_SIGMA  # log noise of one submitted bid at a $1 reference
+    sigma_slope: float = 0.0  # change in that noise per log-dollar of reference
 
     def price(self, reference: float) -> float:
         return math.exp(self.intercept + self.slope * math.log(reference))
+
+    def noise(self, reference: float) -> float:
+        return self.sigma + self.sigma_slope * math.log(reference)
 
 
 @dataclass(frozen=True)
@@ -546,22 +555,31 @@ def bid_observations(state, bidding):
     return observations
 
 
-def fit_price_curve(observations) -> PriceCurve:
-    """Least squares of log bid on log guide reference over positive submitted bids, with
-    the residual spread as bid noise; the guide itself when there is nothing to fit.
-
-    One curve for the room: managers' levels around it did not persist from the week-2 to
-    the week-3 auction (correlation -0.24 over 15 managers), and per-manager offsets fit on
-    week 2 predicted week 3 worse than the curve alone."""
-    points = [(math.log(o["reference"]), math.log(o["bid"])) for o in observations if o["bid"] > 0]
-    if len(points) < 3 or len({x for x, _ in points}) < 2:
-        return PriceCurve()
+def _least_squares(points) -> tuple[float, float]:
+    """(intercept, slope) of y on x."""
     mx = statistics.fmean(x for x, _ in points)
     my = statistics.fmean(y for _, y in points)
     slope = sum((x - mx) * (y - my) for x, y in points) / sum((x - mx) ** 2 for x, _ in points)
-    intercept = my - slope * mx
-    sigma = math.sqrt(sum((y - intercept - slope * x) ** 2 for x, y in points) / (len(points) - 2))
-    return PriceCurve(intercept, slope, sigma)
+    return my - slope * mx, slope
+
+
+def fit_price_curve(observations) -> PriceCurve:
+    """Least squares of log bid on log guide reference over positive submitted bids, then
+    of the residual's size on log reference for the bid noise (a Gaussian's mean absolute
+    deviation is sd * sqrt(2 / pi)); the guide itself when there is nothing to fit.
+
+    One curve for the room: managers' levels around it did not persist from the week-2 to
+    the week-3 auction (correlation -0.24 over 15 managers), and per-manager offsets fit on
+    week 2 predicted week 3 worse than the curve alone. Nearly all of the spread is among
+    the bids on the same player in the same week (sd 1.13 within against 1.19 in all), so
+    it is drawn per bid, not per player."""
+    points = [(math.log(o["reference"]), math.log(o["bid"])) for o in observations if o["bid"] > 0]
+    if len(points) < 3 or len({x for x, _ in points}) < 2:
+        return PriceCurve()
+    intercept, slope = _least_squares(points)
+    scale = math.sqrt(math.pi / 2)
+    sigma, sigma_slope = _least_squares([(x, scale * abs(y - intercept - slope * x)) for x, y in points])
+    return PriceCurve(intercept, slope, sigma, sigma_slope)
 
 
 def off_cycle_share(state) -> float:
@@ -633,6 +651,6 @@ def calibration(state, observations):
             "bid_weeks": len(weeks), "submitted_bids": len(observations),
             "positive_bids_tested": len(errors),
             "price_curve": {"intercept": round(curve.intercept, 3), "slope": round(curve.slope, 3),
-                            "sigma": round(curve.sigma, 3)},
+                            "sigma": round(curve.sigma, 3), "sigma_slope": round(curve.sigma_slope, 3)},
             "prior_log_mae": _mae(prior_errors), "fitted_log_mae": _mae(errors),
             "latest_week_holdout": temporal, "predictions": predictions}

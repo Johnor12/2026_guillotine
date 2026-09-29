@@ -374,7 +374,16 @@ Opponents' bids follow one room-wide price curve fit to every submitted bid, inc
 losses: log bid = a + b log(guide reference), the reference being the guide ceiling for
 that manager's roster, cash and cut risk. This room is flatter than the guide (b about
 0.69 after two auctions): depth and fill-ins sell for several times their guide price,
-stars for less. The curve's residual spread is each bid's noise. There are no
+stars for less. Each bid's noise is the residual spread, which narrows with the stake
+(a second fit, of the residual's size on log reference): the bids on a $5 reference run
+from a $2 flyer to $40 (log sd about 1.4), while the twelve on Ja'Marr Chase ran
+$156-$750 (0.8 at $150 and up). One pooled spread applied per bidder handed stars the
+flyers' scatter, and the highest of a dozen such draws was routinely the whole budget;
+on the 22 observed contested clearing prices, with the actual bidders and their
+references held fixed, the narrowing spread lowers the log error of the simulated
+median winning bid from 0.74 to 0.70, puts the actual price inside the simulated
+10-90% band in 77% of cases against 68%, and cuts the share of simulated winners
+paying $1,000 from a tenth to a thirtieth. There are no
 per-manager bid multipliers: managers' levels around the curve did not persist from
 the week-2 auction to week 3 (correlation -0.24), and multipliers fit on week 2 predicted
 week 3 worse than the curve alone. Participation does persist (15 of 16 week-2 bidders
@@ -450,8 +459,10 @@ the second, against four on about twenty and two on six observed, at prices betw
 two observed weeks ($55 and $27 a round against week 3's $129 and $90 and week 2's $24
 and $0); it makes fewer free pickups of the drops than the log (one or two a round
 against four to eight), since only the attentive share of the room picks up at all. The
-record carries every round, so my replayed agent bids in each, and the market table
-pools a player's clearing prices across rounds. The off-cycle share is pooled over
+record carries every round, so my replayed agent bids in each; the market table
+(`market.simulated_claims_now`: per player in play, how often the room takes him by a
+paid claim or a free pickup and the median and 90th-percentile winning bid) reports
+the run round alone, the one to check against Wednesday's results. The off-cycle share is pooled over
 completed weeks only, so week 3's busier cascade (12 opponents bidding off-cycle
 against 20 in the run) enters it next week. In the week-3 state (after the run) the
 cascade lowers the standing roster's replayed title odds from 27.5% to 26.7% (one round

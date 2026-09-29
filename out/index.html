@@ -75,7 +75,7 @@
   section { margin-top: 30px; }
   section > h2 { font-size: 17px; line-height: 1.25; font-weight: 700; margin: 0 0 4px; }
   section > h3 { font-size: 13px; font-weight: 650; color: var(--muted); margin: 14px 0 6px; }
-  section > .hint { color: var(--muted); font-size: 12.5px; margin: 0 0 12px; max-width: 100ch; }
+  section > .hint, .table-wrap > .hint { color: var(--muted); font-size: 12.5px; margin: 0 0 12px; max-width: 100ch; }
 
   .tiles { display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 1px; overflow: hidden; margin-bottom: 12px; padding: 0; }
   .tile { padding: 12px 14px; border-right: 1px solid var(--grid); }
@@ -286,8 +286,9 @@
           </table>
         </div>
         <div class="table-wrap">
+          <p class="hint">The room's claims on this week's wire across the simulated seasons: how often someone takes each player, whether with a paid claim or a free pickup, and what the winning paid claim runs. Compare with the observed bids alongside.</p>
           <table>
-            <thead><tr><th>Simulated claim this week</th><th class="num" title="Share of simulated seasons where some opponent takes him this week">Taken</th><th class="num">Mean bid</th><th class="num">Max bid</th></tr></thead>
+            <thead><tr><th>Simulated claim this week</th><th class="num" title="Share of simulated seasons in which an opponent takes him in this run, by a paid claim or a free pickup">Taken</th><th class="num" title="Share of simulated seasons in which a paid claim wins him; the rest of Taken are free pickups">Paid</th><th class="num" title="Median winning bid over the seasons a paid claim wins him">Median bid</th><th class="num" title="90th percentile of that winning bid">90th pct</th></tr></thead>
             <tbody id="simulatedBody"></tbody>
           </table>
         </div>
@@ -529,8 +530,9 @@ function renderLeague(d) {
 function renderMarket(d) {
   const fit = d.market.calibration;
   document.getElementById("calibrationNote").textContent = fit.positive_bids_tested
-    ? `${fit.submitted_bids} distinct opponent bids across ${fit.bid_weeks} auction week(s). Held-out player bid-size error (lower is better): original ${fit.legacy_log_mae}, guide ${fit.prior_log_mae}, fitted ${fit.fitted_log_mae}.` +
-      (fit.latest_week_holdout ? ` Week ${fit.latest_week_holdout.test_week} predicted from earlier weeks only: original ${fit.latest_week_holdout.legacy_log_mae}, guide ${fit.latest_week_holdout.prior_log_mae}, fitted ${fit.latest_week_holdout.fitted_log_mae}.` : "") +
+    ? `${fit.submitted_bids} distinct opponent bids across ${fit.bid_weeks} auction week(s). Held-out player bid-size error (lower is better): guide ${fit.prior_log_mae}, fitted ${fit.fitted_log_mae}.` +
+      (fit.latest_week_holdout ? ` Week ${fit.latest_week_holdout.test_week} predicted from earlier weeks only: guide ${fit.latest_week_holdout.prior_log_mae}, fitted ${fit.latest_week_holdout.fitted_log_mae}.` : "") +
+      ` Bid noise narrows with the stake: log sd ${(fit.price_curve.sigma + fit.price_curve.sigma_slope * Math.log(10)).toFixed(2)} around a $10 reference, ${(fit.price_curve.sigma + fit.price_curve.sigma_slope * Math.log(200)).toFixed(2)} around $200.` +
       " This tests submitted amounts; future participation remains uncertain."
     : "No resolved bids yet: opponent behavior follows the guide prior.";
   const observed = d.market.observed.slice(0, 40);
@@ -544,8 +546,9 @@ function renderMarket(d) {
   document.getElementById("simulatedBody").replaceChildren(...(sim.length ? sim.map(s => h("tr", {},
     h("td", {}, h("span", { class: "pname" }, s.name), " ", h("span", { class: `chip pos ${s.position}` }, s.position)),
     h("td", { class: "num" }, pct(s.p_taken)),
-    h("td", { class: "num" }, money(s.mean_bid)),
-    h("td", { class: "num" }, money(s.max_bid)))) : [h("tr", {}, h("td", { colspan: 4 }, d.week === 1 ? "Week 1 adds are free; the market opens after the first cuts." : "No auction pending this week."))]));
+    h("td", { class: "num" }, pct(s.p_claimed)),
+    h("td", { class: "num" }, money(s.p50)),
+    h("td", { class: "num" }, money(s.p90)))) : [h("tr", {}, h("td", { colspan: 5 }, d.week === 1 ? "Week 1 adds are free; the market opens after the first cuts." : "No auction pending this week."))]));
 }
 
 (async () => {

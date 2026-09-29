@@ -280,9 +280,11 @@ def claim_plan(inputs, bidding, roster, candidates, budget, w, risk, rng, saving
         chosen = heapq.nlargest(CLAIMS_PER_TEAM, offers,
                                key=lambda o: o.gain * math.exp(rng.gauss(0, 0.5)))
         curve = inputs.price_curve
-        plan = [(min(allowance, int(curve.price(guide_reference(bidding, o.player, o.ceiling, budget, w))
-                                    * math.exp(rng.gauss(0, curve.sigma)))), o)
-                for o in chosen]
+        plan = []
+        for o in chosen:
+            reference = guide_reference(bidding, o.player, o.ceiling, budget, w)
+            bid = curve.price(reference) * math.exp(rng.gauss(0, curve.noise(reference)))
+            plan.append((min(allowance, int(bid)), o))
     if w == 0:
         plan = [(0, offer) for _, offer in plan]
     return sorted(plan, key=lambda item: (-item[0], -item[1].gain, item[1].player)), allowance
