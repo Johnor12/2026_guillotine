@@ -264,10 +264,14 @@ def _lineups(points, pos, dedicated, flex):
 
 
 @njit(cache=True)
-def _evaluate(candidates, points, pos, ir_until, ros, w, weights, floors, floor_min, size, reserve_slots,
+def _evaluate(candidates, points, pos, ros, w, weights, floors, floor_min, size, reserve_slots,
               eligible, drops, drop_eligible, loss, rest_floors, prune):
     """For each candidate: (gain per remaining week, drop, fits without a drop), plus his
     net against every drop when `prune` is off (for ranking drops).
+
+    The candidate lands in a regular spot: Sleeper never adds a body straight onto
+    reserve, so only the bodies already held fill the reserve slots, and a drop from
+    reserve frees him nothing.
 
     Options are in loss order: no swap nets more than the candidate's gain against the
     kindest thresholds less the drop's loss, so the loop stops once that bound cannot
@@ -284,7 +288,6 @@ def _evaluate(candidates, points, pos, ir_until, ros, w, weights, floors, floor_
     for ci in range(c):
         j = candidates[ci]
         p = pos[j]
-        eligible_j = 1 if ir_until[j] > w else 0
         free_gain = 0.0
         most = 0.0
         for i in range(span):
@@ -293,7 +296,7 @@ def _evaluate(candidates, points, pos, ir_until, ros, w, weights, floors, floor_
                 free_gain += weights[i] * (x - floors[p, i])
             if x > floor_min[p, i]:
                 most += weights[i] * (x - floor_min[p, i])
-        if n + 1 - min(reserve_slots, eligible + eligible_j) <= size:
+        if n + 1 - min(reserve_slots, eligible) <= size:
             fits[ci] = True
             gains[ci] = free_gain / span
             continue
@@ -305,7 +308,7 @@ def _evaluate(candidates, points, pos, ir_until, ros, w, weights, floors, floor_
             if prune and best_o >= 0 and most - loss[o] < best - 1e-9:
                 break
             eligible_d = 1 if drop_eligible[o] else 0
-            if n - min(reserve_slots, eligible - eligible_d + eligible_j) > size:
+            if n - min(reserve_slots, eligible - eligible_d) > size:
                 continue
             net = -loss[o]
             for i in range(span):
@@ -397,9 +400,11 @@ class Bidding:
         """Bodies needing a regular roster spot in week `w`."""
         return len(roster) - self.reserved(roster, w)
 
-    def fits(self, roster, player: int, w: int) -> bool:
-        """Whether `player` joins the roster before week `w` without a drop."""
-        return self.active([*roster, player], w) <= WEEK_ROSTER_SIZE[w]
+    def open_spot(self, roster, w: int) -> bool:
+        """Whether a body joins the roster before week `w` without a drop: he lands in a
+        regular spot, since Sleeper never adds straight onto reserve, so the roster's own
+        eligible bodies fill the reserve and one regular spot must be open for him."""
+        return self.active(roster, w) < WEEK_ROSTER_SIZE[w]
 
     def crunch(self, roster, w: int) -> int | None:
         """The body to cut when the roster does not fit week `w` (a reserve body whose
@@ -443,7 +448,7 @@ class Bidding:
 
     def _core(self, ctx: Context, candidates: list[int], prune: bool):
         return _evaluate(
-            np.asarray(candidates, dtype=np.int64), self.points, self.pos, self.ir_until, self.ros[ctx.w],
+            np.asarray(candidates, dtype=np.int64), self.points, self.pos, self.ros[ctx.w],
             ctx.w, self.week_weights(ctx.w), ctx.floors, ctx.floor_min, WEEK_ROSTER_SIZE[ctx.w], RESERVE_SLOTS,
             ctx.eligible, ctx.drops, ctx.drop_eligible, ctx.loss, ctx.rest_floors, prune,
         )

@@ -260,11 +260,14 @@ def claims(state: SeasonState, inputs: RaceInputs, records: list[dict]) -> dict:
             "ros_per_week": ros_w[i],
         }
 
-    def reserve_moves(variant: tuple[int, ...]) -> list[str]:
-        """Bodies to move onto reserve, beyond those already there, for the variant to fit."""
-        held = sum(1 for i in variant if i in me.reserve)
-        needed = len(variant) - WEEK_ROSTER_SIZE[w] - held
-        movable = [i for i in variant if inputs.bidding.ir_until[i] > w and i not in me.reserve]
+    def reserve_moves(variant: tuple[int, ...], added: int) -> list[str]:
+        """Bodies to move onto reserve before the add, beyond those already there, so the
+        added body has a regular spot (Sleeper never adds straight onto reserve)."""
+        eligible = [i for i in variant if i != added and inputs.bidding.ir_until[i] > w]
+        needed = len(variant) - WEEK_ROSTER_SIZE[w] - sum(1 for i in eligible if i in me.reserve)
+        movable = [i for i in eligible if i not in me.reserve]
+        if needed > len(movable):
+            raise ValueError(f"{state.players[added].name} has no regular spot on {variant}")
         return [state.players[i].name for i in movable[:max(0, needed)]]
 
     rows = []
@@ -296,7 +299,7 @@ def claims(state: SeasonState, inputs: RaceInputs, records: list[dict]) -> dict:
                 **player(j),
                 "waiver_clears": inputs.on_waivers.get(j),
                 "drop": player(drop) if drop is not None else None,
-                "to_reserve": reserve_moves(variant_rosters[j]),
+                "to_reserve": reserve_moves(variant_rosters[j], j),
                 "gain_this_week": round(this_week_total - base_total, 1),
                 "title_if_free": _relative(_interpolate(grid, budget), v0),
                 "title_if_free_se": round(paired_se(free_value[j]), 1),
@@ -372,7 +375,7 @@ def claims(state: SeasonState, inputs: RaceInputs, records: list[dict]) -> dict:
             "player": player(claim.player),
             "waiver_clears": inputs.on_waivers.get(claim.player),
             "drop": player(claim.drop) if claim.drop is not None else None,
-            "to_reserve": reserve_moves(with_offer(offer)),
+            "to_reserve": reserve_moves(with_offer(offer), claim.player),
             "p_reached": round(float(resolution["reached"][k].mean()), 3),
             "p_win": round(float(resolution["won"][k].mean()), 3),
             "title_without": _relative(without, v0),

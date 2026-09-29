@@ -2,11 +2,14 @@
 
 Sleeper processes the room's claims highest bid first (a team's equal bids in the order
 it lists them) and checks each against the roster as its earlier wins left it: a claim
-fails when its player is already mine, its drop is gone, no spot is open for a claim
-without a drop, or the cash is gone. So claims naming the same drop are alternatives
-(the first to win takes the spot), and a player claimed several times with different
-drops has fallbacks for when an earlier win used his drop. A free agent after the run is
-added now, ahead of every claim.
+fails when its player is already mine, its drop is gone, no regular spot is left for
+him, or the cash is gone. A claimed body lands in a regular spot, never straight onto
+reserve: the reserve holds what I put there before the run, so a drop from reserve frees
+him nothing, and a body won earlier in the run keeps his regular spot until it is over.
+So claims naming the same drop are alternatives (the first to win takes the spot), and
+a player claimed several times with different drops has fallbacks for when an earlier
+win used his drop. A free agent after the run is added now, ahead of every claim, by
+hand, with the reserve reshuffled between adds.
 
 The card is scored per recorded opponent season (race.simulate without me): each claim
 wins or loses at that season's price, and the roster and cash the card leaves are valued
@@ -153,28 +156,44 @@ class Scorer:
 
     def resolve(self, card: list[Claim]) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Per claim and season, whether it was still valid when reached and whether it
-        won; per season, the cash left."""
+        won; per season, the cash left.
+
+        Every add lands in a regular spot. The free adds come first, by hand: between them
+        the reserve is refilled from the eligible bodies held, so an add fits when the
+        others leave him a regular spot. The paid claims then process in one run with the
+        reserve as it stood entering it, min(RESERVE_SLOTS, eligible) bodies, so a drop
+        from reserve frees nothing: an eligible drop counts as active only while the
+        eligible bodies outnumber the slots (the ones the card drops are left active
+        first; which of several eligible drops is the active one is not tracked).
+        """
         n = self.n
         has: dict[int, np.ndarray] = {}
         left = np.full(n, self.budget, dtype=np.int64)
         count = np.full(n, self.count0, dtype=np.int64)
         elig = np.full(n, self.elig0, dtype=np.int64)
+        active = overflow = None  # regular spots filled and eligible bodies beyond the reserve, frozen at the run
         won = np.zeros((len(card), n), dtype=bool)
         reached = np.zeros((len(card), n), dtype=bool)
         for k in self.order(card):
             claim = card[k]
             mine = has.setdefault(claim.player, np.zeros(n, dtype=bool))
             live = ~mine & (left >= claim.bid)
-            gained = 1 if claim.player in self.eligible else 0
-            if claim.drop is None:
-                after = count + 1
-                elig_after = elig + gained
-            else:
+            dropped = None
+            if claim.drop is not None:
                 dropped = has.setdefault(claim.drop, np.ones(n, dtype=bool))
                 live &= dropped
-                after = count
-                elig_after = elig + gained - (1 if claim.drop in self.eligible else 0)
-            live &= after - np.minimum(RESERVE_SLOTS, elig_after) <= self.size
+            gained = claim.player in self.eligible
+            lost = claim.drop is not None and claim.drop in self.eligible
+            if claim.free:
+                others = count - (claim.drop is not None)
+                live &= others + 1 - np.minimum(RESERVE_SLOTS, elig - lost) <= self.size
+            else:
+                if active is None:
+                    held = np.minimum(RESERVE_SLOTS, elig)
+                    active, overflow = count - held, elig - held
+                frees = overflow > 0 if lost else np.full(n, claim.drop is not None)
+                after = active + 1 - frees
+                live &= after <= self.size
             reached[k] = live
             if claim.free:
                 ok = live
@@ -186,11 +205,15 @@ class Scorer:
                     ok = live & ((prices < claim.bid) if claim.bid > 0 else (prices == -1))
             won[k] = ok
             mine |= ok
-            if claim.drop is None:
-                count = np.where(ok, after, count)
+            if dropped is None:
+                count += ok
             else:
                 dropped &= ~ok
-            elig = np.where(ok, elig_after, elig)
+            elig += ok * (gained - lost)
+            if not claim.free:
+                active = np.where(ok, after, active)
+                if lost:
+                    overflow -= ok & frees
             left -= claim.bid * ok
         return won, reached, left
 

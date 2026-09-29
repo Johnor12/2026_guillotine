@@ -305,7 +305,7 @@ def _resolve(bidding, roster, plan, budget, allowance, w, won) -> tuple[int, int
             continue
         if offer.drop is not None and offer.drop not in roster:
             continue  # Claims naming the same drop are alternatives, as on Sleeper.
-        if offer.drop is None and not bidding.fits(roster, j, w):
+        if offer.drop is None and not bidding.open_spot(roster, w):
             continue
         if still_improves is not None and j not in still_improves:
             continue
@@ -368,7 +368,7 @@ def _auction(inputs, w, rosters, budgets, alive, free, rng, skip, bar, plans, po
             continue
         if offer.drop is not None and offer.drop not in rosters[team]:
             continue  # Claims naming the same drop are alternatives, as on Sleeper.
-        if offer.drop is None and not bidding.fits(rosters[team], j, w):
+        if offer.drop is None and not bidding.open_spot(rosters[team], w):
             continue
         if team in still_improves and j not in still_improves[team]:
             continue
@@ -457,7 +457,7 @@ def simulate(inputs: RaceInputs, seed: int, exclude_me: bool) -> dict:
             for claim in inputs.my_card:
                 if not claim.free or claim.player not in free or claim.player in mine:
                     continue
-                if claim.drop is None and not inputs.my_bidding.fits(mine, claim.player, w):
+                if claim.drop is None and not inputs.my_bidding.open_spot(mine, w):
                     continue
                 if claim.drop is not None and claim.drop not in mine:
                     continue

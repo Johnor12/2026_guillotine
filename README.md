@@ -312,7 +312,12 @@ season, so a returning starter is not a free placeholder for a short-term fill-i
 two reserve slots hold Out/IR/PUP bodies while their projection is zero; once a body's
 projection resumes he needs a regular spot, and every simulated team cuts its least
 valuable body to make room before that week's claims; a cut is charged its whole
-loss, since no spot is left to refill.
+loss, since no spot is left to refill. A claimed or added body lands in a regular
+spot, never straight onto reserve, so only the bodies a team already holds fill its
+reserve slots and a drop from reserve frees the newcomer nothing; the card's paid
+claims process with the reserve as it stood entering the run (a body won earlier in
+the run keeps his regular spot until it is over), while free adds by hand may
+reshuffle the reserve between adds.
 
 My own bidding is chosen for title odds (`season/claims.py` `title_objective`). My
 roster is valued as it will be managed, not as it stands: from next week on its lineup

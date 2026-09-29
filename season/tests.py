@@ -180,12 +180,26 @@ class WaiverTests(unittest.TestCase):
         bidding = self.build(ir_until=[2] + [0] * 9)
         roster = list(range(8))  # eight bodies, the QB on reserve through week index 1
         self.assertIsNone(bidding.offers(roster, [9], 1000, 0)[0].drop, "Reserve leaves an open spot")
-        self.assertFalse(bidding.fits(roster + [9], 8, 0))
+        self.assertFalse(bidding.open_spot(roster + [9], 0))
         self.assertNotEqual(bidding.crunch(roster + [8, 9], 0), 0, "Cutting a reserve body frees nothing")
         returned = roster + [9]
         fit_roster(bidding, returned, 2)
         self.assertEqual(len(returned), 8, "The returning QB needs a regular spot")
         self.assertIn(0, returned)
+
+    def test_a_claim_lands_in_a_regular_spot(self):
+        # Ten bodies for eight regular spots, the two eligible ones on reserve, and the
+        # candidate eligible himself. Sleeper never adds straight onto reserve: a reserve
+        # body is no drop for him, an active body is, and without a drop he needs an
+        # open regular spot, not a reserve slot.
+        positions = self.positions + [2]
+        weekly = [self.points + [30.] for _ in range(WEEKS)]
+        bidding = Bidding(positions, weekly, weekly, [0] * 8 + [2, 2, 2])
+        roster = list(range(10))
+        self.assertFalse(bidding.open_spot(roster, 0))
+        drops = {o.drop for o in bidding.swaps(roster, 10, 1000, 0, 0.0, 10)}
+        self.assertTrue(drops and drops.isdisjoint({8, 9}), "A drop from reserve frees him nothing")
+        self.assertTrue(bidding.open_spot(roster[:7] + [8, 9], 0), "Two on reserve, seven active: a spot is open")
 
     def test_draftsharks_rows_outside_the_pool_join_by_name(self):
         pool = {"players": [{"player_id": 1, "sleeper_id": "11"}]}
@@ -720,6 +734,21 @@ class CardTests(unittest.TestCase):
         won, reached, _ = roomy.resolve([Claim(9, None, 0), Claim(8, None, 1)])
         self.assertEqual((won[1].tolist(), reached[0].tolist()),
                          ([False, False, True, True], [True, True, False, False]), "One open spot: the higher bid first")
+
+    def test_claims_land_in_regular_spots(self):
+        # Seven regular spots, body 7 on reserve and 8 eligible too. A drop from reserve
+        # frees him nothing; a body won in the run keeps his regular spot until it is
+        # over; a free add by hand can move onto reserve before the next add.
+        scorer = Scorer(self.values, self.outcomes, 4, 100, 7, {7, 8})
+        self.assertFalse(scorer.resolve([Claim(8, 7, 5)])[1].any(), "Never straight onto reserve")
+        _, reached, _ = scorer.resolve([Claim(8, 4, 5), Claim(9, None, 1)])
+        self.assertTrue(reached[0].all() and not reached[1].any())
+        _, reached, _ = scorer.resolve([Claim(8, 4, 0, free=True), Claim(9, None, 0, free=True)])
+        self.assertTrue(reached.all(), "Added by hand, 8 moves onto reserve and 9 takes his spot")
+        # Three eligible bodies for two slots: the one the card drops stays active, once.
+        scorer = Scorer(self.values, self.outcomes, 4, 100, 6, {5, 6, 7})
+        _, reached, _ = scorer.resolve([Claim(8, 7, 5), Claim(9, 6, 5)])
+        self.assertEqual((reached[0].tolist(), reached[1].tolist()), ([True] * 4, [True, True, False, False]))
 
     def test_values_blend_a_replayed_point_with_the_estimated_shape(self):
         roster = (0, 1, 2, 3, 5, 6, 7, 9)
