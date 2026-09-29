@@ -12,8 +12,9 @@ Sleeper ("Gnosis Guillotine", league 1397662420398247936). The code is three pac
   fixed-point level convergence, the pick planner, and `sources/` (provider boards and
   the per-drafter source investigator).
 - `season/`: the in-season desk. Sleeper league fetch, the season state and weekly
-  lineup, the FAAB bidding model, the agent-based elimination race, and this week's
-  claims priced by replayed title odds.
+  lineup, the FAAB bidding model, the agent-based elimination race, this week's
+  claims priced by replayed title odds, and the bidding card that combines them
+  (`card.py`).
 
 Generated artifacts live in `out/` (`pool.json`, `draft.json`, `rankings.json`,
 `data_source_matches.json`, `league.json`, `season.json`, `bidding_evaluation.json`)
@@ -72,18 +73,23 @@ It refetches projections (DraftSharks weekly for the weeks still to play, Sleepe
 season), fetches the league state (including Sleeper weekly projections), and runs the
 season model. The NFL week comes from Sleeper. Each stage must succeed before the next
 starts; a failure exits nonzero without printing recommendations from an older run.
-The season model takes about two minutes at 8 workers; `--sims 256` runs it in
-under half a minute for a quick check, with correspondingly noisier odds.
+The season model takes about ten minutes at 8 workers (pricing each player alone
+about five of them, the bidding card two to four); `--sims 256` runs it in about a
+minute for a quick check, with correspondingly noisier odds.
 
 The terminal summary shows the remaining budget, any reserve body to activate and the
-forced cut that makes room for him, recommended bids with their drops and reserve
-moves, and the optimal lineup with start/sit changes. Bids are evaluated individually,
-so treat them as alternatives. After this week's waivers process, players dropped
-since are still on waivers: their recommendations are claims with a bid, the
-approximate time they clear, win chance, and break-even. Everyone else is a free
-pickup to add now. Enter the recommended claims and lineup on Sleeper yourself. Add
-`--report` for detailed model diagnostics and league odds. The season model alone is
-`uv run -m season.run`, with the same flags.
+forced cut that makes room for him, the bidding card, and the optimal lineup with
+start/sit changes. The card is the whole set of claims to enter, in the order Sleeper
+processes them (highest bid first; keep equal bids in the order listed): each claim
+names its drop and any reserve move, how often it wins across the simulated seasons,
+how often it is still valid when Sleeper reaches it (a fallback on a drop or a player
+an earlier claim may already have used is valid less often), and the card's title odds
+without it; then the card's odds together, its expected spend and its likely outcomes.
+Enter every claim on Sleeper. After this week's waivers process, players dropped since
+are still on waivers: their claims carry the approximate time they clear. Everyone else
+is a free pickup, listed first, to add now. `--report` adds model diagnostics, league
+odds and each player priced alone (his best bid as a lone claim, win chance and
+break-even). The season model alone is `uv run -m season.run`, with the same flags.
 
 Results are saved to `out/league.json` and `out/season.json`; `uv run -m shared.serve`
 displays them at http://127.0.0.1:8123/. The season model reads refreshed
@@ -221,8 +227,11 @@ season/  run ──────────────────────�
   follows processing time relative to Sleeper's season-start date. Wednesday claims may
   remain under the previous submission leg. Both successful and failed bids are
   retained; pending claims do not establish that waivers have processed.
-- `season.json`: this week's optimal lineup and the moves it implies, the optimal FAAB
-  bid on each free agent worth a look with the drop and any move onto reserve it needs
+- `season.json`: this week's optimal lineup and the moves it implies, the bidding
+  card (`claims.card`: each claim's bid, player, drop and reserve move in processing
+  order, its win and validity shares and the card's odds without it, then the card's
+  title odds, expected spend and likely outcomes), the optimal FAAB
+  bid on each free agent priced alone with the drop and any move onto reserve it needs
   (after the weekly run, the players still on waivers carry `waiver_clears`, and the
   rest are free adds), the cut that must come first when a reserve body lost
   Out/IR/PUP status and the roster no longer fits (claims are evaluated on the roster
@@ -307,11 +316,24 @@ loss, since no spot is left to refill.
 
 My own bidding is chosen for title odds (`season/claims.py` `title_objective`). A
 pickup may be held only for its useful weeks: afterwards the vacated spot is refilled
-from the wire the room leaves untaken (free agents taken, by claim or free pickup, in
-fewer than half of the opponent seasons at the next auction, assumed to stay
-available), and the drop is charged only what the best such body cannot restore. A
-one-week starter can then displace depth the wire replaces for free, while a
-returning starter nothing on the wire replaces is still charged in full. Each run
+week by week from the wire the recorded seasons leave, the expected points of the best
+body at each position the room has not taken that week (a free agent today nobody has
+acquired by then, or a player listed at that week's auctions and untaken;
+`claims.wire_stream`, published in `season.json` under the objective as `wire`), and
+the drop is charged only what that refill cannot restore. The credit is incremental:
+the wire's best body would upgrade the undropped roster too, so only what he adds
+beyond that belongs to the drop. Crediting his whole margin over the post-drop floor
+instead let every drop claim the same body, inflated pickup gains and so my bids, and
+replayed the standing roster 0.9 points of title probability worse than no refill on
+the same 1,024 seasons; with the incremental credit the stream, today's untaken pool and
+no refill all replay within a third of a point of each other, the stream surviving the
+regular season most often. A one-week starter can then
+displace depth the wire replaces for free, while a returning starter nothing on the
+wire replaces is still charged in full. The wire is rich in quarterbacks late: by week
+11 the room leaves a starter untaken every week, so a backup quarterback held for the
+week-14 superflex is charged little; the modeled room does not stash quarterbacks
+before week 14 (it weights the current week 32 times any later one), so the late wire
+may be richer here than in reality. Each run
 also derives per-week title weights, d log P(title) / d(points), the draft's week
 weights: the standing roster's replay through the recorded opponent races, the
 per-week survival hazard and championship term weighted by each season's title
@@ -389,8 +411,10 @@ rather than by a chosen tactic. Total
 paid spending in an auction is also limited to its largest individual bid. Claims
 naming the same drop are alternatives; open spots, remaining cash and redundant
 upgrades are checked as claims resolve (a claim that no longer improves the roster
-after an earlier win is passed over, which Sleeper itself cannot do for you: keep
-your live claim list short). Opponents choose their best few targets with preference
+after an earlier win is passed over, which Sleeper itself cannot do; this week's card,
+below, allows for that). This one-offer-per-candidate bidding is the room's and my
+future self's inside the replays; only this week's decision builds a full card.
+Opponents choose their best few targets with preference
 noise. Active managers can also make a free pickup after claims. Week 1 is free agency.
 
 After the weekly run, a player dropped since (including drops on winning claims) is on
@@ -451,10 +475,46 @@ the shaded bids and measuring gain beyond the free pickup were each tested and d
 explain it. The replay's account of what a claim of mine does to the room is first
 order (below), so the race is the check on any change to this family, and the
 discrepancy is open. Winning and losing outcomes are evaluated per recorded season,
-preserving their connection to future opportunity. These are individual alternatives,
-not an optimized simultaneous claim portfolio. Championship weeks are scored with the
+preserving their connection to future opportunity. Championship weeks are scored with the
 roster held in each week; a Week 17 pickup cannot improve Week 16 retroactively. The
 full race uses our selected bid value when reporting league odds.
+
+Those single valuations feed the bidding card (`season/card.py`), which is the
+recommendation. Sleeper processes the room's claims highest bid first, a team's equal
+bids in the order it lists them, and checks each against the roster as its earlier wins
+left it: a claim fails when its player is already mine, its drop is gone, no spot is
+open, or the cash is spent. So claims naming the same drop are alternatives (the first
+to win takes the spot) and a player claimed again with another drop is a fallback for
+when an earlier win used his drop; a free agent after the run is added now, ahead of
+every claim. A card is scored by walking it that way through every recorded season, each
+claim winning or losing at that season's clearing price, and valuing the roster and cash
+it leaves by that season's replay: a replayed roster is priced under the value chosen
+for the nearest grid budget, and rarer rosters, and the value of cash around a replayed
+point, come from
+the standing roster's grid plus each swap's single effect (a swap replayed at the full
+budget only borrows its player's replayed drop's budget profile); a roster reached in
+at least 2% of the seasons is replayed at the cash it leaves. The card grows
+greedily: every claim option (each candidate with each of his replayed drops, or a free
+add, any of them at any bid) is screened by that estimate with its own bid optimized,
+then the best estimates are tried in turn, each replayed with every bid re-optimized by
+coordinate ascent over the recorded clearing prices, and the first whose gain over the
+card so far exceeds two paired standard errors across the seasons joins; the card is
+done when none of the four best does. Claims the card does no
+worse without are pruned, the final bids are settled over every clearing price, and an
+equal bid ahead of a claim that depends on it is raised a dollar so the order does not
+rest on Sleeper's tie rule. In the week-4 state the card holds five claims for an
+expected $74: Omarion Hampton for Cade Otton with Ollie Gordon for the same drop as
+the alternative when Hampton is lost, Davante Adams for Wan'Dale Robinson, Rome Odunze
+for Chris Bell, and Alec Pierce for the reserve spot Zach Charbonnet holds, and it
+replays to +8.6% (±0.6) relative title odds against +4.8% for the best single claim,
+at 57 replays beyond the single valuations. This is a greedy search over a screened
+set, not every card, and the room is not replayed around my wins; only my side bids
+this way, since the room and my replayed future self keep one offer per candidate.
+That one-offer heuristic is blind to this week's cut risk: with the wire refilling a
+backup quarterback cheaply it will offer a running back for the week's starting
+quarterback while the other is still out, which the card never does (it is scored by
+replay) but the full race's agent sometimes does, so the race's cut-this-week odds for
+my roster run a few points above the card's.
 
 A player my replay takes is one the recorded room never got. Each recorded season
 carries every opponent acquisition's weekly lineup loss while he holds the player
@@ -488,8 +548,8 @@ The model does not depend on those suggestions or on future-week guide publicati
 
 `uv run -m shared.serve` serves `out/` at http://127.0.0.1:8123 (direct `file://`
 access cannot fetch the JSON). `/` renders `season.json`: this week's lineup, the
-waiver claims with their optimal bids, the elimination bar by week, every team's odds
-and budget outlook, and the waiver market; `/draft.html` renders `rankings.json`,
+bidding card and each player priced alone, the elimination bar by week, every team's
+odds and budget outlook, and the waiver market; `/draft.html` renders `rankings.json`,
 including the live board state embedded in it and when that snapshot was taken;
 `/sources.html` renders `data_source_matches.json` as a team-by-source fit heatmap
 with pick-level evidence. Re-run `season.refresh` or `draft.refresh` and

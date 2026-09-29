@@ -12,10 +12,11 @@ A claim is a pickup and a drop together: for each candidate the drop is the body
 loss leaves the best remaining-season roster with the candidate on it, so a backup QB
 goes when a better QB arrives and a bench RB goes for a receiver. The claim's gain is
 that swap's net lineup points through week 17. The pickup may be held only for its
-useful weeks, after which the vacated spot is refilled from the wire the room leaves
-untaken (`Bidding.objective`): the drop is charged what that refill cannot restore.
-With no replacement the drop's whole remaining season is charged, so a returning
-starter is not a free placeholder. `weights` value each week's points (opponents:
+useful weeks, after which the vacated spot is refilled from the wire week by week
+(`Bidding.objective`, on the expected best body the room leaves at each position each
+week in the recorded seasons, claims.wire_stream): the drop is charged what that
+refill cannot restore. With no wire the drop's whole remaining season is charged, so a
+returning starter is not a free placeholder. `weights` value each week's points (opponents:
 every week alike; mine: alike or by title leverage, whichever replays better,
 claims.title_objective), and opponents also multiply the week they are bidding for by
 ROOM_CURRENT_WEEK_WEIGHT. Guide prices rank players by points per game played,
@@ -54,7 +55,6 @@ ROOM_CURRENT_WEEK_WEIGHT = 32.0
 # Guide price share of the budget by positional rank: 20% for the elite anchors
 # (QB4 / RB6 / WR6 / TE3), then an inverse-square curve.
 ELITE_RANK = (4, 6, 6, 3)
-REFILL_DEPTH = 3  # untaken bodies ranked per position, in case the best are already held
 CONTEXT_CACHE = 8192  # (roster, week) contexts kept per Bidding before the cache is cleared
 
 # Opponents' saving habits: desired cash entering each week (zero-based), one plan per
@@ -262,14 +262,18 @@ def _lineups(points, pos, dedicated, flex):
 
 
 @njit(cache=True)
-def _refill(lost, rest_floors, weights, refill_points, refill_pos):
-    """What the untaken wire restores once a pickup leaves a vacated spot.
+def _refill(lost, floors, rest_floors, weights, refill_points, refill_pos):
+    """What the wire restores once a pickup leaves a vacated spot.
 
-    lost (n, span) per drop per week; rest_floors (n, 4, span); refill_points (m, span-1)
-    the refill bodies' points from next week on; refill_pos (m,). Returns after (n, span),
-    the loss the best refill cannot restore once a pickup held through week offset i
-    leaves, cost (n,), the cheapest way to vacate the spot for at least one week, and
-    refillable (n,).
+    lost (n, span) per drop per week; floors (4, span) with no drop; rest_floors
+    (n, 4, span) after each drop; refill_points (m, span-1) the wire's expected best body
+    at each of m positions, per week from next week on; refill_pos (m,). The credit is
+    only what the wire adds after the drop beyond what it would add anyway: the same
+    body upgrades the undropped roster too (an open seat, or the body he outscores), so
+    his margin over the pre-drop floor is not the drop's to claim. Returns after (n,
+    span), the loss the best refill cannot restore once a pickup held through week
+    offset i leaves, cost (n,), the cheapest way to vacate the spot for at least one
+    week, and refillable (n,).
     """
     n, span = lost.shape
     m = refill_points.shape[0]
@@ -277,6 +281,12 @@ def _refill(lost, rest_floors, weights, refill_points, refill_pos):
     cost = np.zeros(n)
     refillable = np.zeros(n, np.bool_)
     restored = np.zeros(span - 1)
+    anyway = np.zeros((m, span - 1))  # the wire's weighted margin over the pre-drop floors
+    for k in range(m):
+        for i in range(span - 1):
+            margin = refill_points[k, i] - floors[refill_pos[k], i + 1]
+            if margin > 0.0:
+                anyway[k, i] = weights[i + 1] * margin
     for d in range(n):
         best = 0.0
         best_k = -1
@@ -285,7 +295,7 @@ def _refill(lost, rest_floors, weights, refill_points, refill_pos):
             for i in range(span - 1):
                 diff = refill_points[k, i] - rest_floors[d, refill_pos[k], i + 1]
                 if diff > 0.0:
-                    gained += weights[i + 1] * diff
+                    gained += weights[i + 1] * diff - anyway[k, i]
             if gained > best:
                 best = gained
                 best_k = k
@@ -298,7 +308,7 @@ def _refill(lost, rest_floors, weights, refill_points, refill_pos):
         refillable[d] = True
         for i in range(span - 1):
             diff = refill_points[best_k, i] - rest_floors[d, refill_pos[best_k], i + 1]
-            restored[i] = weights[i + 1] * diff if diff > 0.0 else 0.0
+            restored[i] = weights[i + 1] * diff - anyway[best_k, i] if diff > 0.0 else 0.0
         tail = 0.0
         for h in range(span - 1, 0, -1):
             tail += lost[d, h] - restored[h - 1]
@@ -403,7 +413,7 @@ class Context:
     lost: np.ndarray  # (n, span) the loss per week
     rest_floors: np.ndarray  # (n, 4, span) thresholds after the drop
     after: np.ndarray  # (n, span) loss the wire cannot restore once a pickup held i + 1 weeks leaves
-    refillable: np.ndarray  # (n,) whether an untaken wire body refills him at all
+    refillable: np.ndarray  # (n,) whether the wire refills him at all
     memo: dict[int, tuple[float, int | None]] = field(default_factory=dict)
 
 
@@ -415,8 +425,9 @@ class Bidding:
         self.ros = np.asarray(ros, dtype=np.float64)
         self.ir_until = np.asarray(ir_until, dtype=np.int64)
         self.weights = np.ones(WEEKS)
+        self.final_weight = 1.0  # the championship weeks' mean weight (race.my_bid's denial term)
         self.current_weight = current_weight  # multiplies the week being decided
-        self.refills = [((),) * 4] * WEEKS  # [w][pos] -> refill candidates, best first
+        self.stream = np.zeros((4, WEEKS))  # [pos][week] expected best free body; none for the room
         self.contexts: dict[tuple[tuple[int, ...], int], Context] = {}
         # Guide price share by positional rank of weighted points per game played from
         # each week on, so a returning player is not charged twice for missed weeks.
@@ -434,24 +445,15 @@ class Bidding:
                     shares[j] = 0.20 * min(1.0, elite / rank) ** 2
             self.shares.append(shares)
 
-    def objective(self, weights, replacements) -> "Bidding":
-        """A copy valuing week v's points at weights[v] whose drops can be refilled from
-        `replacements` once a pickup has served its weeks."""
+    def objective(self, weights, stream) -> "Bidding":
+        """A copy valuing week v's points at weights[v] whose vacated spots the wire
+        refills from the next week on: `stream[p, v]` is the expected points of the best
+        free body at position p in week v (claims.wire_stream)."""
         other = copy.copy(self)
         other.weights = np.asarray(weights, dtype=np.float64)
+        other.final_weight = float(other.weights[REGULAR_WEEKS:].mean())
         other.contexts = {}
-        replacements = np.asarray(sorted(replacements), dtype=np.int64)
-        refills = []
-        for w in range(WEEKS):
-            value = other.weights[w + 1:] @ self.points[w + 1:, replacements]
-            cols = []
-            for p in range(4):
-                mine = self.pos[replacements] == p
-                ids = replacements[mine]
-                order = ids[np.lexsort((ids, -value[mine]))]
-                cols.append(tuple(int(r) for r in order[:REFILL_DEPTH]))
-            refills.append(tuple(cols))
-        other.refills = refills
+        other.stream = np.ascontiguousarray(stream, dtype=np.float64)
         return other
 
     def week_weights(self, w: int) -> np.ndarray:
@@ -500,12 +502,9 @@ class Bidding:
             self.points[w:, ids], self.pos[ids], _DEDICATED[:, w:], _FLEX[w:]
         )
         lost = weights * (total - totals_without)
-        # The wire's refill of a vacated spot, from next week on: the best untaken body at
-        # each position not already held.
-        held = set(roster)
-        refill = [r for r in (next((r for r in col if r not in held), None) for col in self.refills[w]) if r is not None]
-        refill = np.asarray(refill, dtype=np.int64)
-        after, cost, refillable = _refill(lost, floors_without, weights, self.points[w + 1:, refill].T, self.pos[refill])
+        # The wire's refill of a vacated spot, from next week on, at each position.
+        after, cost, refillable = _refill(lost, floors, floors_without, weights,
+                                          np.ascontiguousarray(self.stream[:, w + 1:]), np.arange(4, dtype=np.int64))
         order = np.lexsort((ids, self.ros[w, ids], cost))
         return Context(
             roster, w, int((self.ir_until[ids] > w).sum()), floors, floors_without.min(0),

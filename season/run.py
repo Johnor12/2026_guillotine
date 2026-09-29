@@ -171,31 +171,38 @@ def report_decisions(payload: dict) -> None:
         print(f"\nNo longer reserve-eligible, move to the active roster: {', '.join(claims['activate'])}")
     if claims["forced_cuts"]:
         print(f"Roster over capacity, cut before any add below: {', '.join(c['name'] for c in claims['forced_cuts'])}")
-    if not payload["waivers_ran"]:
-        print("\nFAAB recommendations:")
+    card = payload["claims"]["card"]
+    if not card["claims"]:
+        print("\nNo pickups improve the modeled title odds.")
+    elif all(c["bid"] is None for c in card["claims"]):
+        print("\nFree adds, in this order:")
     else:
-        print("\nRecommendations (this week's waivers processed; players dropped since need a claim until they clear):")
-    candidates = [c for c in claims["candidates"] if c["title_at_optimal"] > 0][:12]
-    if candidates:
-        print("Each bid is evaluated separately; treat these as alternatives.")
-        for c in candidates:
-            drop = c["drop"]["name"] if c["drop"] else "no drop needed"
-            if c["to_reserve"]:
-                drop += f"; to IR: {', '.join(c['to_reserve'])}"
-            if payload["waivers_ran"] and not c["waiver_clears"]:
-                action, terms = "free", "add now"
-            else:
-                action = f"${c['optimal_bid']}"
-                terms = f"wins {c['p_win_at_optimal']:.0%}, worth up to ${c['break_even_bid']}"
-                if c["waiver_clears"]:
-                    clears = dt.datetime.fromisoformat(c["waiver_clears"]).astimezone()
-                    terms = f"claim clears ~{clears:%a %H:%M %Z}; {terms}"
-            print(
-                f"  {action:<5} {c['name']} ({c['position']}) — {terms}; "
-                f"drop: {drop}; this week's gain: {c['gain_this_week']:+.1f} pts"
-            )
-    else:
-        print("  No pickups improve the modeled title odds.")
+        print("\nBidding card — enter every claim. Sleeper processes the highest bid first; keep equal bids in this order:")
+    for c in card["claims"]:
+        drop = c["drop"]["name"] if c["drop"] else "no drop needed"
+        if c["to_reserve"]:
+            drop += f"; to IR: {', '.join(c['to_reserve'])}"
+        if c["bid"] is None:
+            action, terms = "free", "add now"
+        else:
+            action = f"${c['bid']}"
+            terms = f"wins {c['p_win']:.0%}"
+            if c["p_reached"] < 0.995:
+                terms += f" (still valid when reached in {c['p_reached']:.0%})"
+            if c["waiver_clears"]:
+                clears = dt.datetime.fromisoformat(c["waiver_clears"]).astimezone()
+                terms = f"claim clears ~{clears:%a %H:%M %Z}; {terms}"
+        print(
+            f"  {c['order']:>2}. {action:<5} {c['player']['name']} ({c['player']['position']}) — {terms}; "
+            f"drop: {drop}; card without it: {c['title_without']:+.1f}%"
+        )
+    if card["claims"]:
+        print(f"Card: title odds {card['relative']:+.1f}% (±{card['relative_se']}) against standing pat; "
+              f"expected spend ${card['expected_spend']}; something lands {card['p_any_win']:.0%} of the time.")
+        outcomes = [o for o in card["outcomes"] if o["adds"]][:4]
+        if outcomes:
+            print("Likely outcomes: " + "; ".join(
+                f"{' + '.join(o['adds'])} {o['p']:.0%} ({o['title']:+.1f}%, ${o['spend']})" for o in outcomes))
 
     lineup = me["lineup"]
     print(f"\nOptimal lineup — {lineup['total']:.1f} projected points (currently set: {lineup['current_total']:.1f}):")
@@ -232,7 +239,9 @@ def report(payload: dict) -> None:
               file=sys.stderr)
     mode = ("weekly run pending" if not payload["waivers_ran"] else
             "off-cycle: players dropped since the run need a claim" if payload["claims"]["pending"] else "free agents only")
-    print(f"claims ({mode}):", file=sys.stderr)
+    card = payload["claims"]["card"]
+    print(f"card: {len(card['claims'])} claims, {card['replays']} replays beyond the single valuations", file=sys.stderr)
+    print(f"claims ({mode}), each player alone:", file=sys.stderr)
     for c in payload["claims"]["candidates"][:12]:
         cl = c["clearing"]
         print(

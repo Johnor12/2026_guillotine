@@ -251,8 +251,7 @@ def my_bid(inputs, j: int, gain: float, budget: int, w: int, price: float) -> in
     if w == WEEKS - 1:
         value = math.inf
     else:
-        weight = float(inputs.my_bidding.weights[REGULAR_WEEKS:].mean())
-        denial = weight * inputs.market.denial.get((w, j), 0.0) / (WEEKS - w)
+        denial = inputs.my_bidding.final_weight * inputs.market.denial.get((w, j), 0.0) / (WEEKS - w)
         value = price * (gain + denial) * budget / (WEEKS - w)
     return min(budget, inputs.market.best_bid(w, j, value))
 

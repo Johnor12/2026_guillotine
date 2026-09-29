@@ -9,10 +9,13 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import patch
 
+import numpy as np
+
 from shared.league import WEEKS
 from shared.noise import SIGMA_WEEK, cdf
 
-from .claims import _record_values, claims, title_objective
+from .card import Claim, Scorer, Values, _break_ties
+from .claims import _record_values, claims, title_objective, wire_stream
 from .fetch_league import processing_week
 from .race import Market, RaceInputs, _auction, claim_plan, fit_roster, race_inputs, replay, simulate
 from .run import league_odds, market
@@ -129,16 +132,22 @@ class WaiverTests(unittest.TestCase):
         self.assertFalse(offers(2.), "Thirty points of cover outweigh one fifteen-point week")
 
     def test_untaken_wire_refills_the_cover(self):
-        # The same thirty points of cover, but an equal RB sits untaken on the wire: hold
-        # the streamer his one week, then refill the spot.
+        # RB7 covers RB1's weeks 3-6 for two points a week and is worthless after; an
+        # equal RB sits on the wire: hold the streamer his one week, then refill the spot.
+        # From week 7 the roster grows, so the wire's back would fill an open seat anyway
+        # and restores nothing there.
         positions = [0, 1, 1, 2, 2, 2, 3, 1, 0, 1]
-        weekly = [[20., 15., 14., 12., 11., 10., 14., 2., 0., 2.] for _ in range(WEEKS)]
+        weekly = [[20., 15., 14., 12., 11., 10., 14., 2. if w < 6 else 0., 0., 2.] for w in range(WEEKS)]
         weekly[1][0] = 0.
         weekly[1][8] = 15.
-        for w in range(2, 12):
+        for w in range(2, 6):
             weekly[w][1] = 0.
         bidding = Bidding(positions, weekly, weekly, [0] * 10)
-        refilled = bidding.objective(bidding.weights, [9])
+        self.assertAlmostEqual(bidding.offers(list(range(8)), [8], 1000, 1)[0].gain, 7. / (WEEKS - 1),
+                               msg="Without a wire the streamer pays the eight points of cover")
+        stream = np.zeros((4, WEEKS))
+        stream[1] = 2.
+        refilled = bidding.objective(bidding.weights, stream)
         offer = refilled.offers(list(range(8)), [8], 1000, 1)[0]
         self.assertEqual(offer.drop, 7)
         self.assertAlmostEqual(offer.gain, 15. / (WEEKS - 1))
@@ -157,7 +166,9 @@ class WaiverTests(unittest.TestCase):
         for points in weekly:
             points.append(1.)
         bidding = Bidding(positions, weekly, weekly, [0] * 10)
-        self.assertFalse(bidding.objective(bidding.weights, [9]).offers(list(range(8)), [8], 1000, 1))
+        stream = np.zeros((4, WEEKS))
+        stream[1] = 1.
+        self.assertFalse(bidding.objective(bidding.weights, stream).offers(list(range(8)), [8], 1000, 1))
 
     def test_guide_rank_ignores_missed_weeks(self):
         # RB0 misses half the season but outscores the 12- and 13-point RBs whenever he plays.
@@ -209,7 +220,9 @@ class WaiverTests(unittest.TestCase):
             with patch("season.claims.run_replays", side_effect=runs):
                 mine, summary = title_objective(inputs, [{"auctions": auctions, "tenures": {}, "champion": 0}])
             self.assertEqual(summary["chosen"], chosen)
-            self.assertEqual({r for col in mine.my_bidding.refills[1] for r in col}, {9})
+            stream = mine.my_bidding.stream
+            self.assertEqual(stream[2, 1:3].tolist(), [13., 0.], "The untaken receiver is on the wire that week")
+            self.assertEqual(stream[1].tolist(), [0.] * WEEKS, "The claimed back is not")
             self.assertIs(mine.bidding, inputs.bidding, "The room keeps its own objective")
         weights = [row["weight"] for row in summary["title_weights"]]
         self.assertAlmostEqual(statistics.fmean(weights), 1., places=2)
@@ -475,16 +488,19 @@ class WaiverTests(unittest.TestCase):
         state = SimpleNamespace(week=3, transactions=txs, my_team=SimpleNamespace(roster_id=1))
         self.assertAlmostEqual(off_cycle_share(state), 1 / 3, msg="Mine and the unfinished week are excluded")
 
-    def test_refill_pool_waits_for_the_weekly_auction(self):
+    def test_wire_stream_follows_the_recorded_seasons(self):
+        # Two seasons: 9 is claimed at week 2 in one and untaken in the other, then dropped
+        # back and untaken at week 3 in both; 8 is a free agent the auctions never list.
         inputs = self.inputs()
-        inputs.waivers_ran = True
-        auctions = [[] for _ in range(WEEKS)]
-        auctions[1] = [([9], [5])]  # off-cycle: 9 is claimed
-        auctions[2] = [([8, 9], [-1, -1])]
-        runs = [{"p_title": .1, "leverage": [1.] * (WEEKS - 1)}] * 3
-        with patch("season.claims.run_replays", return_value=runs):
-            mine, _ = title_objective(inputs, [{"auctions": auctions, "tenures": {}, "champion": 0}])
-        self.assertEqual({r for col in mine.my_bidding.refills[1] for r in col}, {8})
+        records = []
+        for outcome in (5, -1):
+            auctions = [[] for _ in range(WEEKS)]
+            auctions[1] = [([9], [outcome])]
+            auctions[2] = [([9], [-1])]
+            records.append({"auctions": auctions})
+        stream = wire_stream(inputs, records)
+        self.assertEqual(stream[1].tolist(), [0.] * WEEKS, "Never listed, never offered to my replay: not counted")
+        self.assertEqual(stream[2, 1:4].tolist(), [6.5, 13., 0.], "Half at week 2; back on the wire at 3; unlisted after")
 
     def test_replay_chooses_among_the_best_drops(self):
         options = self.bidding.swaps(self.roster, 9, 1000, 1, 0., 3)
@@ -577,6 +593,110 @@ class WaiverTests(unittest.TestCase):
         self.assertEqual(result["p_reach_final"], .5)
         self.assertEqual(result["budget_by_week"][-1], 998,
                          "Cash retained in a season where we were cut is not a survivor's budget")
+
+    def card_state(self):
+        return SimpleNamespace(me=0, my_team=SimpleNamespace(roster=self.roster, faab_left=1000, reserve=[]),
+                               players=[SimpleNamespace(sleeper_id=str(j), name=str(j), position="WR",
+                                                        team="T", injury_status=None, source="test") for j in range(10)])
+
+    def card_records(self):
+        """Eight of each pricing of 8 and 9: (50, 50), (50, 200), (200, 50), (200, 200)."""
+        records = []
+        for _ in range(8):
+            for prices in ((50, 50), (50, 200), (200, 50), (200, 200)):
+                auctions = [[] for _ in range(WEEKS)]
+                auctions[1] = [([8, 9], list(prices))]
+                records.append({"auctions": auctions, "forecast_bars": [0.] * WEEKS})
+        return records
+
+    def card_values(self, worth):
+        """Replay stub: `worth(roster)` plus a dollar's title value, alike in every season."""
+        def values(inputs, records, variants):
+            out = []
+            for roster, budget, _ in variants:
+                t = 0.01 + budget * 4e-5 + worth(roster)
+                out.append({"p_title": t, "title_by_record": [t] * len(records), "p_reach_final": t, "p_cut_now": 0.,
+                            "p_alive_by_week": [1.] * 14, "budget_by_week": [budget] * 16, "budget_after_claims": [budget] * 16})
+            return out
+        return values
+
+    def test_card_claims_both_players_with_different_drops(self):
+        for points in self.weekly:
+            points[8] = points[9] = 25.
+        inputs = self.inputs(self.weekly[:])
+        inputs.free_agents = [8, 9]
+        with patch("season.claims.run_replays", side_effect=self.card_values(lambda r: .004 * (8 in r) + .004 * (9 in r))):
+            card = claims(self.card_state(), inputs, self.card_records())["card"]
+        self.assertEqual({c["player"]["name"] for c in card["claims"]}, {"8", "9"})
+        self.assertEqual(len({c["drop"]["name"] for c in card["claims"]}), 2, "Both can be won: distinct drops")
+        self.assertEqual([c["bid"] for c in card["claims"]], [51, 51], "Beating $50 is worth it, beating $200 is not")
+        self.assertEqual([c["p_reached"] for c in card["claims"]], [1., 1.])
+        both = next(o for o in card["outcomes"] if len(o["adds"]) == 2)
+        self.assertEqual((both["p"], both["spend"]), (.25, 102))
+
+    def test_card_makes_the_same_drop_an_alternative(self):
+        # Either player is the whole gain: claim one, and the other on the same drop only
+        # where the first loses; a dollar more on the first settles the order.
+        for points in self.weekly:
+            points[8] = points[9] = 25.
+        inputs = self.inputs(self.weekly[:])
+        inputs.free_agents = [8, 9]
+        with patch("season.claims.run_replays", side_effect=self.card_values(lambda r: .004 * (8 in r or 9 in r))):
+            card = claims(self.card_state(), inputs, self.card_records())["card"]
+        self.assertEqual({c["player"]["name"] for c in card["claims"]}, {"8", "9"})
+        self.assertEqual(len({c["drop"]["name"] for c in card["claims"]}), 1, "Never both: the same drop")
+        self.assertEqual([c["bid"] for c in card["claims"]], [52, 51])
+        self.assertEqual([c["p_reached"] for c in card["claims"]], [1., .5])
+        self.assertEqual(card["p_any_win"], .75)
+
+
+class CardTests(unittest.TestCase):
+    def setUp(self):
+        # Eight rostered bodies, free agents 8 and 9 each droppable for 4 or 5; four seasons.
+        base, self.n = tuple(range(8)), 4
+        self.values = Values(base, [0, 50, 100], np.array([[0.] * 4, [.05] * 4, [.1] * 4]))
+        for j, worth in ((8, .02), (9, .03)):
+            self.values.single((j, 4), np.full((3, 4), worth))
+            self.values.single((j, 5), np.full((3, 4), worth - .005))
+        self.outcomes = {8: np.array([10, 30, -1, -2]), 9: np.array([20, 20, 5, 95])}
+        self.scorer = Scorer(self.values, self.outcomes, 4, 100, 8, set())
+
+    def test_same_drop_claims_are_alternatives(self):
+        won, reached, left = self.scorer.resolve([Claim(9, 4, 25), Claim(8, 4, 15)])
+        self.assertEqual(won[0].tolist(), [True, True, True, False])
+        self.assertEqual(reached[1].tolist(), [False, False, False, True], "Reached only where the first lost")
+        self.assertEqual(left.tolist(), [75, 75, 75, 85])
+
+    def test_fallback_drop_on_the_same_player(self):
+        won, _, _ = self.scorer.resolve([Claim(9, 4, 25), Claim(8, 4, 15), Claim(8, 5, 15)])
+        self.assertEqual(won[2].tolist(), [True, False, True, False], "Tried where the drop is gone and he is not yet mine")
+
+    def test_cash_open_spots_and_free_adds(self):
+        _, reached, _ = self.scorer.resolve([Claim(9, 4, 80), Claim(8, 5, 25)])
+        self.assertEqual(reached[1].tolist(), [False, False, False, True], "$25 after $80 exceeds the $100")
+        won, _, _ = self.scorer.resolve([Claim(9, 4, 25), Claim(8, 4, 0, free=True)])
+        self.assertTrue(won[1].all() and not won[0].any(), "A free add now takes the drop first")
+        self.assertFalse(self.scorer.resolve([Claim(8, None, 1)])[1].any(), "A full roster reaches no claim without a drop")
+        roomy = Scorer(self.values, self.outcomes, 4, 100, 9, set())
+        won, reached, _ = roomy.resolve([Claim(9, None, 0), Claim(8, None, 1)])
+        self.assertEqual((won[1].tolist(), reached[0].tolist()),
+                         ([False, False, True, True], [True, True, False, False]), "One open spot: the higher bid first")
+
+    def test_values_blend_a_replayed_point_with_the_estimated_shape(self):
+        roster = (0, 1, 2, 3, 5, 6, 7, 9)
+        self.values.learn(roster, 75, np.full(4, .2))
+        idx = np.arange(4)
+        self.assertAlmostEqual(self.values.at(roster, [(9, 4)], 75, idx)[0], .2, msg="The replayed point itself")
+        self.assertAlmostEqual(self.values.at(roster, [(9, 4)], 50, idx)[0], .2 - .025, msg="Down the base's slope")
+        self.assertAlmostEqual(self.values.at((0, 1, 2, 3, 5, 6, 7, 8), [(8, 4)], 50, idx)[0], .07, msg="Additive only")
+
+    def test_bid_levels_and_tie_breaking(self):
+        self.assertEqual(self.scorer.levels(9, None), [0, 1, 6, 21, 96])
+        self.assertEqual(self.scorer.levels(8, 2), [0, 31])
+        card = _break_ties(self.scorer, [Claim(9, 4, 20), Claim(8, 4, 20), Claim(8, 5, 20)])
+        self.assertEqual([c.bid for c in card], [22, 21, 20], "Each dependent tie resolved by a dollar")
+        card = _break_ties(self.scorer, [Claim(9, 4, 20), Claim(8, 5, 20)])
+        self.assertEqual([c.bid for c in card], [20, 20], "Independent claims may tie")
 
 
 if __name__ == "__main__":

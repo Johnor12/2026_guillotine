@@ -74,6 +74,7 @@
 
   section { margin-top: 30px; }
   section > h2 { font-size: 17px; line-height: 1.25; font-weight: 700; margin: 0 0 4px; }
+  section > h3 { font-size: 13px; font-weight: 650; color: var(--muted); margin: 14px 0 6px; }
   section > .hint { color: var(--muted); font-size: 12.5px; margin: 0 0 12px; max-width: 100ch; }
 
   .tiles { display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 1px; overflow: hidden; margin-bottom: 12px; padding: 0; }
@@ -204,6 +205,23 @@
     <section id="claims">
       <h2 id="claimsTitle">Waiver claims</h2>
       <p class="hint" id="claimsHint"></p>
+      <h3 id="cardTitle">Bidding card</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th class="num">#</th>
+            <th class="num">Bid</th>
+            <th>Player</th>
+            <th>Drop</th>
+            <th class="num" title="Share of simulated seasons in which this claim wins">Wins</th>
+            <th class="num" title="Share of seasons in which the claim is still valid when Sleeper reaches it: its player not yet yours, its drop still on your roster, cash enough">Valid</th>
+            <th class="num" title="Title odds of the card without this claim, relative to standing pat">Without it</th>
+          </tr></thead>
+          <tbody id="cardBody"></tbody>
+        </table>
+      </div>
+      <p class="sub" id="cardNote"></p>
+      <h3>Each player alone</h3>
       <div class="table-wrap">
         <table>
           <thead><tr>
@@ -364,6 +382,29 @@ function renderWeek(d) {
   document.getElementById("lineupNote").textContent = note.join(" ");
 }
 
+function renderCard(d) {
+  const card = d.claims.card;
+  const free = card.claims.every(x => x.bid == null);
+  document.getElementById("cardTitle").textContent = !card.claims.length ? "No pickup improves your title odds"
+    : free ? "Free adds, in this order" : "Bidding card";
+  const rows = card.claims.map(x => h("tr", {},
+    h("td", { class: "num" }, String(x.order)),
+    h("td", { class: "num" }, h("span", { class: "bid" }, x.bid == null ? "free" : money(x.bid))),
+    playerCell(x.player, [x.player.injury_status ? [" ", status(x.player)] : null,
+      x.waiver_clears ? h("div", { class: "cell-note" }, `on waivers · clears ~${when(x.waiver_clears)}`) : null]),
+    h("td", {}, x.drop ? [x.drop.name, h("div", { class: "cell-note" }, `${x.drop.position} · ${fmt(x.drop.ros_per_week)}/wk`)] : "open spot",
+      x.to_reserve.length ? h("div", { class: "cell-note" }, `to IR: ${x.to_reserve.join(", ")}`) : null),
+    h("td", { class: "num" }, x.bid == null ? "—" : pct(x.p_win)),
+    h("td", { class: "num" }, x.bid == null ? "—" : pct(x.p_reached)),
+    h("td", { class: `num ${relClass(x.title_without)}` }, rel(x.title_without))));
+  document.getElementById("cardBody").replaceChildren(...rows);
+  const outcomes = card.outcomes.filter(o => o.adds.length).slice(0, 4)
+    .map(o => `${o.adds.join(" + ")} ${pct(o.p)} (${rel(o.title)}, $${o.spend})`).join("; ");
+  document.getElementById("cardNote").textContent = !card.claims.length ? ""
+    : `Together: title odds ${rel(card.relative)} (± ${fmt(card.relative_se)}) against standing pat, expected spend $${card.expected_spend}, something lands ${pct(card.p_any_win)} of the time.`
+      + (outcomes ? ` Likely outcomes: ${outcomes}.` : "");
+}
+
 function renderClaims(d) {
   const c = d.claims;
   // After the weekly run, only players dropped since are still on waivers and need a claim.
@@ -371,12 +412,13 @@ function renderClaims(d) {
   document.getElementById("claimsTitle").textContent = !d.waivers_ran ? `Waiver claims for week ${d.week}`
     : c.pending ? `Waivers and free agents · week ${d.week}` : `Free agents · week ${d.week}`;
   document.getElementById("claimsHint").textContent = !d.waivers_ran
-    ? `Claims have not processed yet. Each bid maximizes modeled title odds; odds are relative to standing pat with $${c.budget}. Treat these bids as alternatives.`
+    ? `Claims have not processed yet. The card is the set of claims to enter, optimized together the way Sleeper processes them: highest bid first, equal bids in the order listed, a claim failing when its player is already yours, its drop is gone or the cash is spent. Odds are relative to standing pat with $${c.budget}.`
     : c.pending
-    ? `This week's claims have processed. Players dropped since are still on waivers: a claim at the bid shown processes when he clears (time under his name), and opponents bid off-cycle at ${pct(d.model.off_cycle_share)} of their weekly-run rate. Everyone else is a free pickup right now. Odds are relative to standing pat with $${c.budget}; treat these as alternatives.`
+    ? `This week's claims have processed. Players dropped since are still on waivers: a claim processes when he clears (time under his name), and opponents bid off-cycle at ${pct(d.model.off_cycle_share)} of their weekly-run rate. Everyone else is a free pickup right now, added ahead of any claim. The card is optimized together; odds are relative to standing pat with $${c.budget}.`
     : (d.week === 1
-      ? "Week 1 is open free agency: every add is $0 and first come, so the table ranks pickups by what they do to your title odds. Claims with bids begin after the week-1 cuts."
-      : "This week's claims have already processed; anyone below is a free pickup right now, ranked by what he does to your title odds.");
+      ? "Week 1 is open free agency: every add is $0 and first come, so the card lists the pickups to make, in order, and the table ranks each alone by what he does to your title odds. Claims with bids begin after the week-1 cuts."
+      : "This week's claims have already processed; the card lists the free pickups to make now, in order, and the table ranks each alone.");
+  renderCard(d);
   const rows = c.candidates.slice(0, 20).map(x => {
     const worth = x.title_at_optimal > 0.05 || x.title_if_free > 0.05;
     const market = x.clearing.p50 == null ? (c.pending && isClaim(x) ? "uncontested" : "—")
@@ -415,7 +457,7 @@ function renderClaims(d) {
           h("td", { class: `num ${relClass(r.relative)}` }, rel(r.relative))))))
       : h("p", { style: "margin:0" }, "Priced once claims are pending: your title odds at each remaining budget, if you stood pat this week."));
   document.getElementById("claimsNote").textContent =
-    `Acquisitions and drops consider all ${d.model.bid_lookahead_weeks} remaining weeks through Week 17, including byes and superflex. Each roster and cash variant is replayed across ${d.model.race_sims} opponent seasons at the future bid value that replays best for that cash. Winning and losing outcomes retain their connection to that season's future opportunities. This compares continuation plans, not every possible future decision. The ceiling is the modeled break-even: the most a win is worth to your title odds. Claims are alternatives, not a combined spending plan. Opponents mix spending and saving habits; participation and bid sizes learn from submitted bids, including losses.`;
+    `Acquisitions and drops consider all ${d.model.bid_lookahead_weeks} remaining weeks through Week 17, including byes and superflex. Each roster and cash variant is replayed across ${d.model.race_sims} opponent seasons at the future bid value that replays best for that cash. Winning and losing outcomes retain their connection to that season's future opportunities. This compares continuation plans, not every possible future decision. The ceiling is the modeled break-even: the most a win is worth to your title odds. The card combines claims: claims naming the same drop are alternatives, a player may be claimed again with another drop as a fallback, every combination is scored per simulated season the way Sleeper processes it, and a claim joins only when it lifts the card's replayed title odds with confidence. Opponents mix spending and saving habits; participation and bid sizes learn from submitted bids, including losses.`;
 }
 
 function renderChart(d) {

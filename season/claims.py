@@ -3,16 +3,17 @@
 Lineup: the greedy optimum on this week's projections (state.lineup), compared with the
 starters Sleeper currently has set for me.
 
-Objective: a drop's spot can be refilled from the wire the room leaves untaken, and my
-bidding values each week's points alike or by d log P(title) / d(points), whichever
-replays to better title odds (title_objective). Screening, drops, ceilings and my future
-bidding use it; this week's bids are chosen by replayed title odds.
+Objective: a drop's spot is refilled week by week from what the room leaves on the wire
+in the recorded seasons (wire_stream), and my bidding values each week's points alike
+or by d log P(title) / d(points), whichever replays to better title odds
+(title_objective). Screening, drops, ceilings and my future bidding use it; this week's
+bids are chosen by replayed title odds.
 
 Claims: every candidate's drop is chosen by replay among the few that waivers.Bidding
 ranks best (the heuristic prices a fixed roster, where a future lineup expansion is an
 empty seat, so its favorite can give up a starter today for depth the wire would supply
-anyway), and the bid is whatever maximizes replayed title odds anywhere in the budget.
-The standing roster is replayed at several budgets under every future bid price
+anyway), and his bid alone is whatever maximizes replayed title odds anywhere in the
+budget. The standing roster is replayed at several budgets under every future bid price
 (race.PRICES, per point of a claim's season gain); that grid is the value of cash, and
 the price that replays best at each budget is what every variant at that budget is
 priced under, so saving or spending is whatever the seasons reward. After this week's run, only players
@@ -23,6 +24,13 @@ otherwise, which keeps the dependence between prices and future opportunities. O
 are relative to standing pat. A player the variant holds comes off the recorded
 roster of the opponent who bought him (race.replay); what that opponent would have
 done with the cash instead is not replayed.
+
+Card: the recommendation is the whole set of claims to enter (card.py), built from
+those single valuations: each claim option (a candidate and one of his drops, or a free
+add) may join at any bid, claims naming the same drop are alternatives and a player may
+be claimed again with another drop as a fallback, and the card is scored per recorded
+season by walking it the way Sleeper processes claims. Only my side bids this way; the
+room and my replayed future self keep race.py's one offer per candidate.
 """
 
 from __future__ import annotations
@@ -30,10 +38,12 @@ from __future__ import annotations
 import dataclasses
 import heapq
 import statistics
-from collections import Counter
 
-from shared.league import WEEK_ROSTER_SIZE, WEEKS
+import numpy as np
 
+from shared.league import POSITIONS, WEEK_ROSTER_SIZE, WEEKS
+
+from .card import Claim, Scorer, Values, build, paired
 from .race import CLAIM_CANDIDATES, PRICES, Market, RaceInputs, apply_offer, cut_risk, fit_roster, run_replays
 from .state import SeasonState, lineup
 
@@ -41,20 +51,39 @@ BUDGET_STEPS = (0, 25, 50, 100, 200, 400, 700)
 DROP_CHOICES = 3  # drops per candidate compared by replay, best heuristic gain first
 CANDIDATES_BY_WEEK = 10  # streamers: free agents that would start for me this week
 PRICED_CANDIDATES = 12  # free agents whose value is priced across the whole bid range
-UNTAKEN = 0.5  # a free agent the room takes in fewer of its seasons refills a dropped spot
+
+
+def wire_stream(inputs: RaceInputs, records: list[dict]) -> np.ndarray:
+    """Expected points, by position and week, of the best body the room leaves on the
+    wire that week: listed at that week's auctions (in play, race.CLAIM_CANDIDATES by
+    rest-of-season points) and untaken, which is what my replayed agent can pick up.
+    The mean over the recorded seasons of each season's best, so a wire that always
+    holds some starter counts even when it is a different one every season. A free
+    agent the auctions never list is not counted, since the replay never offers him."""
+    points = np.asarray(inputs.weekly)
+    pos = np.asarray(inputs.positions)
+    stream = np.zeros((4, WEEKS))
+    for rec in records:
+        for w in range(inputs.week0, WEEKS):
+            available = np.zeros(len(pos), dtype=bool)
+            for candidates, winning in rec["auctions"][w]:
+                listed, outcome = np.asarray(candidates, dtype=np.int64), np.asarray(winning)
+                available[listed[outcome == -1]] = True
+            for p in range(4):
+                mask = available & (pos == p)
+                if mask.any():
+                    stream[p, w] += points[w][mask].max()
+    return stream / len(records)
 
 
 def title_objective(inputs: RaceInputs, records: list[dict]) -> tuple[RaceInputs, dict | None]:
     """`inputs` with the recorded market my future bids are shaded against, and my
-    bidding refilling drops from the untaken wire and weighting weeks by whichever
+    bidding refilling drops from the recorded wire and weighting weeks by whichever
     objective replays the standing roster to better title odds, plus a summary of that
     choice.
 
-    The refill pool is today's free agents the room takes (claim or free pickup) in
-    fewer than UNTAKEN of its seasons by the next weekly auction, counting any off-cycle
-    auction before it; they are assumed to stay available. Title weights come from the
-    points objective's replay at its best price, normalized to average 1 so gains keep
-    their points-a-week scale. They are a first-order fit
+    Title weights come from the points objective's replay at its best price, normalized
+    to average 1 so gains keep their points-a-week scale. They are a first-order fit
     computed once, so a policy on them can give up points in weeks that only look safe;
     the replay decides.
     """
@@ -62,27 +91,22 @@ def title_objective(inputs: RaceInputs, records: list[dict]) -> tuple[RaceInputs
     if not inputs.alive[inputs.me]:
         return inputs, None
     w = inputs.week0
-    pool = []
-    weekly = w + 1 if inputs.waivers_ran else w
-    auction = next((v for v in range(weekly, WEEKS) if records[0]["auctions"][v]), None)
-    if auction is not None:
-        taken = Counter(j for rec in records for v in range(w, auction + 1) for candidates, winning in rec["auctions"][v]
-                        for j, outcome in zip(candidates, winning) if outcome != -1)
-        pool = [j for j in inputs.free_agents if taken[j] < UNTAKEN * len(records)]
+    stream = wire_stream(inputs, records)
     roster, budget = tuple(inputs.rosters[inputs.me]), inputs.budgets[inputs.me]
-    points = dataclasses.replace(inputs, my_bidding=inputs.my_bidding.objective(inputs.my_bidding.weights, pool))
+    points = dataclasses.replace(inputs, my_bidding=inputs.my_bidding.objective(inputs.my_bidding.weights, stream))
     runs = run_replays(points, records, [(roster, budget, s) for s in PRICES])
     price, points_run = max(zip(PRICES, runs), key=lambda item: item[1]["p_title"])
     scale = len(points_run["leverage"]) / sum(points_run["leverage"])
     weights = [0.0] * w + [x * scale for x in points_run["leverage"]]
-    titled = dataclasses.replace(inputs, my_bidding=points.my_bidding.objective(weights, pool))
+    titled = dataclasses.replace(inputs, my_bidding=points.my_bidding.objective(weights, stream))
     titled_run = run_replays(titled, records, [(roster, budget, price)])[0]
     chosen = "title_weighted" if titled_run["p_title"] > points_run["p_title"] else "points"
     return (titled if chosen == "title_weighted" else points), {
         "chosen": chosen,
         "p_title": {"points": round(points_run["p_title"], 4), "title_weighted": round(titled_run["p_title"], 4)},
         "title_weights": [{"week": v + 1, "weight": round(weights[v], 3)} for v in range(w, WEEKS)],
-        "refill_pool": len(pool),
+        "wire": [{"week": v + 1, **{p: round(float(stream[k, v]), 1) for k, p in enumerate(POSITIONS)}}
+                 for v in range(w, WEEKS)],
     }
 
 
@@ -194,20 +218,22 @@ def claims(state: SeasonState, inputs: RaceInputs, records: list[dict]) -> dict:
     # pickup) keeps the drop that replays best; then the price grid only for the ones
     # worth paying for: a player who does not help for free does not help for money.
     swaps = [offer for j in candidates for offer in choices[j]]
+    single_runs = {(o.player, o.drop): {} for o in swaps}
     free_value, offers = {}, {}
     for offer, run in zip(swaps, run_replays(inputs, records, [(with_offer(o), budget, price) for o in swaps])):
+        single_runs[offer.player, offer.drop][budget] = run
         if offer.player not in free_value or run["p_title"] > free_value[offer.player]["p_title"]:
             free_value[offer.player], offers[offer.player] = run, offer
     variant_rosters = {j: with_offer(offers[j]) for j in candidates}
     priced = [j for j in candidates if not inputs.waivers_ran or j in inputs.on_waivers]
     paid = [j for j in sorted(priced, key=lambda j: -free_value[j]["p_title"]) if free_value[j]["p_title"] > v0][:PRICED_CANDIDATES]
     tasks = [(j, b) for j in paid for b in budgets if b < budget]
-    paid_runs = dict(zip(tasks, run_replays(inputs, records, [(variant_rosters[j], b, price_at[b]) for j, b in tasks])))
+    for (j, b), run in zip(tasks, run_replays(inputs, records, [(variant_rosters[j], b, price_at[b]) for j, b in tasks])):
+        single_runs[offers[j].player, offers[j].drop][b] = run
     grids: dict[int, list[tuple[int, float]]] = {}
     record_grids = {}
     for j in candidates:
-        runs = [(budget, free_value[j])] + [(b, paid_runs[j, b]) for b in budgets if b < budget and j in paid]
-        runs.sort(key=lambda item: item[0])
+        runs = sorted(single_runs[offers[j].player, offers[j].drop].items())
         grids[j] = [(b, run["p_title"]) for b, run in runs]
         record_grids[j] = [(b, run["title_by_record"]) for b, run in runs]
 
@@ -292,8 +318,85 @@ def claims(state: SeasonState, inputs: RaceInputs, records: list[dict]) -> dict:
         )
     rows.sort(key=lambda r: (-r["title_at_optimal"], -r["title_if_free"], -r["ros_per_week"], r["name"]))
 
+    # The card: every swap that beats standing pat for free is a claim option (a free
+    # add after the run, or a bid on a player still on waivers); the room's clearing
+    # prices and the replayed grids score any card the way Sleeper processes it.
+    table = Values(roster, budgets, np.array([baseline[price_at[b]][k][1]["title_by_record"] for k, b in enumerate(budgets)]))
+    base_full = table.grids[roster][-1]
+    for j in candidates:
+        best = (offers[j].player, offers[j].drop)
+        for offer in sorted(choices[j], key=lambda o: (o.player, o.drop) != best):
+            swap = (offer.player, offer.drop)
+            runs = single_runs[swap]
+            if len(runs) == len(budgets):
+                grid = np.array([runs[b]["title_by_record"] for b in budgets])
+                table.grids[with_offer(offer)] = grid
+                table.single(swap, grid - table.grids[roster])
+            else:
+                # Replayed at the full budget only: his player's replayed drop lends the budget profile.
+                full = np.array(runs[budget]["title_by_record"])
+                table.learn(with_offer(offer), budget, full)
+                effect = np.tile(full - base_full, (len(budgets), 1))
+                if swap != best:
+                    effect += table.singles[best] - table.singles[best][-1]
+                table.single(swap, effect)
+    options = [Claim(o.player, o.drop, 0, free=o.player not in priced) for j in paid + [j for j in candidates if j not in priced]
+               for o in choices[j] if single_runs[o.player, o.drop][budget]["p_title"] > v0]
+    if not pending:
+        options = [dataclasses.replace(o, free=True) for o in options]
+    eligible = {i for i in range(len(positions)) if inputs.bidding.ir_until[i] > w}
+    scorer = Scorer(table, {j: np.array(outs) for j, outs in outcomes.items() if outs}, len(records), budget,
+                    WEEK_ROSTER_SIZE[w], eligible)
+
+    replayed = []
+
+    def replay_rosters(variants: list[tuple[tuple[int, ...], int]]) -> dict[tuple[tuple[int, ...], int], np.ndarray]:
+        """Each (roster, cash) pair's per-season title values, priced as the nearest grid budget is."""
+        tasks = [(r, b, price_at[min(budgets, key=lambda g: abs(g - b))]) for r, b in variants]
+        replayed.extend(variants)
+        return {v: np.array(run["title_by_record"]) for v, run in zip(variants, run_replays(inputs, records, tasks))}
+
+    card = build(scorer, options, replay_rosters)
+    card_value, card_titles, resolution = scorer.evaluate(card)
+    _, card_se = paired(card_titles, base_full)
+    outcomes_reached = sorted(resolution["rosters"].values(), key=lambda item: -len(item[3]))
+    claims_out = []
+    for k, claim in enumerate(card):
+        without = scorer.evaluate(card[:k] + card[k + 1:])[0]
+        offer = next(o for o in choices[claim.player] if (o.player, o.drop) == claim.swap)
+        claims_out.append({
+            "order": k + 1,
+            "bid": None if claim.free else claim.bid,
+            "player": player(claim.player),
+            "waiver_clears": inputs.on_waivers.get(claim.player),
+            "drop": player(claim.drop) if claim.drop is not None else None,
+            "to_reserve": reserve_moves(with_offer(offer)),
+            "p_reached": round(float(resolution["reached"][k].mean()), 3),
+            "p_win": round(float(resolution["won"][k].mean()), 3),
+            "title_without": _relative(without, v0),
+        })
+
     return {
         "pending": pending,
+        "card": {
+            "claims": claims_out,
+            "p_title": round(card_value, 4),
+            "relative": _relative(card_value, v0),
+            "relative_se": round(card_se / v0 * 100, 1) if v0 > 0 else 0.0,
+            "expected_spend": round(float(budget - resolution["left"].mean())),
+            "p_any_win": round(float(resolution["won"].any(0).mean()), 3),
+            "replays": len(replayed),
+            "outcomes": [
+                {
+                    "adds": [state.players[j].name for j, _ in swaps_won],
+                    "drops": [state.players[d].name for _, d in swaps_won if d is not None],
+                    "spend": int(budget - resolution["left"][idx[0]]),
+                    "p": round(len(idx) / len(records), 3),
+                    "title": _relative(float(card_titles[idx].mean()), float(base_full[idx].mean())),
+                }
+                for _, swaps_won, _, idx in outcomes_reached[:8]
+            ],
+        },
         "price": price,
         "budget": budget,
         "baseline": [
