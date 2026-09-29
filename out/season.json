@@ -1,27 +1,27 @@
 {
  "league_name": "Gnosis Guillotine",
- "week": 3,
- "fetched_at": "2026-09-25T19:21:39+00:00",
- "alive": 28,
- "waivers_ran": true,
+ "week": 4,
+ "fetched_at": "2026-09-29T13:40:41+00:00",
+ "alive": 26,
+ "waivers_ran": false,
  "value_input": "DraftSharks weekly projections blended 2:1 with Sleeper's weekly projections in this league's scoring; Sleeper alone for players DraftSharks does not project",
  "method": "Agent-based season race: optimal weekly lineups under the draft model's noise, bottom two cut, survivors bid FAAB on the wire; see season/run.py and season/race.py.",
  "me": {
   "roster_id": 1,
   "name": "Guh-football",
   "faab_left": 998,
-  "p_cut_now": 0.0127,
-  "p_reach_final": 0.3726,
-  "p_title": 0.2227,
+  "p_cut_now": 0.0195,
+  "p_reach_final": 0.3862,
+  "p_title": 0.2266,
   "rank_by_title": 1,
   "bar_now": {
-   "mean": 40.6,
-   "p10": 31.1,
-   "p50": 40.6,
-   "p90": 49.4
+   "mean": 45.3,
+   "p10": 36.4,
+   "p50": 45.6,
+   "p90": 54.0
   },
   "lineup": {
-   "total": 82.1,
+   "total": 81.6,
    "slots": [
     {
      "slot": "QB",
@@ -29,8 +29,8 @@
      "name": "Sam Darnold",
      "position": "QB",
      "team": "SEA",
-     "points": 15.5,
-     "ros_per_week": 13.3,
+     "points": 15.38,
+     "ros_per_week": 13.16,
      "injury_status": null,
      "source": "blend"
     },
@@ -40,8 +40,8 @@
      "name": "Kenneth Walker",
      "position": "RB",
      "team": "KC",
-     "points": 17.79,
-     "ros_per_week": 15.88,
+     "points": 17.21,
+     "ros_per_week": 15.99,
      "injury_status": null,
      "source": "blend"
     },
@@ -51,8 +51,8 @@
      "name": "Xavier Worthy",
      "position": "WR",
      "team": "KC",
-     "points": 9.26,
-     "ros_per_week": 7.77,
+     "points": 8.54,
+     "ros_per_week": 7.66,
      "injury_status": null,
      "source": "blend"
     },
@@ -62,8 +62,8 @@
      "name": "Wan'Dale Robinson",
      "position": "WR",
      "team": "TEN",
-     "points": 7.15,
-     "ros_per_week": 7.53,
+     "points": 7.91,
+     "ros_per_week": 7.96,
      "injury_status": null,
      "source": "blend"
     },
@@ -73,8 +73,8 @@
      "name": "Harold Fannin",
      "position": "TE",
      "team": "CLE",
-     "points": 12.07,
-     "ros_per_week": 12.1,
+     "points": 13.02,
+     "ros_per_week": 12.3,
      "injury_status": null,
      "source": "blend"
     },
@@ -84,8 +84,8 @@
      "name": "Brenton Strange",
      "position": "TE",
      "team": "JAX",
-     "points": 10.32,
-     "ros_per_week": 10.6,
+     "points": 11.12,
+     "ros_per_week": 10.63,
      "injury_status": null,
      "source": "blend"
     },
@@ -95,8 +95,8 @@
      "name": "Cade Otton",
      "position": "TE",
      "team": "TB",
-     "points": 9.97,
-     "ros_per_week": 9.13,
+     "points": 8.37,
+     "ros_per_week": 8.77,
      "injury_status": null,
      "source": "blend"
     }
@@ -108,8 +108,18 @@
      "position": "QB",
      "team": "CHI",
      "points": 0.0,
-     "ros_per_week": 16.88,
-     "injury_status": "Doubtful",
+     "ros_per_week": 16.76,
+     "injury_status": "Out",
+     "source": "blend"
+    },
+    {
+     "player_id": "13311",
+     "name": "Chris Bell",
+     "position": "WR",
+     "team": "MIA",
+     "points": 6.25,
+     "ros_per_week": 5.37,
+     "injury_status": null,
      "source": "blend"
     },
     {
@@ -118,128 +128,121 @@
      "position": "RB",
      "team": "SEA",
      "points": 0.0,
-     "ros_per_week": 3.39,
+     "ros_per_week": 3.63,
      "injury_status": "PUP",
      "source": "blend"
     }
    ],
    "unvalued": [],
-   "current_total": 82.1,
+   "current_total": 81.5,
    "current_matches": true,
    "start": [],
    "sit": []
   },
   "outlook": [
    {
-    "week": 3,
-    "my_points": 82.1,
-    "bar_mean": 40.6,
-    "p_alive": 0.989,
-    "budget": 998
-   },
-   {
     "week": 4,
-    "my_points": 86.4,
-    "bar_mean": 49.2,
-    "p_alive": 0.9748,
+    "my_points": 81.5,
+    "bar_mean": 45.3,
+    "p_alive": 0.9741,
     "budget": 998
    },
    {
     "week": 5,
-    "my_points": 62.3,
-    "bar_mean": 51.8,
-    "p_alive": 0.8475,
-    "budget": 882
+    "my_points": 67.1,
+    "bar_mean": 50.8,
+    "p_alive": 0.8185,
+    "budget": 998
    },
    {
     "week": 6,
-    "my_points": 86.2,
+    "my_points": 86.9,
     "bar_mean": 52.4,
-    "p_alive": 0.8268,
-    "budget": 788
+    "p_alive": 0.8019,
+    "budget": 911
    },
    {
     "week": 7,
-    "my_points": 74.7,
-    "bar_mean": 59.1,
-    "p_alive": 0.8142,
-    "budget": 700
+    "my_points": 81.0,
+    "bar_mean": 58.7,
+    "p_alive": 0.7855,
+    "budget": 827
    },
    {
     "week": 8,
-    "my_points": 85.0,
-    "bar_mean": 68.6,
-    "p_alive": 0.7953,
-    "budget": 506
+    "my_points": 92.2,
+    "bar_mean": 67.7,
+    "p_alive": 0.7668,
+    "budget": 626
    },
    {
     "week": 9,
-    "my_points": 85.2,
-    "bar_mean": 83.8,
-    "p_alive": 0.789,
-    "budget": 435
+    "my_points": 91.2,
+    "bar_mean": 83.5,
+    "p_alive": 0.7592,
+    "budget": 550
    },
    {
     "week": 10,
-    "my_points": 77.7,
-    "bar_mean": 88.5,
-    "p_alive": 0.7766,
-    "budget": 282
+    "my_points": 84.5,
+    "bar_mean": 88.6,
+    "p_alive": 0.7457,
+    "budget": 399
    },
    {
     "week": 11,
-    "my_points": 74.2,
-    "bar_mean": 94.6,
-    "p_alive": 0.7464,
-    "budget": 245
+    "my_points": 80.6,
+    "bar_mean": 94.3,
+    "p_alive": 0.7084,
+    "budget": 355
    },
    {
     "week": 12,
-    "my_points": 93.2,
-    "bar_mean": 118.1,
-    "p_alive": 0.7192,
-    "budget": 222
+    "my_points": 99.9,
+    "bar_mean": 117.8,
+    "p_alive": 0.6819,
+    "budget": 324
    },
    {
     "week": 13,
-    "my_points": 92.2,
-    "bar_mean": 124.0,
-    "p_alive": 0.6712,
-    "budget": 186
+    "my_points": 98.4,
+    "bar_mean": 123.0,
+    "p_alive": 0.6411,
+    "budget": 279
    },
    {
     "week": 14,
-    "my_points": 108.7,
-    "bar_mean": 158.3,
-    "p_alive": 0.5954,
-    "budget": 157
+    "my_points": 116.0,
+    "bar_mean": 157.8,
+    "p_alive": 0.58,
+    "budget": 246
    },
    {
     "week": 15,
-    "my_points": 107.3,
-    "bar_mean": 183.0,
-    "p_alive": 0.4102,
-    "budget": 150
+    "my_points": 114.5,
+    "bar_mean": 183.5,
+    "p_alive": 0.4137,
+    "budget": 230
    },
    {
     "week": 16,
-    "my_points": 109.1,
+    "my_points": 115.1,
     "bar_mean": null,
     "p_alive": null,
-    "budget": 145
+    "budget": 223
    },
    {
     "week": 17,
-    "my_points": 108.6,
+    "my_points": 115.2,
     "bar_mean": null,
     "p_alive": null,
-    "budget": 144
+    "budget": 222
    }
   ]
  },
  "claims": {
   "pending": true,
-  "price": 0.7,
+  "price": 0.5,
   "budget": 998,
   "baseline": [
    {
@@ -247,51 +250,51 @@
     "budgets": [
      {
       "budget": 0,
-      "p_title": 0.0266,
-      "p_reach_final": 0.0516,
-      "relative": -90.0
+      "p_title": 0.0282,
+      "p_reach_final": 0.0537,
+      "relative": -89.8
      },
      {
       "budget": 298,
-      "p_title": 0.1413,
-      "p_reach_final": 0.2293,
-      "relative": -47.0
+      "p_title": 0.1603,
+      "p_reach_final": 0.2541,
+      "relative": -42.2
      },
      {
       "budget": 598,
-      "p_title": 0.1933,
-      "p_reach_final": 0.3043,
-      "relative": -27.6
+      "p_title": 0.2086,
+      "p_reach_final": 0.3228,
+      "relative": -24.9
      },
      {
       "budget": 798,
-      "p_title": 0.2202,
-      "p_reach_final": 0.3417,
-      "relative": -17.5
+      "p_title": 0.2357,
+      "p_reach_final": 0.3588,
+      "relative": -15.1
      },
      {
       "budget": 898,
-      "p_title": 0.2341,
-      "p_reach_final": 0.3623,
-      "relative": -12.3
+      "p_title": 0.2496,
+      "p_reach_final": 0.3766,
+      "relative": -10.1
      },
      {
       "budget": 948,
-      "p_title": 0.2406,
-      "p_reach_final": 0.3704,
-      "relative": -9.8
+      "p_title": 0.2545,
+      "p_reach_final": 0.3839,
+      "relative": -8.3
      },
      {
       "budget": 973,
-      "p_title": 0.2429,
-      "p_reach_final": 0.3732,
-      "relative": -9.0
+      "p_title": 0.2574,
+      "p_reach_final": 0.3875,
+      "relative": -7.3
      },
      {
       "budget": 998,
-      "p_title": 0.2467,
-      "p_reach_final": 0.378,
-      "relative": -7.5
+      "p_title": 0.2616,
+      "p_reach_final": 0.3921,
+      "relative": -5.8
      }
     ]
    },
@@ -300,51 +303,51 @@
     "budgets": [
      {
       "budget": 0,
-      "p_title": 0.0266,
-      "p_reach_final": 0.0516,
-      "relative": -90.0
+      "p_title": 0.0282,
+      "p_reach_final": 0.0537,
+      "relative": -89.8
      },
      {
       "budget": 298,
-      "p_title": 0.1556,
-      "p_reach_final": 0.2509,
-      "relative": -41.7
+      "p_title": 0.1728,
+      "p_reach_final": 0.2728,
+      "relative": -37.7
      },
      {
       "budget": 598,
-      "p_title": 0.2087,
-      "p_reach_final": 0.3279,
-      "relative": -21.8
+      "p_title": 0.221,
+      "p_reach_final": 0.3418,
+      "relative": -20.4
      },
      {
       "budget": 798,
-      "p_title": 0.2391,
-      "p_reach_final": 0.37,
-      "relative": -10.4
+      "p_title": 0.2507,
+      "p_reach_final": 0.3814,
+      "relative": -9.7
      },
      {
       "budget": 898,
-      "p_title": 0.2508,
-      "p_reach_final": 0.3868,
-      "relative": -6.0
+      "p_title": 0.2659,
+      "p_reach_final": 0.3987,
+      "relative": -4.2
      },
      {
       "budget": 948,
-      "p_title": 0.258,
-      "p_reach_final": 0.3969,
-      "relative": -3.3
+      "p_title": 0.2726,
+      "p_reach_final": 0.4078,
+      "relative": -1.8
      },
      {
       "budget": 973,
-      "p_title": 0.2615,
-      "p_reach_final": 0.4006,
-      "relative": -2.0
+      "p_title": 0.2752,
+      "p_reach_final": 0.4113,
+      "relative": -0.8
      },
      {
       "budget": 998,
-      "p_title": 0.2633,
-      "p_reach_final": 0.4038,
-      "relative": -1.3
+      "p_title": 0.2776,
+      "p_reach_final": 0.4137,
+      "relative": 0.0
      }
     ]
    },
@@ -353,51 +356,51 @@
     "budgets": [
      {
       "budget": 0,
-      "p_title": 0.0266,
-      "p_reach_final": 0.0516,
-      "relative": -90.0
+      "p_title": 0.0282,
+      "p_reach_final": 0.0537,
+      "relative": -89.8
      },
      {
       "budget": 298,
-      "p_title": 0.1666,
-      "p_reach_final": 0.2673,
-      "relative": -37.6
+      "p_title": 0.179,
+      "p_reach_final": 0.2825,
+      "relative": -35.5
      },
      {
       "budget": 598,
-      "p_title": 0.2182,
-      "p_reach_final": 0.3436,
-      "relative": -18.2
+      "p_title": 0.2273,
+      "p_reach_final": 0.3514,
+      "relative": -18.1
      },
      {
       "budget": 798,
-      "p_title": 0.2449,
-      "p_reach_final": 0.3815,
-      "relative": -8.2
+      "p_title": 0.2544,
+      "p_reach_final": 0.3879,
+      "relative": -8.4
      },
      {
       "budget": 898,
-      "p_title": 0.2584,
-      "p_reach_final": 0.3991,
-      "relative": -3.2
+      "p_title": 0.2664,
+      "p_reach_final": 0.4024,
+      "relative": -4.0
      },
      {
       "budget": 948,
-      "p_title": 0.2626,
-      "p_reach_final": 0.4049,
-      "relative": -1.6
+      "p_title": 0.2723,
+      "p_reach_final": 0.4096,
+      "relative": -1.9
      },
      {
       "budget": 973,
-      "p_title": 0.2648,
-      "p_reach_final": 0.4073,
+      "p_title": 0.2753,
+      "p_reach_final": 0.4128,
       "relative": -0.8
      },
      {
       "budget": 998,
-      "p_title": 0.2668,
-      "p_reach_final": 0.4102,
-      "relative": 0.0
+      "p_title": 0.2764,
+      "p_reach_final": 0.4148,
+      "relative": -0.4
      }
     ]
    },
@@ -406,51 +409,51 @@
     "budgets": [
      {
       "budget": 0,
-      "p_title": 0.0266,
-      "p_reach_final": 0.0516,
-      "relative": -90.0
+      "p_title": 0.0282,
+      "p_reach_final": 0.0537,
+      "relative": -89.8
      },
      {
       "budget": 298,
-      "p_title": 0.1628,
-      "p_reach_final": 0.2654,
-      "relative": -39.0
+      "p_title": 0.1763,
+      "p_reach_final": 0.2802,
+      "relative": -36.5
      },
      {
       "budget": 598,
-      "p_title": 0.214,
-      "p_reach_final": 0.3406,
-      "relative": -19.8
+      "p_title": 0.2192,
+      "p_reach_final": 0.3407,
+      "relative": -21.0
      },
      {
       "budget": 798,
-      "p_title": 0.2409,
-      "p_reach_final": 0.3775,
-      "relative": -9.7
+      "p_title": 0.2426,
+      "p_reach_final": 0.3735,
+      "relative": -12.6
      },
      {
       "budget": 898,
-      "p_title": 0.2504,
-      "p_reach_final": 0.3914,
-      "relative": -6.1
+      "p_title": 0.2531,
+      "p_reach_final": 0.3865,
+      "relative": -8.8
      },
      {
       "budget": 948,
-      "p_title": 0.2559,
-      "p_reach_final": 0.3988,
-      "relative": -4.1
+      "p_title": 0.2609,
+      "p_reach_final": 0.3984,
+      "relative": -6.0
      },
      {
       "budget": 973,
-      "p_title": 0.2589,
-      "p_reach_final": 0.4026,
-      "relative": -3.0
+      "p_title": 0.2639,
+      "p_reach_final": 0.4025,
+      "relative": -4.9
      },
      {
       "budget": 998,
-      "p_title": 0.2613,
-      "p_reach_final": 0.4062,
-      "relative": -2.1
+      "p_title": 0.2676,
+      "p_reach_final": 0.4059,
+      "relative": -3.6
      }
     ]
    },
@@ -459,184 +462,1911 @@
     "budgets": [
      {
       "budget": 0,
-      "p_title": 0.0266,
-      "p_reach_final": 0.0516,
-      "relative": -90.0
+      "p_title": 0.0282,
+      "p_reach_final": 0.0537,
+      "relative": -89.8
      },
      {
       "budget": 298,
-      "p_title": 0.1511,
-      "p_reach_final": 0.2514,
-      "relative": -43.4
+      "p_title": 0.1563,
+      "p_reach_final": 0.2552,
+      "relative": -43.7
      },
      {
       "budget": 598,
       "p_title": 0.1883,
-      "p_reach_final": 0.3086,
-      "relative": -29.4
+      "p_reach_final": 0.3023,
+      "relative": -32.2
      },
      {
       "budget": 798,
-      "p_title": 0.2078,
-      "p_reach_final": 0.3375,
-      "relative": -22.1
+      "p_title": 0.2069,
+      "p_reach_final": 0.3316,
+      "relative": -25.5
      },
      {
       "budget": 898,
-      "p_title": 0.2164,
-      "p_reach_final": 0.3507,
-      "relative": -18.9
+      "p_title": 0.2129,
+      "p_reach_final": 0.338,
+      "relative": -23.3
      },
      {
       "budget": 948,
-      "p_title": 0.2199,
-      "p_reach_final": 0.3553,
-      "relative": -17.6
+      "p_title": 0.2179,
+      "p_reach_final": 0.3461,
+      "relative": -21.5
      },
      {
       "budget": 973,
-      "p_title": 0.2229,
-      "p_reach_final": 0.3592,
-      "relative": -16.5
+      "p_title": 0.2218,
+      "p_reach_final": 0.3513,
+      "relative": -20.1
      },
      {
       "budget": 998,
-      "p_title": 0.2236,
-      "p_reach_final": 0.3601,
-      "relative": -16.2
+      "p_title": 0.2224,
+      "p_reach_final": 0.3519,
+      "relative": -19.9
      }
     ]
    }
   ],
   "base": {
-   "p_title": 0.2668,
-   "p_reach_final": 0.4102,
-   "p_cut_now": 0.011,
+   "p_title": 0.2776,
+   "p_reach_final": 0.4137,
+   "p_cut_now": 0.0259,
    "p_alive_by_week": [
-    0.989,
-    0.9748,
-    0.8475,
-    0.8268,
-    0.8142,
-    0.7953,
-    0.789,
-    0.7766,
-    0.7464,
-    0.7192,
-    0.6712,
-    0.5954,
-    0.4102
+    0.9741,
+    0.8185,
+    0.8019,
+    0.7855,
+    0.7668,
+    0.7592,
+    0.7457,
+    0.7084,
+    0.6819,
+    0.6411,
+    0.58,
+    0.4137
    ],
    "budget_by_week": [
     998,
     998,
-    882,
-    788,
-    700,
-    506,
-    435,
-    282,
-    245,
-    222,
-    186,
-    157,
-    150,
-    145,
-    144
+    911,
+    827,
+    626,
+    550,
+    399,
+    355,
+    324,
+    279,
+    246,
+    230,
+    223,
+    222
    ],
    "budget_after_claims": [
     998,
-    882,
-    792,
-    701,
-    507,
-    435,
-    282,
-    246,
+    912,
+    827,
+    627,
+    551,
+    400,
+    356,
+    325,
+    280,
+    247,
+    231,
+    225,
     222,
-    186,
-    158,
-    150,
-    146,
-    144,
-    73
+    143
    ]
   },
-  "roster_size": 9,
+  "roster_size": 10,
   "forced_cuts": [],
   "activate": [],
   "candidates": [
+   {
+    "player_id": "11620",
+    "name": "Rome Odunze",
+    "position": "WR",
+    "team": "CHI",
+    "injury_status": null,
+    "source": "blend",
+    "points_this_week": 8.38,
+    "ros_per_week": 8.95,
+    "waiver_clears": null,
+    "drop": {
+     "player_id": "11624",
+     "name": "Xavier Worthy",
+     "position": "WR",
+     "team": "KC",
+     "injury_status": null,
+     "source": "blend",
+     "points_this_week": 8.54,
+     "ros_per_week": 7.66
+    },
+    "to_reserve": [],
+    "gain_this_week": -0.2,
+    "title_if_free": 6.9,
+    "title_if_free_se": 0.4,
+    "optimal_bid": 31,
+    "planning_gain": 0.88,
+    "p_win_at_optimal": 0.843,
+    "title_at_optimal": 4.8,
+    "break_even_bid": 160,
+    "clearing": {
+     "p_claimed": 0.794,
+     "p_free_pickup": 0.206,
+     "mean": 28.0,
+     "p50": 12.0,
+     "p90": 64
+    },
+    "curve": [
+     {
+      "bid": 0,
+      "p_win": 0.0,
+      "title": -0.0
+     },
+     {
+      "bid": 6,
+      "p_win": 0.348,
+      "title": 2.2
+     },
+     {
+      "bid": 12,
+      "p_win": 0.483,
+      "title": 3.0
+     },
+     {
+      "bid": 18,
+      "p_win": 0.674,
+      "title": 4.2
+     },
+     {
+      "bid": 25,
+      "p_win": 0.74,
+      "title": 4.3
+     },
+     {
+      "bid": 31,
+      "p_win": 0.843,
+      "title": 4.8
+     },
+     {
+      "bid": 37,
+      "p_win": 0.867,
+      "title": 4.6
+     },
+     {
+      "bid": 43,
+      "p_win": 0.879,
+      "title": 4.4
+     },
+     {
+      "bid": 50,
+      "p_win": 0.895,
+      "title": 4.1
+     },
+     {
+      "bid": 56,
+      "p_win": 0.908,
+      "title": 4.0
+     },
+     {
+      "bid": 62,
+      "p_win": 0.918,
+      "title": 3.8
+     },
+     {
+      "bid": 68,
+      "p_win": 0.932,
+      "title": 3.7
+     },
+     {
+      "bid": 76,
+      "p_win": 0.945,
+      "title": 3.6
+     },
+     {
+      "bid": 83,
+      "p_win": 0.956,
+      "title": 3.4
+     },
+     {
+      "bid": 93,
+      "p_win": 0.964,
+      "title": 3.1
+     },
+     {
+      "bid": 106,
+      "p_win": 0.969,
+      "title": 2.6
+     },
+     {
+      "bid": 117,
+      "p_win": 0.973,
+      "title": 2.0
+     },
+     {
+      "bid": 137,
+      "p_win": 0.976,
+      "title": 1.1
+     },
+     {
+      "bid": 156,
+      "p_win": 0.979,
+      "title": 0.2
+     },
+     {
+      "bid": 178,
+      "p_win": 0.983,
+      "title": -0.8
+     },
+     {
+      "bid": 193,
+      "p_win": 0.987,
+      "title": -1.5
+     },
+     {
+      "bid": 231,
+      "p_win": 0.991,
+      "title": -3.4
+     },
+     {
+      "bid": 277,
+      "p_win": 0.994,
+      "title": -5.9
+     },
+     {
+      "bid": 362,
+      "p_win": 0.997,
+      "title": -10.4
+     },
+     {
+      "bid": 546,
+      "p_win": 1.0,
+      "title": -21.4
+     }
+    ]
+   },
+   {
+    "player_id": "12495",
+    "name": "Ollie Gordon",
+    "position": "RB",
+    "team": "MIA",
+    "injury_status": "Questionable",
+    "source": "blend",
+    "points_this_week": 8.0,
+    "ros_per_week": 8.82,
+    "waiver_clears": null,
+    "drop": {
+     "player_id": "13311",
+     "name": "Chris Bell",
+     "position": "WR",
+     "team": "MIA",
+     "injury_status": null,
+     "source": "blend",
+     "points_this_week": 6.25,
+     "ros_per_week": 5.37
+    },
+    "to_reserve": [],
+    "gain_this_week": 0.0,
+    "title_if_free": 5.4,
+    "title_if_free_se": 0.5,
+    "optimal_bid": 27,
+    "planning_gain": 2.27,
+    "p_win_at_optimal": 0.823,
+    "title_at_optimal": 4.3,
+    "break_even_bid": 140,
+    "clearing": {
+     "p_claimed": 0.668,
+     "p_free_pickup": 0.332,
+     "mean": 28.0,
+     "p50": 13.0,
+     "p90": 65
+    },
+    "curve": [
+     {
+      "bid": 0,
+      "p_win": 0.0,
+      "title": -0.0
+     },
+     {
+      "bid": 5,
+      "p_win": 0.411,
+      "title": 2.4
+     },
+     {
+      "bid": 11,
+      "p_win": 0.528,
+      "title": 3.0
+     },
+     {
+      "bid": 17,
+      "p_win": 0.7,
+      "title": 3.9
+     },
+     {
+      "bid": 23,
+      "p_win": 0.747,
+      "title": 4.0
+     },
+     {
+      "bid": 29,
+      "p_win": 0.854,
+      "title": 4.2
+     },
+     {
+      "bid": 35,
+      "p_win": 0.875,
+      "title": 4.0
+     },
+     {
+      "bid": 41,
+      "p_win": 0.888,
+      "title": 3.7
+     },
+     {
+      "bid": 47,
+      "p_win": 0.9,
+      "title": 3.2
+     },
+     {
+      "bid": 53,
+      "p_win": 0.908,
+      "title": 3.0
+     },
+     {
+      "bid": 59,
+      "p_win": 0.92,
+      "title": 2.9
+     },
+     {
+      "bid": 65,
+      "p_win": 0.931,
+      "title": 2.7
+     },
+     {
+      "bid": 71,
+      "p_win": 0.939,
+      "title": 2.5
+     },
+     {
+      "bid": 78,
+      "p_win": 0.947,
+      "title": 2.3
+     },
+     {
+      "bid": 85,
+      "p_win": 0.959,
+      "title": 2.1
+     },
+     {
+      "bid": 96,
+      "p_win": 0.97,
+      "title": 1.8
+     },
+     {
+      "bid": 107,
+      "p_win": 0.975,
+      "title": 1.4
+     },
+     {
+      "bid": 118,
+      "p_win": 0.978,
+      "title": 0.9
+     },
+     {
+      "bid": 134,
+      "p_win": 0.981,
+      "title": 0.3
+     },
+     {
+      "bid": 156,
+      "p_win": 0.984,
+      "title": -0.7
+     },
+     {
+      "bid": 174,
+      "p_win": 0.987,
+      "title": -1.4
+     },
+     {
+      "bid": 204,
+      "p_win": 0.991,
+      "title": -2.8
+     },
+     {
+      "bid": 219,
+      "p_win": 0.995,
+      "title": -3.5
+     },
+     {
+      "bid": 355,
+      "p_win": 0.998,
+      "title": -10.4
+     },
+     {
+      "bid": 821,
+      "p_win": 1.0,
+      "title": -54.4
+     }
+    ]
+   },
+   {
+    "player_id": "2133",
+    "name": "Davante Adams",
+    "position": "WR",
+    "team": "LAR",
+    "injury_status": null,
+    "source": "blend",
+    "points_this_week": 11.46,
+    "ros_per_week": 10.41,
+    "waiver_clears": null,
+    "drop": {
+     "player_id": "11624",
+     "name": "Xavier Worthy",
+     "position": "WR",
+     "team": "KC",
+     "injury_status": null,
+     "source": "blend",
+     "points_this_week": 8.54,
+     "ros_per_week": 7.66
+    },
+    "to_reserve": [],
+    "gain_this_week": 2.9,
+    "title_if_free": 10.1,
+    "title_if_free_se": 0.4,
+    "optimal_bid": 86,
+    "planning_gain": 2.33,
+    "p_win_at_optimal": 0.479,
+    "title_at_optimal": 3.2,
+    "break_even_bid": 217,
+    "clearing": {
+     "p_claimed": 1.0,
+     "p_free_pickup": 0.0,
+     "mean": 155.0,
+     "p50": 92.0,
+     "p90": 355
+    },
+    "curve": [
+     {
+      "bid": 0,
+      "p_win": 0.0,
+      "title": -0.0
+     },
+     {
+      "bid": 29,
+      "p_win": 0.19,
+      "title": 1.6
+     },
+     {
+      "bid": 48,
+      "p_win": 0.284,
+      "title": 2.2
+     },
+     {
+      "bid": 67,
+      "p_win": 0.372,
+      "title": 2.6
+     },
+     {
+      "bid": 86,
+      "p_win": 0.479,
+      "title": 3.2
+     },
+     {
+      "bid": 104,
+      "p_win": 0.545,
+      "title": 3.1
+     },
+     {
+      "bid": 123,
+      "p_win": 0.603,
+      "title": 2.8
+     },
+     {
+      "bid": 143,
+      "p_win": 0.652,
+      "title": 2.4
+     },
+     {
+      "bid": 162,
+      "p_win": 0.687,
+      "title": 2.0
+     },
+     {
+      "bid": 181,
+      "p_win": 0.72,
+      "title": 1.4
+     },
+     {
+      "bid": 201,
+      "p_win": 0.756,
+      "title": 0.8
+     },
+     {
+      "bid": 221,
+      "p_win": 0.798,
+      "title": 0.0
+     },
+     {
+      "bid": 246,
+      "p_win": 0.826,
+      "title": -1.1
+     },
+     {
+      "bid": 268,
+      "p_win": 0.844,
+      "title": -2.1
+     },
+     {
+      "bid": 288,
+      "p_win": 0.861,
+      "title": -3.1
+     },
+     {
+      "bid": 314,
+      "p_win": 0.878,
+      "title": -4.3
+     },
+     {
+      "bid": 340,
+      "p_win": 0.892,
+      "title": -5.8
+     },
+     {
+      "bid": 373,
+      "p_win": 0.906,
+      "title": -7.6
+     },
+     {
+      "bid": 411,
+      "p_win": 0.92,
+      "title": -9.5
+     },
+     {
+      "bid": 458,
+      "p_win": 0.933,
+      "title": -12.6
+     },
+     {
+      "bid": 508,
+      "p_win": 0.946,
+      "title": -15.8
+     },
+     {
+      "bid": 548,
+      "p_win": 0.957,
+      "title": -18.4
+     },
+     {
+      "bid": 646,
+      "p_win": 0.969,
+      "title": -24.7
+     },
+     {
+      "bid": 800,
+      "p_win": 0.979,
+      "title": -47.9
+     },
+     {
+      "bid": 996,
+      "p_win": 0.992,
+      "title": -87.3
+     }
+    ]
+   },
+   {
+    "player_id": "12507",
+    "name": "Omarion Hampton",
+    "position": "RB",
+    "team": "LAC",
+    "injury_status": null,
+    "source": "blend",
+    "points_this_week": 8.81,
+    "ros_per_week": 11.12,
+    "waiver_clears": null,
+    "drop": {
+     "player_id": "13311",
+     "name": "Chris Bell",
+     "position": "WR",
+     "team": "MIA",
+     "injury_status": null,
+     "source": "blend",
+     "points_this_week": 6.25,
+     "ros_per_week": 5.37
+    },
+    "to_reserve": [],
+    "gain_this_week": 0.4,
+    "title_if_free": 5.3,
+    "title_if_free_se": 0.5,
+    "optimal_bid": 29,
+    "planning_gain": 3.84,
+    "p_win_at_optimal": 0.602,
+    "title_at_optimal": 3.2,
+    "break_even_bid": 149,
+    "clearing": {
+     "p_claimed": 0.961,
+     "p_free_pickup": 0.039,
+     "mean": 52.0,
+     "p50": 27.0,
+     "p90": 108
+    },
+    "curve": [
+     {
+      "bid": 0,
+      "p_win": 0.0,
+      "title": -0.0
+     },
+     {
+      "bid": 9,
+      "p_win": 0.099,
+      "title": 0.6
+     },
+     {
+      "bid": 18,
+      "p_win": 0.316,
+      "title": 2.0
+     },
+     {
+      "bid": 28,
+      "p_win": 0.598,
+      "title": 3.2
+     },
+     {
+      "bid": 37,
+      "p_win": 0.652,
+      "title": 2.8
+     },
+     {
+      "bid": 46,
+      "p_win": 0.705,
+      "title": 2.4
+     },
+     {
+      "bid": 56,
+      "p_win": 0.744,
+      "title": 2.0
+     },
+     {
+      "bid": 65,
+      "p_win": 0.785,
+      "title": 2.1
+     },
+     {
+      "bid": 75,
+      "p_win": 0.818,
+      "title": 2.3
+     },
+     {
+      "bid": 84,
+      "p_win": 0.857,
+      "title": 2.3
+     },
+     {
+      "bid": 94,
+      "p_win": 0.884,
+      "title": 2.2
+     },
+     {
+      "bid": 104,
+      "p_win": 0.896,
+      "title": 2.0
+     },
+     {
+      "bid": 115,
+      "p_win": 0.911,
+      "title": 1.6
+     },
+     {
+      "bid": 129,
+      "p_win": 0.923,
+      "title": 1.0
+     },
+     {
+      "bid": 142,
+      "p_win": 0.93,
+      "title": 0.4
+     },
+     {
+      "bid": 155,
+      "p_win": 0.938,
+      "title": -0.3
+     },
+     {
+      "bid": 168,
+      "p_win": 0.947,
+      "title": -0.9
+     },
+     {
+      "bid": 183,
+      "p_win": 0.955,
+      "title": -1.6
+     },
+     {
+      "bid": 203,
+      "p_win": 0.964,
+      "title": -2.5
+     },
+     {
+      "bid": 228,
+      "p_win": 0.972,
+      "title": -3.7
+     },
+     {
+      "bid": 257,
+      "p_win": 0.979,
+      "title": -5.2
+     },
+     {
+      "bid": 302,
+      "p_win": 0.985,
+      "title": -7.5
+     },
+     {
+      "bid": 365,
+      "p_win": 0.99,
+      "title": -10.6
+     },
+     {
+      "bid": 500,
+      "p_win": 0.995,
+      "title": -18.4
+     },
+     {
+      "bid": 821,
+      "p_win": 1.0,
+      "title": -53.4
+     }
+    ]
+   },
+   {
+    "player_id": "7525",
+    "name": "DeVonta Smith",
+    "position": "WR",
+    "team": "PHI",
+    "injury_status": null,
+    "source": "blend",
+    "points_this_week": 12.35,
+    "ros_per_week": 11.01,
+    "waiver_clears": null,
+    "drop": {
+     "player_id": "11624",
+     "name": "Xavier Worthy",
+     "position": "WR",
+     "team": "KC",
+     "injury_status": null,
+     "source": "blend",
+     "points_this_week": 8.54,
+     "ros_per_week": 7.66
+    },
+    "to_reserve": [],
+    "gain_this_week": 3.8,
+    "title_if_free": 11.3,
+    "title_if_free_se": 0.4,
+    "optimal_bid": 128,
+    "planning_gain": 2.94,
+    "p_win_at_optimal": 0.393,
+    "title_at_optimal": 2.1,
+    "break_even_bid": 249,
+    "clearing": {
+     "p_claimed": 1.0,
+     "p_free_pickup": 0.0,
+     "mean": 247.0,
+     "p50": 169.0,
+     "p90": 579
+    },
+    "curve": [
+     {
+      "bid": 0,
+      "p_win": 0.0,
+      "title": -0.0
+     },
+     {
+      "bid": 39,
+      "p_win": 0.109,
+      "title": 1.0
+     },
+     {
+      "bid": 63,
+      "p_win": 0.162,
+      "title": 1.1
+     },
+     {
+      "bid": 87,
+      "p_win": 0.261,
+      "title": 1.7
+     },
+     {
+      "bid": 111,
+      "p_win": 0.35,
+      "title": 1.9
+     },
+     {
+      "bid": 135,
+      "p_win": 0.415,
+      "title": 2.0
+     },
+     {
+      "bid": 159,
+      "p_win": 0.482,
+      "title": 1.9
+     },
+     {
+      "bid": 183,
+      "p_win": 0.533,
+      "title": 1.7
+     },
+     {
+      "bid": 208,
+      "p_win": 0.608,
+      "title": 1.5
+     },
+     {
+      "bid": 235,
+      "p_win": 0.651,
+      "title": 0.7
+     },
+     {
+      "bid": 260,
+      "p_win": 0.685,
+      "title": 0.0
+     },
+     {
+      "bid": 287,
+      "p_win": 0.717,
+      "title": -1.2
+     },
+     {
+      "bid": 316,
+      "p_win": 0.742,
+      "title": -2.4
+     },
+     {
+      "bid": 342,
+      "p_win": 0.767,
+      "title": -3.5
+     },
+     {
+      "bid": 372,
+      "p_win": 0.792,
+      "title": -5.0
+     },
+     {
+      "bid": 404,
+      "p_win": 0.813,
+      "title": -6.5
+     },
+     {
+      "bid": 433,
+      "p_win": 0.833,
+      "title": -8.2
+     },
+     {
+      "bid": 465,
+      "p_win": 0.852,
+      "title": -10.2
+     },
+     {
+      "bid": 509,
+      "p_win": 0.87,
+      "title": -12.9
+     },
+     {
+      "bid": 549,
+      "p_win": 0.888,
+      "title": -15.5
+     },
+     {
+      "bid": 604,
+      "p_win": 0.908,
+      "title": -19.1
+     },
+     {
+      "bid": 675,
+      "p_win": 0.923,
+      "title": -23.6
+     },
+     {
+      "bid": 780,
+      "p_win": 0.937,
+      "title": -40.6
+     },
+     {
+      "bid": 868,
+      "p_win": 0.955,
+      "title": -58.1
+     },
+     {
+      "bid": 996,
+      "p_win": 0.985,
+      "title": -85.4
+     }
+    ]
+   },
    {
     "player_id": "8142",
     "name": "Alec Pierce",
     "position": "WR",
     "team": "IND",
-    "injury_status": "Out",
+    "injury_status": "IR",
     "source": "blend",
     "points_this_week": 0.0,
-    "ros_per_week": 5.81,
+    "ros_per_week": 6.35,
     "waiver_clears": null,
-    "drop": null,
-    "to_reserve": [
-     "Alec Pierce"
-    ],
+    "drop": {
+     "player_id": "13311",
+     "name": "Chris Bell",
+     "position": "WR",
+     "team": "MIA",
+     "injury_status": null,
+     "source": "blend",
+     "points_this_week": 6.25,
+     "ros_per_week": 5.37
+    },
+    "to_reserve": [],
     "gain_this_week": 0.0,
-    "title_if_free": 2.0,
+    "title_if_free": 2.1,
     "title_if_free_se": 0.4,
-    "optimal_bid": 0,
-    "planning_gain": 5.81,
-    "p_win_at_optimal": 1.0,
-    "title_at_optimal": 2.0,
-    "break_even_bid": 0,
+    "optimal_bid": 13,
+    "planning_gain": 1.42,
+    "p_win_at_optimal": 0.835,
+    "title_at_optimal": 1.5,
+    "break_even_bid": 46,
     "clearing": {
-     "p_claimed": 0.0,
-     "p_free_pickup": 0.0,
-     "mean": null,
-     "p50": null,
-     "p90": null
+     "p_claimed": 0.408,
+     "p_free_pickup": 0.592,
+     "mean": 21.0,
+     "p50": 12.0,
+     "p90": 36
     },
     "curve": [
      {
       "bid": 0,
+      "p_win": 0.0,
+      "title": -0.0
+     },
+     {
+      "bid": 3,
+      "p_win": 0.623,
+      "title": 1.1
+     },
+     {
+      "bid": 7,
+      "p_win": 0.691,
+      "title": 1.1
+     },
+     {
+      "bid": 11,
+      "p_win": 0.767,
+      "title": 1.3
+     },
+     {
+      "bid": 15,
+      "p_win": 0.84,
+      "title": 1.4
+     },
+     {
+      "bid": 19,
+      "p_win": 0.866,
+      "title": 1.4
+     },
+     {
+      "bid": 23,
+      "p_win": 0.901,
+      "title": 1.4
+     },
+     {
+      "bid": 27,
+      "p_win": 0.939,
+      "title": 1.2
+     },
+     {
+      "bid": 31,
+      "p_win": 0.955,
+      "title": 1.1
+     },
+     {
+      "bid": 34,
+      "p_win": 0.958,
+      "title": 0.9
+     },
+     {
+      "bid": 39,
+      "p_win": 0.961,
+      "title": 0.5
+     },
+     {
+      "bid": 43,
+      "p_win": 0.966,
+      "title": 0.2
+     },
+     {
+      "bid": 50,
+      "p_win": 0.972,
+      "title": -0.2
+     },
+     {
+      "bid": 58,
+      "p_win": 0.975,
+      "title": -0.3
+     },
+     {
+      "bid": 62,
+      "p_win": 0.978,
+      "title": -0.4
+     },
+     {
+      "bid": 66,
+      "p_win": 0.98,
+      "title": -0.5
+     },
+     {
+      "bid": 74,
+      "p_win": 0.984,
+      "title": -0.6
+     },
+     {
+      "bid": 81,
+      "p_win": 0.986,
+      "title": -0.8
+     },
+     {
+      "bid": 88,
+      "p_win": 0.988,
+      "title": -0.9
+     },
+     {
+      "bid": 103,
+      "p_win": 0.99,
+      "title": -1.2
+     },
+     {
+      "bid": 112,
+      "p_win": 0.992,
+      "title": -1.6
+     },
+     {
+      "bid": 123,
+      "p_win": 0.994,
+      "title": -2.1
+     },
+     {
+      "bid": 155,
+      "p_win": 0.996,
+      "title": -3.5
+     },
+     {
+      "bid": 200,
+      "p_win": 0.998,
+      "title": -5.4
+     },
+     {
+      "bid": 330,
       "p_win": 1.0,
-      "title": 2.0
+      "title": -11.9
      }
     ]
    },
    {
-    "player_id": "13293",
-    "name": "Ja'Kobi Lane",
-    "position": "WR",
-    "team": "BAL",
-    "injury_status": "IR",
+    "player_id": "12527",
+    "name": "Ashton Jeanty",
+    "position": "RB",
+    "team": "LV",
+    "injury_status": null,
     "source": "blend",
-    "points_this_week": 0.0,
-    "ros_per_week": 3.61,
+    "points_this_week": 13.89,
+    "ros_per_week": 13.36,
     "waiver_clears": null,
-    "drop": null,
-    "to_reserve": [
-     "Ja'Kobi Lane"
-    ],
-    "gain_this_week": 0.0,
-    "title_if_free": 1.0,
-    "title_if_free_se": 0.3,
-    "optimal_bid": 0,
-    "planning_gain": 3.28,
-    "p_win_at_optimal": 1.0,
-    "title_at_optimal": 1.0,
-    "break_even_bid": 0,
+    "drop": {
+     "player_id": "13311",
+     "name": "Chris Bell",
+     "position": "WR",
+     "team": "MIA",
+     "injury_status": null,
+     "source": "blend",
+     "points_this_week": 6.25,
+     "ros_per_week": 5.37
+    },
+    "to_reserve": [],
+    "gain_this_week": 5.5,
+    "title_if_free": 13.5,
+    "title_if_free_se": 0.5,
+    "optimal_bid": 152,
+    "planning_gain": 6.09,
+    "p_win_at_optimal": 0.139,
+    "title_at_optimal": 1.2,
+    "break_even_bid": 300,
     "clearing": {
-     "p_claimed": 0.0,
+     "p_claimed": 1.0,
      "p_free_pickup": 0.0,
-     "mean": null,
-     "p50": null,
-     "p90": null
+     "mean": 488.0,
+     "p50": 429.0,
+     "p90": 981
     },
     "curve": [
      {
       "bid": 0,
-      "p_win": 1.0,
+      "p_win": 0.0,
+      "title": -0.0
+     },
+     {
+      "bid": 66,
+      "p_win": 0.033,
+      "title": 0.3
+     },
+     {
+      "bid": 101,
+      "p_win": 0.081,
+      "title": 0.7
+     },
+     {
+      "bid": 134,
+      "p_win": 0.118,
       "title": 1.0
+     },
+     {
+      "bid": 172,
+      "p_win": 0.156,
+      "title": 1.0
+     },
+     {
+      "bid": 206,
+      "p_win": 0.218,
+      "title": 1.0
+     },
+     {
+      "bid": 239,
+      "p_win": 0.269,
+      "title": 0.7
+     },
+     {
+      "bid": 270,
+      "p_win": 0.309,
+      "title": 0.3
+     },
+     {
+      "bid": 303,
+      "p_win": 0.354,
+      "title": -0.5
+     },
+     {
+      "bid": 335,
+      "p_win": 0.391,
+      "title": -1.3
+     },
+     {
+      "bid": 369,
+      "p_win": 0.434,
+      "title": -1.9
+     },
+     {
+      "bid": 403,
+      "p_win": 0.467,
+      "title": -2.9
+     },
+     {
+      "bid": 438,
+      "p_win": 0.507,
+      "title": -4.2
+     },
+     {
+      "bid": 471,
+      "p_win": 0.547,
+      "title": -5.4
+     },
+     {
+      "bid": 510,
+      "p_win": 0.58,
+      "title": -7.3
+     },
+     {
+      "bid": 547,
+      "p_win": 0.616,
+      "title": -9.1
+     },
+     {
+      "bid": 591,
+      "p_win": 0.654,
+      "title": -11.7
+     },
+     {
+      "bid": 632,
+      "p_win": 0.681,
+      "title": -14.1
+     },
+     {
+      "bid": 673,
+      "p_win": 0.702,
+      "title": -16.5
+     },
+     {
+      "bid": 717,
+      "p_win": 0.724,
+      "title": -20.6
+     },
+     {
+      "bid": 765,
+      "p_win": 0.75,
+      "title": -28.4
+     },
+     {
+      "bid": 811,
+      "p_win": 0.786,
+      "title": -36.8
+     },
+     {
+      "bid": 861,
+      "p_win": 0.812,
+      "title": -45.9
+     },
+     {
+      "bid": 911,
+      "p_win": 0.858,
+      "title": -56.9
+     },
+     {
+      "bid": 996,
+      "p_win": 0.934,
+      "title": -77.3
+     }
+    ]
+   },
+   {
+    "player_id": "8210",
+    "name": "Chig Okonkwo",
+    "position": "TE",
+    "team": "WAS",
+    "injury_status": "Out",
+    "source": "blend",
+    "points_this_week": 3.23,
+    "ros_per_week": 8.75,
+    "waiver_clears": null,
+    "drop": {
+     "player_id": "13311",
+     "name": "Chris Bell",
+     "position": "WR",
+     "team": "MIA",
+     "injury_status": null,
+     "source": "blend",
+     "points_this_week": 6.25,
+     "ros_per_week": 5.37
+    },
+    "to_reserve": [],
+    "gain_this_week": 0.0,
+    "title_if_free": 1.3,
+    "title_if_free_se": 0.3,
+    "optimal_bid": 1,
+    "planning_gain": 0.89,
+    "p_win_at_optimal": 0.931,
+    "title_at_optimal": 1.1,
+    "break_even_bid": 17,
+    "clearing": {
+     "p_claimed": 0.077,
+     "p_free_pickup": 0.923,
+     "mean": 9.0,
+     "p50": 4.5,
+     "p90": 20
+    },
+    "curve": [
+     {
+      "bid": 0,
+      "p_win": 0.0,
+      "title": -0.0
+     },
+     {
+      "bid": 1,
+      "p_win": 0.931,
+      "title": 1.1
+     },
+     {
+      "bid": 2,
+      "p_win": 0.942,
+      "title": 1.1
+     },
+     {
+      "bid": 4,
+      "p_win": 0.96,
+      "title": 1.0
+     },
+     {
+      "bid": 5,
+      "p_win": 0.961,
+      "title": 0.9
+     },
+     {
+      "bid": 6,
+      "p_win": 0.968,
+      "title": 0.8
+     },
+     {
+      "bid": 8,
+      "p_win": 0.977,
+      "title": 0.7
+     },
+     {
+      "bid": 9,
+      "p_win": 0.979,
+      "title": 0.6
+     },
+     {
+      "bid": 10,
+      "p_win": 0.981,
+      "title": 0.5
+     },
+     {
+      "bid": 12,
+      "p_win": 0.984,
+      "title": 0.3
+     },
+     {
+      "bid": 13,
+      "p_win": 0.987,
+      "title": 0.3
+     },
+     {
+      "bid": 15,
+      "p_win": 0.989,
+      "title": 0.1
+     },
+     {
+      "bid": 18,
+      "p_win": 0.99,
+      "title": -0.1
+     },
+     {
+      "bid": 19,
+      "p_win": 0.991,
+      "title": -0.2
+     },
+     {
+      "bid": 20,
+      "p_win": 0.992,
+      "title": -0.2
+     },
+     {
+      "bid": 22,
+      "p_win": 0.994,
+      "title": -0.4
+     },
+     {
+      "bid": 25,
+      "p_win": 0.994,
+      "title": -0.6
+     },
+     {
+      "bid": 27,
+      "p_win": 0.995,
+      "title": -0.7
+     },
+     {
+      "bid": 32,
+      "p_win": 0.996,
+      "title": -0.8
+     },
+     {
+      "bid": 38,
+      "p_win": 0.997,
+      "title": -1.0
+     },
+     {
+      "bid": 39,
+      "p_win": 0.998,
+      "title": -1.0
+     },
+     {
+      "bid": 50,
+      "p_win": 0.999,
+      "title": -1.3
+     },
+     {
+      "bid": 68,
+      "p_win": 0.999,
+      "title": -2.0
+     },
+     {
+      "bid": 105,
+      "p_win": 1.0,
+      "title": -3.3
+     },
+     {
+      "bid": 169,
+      "p_win": 1.0,
+      "title": -5.9
+     }
+    ]
+   },
+   {
+    "player_id": "12526",
+    "name": "Tetairoa McMillan",
+    "position": "WR",
+    "team": "CAR",
+    "injury_status": null,
+    "source": "blend",
+    "points_this_week": 10.81,
+    "ros_per_week": 10.37,
+    "waiver_clears": null,
+    "drop": {
+     "player_id": "11624",
+     "name": "Xavier Worthy",
+     "position": "WR",
+     "team": "KC",
+     "injury_status": null,
+     "source": "blend",
+     "points_this_week": 8.54,
+     "ros_per_week": 7.66
+    },
+    "to_reserve": [],
+    "gain_this_week": 2.3,
+    "title_if_free": 4.0,
+    "title_if_free_se": 0.3,
+    "optimal_bid": 35,
+    "planning_gain": 2.72,
+    "p_win_at_optimal": 0.292,
+    "title_at_optimal": 0.8,
+    "break_even_bid": 104,
+    "clearing": {
+     "p_claimed": 1.0,
+     "p_free_pickup": 0.0,
+     "mean": 129.0,
+     "p50": 77.0,
+     "p90": 308
+    },
+    "curve": [
+     {
+      "bid": 0,
+      "p_win": 0.0,
+      "title": -0.0
+     },
+     {
+      "bid": 25,
+      "p_win": 0.099,
+      "title": 0.2
+     },
+     {
+      "bid": 42,
+      "p_win": 0.326,
+      "title": 0.7
+     },
+     {
+      "bid": 60,
+      "p_win": 0.406,
+      "title": 0.6
+     },
+     {
+      "bid": 77,
+      "p_win": 0.498,
+      "title": 0.7
+     },
+     {
+      "bid": 94,
+      "p_win": 0.599,
+      "title": 0.2
+     },
+     {
+      "bid": 113,
+      "p_win": 0.651,
+      "title": -0.3
+     },
+     {
+      "bid": 130,
+      "p_win": 0.693,
+      "title": -0.9
+     },
+     {
+      "bid": 147,
+      "p_win": 0.732,
+      "title": -1.5
+     },
+     {
+      "bid": 165,
+      "p_win": 0.765,
+      "title": -2.4
+     },
+     {
+      "bid": 183,
+      "p_win": 0.789,
+      "title": -3.1
+     },
+     {
+      "bid": 202,
+      "p_win": 0.812,
+      "title": -3.8
+     },
+     {
+      "bid": 220,
+      "p_win": 0.846,
+      "title": -4.6
+     },
+     {
+      "bid": 243,
+      "p_win": 0.862,
+      "title": -5.6
+     },
+     {
+      "bid": 264,
+      "p_win": 0.877,
+      "title": -6.7
+     },
+     {
+      "bid": 287,
+      "p_win": 0.893,
+      "title": -7.9
+     },
+     {
+      "bid": 315,
+      "p_win": 0.905,
+      "title": -9.2
+     },
+     {
+      "bid": 351,
+      "p_win": 0.918,
+      "title": -10.8
+     },
+     {
+      "bid": 392,
+      "p_win": 0.933,
+      "title": -12.7
+     },
+     {
+      "bid": 420,
+      "p_win": 0.944,
+      "title": -14.5
+     },
+     {
+      "bid": 475,
+      "p_win": 0.956,
+      "title": -17.8
+     },
+     {
+      "bid": 515,
+      "p_win": 0.966,
+      "title": -20.3
+     },
+     {
+      "bid": 594,
+      "p_win": 0.975,
+      "title": -25.1
+     },
+     {
+      "bid": 734,
+      "p_win": 0.984,
+      "title": -37.8
+     },
+     {
+      "bid": 996,
+      "p_win": 0.997,
+      "title": -87.3
+     }
+    ]
+   },
+   {
+    "player_id": "13298",
+    "name": "KC Concepcion",
+    "position": "WR",
+    "team": "CLE",
+    "injury_status": null,
+    "source": "blend",
+    "points_this_week": 7.86,
+    "ros_per_week": 7.4,
+    "waiver_clears": null,
+    "drop": {
+     "player_id": "13311",
+     "name": "Chris Bell",
+     "position": "WR",
+     "team": "MIA",
+     "injury_status": null,
+     "source": "blend",
+     "points_this_week": 6.25,
+     "ros_per_week": 5.37
+    },
+    "to_reserve": [],
+    "gain_this_week": 0.0,
+    "title_if_free": 0.5,
+    "title_if_free_se": 0.3,
+    "optimal_bid": 6,
+    "planning_gain": 1.35,
+    "p_win_at_optimal": 0.681,
+    "title_at_optimal": 0.2,
+    "break_even_bid": 24,
+    "clearing": {
+     "p_claimed": 0.538,
+     "p_free_pickup": 0.462,
+     "mean": 15.0,
+     "p50": 9,
+     "p90": 29
+    },
+    "curve": [
+     {
+      "bid": 0,
+      "p_win": 0.0,
+      "title": -0.0
+     },
+     {
+      "bid": 3,
+      "p_win": 0.565,
+      "title": 0.1
+     },
+     {
+      "bid": 7,
+      "p_win": 0.701,
+      "title": 0.2
+     },
+     {
+      "bid": 10,
+      "p_win": 0.742,
+      "title": 0.2
+     },
+     {
+      "bid": 14,
+      "p_win": 0.851,
+      "title": 0.1
+     },
+     {
+      "bid": 17,
+      "p_win": 0.873,
+      "title": 0.2
+     },
+     {
+      "bid": 21,
+      "p_win": 0.896,
+      "title": 0.2
+     },
+     {
+      "bid": 24,
+      "p_win": 0.908,
+      "title": 0.1
+     },
+     {
+      "bid": 28,
+      "p_win": 0.941,
+      "title": -0.1
+     },
+     {
+      "bid": 31,
+      "p_win": 0.948,
+      "title": -0.4
+     },
+     {
+      "bid": 35,
+      "p_win": 0.954,
+      "title": -0.6
+     },
+     {
+      "bid": 38,
+      "p_win": 0.958,
+      "title": -0.8
+     },
+     {
+      "bid": 42,
+      "p_win": 0.963,
+      "title": -1.1
+     },
+     {
+      "bid": 46,
+      "p_win": 0.968,
+      "title": -1.4
+     },
+     {
+      "bid": 49,
+      "p_win": 0.971,
+      "title": -1.6
+     },
+     {
+      "bid": 54,
+      "p_win": 0.974,
+      "title": -1.8
+     },
+     {
+      "bid": 59,
+      "p_win": 0.976,
+      "title": -1.9
+     },
+     {
+      "bid": 64,
+      "p_win": 0.979,
+      "title": -2.0
+     },
+     {
+      "bid": 69,
+      "p_win": 0.984,
+      "title": -2.1
+     },
+     {
+      "bid": 76,
+      "p_win": 0.987,
+      "title": -2.2
+     },
+     {
+      "bid": 85,
+      "p_win": 0.992,
+      "title": -2.4
+     },
+     {
+      "bid": 99,
+      "p_win": 0.995,
+      "title": -2.8
+     },
+     {
+      "bid": 126,
+      "p_win": 0.997,
+      "title": -3.9
+     },
+     {
+      "bid": 190,
+      "p_win": 0.999,
+      "title": -6.5
+     },
+     {
+      "bid": 274,
+      "p_win": 1.0,
+      "title": -10.9
+     }
+    ]
+   },
+   {
+    "player_id": "8161",
+    "name": "Malik Willis",
+    "position": "QB",
+    "team": "MIA",
+    "injury_status": null,
+    "source": "blend",
+    "points_this_week": 13.85,
+    "ros_per_week": 15.15,
+    "waiver_clears": null,
+    "drop": {
+     "player_id": "4943",
+     "name": "Sam Darnold",
+     "position": "QB",
+     "team": "SEA",
+     "injury_status": null,
+     "source": "blend",
+     "points_this_week": 15.38,
+     "ros_per_week": 13.16
+    },
+    "to_reserve": [],
+    "gain_this_week": -1.5,
+    "title_if_free": 0.1,
+    "title_if_free_se": 0.3,
+    "optimal_bid": 1,
+    "planning_gain": 0.46,
+    "p_win_at_optimal": 0.671,
+    "title_at_optimal": 0.0,
+    "break_even_bid": 2,
+    "clearing": {
+     "p_claimed": 0.332,
+     "p_free_pickup": 0.668,
+     "mean": 35.0,
+     "p50": 19.0,
+     "p90": 82
+    },
+    "curve": [
+     {
+      "bid": 0,
+      "p_win": 0.0,
+      "title": -0.0
+     },
+     {
+      "bid": 5,
+      "p_win": 0.709,
+      "title": -0.1
+     },
+     {
+      "bid": 10,
+      "p_win": 0.755,
+      "title": -0.1
+     },
+     {
+      "bid": 16,
+      "p_win": 0.816,
+      "title": -0.3
+     },
+     {
+      "bid": 21,
+      "p_win": 0.842,
+      "title": -0.4
+     },
+     {
+      "bid": 26,
+      "p_win": 0.876,
+      "title": -0.6
+     },
+     {
+      "bid": 32,
+      "p_win": 0.896,
+      "title": -1.1
+     },
+     {
+      "bid": 37,
+      "p_win": 0.91,
+      "title": -1.5
+     },
+     {
+      "bid": 42,
+      "p_win": 0.917,
+      "title": -1.8
+     },
+     {
+      "bid": 48,
+      "p_win": 0.927,
+      "title": -2.3
+     },
+     {
+      "bid": 53,
+      "p_win": 0.935,
+      "title": -2.6
+     },
+     {
+      "bid": 58,
+      "p_win": 0.941,
+      "title": -2.7
+     },
+     {
+      "bid": 64,
+      "p_win": 0.951,
+      "title": -2.8
+     },
+     {
+      "bid": 69,
+      "p_win": 0.957,
+      "title": -2.9
+     },
+     {
+      "bid": 74,
+      "p_win": 0.961,
+      "title": -3.0
+     },
+     {
+      "bid": 82,
+      "p_win": 0.967,
+      "title": -3.1
+     },
+     {
+      "bid": 88,
+      "p_win": 0.97,
+      "title": -3.2
+     },
+     {
+      "bid": 93,
+      "p_win": 0.973,
+      "title": -3.3
+     },
+     {
+      "bid": 104,
+      "p_win": 0.978,
+      "title": -3.6
+     },
+     {
+      "bid": 115,
+      "p_win": 0.981,
+      "title": -4.1
+     },
+     {
+      "bid": 128,
+      "p_win": 0.985,
+      "title": -4.6
+     },
+     {
+      "bid": 158,
+      "p_win": 0.989,
+      "title": -5.9
+     },
+     {
+      "bid": 193,
+      "p_win": 0.991,
+      "title": -7.4
+     },
+     {
+      "bid": 225,
+      "p_win": 0.998,
+      "title": -9.0
+     },
+     {
+      "bid": 867,
+      "p_win": 1.0,
+      "title": -66.1
      }
     ]
    },
@@ -648,105 +2378,40 @@
     "injury_status": "IR",
     "source": "blend",
     "points_this_week": 0.0,
-    "ros_per_week": 4.77,
+    "ros_per_week": 5.16,
     "waiver_clears": null,
-    "drop": null,
+    "drop": {
+     "player_id": "9753",
+     "name": "Zach Charbonnet",
+     "position": "RB",
+     "team": "SEA",
+     "injury_status": "PUP",
+     "source": "blend",
+     "points_this_week": 0.0,
+     "ros_per_week": 3.63
+    },
     "to_reserve": [
      "Omar Cooper"
     ],
     "gain_this_week": 0.0,
-    "title_if_free": 0.7,
+    "title_if_free": -0.0,
     "title_if_free_se": 0.4,
     "optimal_bid": 0,
-    "planning_gain": 4.36,
-    "p_win_at_optimal": 1.0,
-    "title_at_optimal": 0.7,
-    "break_even_bid": 0,
-    "clearing": {
-     "p_claimed": 0.0,
-     "p_free_pickup": 0.0,
-     "mean": null,
-     "p50": null,
-     "p90": null
-    },
-    "curve": [
-     {
-      "bid": 0,
-      "p_win": 1.0,
-      "title": 0.7
-     }
-    ]
-   },
-   {
-    "player_id": "10226",
-    "name": "Andrei Iosivas",
-    "position": "WR",
-    "team": "CIN",
-    "injury_status": "Out",
-    "source": "blend",
-    "points_this_week": 0.0,
-    "ros_per_week": 2.53,
-    "waiver_clears": null,
-    "drop": null,
-    "to_reserve": [
-     "Andrei Iosivas"
-    ],
-    "gain_this_week": 0.0,
-    "title_if_free": 0.6,
-    "title_if_free_se": 0.2,
-    "optimal_bid": 0,
-    "planning_gain": 2.53,
-    "p_win_at_optimal": 1.0,
-    "title_at_optimal": 0.6,
-    "break_even_bid": 0,
-    "clearing": {
-     "p_claimed": 0.0,
-     "p_free_pickup": 0.0,
-     "mean": null,
-     "p50": null,
-     "p90": null
-    },
-    "curve": [
-     {
-      "bid": 0,
-      "p_win": 1.0,
-      "title": 0.6
-     }
-    ]
-   },
-   {
-    "player_id": "12498",
-    "name": "Mason Taylor",
-    "position": "TE",
-    "team": "NYJ",
-    "injury_status": "Out",
-    "source": "blend",
-    "points_this_week": 0.0,
-    "ros_per_week": 4.0,
-    "waiver_clears": null,
-    "drop": null,
-    "to_reserve": [
-     "Mason Taylor"
-    ],
-    "gain_this_week": 0.0,
-    "title_if_free": 0.0,
-    "title_if_free_se": 0.0,
-    "optimal_bid": 0,
-    "planning_gain": 2.46,
-    "p_win_at_optimal": 1.0,
+    "planning_gain": 0.75,
+    "p_win_at_optimal": 0.0,
     "title_at_optimal": -0.0,
     "break_even_bid": 0,
     "clearing": {
-     "p_claimed": 0.0,
-     "p_free_pickup": 0.0,
-     "mean": null,
-     "p50": null,
-     "p90": null
+     "p_claimed": 0.115,
+     "p_free_pickup": 0.885,
+     "mean": 6.0,
+     "p50": 3.0,
+     "p90": 12
     },
     "curve": [
      {
       "bid": 0,
-      "p_win": 1.0,
+      "p_win": 0.0,
       "title": -0.0
      }
     ]
@@ -759,32 +2424,87 @@
     "injury_status": "PUP",
     "source": "blend",
     "points_this_week": 0.0,
-    "ros_per_week": 2.26,
+    "ros_per_week": 2.35,
     "waiver_clears": null,
-    "drop": null,
+    "drop": {
+     "player_id": "9753",
+     "name": "Zach Charbonnet",
+     "position": "RB",
+     "team": "SEA",
+     "injury_status": "PUP",
+     "source": "blend",
+     "points_this_week": 0.0,
+     "ros_per_week": 3.63
+    },
     "to_reserve": [
      "Luke Musgrave"
     ],
     "gain_this_week": 0.0,
-    "title_if_free": 0.0,
-    "title_if_free_se": 0.3,
+    "title_if_free": -0.0,
+    "title_if_free_se": 0.4,
     "optimal_bid": 0,
-    "planning_gain": 1.5,
-    "p_win_at_optimal": 1.0,
+    "planning_gain": 0.13,
+    "p_win_at_optimal": 0.02,
     "title_at_optimal": 0.0,
     "break_even_bid": 0,
     "clearing": {
-     "p_claimed": 0.0,
-     "p_free_pickup": 0.0,
-     "mean": null,
-     "p50": null,
-     "p90": null
+     "p_claimed": 0.001,
+     "p_free_pickup": 0.979,
+     "mean": 5.0,
+     "p50": 4,
+     "p90": 10
     },
     "curve": [
      {
       "bid": 0,
-      "p_win": 1.0,
+      "p_win": 0.02,
       "title": 0.0
+     }
+    ]
+   },
+   {
+    "player_id": "13293",
+    "name": "Ja'Kobi Lane",
+    "position": "WR",
+    "team": "BAL",
+    "injury_status": "IR",
+    "source": "blend",
+    "points_this_week": 0.0,
+    "ros_per_week": 3.87,
+    "waiver_clears": null,
+    "drop": {
+     "player_id": "9753",
+     "name": "Zach Charbonnet",
+     "position": "RB",
+     "team": "SEA",
+     "injury_status": "PUP",
+     "source": "blend",
+     "points_this_week": 0.0,
+     "ros_per_week": 3.63
+    },
+    "to_reserve": [
+     "Ja'Kobi Lane"
+    ],
+    "gain_this_week": 0.0,
+    "title_if_free": -0.1,
+    "title_if_free_se": 0.4,
+    "optimal_bid": 0,
+    "planning_gain": 0.28,
+    "p_win_at_optimal": 0.0,
+    "title_at_optimal": -0.0,
+    "break_even_bid": 0,
+    "clearing": {
+     "p_claimed": 0.028,
+     "p_free_pickup": 0.972,
+     "mean": 5.0,
+     "p50": 3.0,
+     "p90": 13
+    },
+    "curve": [
+     {
+      "bid": 0,
+      "p_win": 0.0,
+      "title": -0.0
      }
     ]
    }
@@ -792,74 +2512,70 @@
   "objective": {
    "chosen": "points",
    "p_title": {
-    "points": 0.2668,
-    "title_weighted": 0.249
+    "points": 0.2776,
+    "title_weighted": 0.271
    },
    "title_weights": [
     {
-     "week": 3,
-     "weight": 0.13
-    },
-    {
      "week": 4,
-     "weight": 0.161
+     "weight": 0.317
     },
     {
      "week": 5,
-     "weight": 1.64
+     "weight": 1.956
     },
     {
      "week": 6,
-     "weight": 0.347
+     "weight": 0.255
     },
     {
      "week": 7,
-     "weight": 0.197
+     "weight": 0.255
     },
     {
      "week": 8,
-     "weight": 0.326
+     "weight": 0.315
     },
     {
      "week": 9,
-     "weight": 0.114
+     "weight": 0.129
     },
     {
      "week": 10,
-     "weight": 0.214
+     "weight": 0.22
     },
     {
      "week": 11,
-     "weight": 0.504
+     "weight": 0.601
     },
     {
      "week": 12,
-     "weight": 0.494
+     "weight": 0.459
     },
     {
      "week": 13,
-     "weight": 0.849
+     "weight": 0.726
     },
     {
      "week": 14,
-     "weight": 1.397
+     "weight": 1.111
     },
     {
      "week": 15,
-     "weight": 3.487
+     "weight": 3.02
     },
     {
      "week": 16,
-     "weight": 2.57
+     "weight": 2.318
     },
     {
      "week": 17,
-     "weight": 2.57
+     "weight": 2.318
     }
    ],
-   "refill_pool": 200
+   "refill_pool": 204
   },
-  "race_title": 0.2227
+  "race_title": 0.2266
  },
  "teams": [
   {
@@ -869,86 +2585,91 @@
    "is_mine": true,
    "alive": true,
    "faab_left": 998,
-   "points_for": 177.0,
+   "points_for": 288.5,
    "points_this_week": 0.0,
-   "roster_size": 9,
-   "projected_now": 82.1,
-   "p_cut_now": 0.0127,
+   "roster_size": 10,
+   "projected_now": 81.5,
+   "p_cut_now": 0.0195,
    "p_alive_by_week": [
-    0.9873,
-    0.9727,
-    0.8481,
-    0.8281,
+    0.9805,
+    0.8862,
+    0.8677,
+    0.8511,
+    0.8291,
     0.8154,
-    0.7935,
-    0.7861,
-    0.7705,
-    0.7397,
-    0.7095,
-    0.6519,
-    0.5713,
-    0.3726
+    0.7988,
+    0.7554,
+    0.7246,
+    0.6753,
+    0.5889,
+    0.3862
    ],
-   "p_reach_final": 0.3726,
-   "p_title": 0.2227,
-   "spend_now": 0,
-   "p_claim_now": 0.0,
-   "budget_entering_week9": 452,
-   "budget_entering_week13": 193,
+   "p_reach_final": 0.3862,
+   "p_title": 0.2266,
+   "spend_now": 87,
+   "p_claim_now": 1.0,
+   "budget_entering_week9": 561,
+   "budget_entering_week13": 296,
    "players": [
     {
      "name": "Caleb Williams",
      "position": "QB",
      "points": 0.0,
-     "ros_per_week": 16.88
+     "ros_per_week": 16.76
     },
     {
      "name": "Kenneth Walker",
      "position": "RB",
-     "points": 17.79,
-     "ros_per_week": 15.88
+     "points": 17.21,
+     "ros_per_week": 15.99
     },
     {
      "name": "Sam Darnold",
      "position": "QB",
-     "points": 15.5,
-     "ros_per_week": 13.3
+     "points": 15.38,
+     "ros_per_week": 13.16
     },
     {
      "name": "Harold Fannin",
      "position": "TE",
-     "points": 12.07,
-     "ros_per_week": 12.1
+     "points": 13.02,
+     "ros_per_week": 12.3
     },
     {
      "name": "Brenton Strange",
      "position": "TE",
-     "points": 10.32,
-     "ros_per_week": 10.6
+     "points": 11.12,
+     "ros_per_week": 10.63
     },
     {
      "name": "Cade Otton",
      "position": "TE",
-     "points": 9.97,
-     "ros_per_week": 9.13
-    },
-    {
-     "name": "Xavier Worthy",
-     "position": "WR",
-     "points": 9.26,
-     "ros_per_week": 7.77
+     "points": 8.37,
+     "ros_per_week": 8.77
     },
     {
      "name": "Wan'Dale Robinson",
      "position": "WR",
-     "points": 7.15,
-     "ros_per_week": 7.53
+     "points": 7.91,
+     "ros_per_week": 7.96
+    },
+    {
+     "name": "Xavier Worthy",
+     "position": "WR",
+     "points": 8.54,
+     "ros_per_week": 7.66
+    },
+    {
+     "name": "Chris Bell",
+     "position": "WR",
+     "points": 6.25,
+     "ros_per_week": 5.37
     },
     {
      "name": "Zach Charbonnet",
      "position": "RB",
      "points": 0.0,
-     "ros_per_week": 3.39
+     "ros_per_week": 3.63
     }
    ]
   },
@@ -959,80 +2680,85 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 995,
-   "points_for": 134.5,
-   "points_this_week": 2.1,
-   "roster_size": 8,
-   "projected_now": 73.9,
-   "p_cut_now": 0.0405,
+   "points_for": 198.5,
+   "points_this_week": 0.0,
+   "roster_size": 9,
+   "projected_now": 73.7,
+   "p_cut_now": 0.0571,
    "p_alive_by_week": [
-    0.9595,
-    0.9014,
-    0.856,
-    0.7905,
-    0.7061,
-    0.645,
-    0.5576,
-    0.4893,
-    0.4185,
-    0.3389,
-    0.2529,
-    0.1494,
-    0.0811
+    0.9429,
+    0.8975,
+    0.8296,
+    0.7349,
+    0.6733,
+    0.5791,
+    0.5112,
+    0.4346,
+    0.3472,
+    0.2676,
+    0.1519,
+    0.0801
    ],
-   "p_reach_final": 0.0811,
-   "p_title": 0.0425,
-   "spend_now": 5,
-   "p_claim_now": 0.345,
-   "budget_entering_week9": 557,
-   "budget_entering_week13": 228,
+   "p_reach_final": 0.0801,
+   "p_title": 0.0366,
+   "spend_now": 78,
+   "p_claim_now": 0.961,
+   "budget_entering_week9": 585,
+   "budget_entering_week13": 223,
    "players": [
     {
      "name": "Trey McBride",
      "position": "TE",
-     "points": 19.05,
-     "ros_per_week": 17.75
+     "points": 19.42,
+     "ros_per_week": 17.74
     },
     {
      "name": "Jared Goff",
      "position": "QB",
-     "points": 18.01,
-     "ros_per_week": 16.57
+     "points": 17.44,
+     "ros_per_week": 16.5
     },
     {
      "name": "Jadarian Price",
      "position": "RB",
-     "points": 9.82,
-     "ros_per_week": 9.31
+     "points": 8.98,
+     "ros_per_week": 8.96
     },
     {
      "name": "Quentin Johnston",
      "position": "WR",
-     "points": 7.98,
-     "ros_per_week": 8.55
+     "points": 7.41,
+     "ros_per_week": 8.34
     },
     {
      "name": "Colby Parkinson",
      "position": "TE",
-     "points": 6.36,
-     "ros_per_week": 6.62
+     "points": 7.27,
+     "ros_per_week": 6.67
     },
     {
      "name": "Keenan Allen",
      "position": "WR",
-     "points": 6.87,
-     "ros_per_week": 6.46
+     "points": 7.88,
+     "ros_per_week": 6.48
+    },
+    {
+     "name": "Joshua Palmer",
+     "position": "WR",
+     "points": 3.26,
+     "ros_per_week": 3.4
     },
     {
      "name": "Jonah Coleman",
      "position": "RB",
-     "points": 2.19,
-     "ros_per_week": 3.74
+     "points": 0.0,
+     "ros_per_week": 2.54
     },
     {
      "name": "Kaleb Johnson",
      "position": "RB",
-     "points": 5.79,
-     "ros_per_week": 2.18
+     "points": 5.3,
+     "ros_per_week": 1.89
     }
    ]
   },
@@ -1043,86 +2769,85 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 978,
-   "points_for": 106.6,
-   "points_this_week": 8.6,
+   "points_for": 186.0,
+   "points_this_week": 0.0,
    "roster_size": 9,
-   "projected_now": 83.6,
-   "p_cut_now": 0.0083,
+   "projected_now": 85.8,
+   "p_cut_now": 0.0132,
    "p_alive_by_week": [
-    0.9917,
-    0.979,
-    0.9653,
-    0.9253,
-    0.8989,
-    0.8623,
-    0.7915,
-    0.7026,
-    0.6025,
-    0.5,
+    0.9868,
+    0.9668,
+    0.9336,
+    0.9121,
+    0.877,
+    0.8096,
+    0.7227,
+    0.6074,
+    0.5166,
     0.3315,
-    0.2329,
-    0.1162
+    0.2314,
+    0.1191
    ],
-   "p_reach_final": 0.1162,
-   "p_title": 0.0547,
-   "spend_now": 0,
-   "p_claim_now": 0.0,
-   "budget_entering_week9": 598,
-   "budget_entering_week13": 271,
+   "p_reach_final": 0.1191,
+   "p_title": 0.0654,
+   "spend_now": 64,
+   "p_claim_now": 0.92,
+   "budget_entering_week9": 616,
+   "budget_entering_week13": 264,
    "players": [
-    {
-     "name": "Kyler Murray",
-     "position": "QB",
-     "points": 17.4,
-     "ros_per_week": 17.11
-    },
     {
      "name": "Brock Bowers",
      "position": "TE",
-     "points": 14.65,
-     "ros_per_week": 16.6
+     "points": 17.69,
+     "ros_per_week": 17.94
     },
     {
-     "name": "Tucker Kraft",
-     "position": "TE",
-     "points": 12.79,
-     "ros_per_week": 13.01
-    },
-    {
-     "name": "Mark Andrews",
-     "position": "TE",
-     "points": 14.04,
-     "ros_per_week": 11.83
+     "name": "Kyler Murray",
+     "position": "QB",
+     "points": 18.05,
+     "ros_per_week": 16.53
     },
     {
      "name": "Jayden Daniels",
      "position": "QB",
      "points": 0.0,
-     "ros_per_week": 11.73
+     "ros_per_week": 13.75
+    },
+    {
+     "name": "Tucker Kraft",
+     "position": "TE",
+     "points": 12.46,
+     "ros_per_week": 12.58
+    },
+    {
+     "name": "Mark Andrews",
+     "position": "TE",
+     "points": 11.76,
+     "ros_per_week": 11.3
     },
     {
      "name": "Courtland Sutton",
      "position": "WR",
      "points": 8.15,
-     "ros_per_week": 8.7
-    },
-    {
-     "name": "RJ Harvey",
-     "position": "RB",
-     "points": 7.95,
-     "ros_per_week": 7.73
+     "ros_per_week": 8.5
     },
     {
      "name": "Denzel Boston",
      "position": "WR",
-     "points": 8.65,
-     "ros_per_week": 7.49
+     "points": 8.89,
+     "ros_per_week": 7.8
+    },
+    {
+     "name": "RJ Harvey",
+     "position": "RB",
+     "points": 8.78,
+     "ros_per_week": 7.68
     },
     {
      "name": "Josh Jacobs",
      "position": "RB",
      "points": 0.0,
-     "ros_per_week": 6.98
+     "ros_per_week": 3.71
     }
    ]
   },
@@ -1133,86 +2858,85 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 983,
-   "points_for": 178.1,
+   "points_for": 253.1,
    "points_this_week": 0.0,
    "roster_size": 9,
-   "projected_now": 76.5,
-   "p_cut_now": 0.0249,
+   "projected_now": 77.1,
+   "p_cut_now": 0.0317,
    "p_alive_by_week": [
-    0.9751,
-    0.9326,
-    0.8838,
-    0.8125,
-    0.7861,
-    0.7432,
-    0.6719,
-    0.6006,
-    0.416,
-    0.3281,
-    0.2554,
-    0.1704,
-    0.0825
+    0.9683,
+    0.9111,
+    0.835,
+    0.8003,
+    0.7612,
+    0.6865,
+    0.626,
+    0.4556,
+    0.3657,
+    0.2729,
+    0.1699,
+    0.0835
    ],
-   "p_reach_final": 0.0825,
-   "p_title": 0.0376,
-   "spend_now": 3,
-   "p_claim_now": 0.282,
-   "budget_entering_week9": 564,
-   "budget_entering_week13": 162,
+   "p_reach_final": 0.0835,
+   "p_title": 0.0444,
+   "spend_now": 70,
+   "p_claim_now": 0.958,
+   "budget_entering_week9": 592,
+   "budget_entering_week13": 177,
    "players": [
     {
      "name": "Jaxon Smith-Njigba",
      "position": "WR",
-     "points": 17.42,
-     "ros_per_week": 15.34
+     "points": 18.15,
+     "ros_per_week": 15.46
     },
     {
      "name": "Bryce Young",
      "position": "QB",
-     "points": 16.29,
-     "ros_per_week": 14.77
+     "points": 16.09,
+     "ros_per_week": 15.04
     },
     {
      "name": "Tee Higgins",
      "position": "WR",
-     "points": 11.04,
-     "ros_per_week": 11.27
-    },
-    {
-     "name": "Hunter Henry",
-     "position": "TE",
-     "points": 11.66,
-     "ros_per_week": 10.37
+     "points": 12.11,
+     "ros_per_week": 11.29
     },
     {
      "name": "Rhamondre Stevenson",
      "position": "RB",
-     "points": 9.65,
-     "ros_per_week": 10.12
+     "points": 10.18,
+     "ros_per_week": 10.37
+    },
+    {
+     "name": "Hunter Henry",
+     "position": "TE",
+     "points": 11.17,
+     "ros_per_week": 10.24
     },
     {
      "name": "Antonio Williams",
      "position": "WR",
-     "points": 4.75,
-     "ros_per_week": 5.41
+     "points": 4.44,
+     "ros_per_week": 5.43
     },
     {
      "name": "Kendrick Bourne",
      "position": "WR",
-     "points": 5.73,
-     "ros_per_week": 4.48
+     "points": 4.99,
+     "ros_per_week": 4.36
     },
     {
      "name": "Mike Washington",
      "position": "RB",
-     "points": 3.22,
-     "ros_per_week": 4.02
+     "points": 3.63,
+     "ros_per_week": 4.19
     },
     {
      "name": "Isiah Pacheco",
      "position": "RB",
      "points": 0.0,
-     "ros_per_week": 0.6
+     "ros_per_week": 0.65
     }
    ]
   },
@@ -1223,80 +2947,79 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 981,
-   "points_for": 93.9,
+   "points_for": 197.2,
    "points_this_week": 0.0,
    "roster_size": 8,
-   "projected_now": 67.7,
-   "p_cut_now": 0.0811,
+   "projected_now": 69.4,
+   "p_cut_now": 0.0859,
    "p_alive_by_week": [
-    0.9189,
-    0.7944,
-    0.7021,
-    0.6265,
-    0.5767,
-    0.5132,
-    0.4111,
-    0.3345,
-    0.2764,
-    0.1982,
-    0.1416,
-    0.0903,
+    0.9141,
+    0.7832,
+    0.6973,
+    0.644,
+    0.5723,
+    0.4678,
+    0.3652,
+    0.3062,
+    0.2129,
+    0.1343,
+    0.0889,
     0.0405
    ],
    "p_reach_final": 0.0405,
-   "p_title": 0.0234,
-   "spend_now": 2,
-   "p_claim_now": 0.145,
-   "budget_entering_week9": 554,
-   "budget_entering_week13": 174,
+   "p_title": 0.0195,
+   "spend_now": 76,
+   "p_claim_now": 0.92,
+   "budget_entering_week9": 580,
+   "budget_entering_week13": 172,
    "players": [
     {
      "name": "Lamar Jackson",
      "position": "QB",
-     "points": 21.59,
-     "ros_per_week": 19.16
+     "points": 20.75,
+     "ros_per_week": 19.15
     },
     {
      "name": "Emeka Egbuka",
      "position": "WR",
-     "points": 9.81,
-     "ros_per_week": 9.48
+     "points": 8.21,
+     "ros_per_week": 9.15
     },
     {
      "name": "Tony Pollard",
      "position": "RB",
-     "points": 9.88,
-     "ros_per_week": 8.67
+     "points": 9.29,
+     "ros_per_week": 8.52
     },
     {
      "name": "J.K. Dobbins",
      "position": "RB",
-     "points": 7.36,
-     "ros_per_week": 8.1
+     "points": 8.4,
+     "ros_per_week": 8.26
     },
     {
      "name": "Jordan Addison",
      "position": "WR",
-     "points": 8.21,
-     "ros_per_week": 8.03
-    },
-    {
-     "name": "Tyler Allgeier",
-     "position": "RB",
-     "points": 6.98,
-     "ros_per_week": 5.36
+     "points": 9.54,
+     "ros_per_week": 7.98
     },
     {
      "name": "Kalif Raymond",
      "position": "WR",
-     "points": 5.39,
-     "ros_per_week": 5.08
+     "points": 6.93,
+     "ros_per_week": 5.24
     },
     {
      "name": "Noah Fant",
      "position": "TE",
-     "points": 3.86,
-     "ros_per_week": 3.82
+     "points": 6.27,
+     "ros_per_week": 5.14
+    },
+    {
+     "name": "Tyler Allgeier",
+     "position": "RB",
+     "points": 6.15,
+     "ros_per_week": 5.05
     }
    ]
   },
@@ -1307,80 +3030,79 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 866,
-   "points_for": 124.8,
+   "points_for": 209.7,
    "points_this_week": 0.0,
    "roster_size": 8,
-   "projected_now": 55.6,
-   "p_cut_now": 0.2256,
+   "projected_now": 75.8,
+   "p_cut_now": 0.0566,
    "p_alive_by_week": [
-    0.7744,
-    0.7012,
-    0.6152,
-    0.5654,
-    0.4351,
-    0.3335,
-    0.291,
-    0.2554,
-    0.2124,
-    0.1606,
-    0.1152,
-    0.0688,
-    0.0288
+    0.9434,
+    0.8027,
+    0.7256,
+    0.5444,
+    0.4141,
+    0.3535,
+    0.3022,
+    0.2539,
+    0.1826,
+    0.1289,
+    0.0825,
+    0.0322
    ],
-   "p_reach_final": 0.0288,
-   "p_title": 0.0112,
-   "spend_now": 6,
-   "p_claim_now": 0.322,
-   "budget_entering_week9": 403,
-   "budget_entering_week13": 163,
+   "p_reach_final": 0.0322,
+   "p_title": 0.0127,
+   "spend_now": 36,
+   "p_claim_now": 0.726,
+   "budget_entering_week9": 427,
+   "budget_entering_week13": 152,
    "players": [
     {
      "name": "Nico Collins",
      "position": "WR",
-     "points": 0.0,
-     "ros_per_week": 11.79
+     "points": 13.73,
+     "ros_per_week": 12.72
     },
     {
      "name": "DJ Moore",
      "position": "WR",
-     "points": 10.52,
-     "ros_per_week": 10.37
+     "points": 10.84,
+     "ros_per_week": 10.5
     },
     {
      "name": "Rashee Rice",
      "position": "WR",
-     "points": 10.04,
-     "ros_per_week": 9.96
+     "points": 11.69,
+     "ros_per_week": 10.07
     },
     {
      "name": "Jacory Croskey-Merritt",
      "position": "RB",
-     "points": 8.23,
-     "ros_per_week": 9.22
+     "points": 10.11,
+     "ros_per_week": 9.08
     },
     {
      "name": "Deebo Samuel",
      "position": "WR",
-     "points": 9.73,
-     "ros_per_week": 8.52
+     "points": 9.2,
+     "ros_per_week": 8.22
     },
     {
-     "name": "Marcus Mariota",
-     "position": "QB",
-     "points": 14.02,
-     "ros_per_week": 5.43
+     "name": "Cooper Kupp",
+     "position": "WR",
+     "points": 5.11,
+     "ros_per_week": 5.04
     },
     {
      "name": "Foster Moreau",
      "position": "TE",
-     "points": 3.03,
-     "ros_per_week": 3.27
+     "points": 3.64,
+     "ros_per_week": 3.29
     },
     {
-     "name": "Drew Lock",
+     "name": "Marcus Mariota",
      "position": "QB",
-     "points": 0.0,
-     "ros_per_week": 1.34
+     "points": 16.55,
+     "ros_per_week": 3.14
     }
    ]
   },
@@ -1391,92 +3113,85 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 999,
-   "points_for": 194.7,
+   "points_for": 259.2,
    "points_this_week": 0.0,
-   "roster_size": 10,
-   "projected_now": 63.8,
-   "p_cut_now": 0.1177,
+   "roster_size": 9,
+   "projected_now": 79.7,
+   "p_cut_now": 0.0347,
    "p_alive_by_week": [
-    0.8823,
-    0.8418,
-    0.8105,
-    0.7417,
-    0.7178,
-    0.6362,
-    0.5718,
-    0.5156,
-    0.4585,
-    0.3774,
-    0.2827,
-    0.1924,
-    0.0981
+    0.9653,
+    0.9248,
+    0.8481,
+    0.8276,
+    0.7354,
+    0.6572,
+    0.5894,
+    0.5283,
+    0.4502,
+    0.3301,
+    0.2266,
+    0.1221
    ],
-   "p_reach_final": 0.0981,
-   "p_title": 0.0435,
-   "spend_now": 8,
-   "p_claim_now": 0.328,
-   "budget_entering_week9": 565,
-   "budget_entering_week13": 261,
+   "p_reach_final": 0.1221,
+   "p_title": 0.0557,
+   "spend_now": 73,
+   "p_claim_now": 0.819,
+   "budget_entering_week9": 573,
+   "budget_entering_week13": 250,
    "players": [
     {
      "name": "Chase Brown",
      "position": "RB",
-     "points": 14.79,
-     "ros_per_week": 13.64
-    },
-    {
-     "name": "Chris Olave",
-     "position": "WR",
-     "points": 13.74,
-     "ros_per_week": 12.93
+     "points": 15.52,
+     "ros_per_week": 13.71
     },
     {
      "name": "Zay Flowers",
      "position": "WR",
-     "points": 4.86,
-     "ros_per_week": 11.97
+     "points": 13.61,
+     "ros_per_week": 13.17
     },
     {
-     "name": "Michael Pittman",
+     "name": "Chris Olave",
      "position": "WR",
-     "points": 2.5,
-     "ros_per_week": 8.03
-    },
-    {
-     "name": "Kyle Monangai",
-     "position": "RB",
-     "points": 8.12,
-     "ros_per_week": 7.89
-    },
-    {
-     "name": "Dontayvion Wicks",
-     "position": "WR",
-     "points": 8.05,
-     "ros_per_week": 6.84
+     "points": 15.17,
+     "ros_per_week": 13.11
     },
     {
      "name": "Deshaun Watson",
      "position": "QB",
-     "points": 14.29,
-     "ros_per_week": 4.3
+     "points": 14.79,
+     "ros_per_week": 8.43
     },
     {
-     "name": "Tyquan Thornton",
+     "name": "Michael Pittman",
      "position": "WR",
-     "points": 4.78,
-     "ros_per_week": 4.09
+     "points": 7.51,
+     "ros_per_week": 8.19
+    },
+    {
+     "name": "Kyle Monangai",
+     "position": "RB",
+     "points": 8.13,
+     "ros_per_week": 7.86
+    },
+    {
+     "name": "Dontayvion Wicks",
+     "position": "WR",
+     "points": 7.6,
+     "ros_per_week": 6.85
+    },
+    {
+     "name": "Darnell Washington",
+     "position": "TE",
+     "points": 4.86,
+     "ros_per_week": 5.46
     },
     {
      "name": "Demarcus Robinson",
      "position": "WR",
      "points": 0.0,
-     "ros_per_week": 3.74
-    },
-    {
-     "name": "David Njoku",
-     "position": "TE",
-     "points": 0.0,
-     "ros_per_week": 1.9
+     "ros_per_week": 3.93
     }
    ]
   },
@@ -1487,80 +3202,79 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 1000,
-   "points_for": 180.4,
-   "points_this_week": 2.9,
+   "points_for": 251.9,
+   "points_this_week": 0.0,
    "roster_size": 8,
-   "projected_now": 77.2,
-   "p_cut_now": 0.0249,
+   "projected_now": 79.5,
+   "p_cut_now": 0.0269,
    "p_alive_by_week": [
-    0.9751,
-    0.9307,
-    0.8774,
-    0.8442,
-    0.7915,
-    0.7231,
-    0.6606,
-    0.5562,
-    0.4629,
-    0.3672,
-    0.291,
-    0.1846,
-    0.0903
+    0.9731,
+    0.9438,
+    0.9121,
+    0.8599,
+    0.7998,
+    0.7144,
+    0.5903,
+    0.5039,
+    0.4087,
+    0.3101,
+    0.1914,
+    0.0918
    ],
-   "p_reach_final": 0.0903,
-   "p_title": 0.0454,
-   "spend_now": 5,
-   "p_claim_now": 0.353,
-   "budget_entering_week9": 565,
-   "budget_entering_week13": 245,
+   "p_reach_final": 0.0918,
+   "p_title": 0.0449,
+   "spend_now": 66,
+   "p_claim_now": 0.971,
+   "budget_entering_week9": 604,
+   "budget_entering_week13": 259,
    "players": [
     {
      "name": "Tyler Shough",
      "position": "QB",
-     "points": 17.23,
-     "ros_per_week": 15.89
+     "points": 17.92,
+     "ros_per_week": 16.25
     },
     {
      "name": "CeeDee Lamb",
      "position": "WR",
-     "points": 14.58,
-     "ros_per_week": 13.28
+     "points": 13.95,
+     "ros_per_week": 13.34
     },
     {
      "name": "D'Andre Swift",
      "position": "RB",
-     "points": 12.26,
-     "ros_per_week": 12.16
+     "points": 13.21,
+     "ros_per_week": 12.5
     },
     {
      "name": "Kyle Pitts",
      "position": "TE",
-     "points": 10.98,
-     "ros_per_week": 11.46
+     "points": 11.14,
+     "ros_per_week": 11.56
     },
     {
      "name": "Stefon Diggs",
      "position": "WR",
-     "points": 8.17,
-     "ros_per_week": 8.68
+     "points": 9.15,
+     "ros_per_week": 8.69
     },
     {
      "name": "Greg Dulcich",
      "position": "TE",
-     "points": 7.6,
-     "ros_per_week": 7.57
+     "points": 7.98,
+     "ros_per_week": 8.35
     },
     {
      "name": "DeMario Douglas",
      "position": "WR",
-     "points": 6.43,
-     "ros_per_week": 4.18
+     "points": 6.15,
+     "ros_per_week": 3.93
     },
     {
      "name": "Chris Brooks",
      "position": "RB",
-     "points": 6.15,
-     "ros_per_week": 3.21
+     "points": 5.04,
+     "ros_per_week": 2.92
     }
    ]
   },
@@ -1571,80 +3285,79 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 796,
-   "points_for": 150.5,
-   "points_this_week": 19.1,
+   "points_for": 255.8,
+   "points_this_week": 0.0,
    "roster_size": 8,
-   "projected_now": 80.0,
-   "p_cut_now": 0.0181,
+   "projected_now": 87.6,
+   "p_cut_now": 0.0093,
    "p_alive_by_week": [
-    0.9819,
-    0.9717,
-    0.9561,
-    0.9443,
-    0.9199,
-    0.8716,
-    0.811,
-    0.7085,
-    0.6333,
-    0.541,
-    0.4243,
-    0.2808,
-    0.1387
+    0.9907,
+    0.9805,
+    0.9688,
+    0.9414,
+    0.8882,
+    0.832,
+    0.7305,
+    0.6357,
+    0.5371,
+    0.4331,
+    0.3096,
+    0.1519
    ],
-   "p_reach_final": 0.1387,
-   "p_title": 0.0659,
-   "spend_now": 0,
-   "p_claim_now": 0.0,
-   "budget_entering_week9": 485,
-   "budget_entering_week13": 217,
+   "p_reach_final": 0.1519,
+   "p_title": 0.0747,
+   "spend_now": 52,
+   "p_claim_now": 0.691,
+   "budget_entering_week9": 512,
+   "budget_entering_week13": 229,
    "players": [
     {
      "name": "Trevor Lawrence",
      "position": "QB",
-     "points": 18.2,
-     "ros_per_week": 18.12
+     "points": 18.48,
+     "ros_per_week": 18.55
     },
     {
      "name": "Colston Loveland",
      "position": "TE",
-     "points": 10.65,
-     "ros_per_week": 13.24
-    },
-    {
-     "name": "Jeremiyah Love",
-     "position": "RB",
-     "points": 11.04,
-     "ros_per_week": 12.12
+     "points": 11.53,
+     "ros_per_week": 12.87
     },
     {
      "name": "Juwan Johnson",
      "position": "TE",
-     "points": 11.47,
-     "ros_per_week": 11.94
+     "points": 13.34,
+     "ros_per_week": 12.29
+    },
+    {
+     "name": "Jeremiyah Love",
+     "position": "RB",
+     "points": 13.43,
+     "ros_per_week": 12.19
     },
     {
      "name": "Christian Watson",
      "position": "WR",
-     "points": 12.42,
-     "ros_per_week": 11.67
+     "points": 12.7,
+     "ros_per_week": 11.87
     },
     {
      "name": "Luther Burden",
      "position": "WR",
-     "points": 8.19,
-     "ros_per_week": 9.31
+     "points": 9.98,
+     "ros_per_week": 9.44
     },
     {
      "name": "Gunnar Helm",
      "position": "TE",
-     "points": 8.06,
-     "ros_per_week": 8.41
+     "points": 8.11,
+     "ros_per_week": 8.26
     },
     {
      "name": "Tre Tucker",
      "position": "WR",
-     "points": 7.72,
-     "ros_per_week": 7.0
+     "points": 7.57,
+     "ros_per_week": 6.99
     }
    ]
   },
@@ -1655,86 +3368,79 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 1000,
-   "points_for": 124.3,
-   "points_this_week": 2.8,
-   "roster_size": 9,
-   "projected_now": 67.7,
-   "p_cut_now": 0.0869,
+   "points_for": 169.9,
+   "points_this_week": 0.0,
+   "roster_size": 8,
+   "projected_now": 54.2,
+   "p_cut_now": 0.2056,
    "p_alive_by_week": [
-    0.9131,
-    0.814,
-    0.7417,
-    0.6504,
-    0.5166,
-    0.4639,
-    0.3965,
-    0.3442,
-    0.2983,
-    0.2329,
-    0.1777,
-    0.1172,
-    0.0537
+    0.7944,
+    0.6636,
+    0.5806,
+    0.4272,
+    0.3706,
+    0.3081,
+    0.2568,
+    0.2114,
+    0.1538,
+    0.1055,
+    0.0586,
+    0.0254
    ],
-   "p_reach_final": 0.0537,
-   "p_title": 0.0239,
-   "spend_now": 1,
-   "p_claim_now": 0.089,
-   "budget_entering_week9": 475,
-   "budget_entering_week13": 217,
+   "p_reach_final": 0.0254,
+   "p_title": 0.0122,
+   "spend_now": 93,
+   "p_claim_now": 0.959,
+   "budget_entering_week9": 351,
+   "budget_entering_week13": 131,
    "players": [
-    {
-     "name": "De'Von Achane",
-     "position": "RB",
-     "points": 14.17,
-     "ros_per_week": 13.89
-    },
     {
      "name": "Cam Ward",
      "position": "QB",
-     "points": 12.78,
-     "ros_per_week": 13.55
+     "points": 12.64,
+     "ros_per_week": 13.64
     },
     {
      "name": "Jacoby Brissett",
      "position": "QB",
-     "points": 15.1,
-     "ros_per_week": 12.37
-    },
-    {
-     "name": "Ladd McConkey",
-     "position": "WR",
-     "points": 11.16,
-     "ros_per_week": 10.6
+     "points": 15.42,
+     "ros_per_week": 12.27
     },
     {
      "name": "Bhayshul Tuten",
      "position": "RB",
-     "points": 10.44,
-     "ros_per_week": 9.92
+     "points": 11.51,
+     "ros_per_week": 11.09
+    },
+    {
+     "name": "Ladd McConkey",
+     "position": "WR",
+     "points": 10.35,
+     "ros_per_week": 10.21
     },
     {
      "name": "MarShawn Lloyd",
      "position": "RB",
-     "points": 6.56,
-     "ros_per_week": 5.81
+     "points": 7.29,
+     "ros_per_week": 5.66
     },
     {
      "name": "Cole Kmet",
      "position": "TE",
-     "points": 4.17,
-     "ros_per_week": 4.42
+     "points": 4.38,
+     "ros_per_week": 4.39
     },
     {
      "name": "Xavier Hutchinson",
      "position": "WR",
-     "points": 6.08,
-     "ros_per_week": 3.86
+     "points": 5.27,
+     "ros_per_week": 3.7
     },
     {
      "name": "De'Zhaun Stribling",
      "position": "WR",
      "points": 0.0,
-     "ros_per_week": 2.03
+     "ros_per_week": 2.17
     }
    ]
   },
@@ -1745,80 +3451,79 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 576,
-   "points_for": 189.2,
-   "points_this_week": 23.9,
+   "points_for": 281.4,
+   "points_this_week": 0.0,
    "roster_size": 8,
-   "projected_now": 90.3,
-   "p_cut_now": 0.001,
+   "projected_now": 92.5,
+   "p_cut_now": 0.0034,
    "p_alive_by_week": [
-    0.999,
-    0.9829,
-    0.9512,
-    0.9009,
-    0.8804,
-    0.7812,
-    0.7202,
-    0.6514,
-    0.5537,
-    0.4385,
-    0.3379,
-    0.2168,
-    0.1011
+    0.9966,
+    0.9668,
+    0.9165,
+    0.9053,
+    0.8203,
+    0.7681,
+    0.6978,
+    0.604,
+    0.5005,
+    0.3853,
+    0.2627,
+    0.1211
    ],
-   "p_reach_final": 0.1011,
-   "p_title": 0.0469,
-   "spend_now": 0,
-   "p_claim_now": 0.0,
-   "budget_entering_week9": 346,
-   "budget_entering_week13": 161,
+   "p_reach_final": 0.1211,
+   "p_title": 0.0581,
+   "spend_now": 35,
+   "p_claim_now": 0.655,
+   "budget_entering_week9": 364,
+   "budget_entering_week13": 162,
    "players": [
     {
      "name": "Matthew Stafford",
      "position": "QB",
-     "points": 15.77,
-     "ros_per_week": 16.02
+     "points": 16.71,
+     "ros_per_week": 16.25
     },
     {
      "name": "Amon-Ra St. Brown",
      "position": "WR",
-     "points": 15.9,
-     "ros_per_week": 14.79
+     "points": 15.8,
+     "ros_per_week": 14.69
     },
     {
      "name": "Drake London",
      "position": "WR",
-     "points": 11.31,
-     "ros_per_week": 11.21
-    },
-    {
-     "name": "Cam Skattebo",
-     "position": "RB",
-     "points": 12.67,
-     "ros_per_week": 11.2
+     "points": 13.24,
+     "ros_per_week": 12.04
     },
     {
      "name": "Chuba Hubbard",
      "position": "RB",
-     "points": 13.31,
-     "ros_per_week": 10.91
+     "points": 14.1,
+     "ros_per_week": 11.53
+    },
+    {
+     "name": "Cam Skattebo",
+     "position": "RB",
+     "points": 13.41,
+     "ros_per_week": 11.01
     },
     {
      "name": "Dalton Schultz",
      "position": "TE",
-     "points": 13.32,
-     "ros_per_week": 10.47
+     "points": 12.72,
+     "ros_per_week": 10.48
     },
     {
      "name": "Marvin Harrison",
      "position": "WR",
-     "points": 7.69,
-     "ros_per_week": 7.5
+     "points": 6.52,
+     "ros_per_week": 7.25
     },
     {
      "name": "Adonai Mitchell",
      "position": "WR",
-     "points": 8.0,
-     "ros_per_week": 6.93
+     "points": 2.31,
+     "ros_per_week": 6.48
     }
    ]
   },
@@ -1829,86 +3534,85 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 1000,
-   "points_for": 145.5,
+   "points_for": 188.0,
    "points_this_week": 0.0,
    "roster_size": 9,
-   "projected_now": 70.5,
-   "p_cut_now": 0.0522,
+   "projected_now": 70.9,
+   "p_cut_now": 0.0806,
    "p_alive_by_week": [
-    0.9478,
-    0.856,
-    0.7637,
-    0.7036,
-    0.5547,
-    0.4443,
-    0.3599,
-    0.3115,
-    0.249,
-    0.1909,
-    0.1431,
-    0.0942,
-    0.0483
+    0.9194,
+    0.8369,
+    0.7686,
+    0.5894,
+    0.4673,
+    0.3867,
+    0.3325,
+    0.2607,
+    0.1978,
+    0.1543,
+    0.105,
+    0.0503
    ],
-   "p_reach_final": 0.0483,
-   "p_title": 0.02,
-   "spend_now": 3,
-   "p_claim_now": 0.232,
-   "budget_entering_week9": 499,
-   "budget_entering_week13": 190,
+   "p_reach_final": 0.0503,
+   "p_title": 0.0254,
+   "spend_now": 44,
+   "p_claim_now": 0.763,
+   "budget_entering_week9": 552,
+   "budget_entering_week13": 202,
    "players": [
     {
      "name": "Josh Allen",
      "position": "QB",
-     "points": 22.61,
-     "ros_per_week": 21.01
+     "points": 22.82,
+     "ros_per_week": 21.45
     },
     {
      "name": "Isaiah Likely",
      "position": "TE",
-     "points": 12.57,
-     "ros_per_week": 12.09
+     "points": 12.01,
+     "ros_per_week": 11.64
     },
     {
      "name": "TreVeyon Henderson",
      "position": "RB",
-     "points": 10.17,
-     "ros_per_week": 11.51
+     "points": 10.6,
+     "ros_per_week": 11.6
     },
     {
      "name": "Makai Lemon",
      "position": "WR",
-     "points": 5.69,
-     "ros_per_week": 6.65
-    },
-    {
-     "name": "Tre' Harris",
-     "position": "WR",
-     "points": 6.59,
-     "ros_per_week": 5.45
+     "points": 5.48,
+     "ros_per_week": 6.52
     },
     {
      "name": "Alvin Kamara",
      "position": "RB",
-     "points": 6.53,
-     "ros_per_week": 5.29
+     "points": 8.45,
+     "ros_per_week": 5.6
+    },
+    {
+     "name": "Tre' Harris",
+     "position": "WR",
+     "points": 6.72,
+     "ros_per_week": 5.45
     },
     {
      "name": "Kaelon Black",
      "position": "RB",
-     "points": 6.32,
-     "ros_per_week": 4.72
+     "points": 4.82,
+     "ros_per_week": 4.34
     },
     {
      "name": "James Conner",
      "position": "RB",
      "points": 0.0,
-     "ros_per_week": 2.22
+     "ros_per_week": 2.34
     },
     {
      "name": "Odell Beckham",
      "position": "WR",
-     "points": 1.31,
-     "ros_per_week": 1.92
+     "points": 1.09,
+     "ros_per_week": 1.68
     }
    ]
   },
@@ -1925,7 +3629,6 @@
    "projected_now": null,
    "p_cut_now": 0.0,
    "p_alive_by_week": [
-    0.0,
     0.0,
     0.0,
     0.0,
@@ -1971,7 +3674,6 @@
     0.0,
     0.0,
     0.0,
-    0.0,
     0.0
    ],
    "p_reach_final": 0.0,
@@ -1989,80 +3691,79 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 910,
-   "points_for": 112.6,
+   "points_for": 194.4,
    "points_this_week": 0.0,
    "roster_size": 8,
-   "projected_now": 74.3,
-   "p_cut_now": 0.0381,
+   "projected_now": 77.1,
+   "p_cut_now": 0.0439,
    "p_alive_by_week": [
-    0.9619,
-    0.9028,
-    0.8481,
-    0.7969,
-    0.7026,
-    0.5801,
-    0.4932,
-    0.4102,
-    0.3413,
-    0.2603,
-    0.1899,
-    0.1147,
-    0.0459
+    0.9561,
+    0.8877,
+    0.8154,
+    0.7344,
+    0.6069,
+    0.5049,
+    0.4062,
+    0.3374,
+    0.2529,
+    0.1929,
+    0.1182,
+    0.0498
    ],
-   "p_reach_final": 0.0459,
-   "p_title": 0.022,
-   "spend_now": 1,
-   "p_claim_now": 0.057,
-   "budget_entering_week9": 490,
-   "budget_entering_week13": 183,
+   "p_reach_final": 0.0498,
+   "p_title": 0.0215,
+   "spend_now": 62,
+   "p_claim_now": 0.803,
+   "budget_entering_week9": 519,
+   "budget_entering_week13": 172,
    "players": [
     {
      "name": "Jalen Hurts",
      "position": "QB",
-     "points": 19.19,
-     "ros_per_week": 17.79
+     "points": 18.31,
+     "ros_per_week": 17.77
     },
     {
      "name": "George Kittle",
      "position": "TE",
-     "points": 13.15,
-     "ros_per_week": 12.69
+     "points": 14.69,
+     "ros_per_week": 12.96
     },
     {
      "name": "Terry McLaurin",
      "position": "WR",
-     "points": 9.33,
-     "ros_per_week": 9.64
-    },
-    {
-     "name": "Aaron Jones",
-     "position": "RB",
-     "points": 10.66,
-     "ros_per_week": 7.79
+     "points": 10.8,
+     "ros_per_week": 9.6
     },
     {
      "name": "Romeo Doubs",
      "position": "WR",
-     "points": 8.21,
-     "ros_per_week": 7.72
+     "points": 8.02,
+     "ros_per_week": 7.73
+    },
+    {
+     "name": "Aaron Jones",
+     "position": "RB",
+     "points": 12.54,
+     "ros_per_week": 7.45
     },
     {
      "name": "Tyjae Spears",
      "position": "RB",
-     "points": 7.46,
-     "ros_per_week": 7.11
+     "points": 6.27,
+     "ros_per_week": 7.07
     },
     {
      "name": "Kenny Gainwell",
      "position": "RB",
-     "points": 6.2,
-     "ros_per_week": 5.85
+     "points": 6.36,
+     "ros_per_week": 5.78
     },
     {
      "name": "Ryan Flournoy",
      "position": "WR",
-     "points": 6.3,
-     "ros_per_week": 5.37
+     "points": 6.36,
+     "ros_per_week": 5.23
     }
    ]
   },
@@ -2079,7 +3780,6 @@
    "projected_now": null,
    "p_cut_now": 0.0,
    "p_alive_by_week": [
-    0.0,
     0.0,
     0.0,
     0.0,
@@ -2108,80 +3808,79 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 1000,
-   "points_for": 162.5,
-   "points_this_week": 18.5,
+   "points_for": 253.8,
+   "points_this_week": 0.0,
    "roster_size": 8,
-   "projected_now": 80.2,
-   "p_cut_now": 0.0156,
+   "projected_now": 78.1,
+   "p_cut_now": 0.042,
    "p_alive_by_week": [
-    0.9844,
-    0.9165,
-    0.8579,
-    0.6294,
-    0.5918,
-    0.4839,
-    0.4043,
-    0.334,
-    0.2544,
-    0.1924,
-    0.1406,
-    0.0801,
-    0.043
+    0.958,
+    0.8906,
+    0.6382,
+    0.6001,
+    0.5024,
+    0.4175,
+    0.3403,
+    0.2681,
+    0.2065,
+    0.1509,
+    0.0952,
+    0.0381
    ],
-   "p_reach_final": 0.043,
-   "p_title": 0.0239,
-   "spend_now": 0,
-   "p_claim_now": 0.029,
-   "budget_entering_week9": 657,
-   "budget_entering_week13": 227,
+   "p_reach_final": 0.0381,
+   "p_title": 0.0195,
+   "spend_now": 20,
+   "p_claim_now": 0.367,
+   "budget_entering_week9": 702,
+   "budget_entering_week13": 211,
    "players": [
     {
      "name": "Jahmyr Gibbs",
      "position": "RB",
-     "points": 20.9,
-     "ros_per_week": 18.37
+     "points": 20.7,
+     "ros_per_week": 18.03
     },
     {
      "name": "Jordan Love",
      "position": "QB",
-     "points": 16.59,
-     "ros_per_week": 15.77
+     "points": 16.74,
+     "ros_per_week": 15.86
     },
     {
      "name": "Jake Ferguson",
      "position": "TE",
-     "points": 10.85,
-     "ros_per_week": 10.8
+     "points": 10.48,
+     "ros_per_week": 10.84
     },
     {
      "name": "Quinshon Judkins",
      "position": "RB",
-     "points": 11.65,
-     "ros_per_week": 10.07
-    },
-    {
-     "name": "Kayshon Boutte",
-     "position": "WR",
-     "points": 6.82,
-     "ros_per_week": 5.85
+     "points": 10.11,
+     "ros_per_week": 9.53
     },
     {
      "name": "Malik Washington",
      "position": "WR",
-     "points": 7.7,
-     "ros_per_week": 5.83
+     "points": 8.54,
+     "ros_per_week": 6.32
+    },
+    {
+     "name": "Kayshon Boutte",
+     "position": "WR",
+     "points": 6.52,
+     "ros_per_week": 5.66
     },
     {
      "name": "Malachi Fields",
      "position": "WR",
-     "points": 5.66,
-     "ros_per_week": 5.28
+     "points": 4.96,
+     "ros_per_week": 4.86
     },
     {
      "name": "Jaylin Noel",
      "position": "WR",
-     "points": 5.54,
-     "ros_per_week": 4.85
+     "points": 3.97,
+     "ros_per_week": 4.74
     }
    ]
   },
@@ -2198,7 +3897,6 @@
    "projected_now": null,
    "p_cut_now": 0.0,
    "p_alive_by_week": [
-    0.0,
     0.0,
     0.0,
     0.0,
@@ -2227,80 +3925,79 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 1000,
-   "points_for": 129.9,
-   "points_this_week": 35.5,
+   "points_for": 212.6,
+   "points_this_week": 0.0,
    "roster_size": 8,
-   "projected_now": 69.3,
-   "p_cut_now": 0.0713,
+   "projected_now": 69.1,
+   "p_cut_now": 0.0923,
    "p_alive_by_week": [
-    0.9287,
-    0.8628,
-    0.8022,
-    0.7617,
-    0.5776,
-    0.5215,
-    0.4497,
-    0.355,
-    0.2554,
-    0.2012,
-    0.1572,
-    0.1118,
-    0.0625
+    0.9077,
+    0.8442,
+    0.7827,
+    0.5752,
+    0.521,
+    0.4492,
+    0.3521,
+    0.2646,
+    0.2104,
+    0.1748,
+    0.123,
+    0.0654
    ],
-   "p_reach_final": 0.0625,
-   "p_title": 0.0332,
-   "spend_now": 2,
-   "p_claim_now": 0.127,
-   "budget_entering_week9": 683,
-   "budget_entering_week13": 205,
+   "p_reach_final": 0.0654,
+   "p_title": 0.0308,
+   "spend_now": 18,
+   "p_claim_now": 0.382,
+   "budget_entering_week9": 732,
+   "budget_entering_week13": 230,
    "players": [
     {
      "name": "Bijan Robinson",
      "position": "RB",
-     "points": 17.48,
-     "ros_per_week": 17.28
+     "points": 18.93,
+     "ros_per_week": 17.5
     },
     {
      "name": "Bo Nix",
      "position": "QB",
-     "points": 15.9,
-     "ros_per_week": 16.34
+     "points": 16.41,
+     "ros_per_week": 16.39
     },
     {
      "name": "Dalton Kincaid",
      "position": "TE",
-     "points": 14.34,
-     "ros_per_week": 14.72
+     "points": 14.43,
+     "ros_per_week": 14.73
     },
     {
      "name": "Chris Godwin",
      "position": "WR",
-     "points": 8.1,
-     "ros_per_week": 8.18
+     "points": 6.24,
+     "ros_per_week": 7.88
     },
     {
      "name": "Jalen Nailor",
      "position": "WR",
-     "points": 5.7,
-     "ros_per_week": 5.59
+     "points": 5.15,
+     "ros_per_week": 5.46
     },
     {
      "name": "Keaton Mitchell",
      "position": "RB",
-     "points": 5.42,
-     "ros_per_week": 5.22
+     "points": 5.28,
+     "ros_per_week": 5.1
     },
     {
      "name": "Zachariah Branch",
      "position": "WR",
-     "points": 2.38,
+     "points": 2.68,
      "ros_per_week": 2.28
     },
     {
      "name": "Sean Tucker",
      "position": "RB",
-     "points": 0.86,
-     "ros_per_week": 1.95
+     "points": 0.84,
+     "ros_per_week": 1.98
     }
    ]
   },
@@ -2311,92 +4008,91 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 950,
-   "points_for": 108.0,
+   "points_for": 190.3,
    "points_this_week": 0.0,
    "roster_size": 10,
-   "projected_now": 68.0,
-   "p_cut_now": 0.085,
+   "projected_now": 67.6,
+   "p_cut_now": 0.1245,
    "p_alive_by_week": [
-    0.915,
-    0.7622,
-    0.6675,
-    0.606,
-    0.5361,
-    0.4883,
-    0.4131,
-    0.3579,
-    0.2739,
-    0.2051,
-    0.144,
-    0.0874,
-    0.0439
+    0.8755,
+    0.7954,
+    0.7358,
+    0.6606,
+    0.6118,
+    0.5181,
+    0.4438,
+    0.3398,
+    0.2573,
+    0.1768,
+    0.1016,
+    0.0435
    ],
-   "p_reach_final": 0.0439,
-   "p_title": 0.0234,
-   "spend_now": 5,
-   "p_claim_now": 0.349,
-   "budget_entering_week9": 515,
-   "budget_entering_week13": 162,
+   "p_reach_final": 0.0435,
+   "p_title": 0.021,
+   "spend_now": 78,
+   "p_claim_now": 0.957,
+   "budget_entering_week9": 549,
+   "budget_entering_week13": 191,
    "players": [
     {
      "name": "Dak Prescott",
      "position": "QB",
-     "points": 18.39,
-     "ros_per_week": 17.42
+     "points": 17.17,
+     "ros_per_week": 17.29
+    },
+    {
+     "name": "Kenyon Sadiq",
+     "position": "TE",
+     "points": 11.72,
+     "ros_per_week": 9.87
     },
     {
      "name": "A.J. Brown",
      "position": "WR",
      "points": 0.0,
-     "ros_per_week": 8.97
-    },
-    {
-     "name": "Oronde Gadsden",
-     "position": "TE",
-     "points": 10.34,
-     "ros_per_week": 8.59
+     "ros_per_week": 9.59
     },
     {
      "name": "Carnell Tate",
      "position": "WR",
-     "points": 8.08,
-     "ros_per_week": 8.38
+     "points": 8.63,
+     "ros_per_week": 8.67
+    },
+    {
+     "name": "Oronde Gadsden",
+     "position": "TE",
+     "points": 8.8,
+     "ros_per_week": 8.31
     },
     {
      "name": "Blake Corum",
      "position": "RB",
-     "points": 8.57,
-     "ros_per_week": 8.04
-    },
-    {
-     "name": "Kenyon Sadiq",
-     "position": "TE",
-     "points": 9.4,
-     "ros_per_week": 7.69
+     "points": 8.09,
+     "ros_per_week": 7.88
     },
     {
      "name": "Pat Bryant",
      "position": "WR",
-     "points": 6.31,
-     "ros_per_week": 5.63
+     "points": 6.55,
+     "ros_per_week": 5.75
     },
     {
      "name": "Mack Hollins",
      "position": "WR",
-     "points": 6.92,
+     "points": 6.66,
      "ros_per_week": 5.01
     },
     {
      "name": "Ted Hurst",
      "position": "WR",
-     "points": 4.34,
-     "ros_per_week": 3.71
+     "points": 4.4,
+     "ros_per_week": 4.96
     },
     {
      "name": "Tank Dell",
      "position": "WR",
      "points": 0.0,
-     "ros_per_week": 2.53
+     "ros_per_week": 2.71
     }
    ]
   },
@@ -2407,80 +4103,79 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 1000,
-   "points_for": 138.0,
+   "points_for": 206.4,
    "points_this_week": 0.0,
    "roster_size": 8,
-   "projected_now": 67.0,
-   "p_cut_now": 0.0874,
+   "projected_now": 61.6,
+   "p_cut_now": 0.1689,
    "p_alive_by_week": [
-    0.9126,
-    0.7695,
-    0.6255,
-    0.417,
-    0.3325,
-    0.2837,
-    0.2002,
-    0.1748,
-    0.1367,
-    0.0986,
-    0.0591,
-    0.0337,
-    0.0146
+    0.8311,
+    0.6958,
+    0.5186,
+    0.4199,
+    0.3623,
+    0.2422,
+    0.2041,
+    0.168,
+    0.1221,
+    0.0796,
+    0.0439,
+    0.0225
    ],
-   "p_reach_final": 0.0146,
-   "p_title": 0.0063,
-   "spend_now": 3,
-   "p_claim_now": 0.147,
-   "budget_entering_week9": 571,
-   "budget_entering_week13": 171,
+   "p_reach_final": 0.0225,
+   "p_title": 0.0088,
+   "spend_now": 23,
+   "p_claim_now": 0.374,
+   "budget_entering_week9": 688,
+   "budget_entering_week13": 182,
    "players": [
     {
      "name": "Justin Jefferson",
      "position": "WR",
-     "points": 13.99,
-     "ros_per_week": 13.03
+     "points": 12.94,
+     "ros_per_week": 12.83
     },
     {
      "name": "Breece Hall",
      "position": "RB",
-     "points": 13.16,
-     "ros_per_week": 12.36
+     "points": 0.0,
+     "ros_per_week": 10.64
     },
     {
      "name": "Jaylen Warren",
      "position": "RB",
-     "points": 13.2,
-     "ros_per_week": 9.96
+     "points": 14.17,
+     "ros_per_week": 10.11
     },
     {
      "name": "Jakobi Meyers",
      "position": "WR",
-     "points": 7.53,
-     "ros_per_week": 7.93
+     "points": 8.64,
+     "ros_per_week": 8.05
+    },
+    {
+     "name": "Kirk Cousins",
+     "position": "QB",
+     "points": 14.0,
+     "ros_per_week": 8.02
     },
     {
      "name": "Braelon Allen",
      "position": "RB",
-     "points": 5.45,
-     "ros_per_week": 5.06
+     "points": 11.81,
+     "ros_per_week": 6.69
     },
     {
      "name": "Jonathon Brooks",
      "position": "RB",
      "points": 0.0,
-     "ros_per_week": 3.94
+     "ros_per_week": 3.86
     },
     {
      "name": "Eli Stowers",
      "position": "TE",
      "points": 0.0,
-     "ros_per_week": 3.16
-    },
-    {
-     "name": "Kirk Cousins",
-     "position": "QB",
-     "points": 13.71,
-     "ros_per_week": 2.15
+     "ros_per_week": 3.37
     }
    ]
   },
@@ -2491,80 +4186,79 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 820,
-   "points_for": 151.8,
+   "points_for": 215.1,
    "points_this_week": 0.0,
    "roster_size": 8,
-   "projected_now": 65.7,
-   "p_cut_now": 0.0933,
+   "projected_now": 54.2,
+   "p_cut_now": 0.189,
    "p_alive_by_week": [
-    0.9067,
-    0.7969,
-    0.6162,
-    0.5703,
-    0.4819,
-    0.353,
-    0.2866,
-    0.2363,
-    0.189,
-    0.1313,
-    0.0854,
-    0.0454,
-    0.019
+    0.811,
+    0.6436,
+    0.6084,
+    0.5176,
+    0.3652,
+    0.3037,
+    0.2563,
+    0.2056,
+    0.1465,
+    0.1021,
+    0.0625,
+    0.0259
    ],
-   "p_reach_final": 0.019,
-   "p_title": 0.0078,
-   "spend_now": 6,
-   "p_claim_now": 0.31,
-   "budget_entering_week9": 304,
-   "budget_entering_week13": 108,
+   "p_reach_final": 0.0259,
+   "p_title": 0.0142,
+   "spend_now": 57,
+   "p_claim_now": 0.759,
+   "budget_entering_week9": 339,
+   "budget_entering_week13": 118,
    "players": [
     {
      "name": "Brock Purdy",
      "position": "QB",
-     "points": 19.62,
-     "ros_per_week": 17.81
+     "points": 18.1,
+     "ros_per_week": 18.25
     },
     {
      "name": "Travis Kelce",
      "position": "TE",
-     "points": 13.58,
-     "ros_per_week": 12.26
+     "points": 14.17,
+     "ros_per_week": 12.38
     },
     {
      "name": "Travis Etienne",
      "position": "RB",
-     "points": 10.52,
-     "ros_per_week": 9.62
+     "points": 0.0,
+     "ros_per_week": 8.69
     },
     {
      "name": "Brian Thomas",
      "position": "WR",
-     "points": 8.04,
-     "ros_per_week": 8.28
+     "points": 7.64,
+     "ros_per_week": 8.14
     },
     {
      "name": "Devaughn Vele",
      "position": "WR",
-     "points": 8.21,
-     "ros_per_week": 6.91
+     "points": 8.61,
+     "ros_per_week": 6.82
     },
     {
      "name": "Zach Ertz",
      "position": "TE",
-     "points": 5.75,
-     "ros_per_week": 5.2
+     "points": 5.71,
+     "ros_per_week": 5.11
     },
     {
      "name": "Jayden Reed",
      "position": "WR",
      "points": 0.0,
-     "ros_per_week": 3.11
+     "ros_per_week": 3.22
     },
     {
      "name": "Dylan Sampson",
      "position": "RB",
      "points": 0.0,
-     "ros_per_week": 0.98
+     "ros_per_week": 1.05
     }
    ]
   },
@@ -2575,80 +4269,73 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 205,
-   "points_for": 130.1,
-   "points_this_week": 18.5,
-   "roster_size": 8,
-   "projected_now": 67.8,
-   "p_cut_now": 0.0586,
+   "points_for": 207.5,
+   "points_this_week": 0.0,
+   "roster_size": 7,
+   "projected_now": 70.6,
+   "p_cut_now": 0.0542,
    "p_alive_by_week": [
-    0.9414,
-    0.9023,
-    0.8677,
-    0.7847,
-    0.73,
-    0.6831,
-    0.5942,
-    0.5107,
-    0.3906,
-    0.2969,
-    0.2153,
-    0.1274,
-    0.0532
+    0.9458,
+    0.8921,
+    0.748,
+    0.6997,
+    0.6323,
+    0.5425,
+    0.4482,
+    0.3252,
+    0.2383,
+    0.1836,
+    0.104,
+    0.043
    ],
-   "p_reach_final": 0.0532,
-   "p_title": 0.0239,
-   "spend_now": 3,
-   "p_claim_now": 0.326,
-   "budget_entering_week9": 131,
-   "budget_entering_week13": 53,
+   "p_reach_final": 0.043,
+   "p_title": 0.0215,
+   "spend_now": 11,
+   "p_claim_now": 0.959,
+   "budget_entering_week9": 132,
+   "budget_entering_week13": 47,
    "players": [
     {
      "name": "Ja'Marr Chase",
      "position": "WR",
-     "points": 14.53,
-     "ros_per_week": 14.7
-    },
-    {
-     "name": "Jameis Winston",
-     "position": "QB",
-     "points": 13.5,
-     "ros_per_week": 13.0
+     "points": 16.14,
+     "ros_per_week": 14.62
     },
     {
      "name": "Kyren Williams",
      "position": "RB",
-     "points": 12.5,
+     "points": 12.42,
      "ros_per_week": 11.99
+    },
+    {
+     "name": "Jameis Winston",
+     "position": "QB",
+     "points": 13.33,
+     "ros_per_week": 11.8
     },
     {
      "name": "George Pickens",
      "position": "WR",
-     "points": 12.57,
-     "ros_per_week": 11.41
+     "points": 11.67,
+     "ros_per_week": 11.12
     },
     {
      "name": "Matthew Golden",
      "position": "WR",
-     "points": 10.27,
-     "ros_per_week": 8.9
-    },
-    {
-     "name": "Chig Okonkwo",
-     "position": "TE",
-     "points": 0.0,
-     "ros_per_week": 8.72
+     "points": 10.93,
+     "ros_per_week": 8.97
     },
     {
      "name": "Caleb Douglas",
      "position": "WR",
-     "points": 0.0,
-     "ros_per_week": 6.03
+     "points": 1.64,
+     "ros_per_week": 6.12
     },
     {
      "name": "Dawson Knox",
      "position": "TE",
-     "points": 4.44,
-     "ros_per_week": 4.45
+     "points": 4.5,
+     "ros_per_week": 4.52
     }
    ]
   },
@@ -2659,80 +4346,79 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 1000,
-   "points_for": 177.6,
+   "points_for": 232.4,
    "points_this_week": 0.0,
    "roster_size": 8,
-   "projected_now": 79.4,
-   "p_cut_now": 0.0122,
+   "projected_now": 80.8,
+   "p_cut_now": 0.0234,
    "p_alive_by_week": [
-    0.9878,
-    0.9351,
-    0.8354,
-    0.7529,
-    0.6646,
-    0.5591,
-    0.4834,
-    0.4175,
-    0.3442,
-    0.2617,
-    0.189,
-    0.125,
-    0.0444
+    0.9766,
+    0.8887,
+    0.7954,
+    0.7002,
+    0.603,
+    0.5161,
+    0.4526,
+    0.3618,
+    0.2686,
+    0.1904,
+    0.1064,
+    0.0474
    ],
-   "p_reach_final": 0.0444,
-   "p_title": 0.0181,
-   "spend_now": 1,
-   "p_claim_now": 0.056,
-   "budget_entering_week9": 624,
-   "budget_entering_week13": 222,
+   "p_reach_final": 0.0474,
+   "p_title": 0.0229,
+   "spend_now": 46,
+   "p_claim_now": 0.541,
+   "budget_entering_week9": 648,
+   "budget_entering_week13": 230,
    "players": [
     {
      "name": "Drake Maye",
      "position": "QB",
      "points": 17.24,
-     "ros_per_week": 18.2
+     "ros_per_week": 17.71
     },
     {
      "name": "David Montgomery",
      "position": "RB",
-     "points": 12.02,
-     "ros_per_week": 11.57
+     "points": 12.71,
+     "ros_per_week": 11.47
     },
     {
      "name": "Parker Washington",
      "position": "WR",
-     "points": 12.13,
-     "ros_per_week": 10.97
+     "points": 13.04,
+     "ros_per_week": 11.18
     },
     {
      "name": "T.J. Hockenson",
      "position": "TE",
-     "points": 10.53,
-     "ros_per_week": 9.77
+     "points": 10.62,
+     "ros_per_week": 9.59
     },
     {
      "name": "Jalen Coker",
      "position": "WR",
-     "points": 11.4,
-     "ros_per_week": 9.3
+     "points": 10.55,
+     "ros_per_week": 9.38
     },
     {
      "name": "Mike Gesicki",
      "position": "TE",
-     "points": 7.56,
-     "ros_per_week": 7.94
+     "points": 8.33,
+     "ros_per_week": 8.32
     },
     {
      "name": "Darren Waller",
      "position": "TE",
-     "points": 8.48,
-     "ros_per_week": 7.9
+     "points": 8.29,
+     "ros_per_week": 8.13
     },
     {
      "name": "Keon Coleman",
      "position": "WR",
-     "points": 4.81,
-     "ros_per_week": 4.82
+     "points": 4.63,
+     "ros_per_week": 5.39
     }
    ]
   },
@@ -2743,80 +4429,79 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 1000,
-   "points_for": 98.6,
-   "points_this_week": 11.0,
+   "points_for": 142.2,
+   "points_this_week": 0.0,
    "roster_size": 8,
-   "projected_now": 51.8,
-   "p_cut_now": 0.291,
+   "projected_now": 52.5,
+   "p_cut_now": 0.3389,
    "p_alive_by_week": [
-    0.709,
-    0.541,
-    0.4189,
-    0.3486,
-    0.2261,
-    0.1787,
-    0.1191,
-    0.0972,
-    0.0791,
-    0.062,
-    0.0396,
-    0.0215,
-    0.0122
+    0.6611,
+    0.5024,
+    0.3931,
+    0.2373,
+    0.1865,
+    0.126,
+    0.1006,
+    0.0762,
+    0.0522,
+    0.0288,
+    0.0142,
+    0.0083
    ],
-   "p_reach_final": 0.0122,
-   "p_title": 0.0049,
-   "spend_now": 4,
-   "p_claim_now": 0.128,
-   "budget_entering_week9": 550,
-   "budget_entering_week13": 124,
+   "p_reach_final": 0.0083,
+   "p_title": 0.0029,
+   "spend_now": 40,
+   "p_claim_now": 0.381,
+   "budget_entering_week9": 578,
+   "budget_entering_week13": 172,
    "players": [
     {
      "name": "Justin Herbert",
      "position": "QB",
-     "points": 16.37,
-     "ros_per_week": 16.57
+     "points": 14.32,
+     "ros_per_week": 16.29
     },
     {
      "name": "Jonathan Taylor",
      "position": "RB",
-     "points": 17.1,
-     "ros_per_week": 15.93
+     "points": 18.58,
+     "ros_per_week": 15.59
     },
     {
      "name": "Rico Dowdle",
      "position": "RB",
-     "points": 2.18,
-     "ros_per_week": 7.79
+     "points": 3.0,
+     "ros_per_week": 7.44
     },
     {
      "name": "Brian Robinson",
      "position": "RB",
-     "points": 4.93,
-     "ros_per_week": 4.79
+     "points": 5.11,
+     "ros_per_week": 4.74
     },
     {
      "name": "Elic Ayomanor",
      "position": "WR",
-     "points": 4.16,
-     "ros_per_week": 4.12
+     "points": 4.83,
+     "ros_per_week": 4.52
     },
     {
      "name": "Isaac TeSlaa",
      "position": "WR",
-     "points": 4.11,
+     "points": 4.09,
      "ros_per_week": 4.02
     },
     {
      "name": "Oscar Delp",
      "position": "TE",
-     "points": 2.15,
-     "ros_per_week": 2.9
+     "points": 1.87,
+     "ros_per_week": 2.73
     },
     {
      "name": "Johnny Mundt",
      "position": "TE",
-     "points": 2.94,
-     "ros_per_week": 1.3
+     "points": 2.59,
+     "ros_per_week": 1.21
     }
    ]
   },
@@ -2827,80 +4512,79 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 800,
-   "points_for": 152.9,
+   "points_for": 214.0,
    "points_this_week": 0.0,
    "roster_size": 8,
-   "projected_now": 77.8,
-   "p_cut_now": 0.0244,
+   "projected_now": 52.0,
+   "p_cut_now": 0.1245,
    "p_alive_by_week": [
-    0.9756,
-    0.9526,
-    0.937,
-    0.9175,
-    0.8984,
-    0.8374,
-    0.7656,
-    0.6611,
-    0.5444,
-    0.4644,
-    0.3555,
-    0.2437,
-    0.1123
+    0.8755,
+    0.814,
+    0.7925,
+    0.7788,
+    0.7256,
+    0.6641,
+    0.5801,
+    0.4717,
+    0.3911,
+    0.2983,
+    0.2031,
+    0.0981
    ],
-   "p_reach_final": 0.1123,
-   "p_title": 0.0513,
-   "spend_now": 0,
-   "p_claim_now": 0.011,
-   "budget_entering_week9": 491,
-   "budget_entering_week13": 217,
+   "p_reach_final": 0.0981,
+   "p_title": 0.0449,
+   "spend_now": 86,
+   "p_claim_now": 0.967,
+   "budget_entering_week9": 494,
+   "budget_entering_week13": 219,
    "players": [
-    {
-     "name": "Baker Mayfield",
-     "position": "QB",
-     "points": 15.57,
-     "ros_per_week": 15.51
-    },
     {
      "name": "Puka Nacua",
      "position": "WR",
-     "points": 3.73,
-     "ros_per_week": 14.4
+     "points": 5.27,
+     "ros_per_week": 13.83
     },
     {
-     "name": "Bucky Irving",
-     "position": "RB",
-     "points": 12.05,
-     "ros_per_week": 11.7
+     "name": "Baker Mayfield",
+     "position": "QB",
+     "points": 0.0,
+     "ros_per_week": 11.69
     },
     {
      "name": "Garrett Wilson",
      "position": "WR",
-     "points": 13.14,
-     "ros_per_week": 11.01
+     "points": 13.01,
+     "ros_per_week": 11.16
+    },
+    {
+     "name": "Bucky Irving",
+     "position": "RB",
+     "points": 12.0,
+     "ros_per_week": 10.97
     },
     {
      "name": "Mike Evans",
      "position": "WR",
-     "points": 11.31,
-     "ros_per_week": 10.05
+     "points": 3.75,
+     "ros_per_week": 9.89
     },
     {
      "name": "Pat Freiermuth",
      "position": "TE",
-     "points": 10.34,
-     "ros_per_week": 9.1
+     "points": 10.01,
+     "ros_per_week": 9.02
     },
     {
      "name": "Terrance Ferguson",
      "position": "TE",
-     "points": 9.83,
-     "ros_per_week": 7.29
+     "points": 7.98,
+     "ros_per_week": 8.27
     },
     {
      "name": "Germie Bernard",
      "position": "WR",
-     "points": 5.55,
-     "ros_per_week": 4.28
+     "points": 2.87,
+     "ros_per_week": 4.15
     }
    ]
   },
@@ -2911,86 +4595,85 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 1000,
-   "points_for": 133.0,
+   "points_for": 215.6,
    "points_this_week": 0.0,
    "roster_size": 9,
-   "projected_now": 75.3,
-   "p_cut_now": 0.0337,
+   "projected_now": 74.8,
+   "p_cut_now": 0.0576,
    "p_alive_by_week": [
-    0.9663,
-    0.9238,
-    0.8726,
-    0.7944,
-    0.7505,
-    0.6289,
-    0.5366,
-    0.4834,
-    0.4282,
-    0.3442,
-    0.2646,
-    0.1758,
-    0.0771
+    0.9424,
+    0.8975,
+    0.8027,
+    0.7568,
+    0.6304,
+    0.5547,
+    0.4941,
+    0.4263,
+    0.3467,
+    0.2666,
+    0.1768,
+    0.0835
    ],
-   "p_reach_final": 0.0771,
-   "p_title": 0.0327,
-   "spend_now": 0,
-   "p_claim_now": 0.005,
-   "budget_entering_week9": 616,
-   "budget_entering_week13": 268,
+   "p_reach_final": 0.0835,
+   "p_title": 0.0371,
+   "spend_now": 45,
+   "p_claim_now": 0.73,
+   "budget_entering_week9": 645,
+   "budget_entering_week13": 265,
    "players": [
     {
      "name": "Christian McCaffrey",
      "position": "RB",
-     "points": 16.92,
-     "ros_per_week": 15.98
+     "points": 17.14,
+     "ros_per_week": 16.15
     },
     {
      "name": "Daniel Jones",
      "position": "QB",
-     "points": 13.26,
-     "ros_per_week": 14.33
+     "points": 15.57,
+     "ros_per_week": 14.07
     },
     {
      "name": "Sam LaPorta",
      "position": "TE",
-     "points": 13.97,
-     "ros_per_week": 12.94
+     "points": 13.74,
+     "ros_per_week": 12.73
     },
     {
      "name": "Geno Smith",
      "position": "QB",
-     "points": 15.42,
-     "ros_per_week": 12.36
+     "points": 14.36,
+     "ros_per_week": 12.21
     },
     {
      "name": "DK Metcalf",
      "position": "WR",
-     "points": 9.46,
-     "ros_per_week": 9.05
+     "points": 8.97,
+     "ros_per_week": 8.87
     },
     {
      "name": "Michael Mayer",
      "position": "TE",
-     "points": 6.57,
-     "ros_per_week": 7.66
-    },
-    {
-     "name": "Rashid Shaheed",
-     "position": "WR",
-     "points": 6.87,
-     "ros_per_week": 6.83
+     "points": 7.34,
+     "ros_per_week": 7.93
     },
     {
      "name": "Jordan Mason",
      "position": "RB",
      "points": 0.0,
+     "ros_per_week": 6.87
+    },
+    {
+     "name": "Rashid Shaheed",
+     "position": "WR",
+     "points": 5.98,
      "ros_per_week": 6.49
     },
     {
      "name": "Emanuel Wilson",
      "position": "RB",
-     "points": 6.14,
-     "ros_per_week": 4.47
+     "points": 6.09,
+     "ros_per_week": 4.21
     }
    ]
   },
@@ -3001,86 +4684,85 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 450,
-   "points_for": 114.0,
+   "points_for": 196.6,
    "points_this_week": 0.0,
    "roster_size": 9,
-   "projected_now": 78.9,
-   "p_cut_now": 0.0156,
+   "projected_now": 79.3,
+   "p_cut_now": 0.0166,
    "p_alive_by_week": [
-    0.9844,
-    0.9517,
-    0.9287,
-    0.8428,
-    0.8013,
-    0.7329,
-    0.6416,
-    0.561,
-    0.4858,
-    0.355,
-    0.231,
-    0.1328,
-    0.0591
+    0.9834,
+    0.9526,
+    0.8818,
+    0.8394,
+    0.772,
+    0.6655,
+    0.5757,
+    0.4971,
+    0.3716,
+    0.2344,
+    0.1362,
+    0.0615
    ],
-   "p_reach_final": 0.0591,
-   "p_title": 0.0303,
-   "spend_now": 4,
-   "p_claim_now": 0.373,
-   "budget_entering_week9": 286,
-   "budget_entering_week13": 109,
+   "p_reach_final": 0.0615,
+   "p_title": 0.0298,
+   "spend_now": 24,
+   "p_claim_now": 0.965,
+   "budget_entering_week9": 295,
+   "budget_entering_week13": 119,
    "players": [
     {
      "name": "Joe Burrow",
      "position": "QB",
-     "points": 16.99,
-     "ros_per_week": 17.45
+     "points": 18.97,
+     "ros_per_week": 17.44
     },
     {
      "name": "Derrick Henry",
      "position": "RB",
-     "points": 17.49,
-     "ros_per_week": 15.19
+     "points": 18.23,
+     "ros_per_week": 15.55
     },
     {
      "name": "Javonte Williams",
      "position": "RB",
-     "points": 13.4,
-     "ros_per_week": 13.13
+     "points": 13.13,
+     "ros_per_week": 13.23
     },
     {
      "name": "Jameson Williams",
      "position": "WR",
-     "points": 10.54,
-     "ros_per_week": 9.79
+     "points": 10.3,
+     "ros_per_week": 9.35
     },
     {
      "name": "AJ Barner",
      "position": "TE",
-     "points": 8.57,
-     "ros_per_week": 8.97
+     "points": 9.23,
+     "ros_per_week": 8.84
     },
     {
      "name": "Evan Engram",
      "position": "TE",
-     "points": 7.4,
-     "ros_per_week": 7.54
+     "points": 6.63,
+     "ros_per_week": 7.48
     },
     {
      "name": "Jordyn Tyson",
      "position": "WR",
      "points": 0.0,
-     "ros_per_week": 6.57
+     "ros_per_week": 7.0
     },
     {
      "name": "Calvin Ridley",
      "position": "WR",
-     "points": 4.5,
-     "ros_per_week": 4.28
+     "points": 2.82,
+     "ros_per_week": 3.47
     },
     {
      "name": "Charlie Kolar",
      "position": "TE",
      "points": 0.0,
-     "ros_per_week": 2.5
+     "ros_per_week": 2.64
     }
    ]
   },
@@ -3091,80 +4773,79 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 870,
-   "points_for": 131.4,
+   "points_for": 196.3,
    "points_this_week": 0.0,
    "roster_size": 9,
-   "projected_now": 77.7,
-   "p_cut_now": 0.0234,
+   "projected_now": 76.5,
+   "p_cut_now": 0.0562,
    "p_alive_by_week": [
-    0.9766,
-    0.9072,
-    0.8052,
-    0.7373,
-    0.6636,
-    0.5625,
-    0.479,
-    0.4146,
-    0.3384,
-    0.2563,
-    0.1709,
+    0.9438,
+    0.8315,
+    0.7549,
+    0.6836,
+    0.5659,
+    0.4868,
+    0.4038,
+    0.3345,
+    0.2446,
+    0.1719,
     0.1045,
-    0.0562
+    0.0483
    ],
-   "p_reach_final": 0.0562,
-   "p_title": 0.0293,
-   "spend_now": 1,
-   "p_claim_now": 0.109,
-   "budget_entering_week9": 453,
-   "budget_entering_week13": 177,
+   "p_reach_final": 0.0483,
+   "p_title": 0.0244,
+   "spend_now": 55,
+   "p_claim_now": 0.799,
+   "budget_entering_week9": 466,
+   "budget_entering_week13": 174,
    "players": [
     {
      "name": "Patrick Mahomes",
      "position": "QB",
-     "points": 19.22,
-     "ros_per_week": 16.89
+     "points": 19.1,
+     "ros_per_week": 16.92
     },
     {
      "name": "Tyler Warren",
      "position": "TE",
-     "points": 13.45,
-     "ros_per_week": 13.77
+     "points": 14.78,
+     "ros_per_week": 13.65
     },
     {
      "name": "Malik Nabers",
      "position": "WR",
-     "points": 10.76,
-     "ros_per_week": 9.85
+     "points": 10.83,
+     "ros_per_week": 9.44
     },
     {
      "name": "Josh Downs",
      "position": "WR",
-     "points": 9.14,
-     "ros_per_week": 8.32
+     "points": 10.33,
+     "ros_per_week": 8.47
     },
     {
      "name": "Khalil Shakir",
      "position": "WR",
-     "points": 8.04,
-     "ros_per_week": 7.52
+     "points": 7.56,
+     "ros_per_week": 7.05
     },
     {
      "name": "Rashod Bateman",
      "position": "WR",
-     "points": 9.23,
-     "ros_per_week": 6.58
+     "points": 6.86,
+     "ros_per_week": 6.31
     },
     {
      "name": "Woody Marks",
      "position": "RB",
-     "points": 7.83,
-     "ros_per_week": 6.23
+     "points": 7.0,
+     "ros_per_week": 6.1
     },
     {
      "name": "Chris Rodriguez",
      "position": "RB",
-     "points": 4.43,
-     "ros_per_week": 5.36
+     "points": 4.81,
+     "ros_per_week": 5.4
     }
    ]
   },
@@ -3173,156 +4854,68 @@
    "name": "csmittt",
    "username": "csmittt",
    "is_mine": false,
-   "alive": true,
+   "alive": false,
    "faab_left": 1000,
-   "points_for": 125.2,
+   "points_for": 161.4,
    "points_this_week": 0.0,
-   "roster_size": 8,
-   "projected_now": 63.0,
-   "p_cut_now": 0.1338,
+   "roster_size": 0,
+   "projected_now": null,
+   "p_cut_now": 0.0,
    "p_alive_by_week": [
-    0.8662,
-    0.7231,
-    0.6338,
-    0.479,
-    0.3555,
-    0.3018,
-    0.2378,
-    0.1558,
-    0.1226,
-    0.0869,
-    0.0615,
-    0.0415,
-    0.0161
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
    ],
-   "p_reach_final": 0.0161,
-   "p_title": 0.0093,
-   "spend_now": 1,
-   "p_claim_now": 0.097,
-   "budget_entering_week9": 644,
-   "budget_entering_week13": 160,
-   "players": [
-    {
-     "name": "Malik Willis",
-     "position": "QB",
-     "points": 14.95,
-     "ros_per_week": 15.27
-    },
-    {
-     "name": "Omarion Hampton",
-     "position": "RB",
-     "points": 12.49,
-     "ros_per_week": 11.97
-    },
-    {
-     "name": "DeVonta Smith",
-     "position": "WR",
-     "points": 13.59,
-     "ros_per_week": 11.13
-    },
-    {
-     "name": "Rome Odunze",
-     "position": "WR",
-     "points": 7.33,
-     "ros_per_week": 8.89
-    },
-    {
-     "name": "KC Concepcion",
-     "position": "WR",
-     "points": 8.27,
-     "ros_per_week": 7.75
-    },
-    {
-     "name": "Eli Raridon",
-     "position": "TE",
-     "points": 0.73,
-     "ros_per_week": 4.83
-    },
-    {
-     "name": "Justice Hill",
-     "position": "RB",
-     "points": 5.65,
-     "ros_per_week": 4.51
-    },
-    {
-     "name": "Darnell Mooney",
-     "position": "WR",
-     "points": 4.51,
-     "ros_per_week": 3.62
-    }
-   ]
+   "p_reach_final": 0.0,
+   "p_title": 0.0,
+   "spend_now": 0,
+   "p_claim_now": 0.0,
+   "budget_entering_week9": null,
+   "budget_entering_week13": null,
+   "players": []
   },
   {
    "roster_id": 31,
    "name": "candivanpeltz",
    "username": "candivanpeltz",
    "is_mine": false,
-   "alive": true,
+   "alive": false,
    "faab_left": 1000,
-   "points_for": 122.8,
+   "points_for": 164.1,
    "points_this_week": 0.0,
-   "roster_size": 8,
-   "projected_now": 51.2,
-   "p_cut_now": 0.2861,
+   "roster_size": 0,
+   "projected_now": null,
+   "p_cut_now": 0.0,
    "p_alive_by_week": [
-    0.7139,
-    0.563,
-    0.4517,
-    0.4185,
-    0.3589,
-    0.3179,
-    0.2632,
-    0.2163,
-    0.165,
-    0.1265,
-    0.0825,
-    0.0513,
-    0.0249
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
    ],
-   "p_reach_final": 0.0249,
-   "p_title": 0.0107,
-   "spend_now": 15,
-   "p_claim_now": 0.361,
-   "budget_entering_week9": 442,
-   "budget_entering_week13": 157,
-   "players": [
-    {
-     "name": "Ashton Jeanty",
-     "position": "RB",
-     "points": 14.76,
-     "ros_per_week": 13.67
-    },
-    {
-     "name": "Tetairoa McMillan",
-     "position": "WR",
-     "points": 11.77,
-     "ros_per_week": 10.65
-    },
-    {
-     "name": "Davante Adams",
-     "position": "WR",
-     "points": 11.41,
-     "ros_per_week": 9.94
-    },
-    {
-     "name": "Rachaad White",
-     "position": "RB",
-     "points": 6.66,
-     "ros_per_week": 6.73
-    },
-    {
-     "name": "Devin Singletary",
-     "position": "RB",
-     "points": 4.26,
-     "ros_per_week": 3.49
-    },
-    {
-     "name": "Will Kacmarek",
-     "position": "TE",
-     "points": 2.33,
-     "ros_per_week": 2.48
-    }
-   ]
+   "p_reach_final": 0.0,
+   "p_title": 0.0,
+   "spend_now": 0,
+   "p_claim_now": 0.0,
+   "budget_entering_week9": null,
+   "budget_entering_week13": null,
+   "players": []
   },
   {
    "roster_id": 32,
@@ -3331,80 +4924,79 @@
    "is_mine": false,
    "alive": true,
    "faab_left": 490,
-   "points_for": 133.7,
-   "points_this_week": 4.6,
+   "points_for": 202.7,
+   "points_this_week": 0.0,
    "roster_size": 8,
-   "projected_now": 74.3,
-   "p_cut_now": 0.0366,
+   "projected_now": 76.7,
+   "p_cut_now": 0.0435,
    "p_alive_by_week": [
-    0.9634,
-    0.9111,
-    0.8604,
-    0.8096,
-    0.7295,
-    0.6763,
-    0.603,
-    0.374,
-    0.3296,
-    0.2739,
-    0.2085,
-    0.1343,
-    0.0635
+    0.9565,
+    0.8999,
+    0.8491,
+    0.7588,
+    0.7061,
+    0.6304,
+    0.4185,
+    0.3667,
+    0.2935,
+    0.2202,
+    0.1431,
+    0.0605
    ],
-   "p_reach_final": 0.0635,
-   "p_title": 0.0352,
-   "spend_now": 2,
-   "p_claim_now": 0.18,
-   "budget_entering_week9": 319,
-   "budget_entering_week13": 87,
+   "p_reach_final": 0.0605,
+   "p_title": 0.0244,
+   "spend_now": 22,
+   "p_claim_now": 0.782,
+   "budget_entering_week9": 327,
+   "budget_entering_week13": 97,
    "players": [
     {
      "name": "James Cook",
      "position": "RB",
-     "points": 16.28,
-     "ros_per_week": 14.99
+     "points": 16.34,
+     "ros_per_week": 15.1
     },
     {
      "name": "C.J. Stroud",
      "position": "QB",
-     "points": 15.04,
-     "ros_per_week": 14.65
+     "points": 17.25,
+     "ros_per_week": 14.62
     },
     {
      "name": "Saquon Barkley",
      "position": "RB",
-     "points": 14.33,
-     "ros_per_week": 13.46
-    },
-    {
-     "name": "Jaylen Waddle",
-     "position": "WR",
-     "points": 11.14,
-     "ros_per_week": 10.58
+     "points": 14.1,
+     "ros_per_week": 12.73
     },
     {
      "name": "Dallas Goedert",
      "position": "TE",
      "points": 0.0,
-     "ros_per_week": 9.31
+     "ros_per_week": 10.2
+    },
+    {
+     "name": "Jaylen Waddle",
+     "position": "WR",
+     "points": 10.34,
+     "ros_per_week": 10.03
     },
     {
      "name": "Michael Wilson",
      "position": "WR",
-     "points": 9.24,
-     "ros_per_week": 8.77
+     "points": 10.47,
+     "ros_per_week": 9.77
     },
     {
      "name": "Jonnu Smith",
      "position": "TE",
-     "points": 5.07,
-     "ros_per_week": 4.98
+     "points": 4.91,
+     "ros_per_week": 4.84
     },
     {
      "name": "Tank Bigsby",
      "position": "RB",
-     "points": 3.23,
-     "ros_per_week": 4.36
+     "points": 3.28,
+     "ros_per_week": 4.53
     }
    ]
   }
@@ -3416,253 +5008,253 @@
    "submitted_bids": 158,
    "positive_bids_tested": 139,
    "price_curve": {
-    "intercept": 1.339,
-    "slope": 0.747,
-    "sigma": 1.138
+    "intercept": 1.159,
+    "slope": 0.738,
+    "sigma": 1.2
    },
-   "prior_log_mae": 1.013,
-   "fitted_log_mae": 0.903,
+   "prior_log_mae": 0.957,
+   "fitted_log_mae": 0.987,
    "latest_week_holdout": {
     "test_week": 3,
     "positive_bids_tested": 88,
-    "prior_log_mae": 1.164,
-    "fitted_log_mae": 0.976,
-    "fitted_mean_log_ratio": 0.228
+    "prior_log_mae": 1.124,
+    "fitted_log_mae": 1.08,
+    "fitted_mean_log_ratio": 0.274
    },
    "predictions": [
     {
      "player": "Michael Wilson",
      "roster_id": 20,
      "actual": 5,
-     "predicted": 27
+     "predicted": 34
     },
     {
      "player": "Michael Wilson",
      "roster_id": 11,
      "actual": 3,
-     "predicted": 16
+     "predicted": 20
     },
     {
      "player": "Michael Wilson",
      "roster_id": 2,
      "actual": 25,
-     "predicted": 25
+     "predicted": 31
     },
     {
      "player": "Michael Wilson",
      "roster_id": 29,
      "actual": 31,
-     "predicted": 6
+     "predicted": 7
     },
     {
      "player": "Michael Wilson",
      "roster_id": 8,
      "actual": 12,
-     "predicted": 25
+     "predicted": 30
     },
     {
      "player": "Michael Wilson",
      "roster_id": 5,
      "actual": 5,
-     "predicted": 26
+     "predicted": 32
     },
     {
      "player": "Michael Wilson",
      "roster_id": 28,
      "actual": 25,
-     "predicted": 26
+     "predicted": 32
     },
     {
      "player": "Michael Wilson",
      "roster_id": 15,
      "actual": 50,
-     "predicted": 26
+     "predicted": 31
     },
     {
      "player": "Michael Wilson",
      "roster_id": 32,
      "actual": 85,
-     "predicted": 29
+     "predicted": 35
     },
     {
      "player": "Michael Wilson",
      "roster_id": 6,
      "actual": 81,
-     "predicted": 36
+     "predicted": 34
     },
     {
      "player": "Michael Wilson",
      "roster_id": 3,
      "actual": 6,
-     "predicted": 6
+     "predicted": 30
     },
     {
      "player": "Jayden Daniels",
      "roster_id": 3,
      "actual": 6,
-     "predicted": 4
+     "predicted": 6
     },
     {
      "player": "Xavier Worthy",
      "roster_id": 3,
      "actual": 6,
-     "predicted": 23
+     "predicted": 14
     },
     {
      "player": "Adonai Mitchell",
      "roster_id": 11,
      "actual": 1,
-     "predicted": 5
+     "predicted": 3
     },
     {
      "player": "Brian Thomas",
      "roster_id": 20,
      "actual": 5,
-     "predicted": 16
+     "predicted": 13
     },
     {
      "player": "Brian Thomas",
      "roster_id": 2,
      "actual": 20,
-     "predicted": 15
+     "predicted": 12
     },
     {
      "player": "Brian Thomas",
      "roster_id": 27,
      "actual": 25,
-     "predicted": 15
+     "predicted": 12
     },
     {
      "player": "Brian Thomas",
      "roster_id": 8,
      "actual": 2,
-     "predicted": 15
+     "predicted": 11
     },
     {
      "player": "Brian Thomas",
      "roster_id": 28,
      "actual": 5,
-     "predicted": 16
+     "predicted": 12
     },
     {
      "player": "Brian Thomas",
      "roster_id": 3,
      "actual": 1,
-     "predicted": 4
+     "predicted": 3
     },
     {
      "player": "Brian Thomas",
      "roster_id": 22,
      "actual": 30,
-     "predicted": 17
+     "predicted": 15
     },
     {
      "player": "Brian Thomas",
      "roster_id": 10,
      "actual": 4,
-     "predicted": 16
+     "predicted": 14
     },
     {
      "player": "RJ Harvey",
      "roster_id": 3,
      "actual": 2,
-     "predicted": 5
+     "predicted": 17
     },
     {
      "player": "Luther Burden",
      "roster_id": 2,
      "actual": 20,
-     "predicted": 21
+     "predicted": 24
     },
     {
      "player": "Luther Burden",
      "roster_id": 9,
      "actual": 52,
-     "predicted": 15
+     "predicted": 21
     },
     {
      "player": "Luther Burden",
      "roster_id": 20,
      "actual": 15,
-     "predicted": 22
+     "predicted": 27
     },
     {
      "player": "Luther Burden",
      "roster_id": 3,
      "actual": 6,
-     "predicted": 5
+     "predicted": 21
     },
     {
      "player": "Carnell Tate",
      "roster_id": 20,
      "actual": 15,
-     "predicted": 18
+     "predicted": 19
     },
     {
      "player": "Carnell Tate",
      "roster_id": 3,
      "actual": 6,
-     "predicted": 4
+     "predicted": 8
     },
     {
      "player": "Jeremiyah Love",
      "roster_id": 3,
      "actual": 56,
-     "predicted": 40
+     "predicted": 76
     },
     {
      "player": "Jeremiyah Love",
      "roster_id": 4,
      "actual": 143,
-     "predicted": 41
+     "predicted": 77
     },
     {
      "player": "Jeremiyah Love",
      "roster_id": 26,
      "actual": 150,
-     "predicted": 41
+     "predicted": 103
     },
     {
      "player": "Jeremiyah Love",
      "roster_id": 9,
      "actual": 152,
-     "predicted": 40
+     "predicted": 76
     },
     {
      "player": "Antonio Williams",
      "roster_id": 4,
      "actual": 17,
-     "predicted": 6
+     "predicted": 5
     },
     {
      "player": "Kenyon Sadiq",
      "roster_id": 7,
      "actual": 10,
-     "predicted": 13
+     "predicted": 19
     },
     {
      "player": "Kenyon Sadiq",
      "roster_id": 20,
      "actual": 15,
-     "predicted": 13
+     "predicted": 22
     },
     {
      "player": "Kenyon Sadiq",
      "roster_id": 10,
      "actual": 3,
-     "predicted": 12
+     "predicted": 24
     },
     {
      "player": "Jonah Coleman",
      "roster_id": 2,
      "actual": 5,
-     "predicted": 4
+     "predicted": 3
     },
     {
      "player": "Jonah Coleman",
      "roster_id": 3,
      "actual": 1,
-     "predicted": 4
+     "predicted": 3
     },
     {
      "player": "Zach Ertz",
@@ -3674,289 +5266,289 @@
      "player": "Zach Ertz",
      "roster_id": 6,
      "actual": 49,
-     "predicted": 10
+     "predicted": 4
     },
     {
      "player": "Jameis Winston",
      "roster_id": 23,
      "actual": 25,
-     "predicted": 7
+     "predicted": 5
     },
     {
      "player": "Marcus Mariota",
      "roster_id": 23,
      "actual": 25,
-     "predicted": 8
+     "predicted": 11
     },
     {
      "player": "Marcus Mariota",
      "roster_id": 6,
      "actual": 45,
-     "predicted": 25
+     "predicted": 29
     },
     {
      "player": "Derrick Henry",
      "roster_id": 20,
      "actual": 300,
-     "predicted": 306
+     "predicted": 252
     },
     {
      "player": "Derrick Henry",
      "roster_id": 2,
      "actual": 300,
-     "predicted": 287
+     "predicted": 229
     },
     {
      "player": "Derrick Henry",
      "roster_id": 27,
      "actual": 451,
-     "predicted": 287
+     "predicted": 230
     },
     {
      "player": "Derrick Henry",
      "roster_id": 11,
      "actual": 7,
-     "predicted": 185
+     "predicted": 149
     },
     {
      "player": "Derrick Henry",
      "roster_id": 29,
      "actual": 358,
-     "predicted": 70
+     "predicted": 55
     },
     {
      "player": "Derrick Henry",
      "roster_id": 4,
      "actual": 467,
-     "predicted": 281
+     "predicted": 223
     },
     {
      "player": "Derrick Henry",
      "roster_id": 6,
      "actual": 501,
-     "predicted": 411
+     "predicted": 249
     },
     {
      "player": "Derrick Henry",
      "roster_id": 5,
      "actual": 500,
-     "predicted": 294
+     "predicted": 236
     },
     {
      "player": "Derrick Henry",
      "roster_id": 8,
      "actual": 316,
-     "predicted": 284
+     "predicted": 224
     },
     {
      "player": "Derrick Henry",
      "roster_id": 28,
      "actual": 550,
-     "predicted": 297
+     "predicted": 239
     },
     {
      "player": "Derrick Henry",
      "roster_id": 26,
      "actual": 300,
-     "predicted": 240
+     "predicted": 247
     },
     {
      "player": "Demarcus Robinson",
      "roster_id": 7,
      "actual": 1,
-     "predicted": 4
+     "predicted": 3
     },
     {
      "player": "Kalif Raymond",
      "roster_id": 5,
      "actual": 4,
-     "predicted": 6
+     "predicted": 8
     },
     {
      "player": "Mack Hollins",
      "roster_id": 20,
      "actual": 20,
-     "predicted": 10
+     "predicted": 8
     },
     {
      "player": "Matthew Stafford",
      "roster_id": 3,
      "actual": 3,
-     "predicted": 15
+     "predicted": 34
     },
     {
      "player": "Matthew Stafford",
      "roster_id": 11,
      "actual": 151,
-     "predicted": 34
+     "predicted": 38
     },
     {
      "player": "Saquon Barkley",
      "roster_id": 7,
      "actual": 100,
-     "predicted": 119
+     "predicted": 109
     },
     {
      "player": "Saquon Barkley",
      "roster_id": 2,
      "actual": 50,
-     "predicted": 111
+     "predicted": 110
     },
     {
      "player": "Saquon Barkley",
      "roster_id": 3,
      "actual": 56,
-     "predicted": 27
+     "predicted": 106
     },
     {
      "player": "Saquon Barkley",
      "roster_id": 15,
      "actual": 280,
-     "predicted": 113
+     "predicted": 110
     },
     {
      "player": "Saquon Barkley",
      "roster_id": 11,
      "actual": 3,
-     "predicted": 72
+     "predicted": 71
     },
     {
      "player": "Saquon Barkley",
      "roster_id": 29,
      "actual": 182,
-     "predicted": 27
+     "predicted": 26
     },
     {
      "player": "Saquon Barkley",
      "roster_id": 4,
      "actual": 202,
-     "predicted": 109
+     "predicted": 107
     },
     {
      "player": "Saquon Barkley",
      "roster_id": 27,
      "actual": 369,
-     "predicted": 111
+     "predicted": 110
     },
     {
      "player": "Saquon Barkley",
      "roster_id": 8,
      "actual": 414,
-     "predicted": 110
+     "predicted": 107
     },
     {
      "player": "Saquon Barkley",
      "roster_id": 28,
      "actual": 400,
-     "predicted": 115
+     "predicted": 114
     },
     {
      "player": "Saquon Barkley",
      "roster_id": 32,
      "actual": 425,
-     "predicted": 125
+     "predicted": 123
     },
     {
      "player": "Saquon Barkley",
      "roster_id": 26,
      "actual": 200,
-     "predicted": 93
+     "predicted": 119
     },
     {
      "player": "Dalton Schultz",
      "roster_id": 3,
      "actual": 6,
-     "predicted": 22
+     "predicted": 35
     },
     {
      "player": "Dalton Schultz",
      "roster_id": 5,
      "actual": 26,
-     "predicted": 44
+     "predicted": 38
     },
     {
      "player": "Dalton Schultz",
      "roster_id": 11,
      "actual": 131,
-     "predicted": 42
+     "predicted": 36
     },
     {
      "player": "Courtland Sutton",
      "roster_id": 3,
      "actual": 6,
-     "predicted": 18
+     "predicted": 13
     },
     {
      "player": "Josh Jacobs",
      "roster_id": 3,
      "actual": 6,
-     "predicted": 8
+     "predicted": 3
     },
     {
      "player": "Drew Lock",
      "roster_id": 3,
      "actual": 1,
-     "predicted": 4
+     "predicted": 3
     },
     {
      "player": "Deebo Samuel",
      "roster_id": 20,
      "actual": 75,
-     "predicted": 29
+     "predicted": 20
     },
     {
      "player": "Deebo Samuel",
      "roster_id": 7,
      "actual": 25,
-     "predicted": 30
+     "predicted": 16
     },
     {
      "player": "Deebo Samuel",
      "roster_id": 2,
      "actual": 10,
-     "predicted": 28
+     "predicted": 18
     },
     {
      "player": "Deebo Samuel",
      "roster_id": 15,
      "actual": 60,
-     "predicted": 28
+     "predicted": 18
     },
     {
      "player": "Deebo Samuel",
      "roster_id": 4,
      "actual": 40,
-     "predicted": 27
+     "predicted": 18
     },
     {
      "player": "Deebo Samuel",
      "roster_id": 5,
      "actual": 11,
-     "predicted": 28
+     "predicted": 19
     },
     {
      "player": "Deebo Samuel",
      "roster_id": 28,
      "actual": 40,
-     "predicted": 29
+     "predicted": 19
     },
     {
      "player": "Deebo Samuel",
      "roster_id": 6,
      "actual": 89,
-     "predicted": 40
+     "predicted": 17
     },
     {
      "player": "Deebo Samuel",
      "roster_id": 3,
      "actual": 6,
-     "predicted": 7
+     "predicted": 10
     },
     {
      "player": "Dawson Knox",
      "roster_id": 23,
      "actual": 20,
-     "predicted": 4
+     "predicted": 3
     },
     {
      "player": "J.K. Dobbins",
@@ -3980,133 +5572,133 @@
      "player": "Jauan Jennings",
      "roster_id": 29,
      "actual": 4,
-     "predicted": 6
+     "predicted": 7
     },
     {
      "player": "Jauan Jennings",
      "roster_id": 23,
      "actual": 1,
-     "predicted": 9
+     "predicted": 10
     },
     {
      "player": "Ja'Marr Chase",
      "roster_id": 20,
      "actual": 400,
-     "predicted": 307
+     "predicted": 247
     },
     {
      "player": "Ja'Marr Chase",
      "roster_id": 2,
      "actual": 300,
-     "predicted": 270
+     "predicted": 213
     },
     {
      "player": "Ja'Marr Chase",
      "roster_id": 8,
      "actual": 307,
-     "predicted": 269
+     "predicted": 211
     },
     {
      "player": "Ja'Marr Chase",
      "roster_id": 5,
      "actual": 347,
-     "predicted": 284
+     "predicted": 225
     },
     {
      "player": "Ja'Marr Chase",
      "roster_id": 3,
      "actual": 156,
-     "predicted": 268
+     "predicted": 211
     },
     {
      "player": "Ja'Marr Chase",
      "roster_id": 4,
      "actual": 413,
-     "predicted": 275
+     "predicted": 215
     },
     {
      "player": "Ja'Marr Chase",
      "roster_id": 11,
      "actual": 309,
-     "predicted": 272
+     "predicted": 213
     },
     {
      "player": "Ja'Marr Chase",
      "roster_id": 15,
      "actual": 450,
-     "predicted": 275
+     "predicted": 212
     },
     {
      "player": "Ja'Marr Chase",
      "roster_id": 23,
      "actual": 750,
-     "predicted": 414
+     "predicted": 313
     },
     {
      "player": "Ja'Marr Chase",
      "roster_id": 28,
      "actual": 400,
-     "predicted": 286
+     "predicted": 223
     },
     {
      "player": "Ja'Marr Chase",
      "roster_id": 26,
      "actual": 300,
-     "predicted": 277
+     "predicted": 285
     },
     {
      "player": "Ja'Marr Chase",
      "roster_id": 9,
      "actual": 502,
-     "predicted": 269
+     "predicted": 211
     },
     {
      "player": "Rashod Bateman",
      "roster_id": 29,
      "actual": 3,
-     "predicted": 20
+     "predicted": 9
     },
     {
      "player": "Joshua Palmer",
      "roster_id": 6,
      "actual": 71,
-     "predicted": 4
+     "predicted": 3
     },
     {
      "player": "Drake London",
      "roster_id": 20,
      "actual": 100,
-     "predicted": 84
+     "predicted": 164
     },
     {
      "player": "Drake London",
      "roster_id": 2,
      "actual": 100,
-     "predicted": 73
+     "predicted": 140
     },
     {
      "player": "Drake London",
      "roster_id": 8,
      "actual": 79,
-     "predicted": 73
+     "predicted": 138
     },
     {
      "player": "Drake London",
      "roster_id": 3,
      "actual": 56,
-     "predicted": 73
+     "predicted": 139
     },
     {
      "player": "Drake London",
      "roster_id": 11,
      "actual": 141,
-     "predicted": 74
+     "predicted": 140
     },
     {
      "player": "Drake London",
      "roster_id": 28,
      "actual": 50,
-     "predicted": 78
+     "predicted": 146
     },
     {
      "player": "Romeo Doubs",
@@ -4118,79 +5710,79 @@
      "player": "Romeo Doubs",
      "roster_id": 10,
      "actual": 6,
-     "predicted": 14
+     "predicted": 15
     },
     {
      "player": "Romeo Doubs",
      "roster_id": 15,
      "actual": 45,
-     "predicted": 14
+     "predicted": 12
     },
     {
      "player": "Romeo Doubs",
      "roster_id": 29,
      "actual": 2,
-     "predicted": 4
+     "predicted": 3
     },
     {
      "player": "Garrett Wilson",
      "roster_id": 20,
      "actual": 150,
-     "predicted": 204
+     "predicted": 103
     },
     {
      "player": "Garrett Wilson",
      "roster_id": 2,
      "actual": 100,
-     "predicted": 178
+     "predicted": 88
     },
     {
      "player": "Garrett Wilson",
      "roster_id": 8,
      "actual": 77,
-     "predicted": 178
+     "predicted": 87
     },
     {
      "player": "Garrett Wilson",
      "roster_id": 10,
      "actual": 28,
-     "predicted": 192
+     "predicted": 112
     },
     {
      "player": "Garrett Wilson",
      "roster_id": 3,
      "actual": 36,
-     "predicted": 177
+     "predicted": 87
     },
     {
      "player": "Garrett Wilson",
      "roster_id": 4,
      "actual": 163,
-     "predicted": 181
+     "predicted": 88
     },
     {
      "player": "Garrett Wilson",
      "roster_id": 11,
      "actual": 151,
-     "predicted": 179
+     "predicted": 88
     },
     {
      "player": "Garrett Wilson",
      "roster_id": 28,
      "actual": 100,
-     "predicted": 189
+     "predicted": 92
     },
     {
      "player": "Garrett Wilson",
      "roster_id": 26,
      "actual": 200,
-     "predicted": 183
+     "predicted": 119
     },
     {
      "player": "Garrett Wilson",
      "roster_id": 7,
      "actual": 50,
-     "predicted": 188
+     "predicted": 87
     },
     {
      "player": "Josh Downs",
@@ -4202,67 +5794,67 @@
      "player": "Josh Downs",
      "roster_id": 10,
      "actual": 5,
-     "predicted": 25
+     "predicted": 29
     },
     {
      "player": "Josh Downs",
      "roster_id": 2,
      "actual": 75,
-     "predicted": 24
+     "predicted": 23
     },
     {
      "player": "Josh Downs",
      "roster_id": 8,
      "actual": 2,
-     "predicted": 24
+     "predicted": 23
     },
     {
      "player": "Josh Downs",
      "roster_id": 28,
      "actual": 5,
-     "predicted": 25
+     "predicted": 24
     },
     {
      "player": "Josh Downs",
      "roster_id": 24,
      "actual": 51,
-     "predicted": 21
+     "predicted": 23
     },
     {
      "player": "Josh Downs",
      "roster_id": 29,
      "actual": 92,
-     "predicted": 6
+     "predicted": 5
     },
     {
      "player": "Josh Downs",
      "roster_id": 3,
      "actual": 3,
-     "predicted": 6
+     "predicted": 20
     },
     {
      "player": "Josh Downs",
      "roster_id": 22,
      "actual": 20,
-     "predicted": 27
+     "predicted": 31
     },
     {
      "player": "Tyjae Spears",
      "roster_id": 15,
      "actual": 45,
-     "predicted": 17
+     "predicted": 11
     },
     {
      "player": "Aaron Rodgers",
      "roster_id": 3,
      "actual": 2,
-     "predicted": 4
+     "predicted": 9
     },
     {
      "player": "Aaron Rodgers",
      "roster_id": 11,
      "actual": 131,
-     "predicted": 7
+     "predicted": 9
     }
    ]
   },
@@ -4436,20 +6028,6 @@
     "bids": 8
    },
    {
-    "roster_id": 30,
-    "name": "csmittt",
-    "activity": 0.222,
-    "bid_weeks": 0,
-    "bids": 0
-   },
-   {
-    "roster_id": 31,
-    "name": "candivanpeltz",
-    "activity": 0.556,
-    "bid_weeks": 1,
-    "bids": 1
-   },
-   {
     "roster_id": 32,
     "name": "RadMonkey",
     "activity": 0.556,
@@ -4459,430 +6037,515 @@
   ],
   "bars_by_week": [
    {
-    "week": 3,
-    "mean": 40.6,
-    "p10": 31.1,
-    "p90": 49.4
-   },
-   {
     "week": 4,
-    "mean": 49.2,
-    "p10": 40.5,
-    "p90": 58.0
+    "mean": 45.3,
+    "p10": 36.4,
+    "p90": 54.0
    },
    {
     "week": 5,
-    "mean": 51.8,
-    "p10": 42.8,
-    "p90": 60.4
+    "mean": 50.8,
+    "p10": 41.6,
+    "p90": 60.0
    },
    {
     "week": 6,
     "mean": 52.4,
-    "p10": 42.6,
-    "p90": 61.7
+    "p10": 42.7,
+    "p90": 61.9
    },
    {
     "week": 7,
-    "mean": 59.1,
-    "p10": 47.6,
-    "p90": 69.6
+    "mean": 58.7,
+    "p10": 47.2,
+    "p90": 70.0
    },
    {
     "week": 8,
-    "mean": 68.6,
-    "p10": 58.0,
-    "p90": 78.9
+    "mean": 67.7,
+    "p10": 57.0,
+    "p90": 78.1
    },
    {
     "week": 9,
-    "mean": 83.8,
-    "p10": 72.5,
-    "p90": 94.8
+    "mean": 83.5,
+    "p10": 71.8,
+    "p90": 94.5
    },
    {
     "week": 10,
-    "mean": 88.5,
-    "p10": 76.5,
-    "p90": 99.6
+    "mean": 88.6,
+    "p10": 76.3,
+    "p90": 100.4
    },
    {
     "week": 11,
-    "mean": 94.6,
-    "p10": 82.7,
-    "p90": 106.0
+    "mean": 94.3,
+    "p10": 82.5,
+    "p90": 105.5
    },
    {
     "week": 12,
-    "mean": 118.1,
-    "p10": 105.2,
-    "p90": 130.6
+    "mean": 117.8,
+    "p10": 104.6,
+    "p90": 130.3
    },
    {
     "week": 13,
-    "mean": 124.0,
-    "p10": 109.5,
-    "p90": 137.0
+    "mean": 123.0,
+    "p10": 109.4,
+    "p90": 136.4
    },
    {
     "week": 14,
-    "mean": 158.3,
-    "p10": 142.9,
-    "p90": 173.2
+    "mean": 157.8,
+    "p10": 142.2,
+    "p90": 172.9
    },
    {
     "week": 15,
-    "mean": 183.0,
-    "p10": 164.0,
-    "p90": 202.0
+    "mean": 183.5,
+    "p10": 163.9,
+    "p90": 203.0
    }
   ],
-  "champion_bar_mean": 403.6,
+  "champion_bar_mean": 407.4,
   "mean_budget_by_week": [
    {
-    "week": 3,
-    "budget": 943
-   },
-   {
     "week": 4,
-    "budget": 875
+    "budget": 872
    },
    {
     "week": 5,
-    "budget": 796
+    "budget": 814
    },
    {
     "week": 6,
-    "budget": 717
+    "budget": 742
    },
    {
     "week": 7,
-    "budget": 637
+    "budget": 667
    },
    {
     "week": 8,
-    "budget": 558
+    "budget": 588
    },
    {
     "week": 9,
-    "budget": 488
+    "budget": 514
    },
    {
     "week": 10,
-    "budget": 407
+    "budget": 431
    },
    {
     "week": 11,
-    "budget": 328
+    "budget": 347
    },
    {
     "week": 12,
-    "budget": 253
+    "budget": 269
    },
    {
     "week": 13,
-    "budget": 192
+    "budget": 205
    },
    {
     "week": 14,
-    "budget": 148
+    "budget": 162
    },
    {
     "week": 15,
-    "budget": 87
+    "budget": 101
    },
    {
     "week": 16,
-    "budget": 37
+    "budget": 55
    },
    {
     "week": 17,
-    "budget": 34
+    "budget": 52
    }
   ],
   "simulated_claims_now": [
    {
-    "name": "Marcus Mariota",
-    "position": "QB",
-    "p_taken": 0.004,
-    "mean_bid": 64,
-    "max_bid": 191
+    "name": "Ashton Jeanty",
+    "position": "RB",
+    "p_taken": 1.0,
+    "mean_bid": 488,
+    "max_bid": 1000
    },
    {
-    "name": "Xavier Hutchinson",
+    "name": "DeVonta Smith",
+    "position": "WR",
+    "p_taken": 1.0,
+    "mean_bid": 247,
+    "max_bid": 1000
+   },
+   {
+    "name": "Davante Adams",
+    "position": "WR",
+    "p_taken": 1.0,
+    "mean_bid": 155,
+    "max_bid": 1000
+   },
+   {
+    "name": "Tetairoa McMillan",
+    "position": "WR",
+    "p_taken": 1.0,
+    "mean_bid": 129,
+    "max_bid": 1000
+   },
+   {
+    "name": "James Conner",
+    "position": "RB",
+    "p_taken": 0.0,
+    "mean_bid": 102,
+    "max_bid": 102
+   },
+   {
+    "name": "Marvin Harrison",
+    "position": "WR",
+    "p_taken": 0.0,
+    "mean_bid": 79,
+    "max_bid": 79
+   },
+   {
+    "name": "RJ Harvey",
+    "position": "RB",
+    "p_taken": 0.002,
+    "mean_bid": 73,
+    "max_bid": 181
+   },
+   {
+    "name": "Gunnar Helm",
+    "position": "TE",
+    "p_taken": 0.0,
+    "mean_bid": 63,
+    "max_bid": 63
+   },
+   {
+    "name": "Deebo Samuel",
+    "position": "WR",
+    "p_taken": 0.034,
+    "mean_bid": 61,
+    "max_bid": 673
+   },
+   {
+    "name": "Omarion Hampton",
+    "position": "RB",
+    "p_taken": 1.0,
+    "mean_bid": 50,
+    "max_bid": 1000
+   },
+   {
+    "name": "Courtland Sutton",
     "position": "WR",
     "p_taken": 0.002,
-    "mean_bid": 29,
-    "max_bid": 129
+    "mean_bid": 42,
+    "max_bid": 102
    },
    {
-    "name": "Emanuel Wilson",
+    "name": "Woody Marks",
     "position": "RB",
-    "p_taken": 0.005,
-    "mean_bid": 25,
-    "max_bid": 126
+    "p_taken": 0.008,
+    "mean_bid": 31,
+    "max_bid": 135
    },
    {
-    "name": "Aaron Rodgers",
-    "position": "QB",
-    "p_taken": 0.995,
-    "mean_bid": 24,
-    "max_bid": 482
-   },
-   {
-    "name": "Dawson Knox",
+    "name": "Charlie Kolar",
     "position": "TE",
-    "p_taken": 0.011,
-    "mean_bid": 18,
-    "max_bid": 103
+    "p_taken": 0.002,
+    "mean_bid": 30,
+    "max_bid": 67
    },
    {
-    "name": "Deshaun Watson",
-    "position": "QB",
-    "p_taken": 0.078,
-    "mean_bid": 17,
-    "max_bid": 214
-   },
-   {
-    "name": "Ryan Flournoy",
+    "name": "Tre' Harris",
     "position": "WR",
-    "p_taken": 0.058,
-    "mean_bid": 17,
-    "max_bid": 115
+    "p_taken": 0.001,
+    "mean_bid": 26,
+    "max_bid": 61
    },
    {
-    "name": "Darnell Washington",
-    "position": "TE",
-    "p_taken": 0.991,
-    "mean_bid": 16,
-    "max_bid": 389
-   },
-   {
-    "name": "Chris Brooks",
-    "position": "RB",
-    "p_taken": 0.302,
-    "mean_bid": 16,
-    "max_bid": 268
-   },
-   {
-    "name": "Antonio Williams",
+    "name": "Tre Tucker",
     "position": "WR",
-    "p_taken": 0.02,
-    "mean_bid": 16,
-    "max_bid": 85
-   },
-   {
-    "name": "Chris Rodriguez",
-    "position": "RB",
-    "p_taken": 0.109,
-    "mean_bid": 15,
-    "max_bid": 228
-   },
-   {
-    "name": "Jaylin Noel",
-    "position": "WR",
-    "p_taken": 0.024,
-    "mean_bid": 15,
-    "max_bid": 125
-   },
-   {
-    "name": "Will Kacmarek",
-    "position": "TE",
-    "p_taken": 0.003,
-    "mean_bid": 15,
-    "max_bid": 60
-   },
-   {
-    "name": "Kaleb Johnson",
-    "position": "RB",
-    "p_taken": 0.119,
-    "mean_bid": 14,
-    "max_bid": 180
-   },
-   {
-    "name": "Cole Kmet",
-    "position": "TE",
-    "p_taken": 0.08,
-    "mean_bid": 14,
-    "max_bid": 138
-   },
-   {
-    "name": "Kalif Raymond",
-    "position": "WR",
-    "p_taken": 0.06,
-    "mean_bid": 14,
-    "max_bid": 83
-   },
-   {
-    "name": "Germie Bernard",
-    "position": "WR",
-    "p_taken": 0.011,
-    "mean_bid": 14,
-    "max_bid": 53
-   },
-   {
-    "name": "Cam Ward",
-    "position": "QB",
-    "p_taken": 0.003,
-    "mean_bid": 13,
-    "max_bid": 45
-   },
-   {
-    "name": "Roman Wilson",
-    "position": "WR",
-    "p_taken": 0.975,
-    "mean_bid": 12,
-    "max_bid": 179
-   },
-   {
-    "name": "Mike Washington",
-    "position": "RB",
-    "p_taken": 0.241,
-    "mean_bid": 12,
+    "p_taken": 0.264,
+    "mean_bid": 23,
     "max_bid": 210
    },
    {
-    "name": "Noah Fant",
+    "name": "MarShawn Lloyd",
+    "position": "RB",
+    "p_taken": 0.002,
+    "mean_bid": 23,
+    "max_bid": 40
+   },
+   {
+    "name": "Rome Odunze",
+    "position": "WR",
+    "p_taken": 1.0,
+    "mean_bid": 22,
+    "max_bid": 545
+   },
+   {
+    "name": "Dontayvion Wicks",
+    "position": "WR",
+    "p_taken": 0.342,
+    "mean_bid": 22,
+    "max_bid": 568
+   },
+   {
+    "name": "Jalon Daniels",
+    "position": "QB",
+    "p_taken": 0.148,
+    "mean_bid": 22,
+    "max_bid": 303
+   },
+   {
+    "name": "Darren Waller",
     "position": "TE",
-    "p_taken": 0.091,
-    "mean_bid": 12,
-    "max_bid": 123
+    "p_taken": 0.001,
+    "mean_bid": 22,
+    "max_bid": 29
    },
    {
-    "name": "Tyquan Thornton",
-    "position": "WR",
-    "p_taken": 0.227,
-    "mean_bid": 11,
-    "max_bid": 322
+    "name": "Greg Dulcich",
+    "position": "TE",
+    "p_taken": 0.0,
+    "mean_bid": 21,
+    "max_bid": 21
    },
    {
-    "name": "Jonah Coleman",
+    "name": "Jonathon Brooks",
     "position": "RB",
-    "p_taken": 0.199,
-    "mean_bid": 11,
-    "max_bid": 200
+    "p_taken": 0.003,
+    "mean_bid": 20,
+    "max_bid": 33
    },
    {
-    "name": "Tank Bigsby",
+    "name": "Ollie Gordon",
     "position": "RB",
-    "p_taken": 0.144,
-    "mean_bid": 11,
-    "max_bid": 104
+    "p_taken": 1.0,
+    "mean_bid": 19,
+    "max_bid": 820
    },
    {
-    "name": "Keon Coleman",
+    "name": "Kenny Gainwell",
+    "position": "RB",
+    "p_taken": 0.186,
+    "mean_bid": 19,
+    "max_bid": 256
+   },
+   {
+    "name": "Makai Lemon",
     "position": "WR",
-    "p_taken": 0.05,
-    "mean_bid": 11,
-    "max_bid": 55
+    "p_taken": 0.005,
+    "mean_bid": 19,
+    "max_bid": 39
+   },
+   {
+    "name": "Sione Vaki",
+    "position": "RB",
+    "p_taken": 0.0,
+    "mean_bid": 18,
+    "max_bid": 18
+   },
+   {
+    "name": "Isaiah Davis",
+    "position": "RB",
+    "p_taken": 0.025,
+    "mean_bid": 17,
+    "max_bid": 92
+   },
+   {
+    "name": "George Holani",
+    "position": "RB",
+    "p_taken": 0.023,
+    "mean_bid": 17,
+    "max_bid": 134
+   },
+   {
+    "name": "Evan Engram",
+    "position": "TE",
+    "p_taken": 0.003,
+    "mean_bid": 17,
+    "max_bid": 27
+   },
+   {
+    "name": "Najee Harris",
+    "position": "RB",
+    "p_taken": 0.038,
+    "mean_bid": 16,
+    "max_bid": 150
    },
    {
     "name": "Elic Ayomanor",
     "position": "WR",
-    "p_taken": 0.001,
-    "mean_bid": 10,
-    "max_bid": 12
+    "p_taken": 0.003,
+    "mean_bid": 16,
+    "max_bid": 34
    },
    {
-    "name": "Ted Hurst",
+    "name": "Tyler Goodson",
+    "position": "RB",
+    "p_taken": 0.0,
+    "mean_bid": 16,
+    "max_bid": 16
+   },
+   {
+    "name": "Kalif Raymond",
     "position": "WR",
-    "p_taken": 0.272,
-    "mean_bid": 9,
-    "max_bid": 66
+    "p_taken": 0.188,
+    "mean_bid": 15,
+    "max_bid": 228
+   },
+   {
+    "name": "Rashod Bateman",
+    "position": "WR",
+    "p_taken": 0.087,
+    "mean_bid": 15,
+    "max_bid": 94
+   },
+   {
+    "name": "Kaleb Johnson",
+    "position": "RB",
+    "p_taken": 0.084,
+    "mean_bid": 15,
+    "max_bid": 436
+   },
+   {
+    "name": "Cam Ward",
+    "position": "QB",
+    "p_taken": 0.11,
+    "mean_bid": 14,
+    "max_bid": 450
+   },
+   {
+    "name": "Pat Bryant",
+    "position": "WR",
+    "p_taken": 0.046,
+    "mean_bid": 14,
+    "max_bid": 67
+   },
+   {
+    "name": "Mike Evans",
+    "position": "WR",
+    "p_taken": 0.005,
+    "mean_bid": 14,
+    "max_bid": 29
    },
    {
     "name": "Michael Pittman",
     "position": "WR",
-    "p_taken": 0.0,
-    "mean_bid": 9,
-    "max_bid": 9
+    "p_taken": 0.001,
+    "mean_bid": 14,
+    "max_bid": 20
    },
    {
-    "name": "Oscar Delp",
-    "position": "TE",
-    "p_taken": 0.086,
-    "mean_bid": 8,
-    "max_bid": 82
-   },
-   {
-    "name": "Calvin Ridley",
-    "position": "WR",
-    "p_taken": 0.019,
-    "mean_bid": 8,
-    "max_bid": 32
-   },
-   {
-    "name": "Foster Moreau",
-    "position": "TE",
-    "p_taken": 0.006,
-    "mean_bid": 8,
-    "max_bid": 29
-   },
-   {
-    "name": "Johnny Mundt",
-    "position": "TE",
-    "p_taken": 0.003,
-    "mean_bid": 8,
-    "max_bid": 31
-   },
-   {
-    "name": "Sean Tucker",
-    "position": "RB",
-    "p_taken": 0.072,
-    "mean_bid": 7,
-    "max_bid": 57
-   },
-   {
-    "name": "Drew Lock",
-    "position": "QB",
-    "p_taken": 0.051,
-    "mean_bid": 7,
-    "max_bid": 50
-   },
-   {
-    "name": "Odell Beckham",
-    "position": "WR",
-    "p_taken": 0.12,
-    "mean_bid": 6,
-    "max_bid": 44
-   },
-   {
-    "name": "Darnell Mooney",
-    "position": "WR",
-    "p_taken": 0.065,
-    "mean_bid": 6,
-    "max_bid": 26
-   },
-   {
-    "name": "Zachariah Branch",
-    "position": "WR",
-    "p_taken": 0.006,
-    "mean_bid": 5,
-    "max_bid": 22
-   },
-   {
-    "name": "Isaac TeSlaa",
-    "position": "WR",
-    "p_taken": 0.0,
-    "mean_bid": 4,
-    "max_bid": 4
-   },
-   {
-    "name": "Devin Singletary",
+    "name": "Isiah Pacheco",
     "position": "RB",
     "p_taken": 0.001,
-    "mean_bid": 2,
-    "max_bid": 3
-   },
-   {
-    "name": "Eli Raridon",
-    "position": "TE",
-    "p_taken": 0.0,
-    "mean_bid": 1,
-    "max_bid": 1
+    "mean_bid": 14,
+    "max_bid": 16
    }
   ],
   "observed": [
+   {
+    "week": 3,
+    "type": "free_agent",
+    "status": "complete",
+    "team": "chasma",
+    "adds": [],
+    "drops": [
+     "9226"
+    ],
+    "bid": null,
+    "note": null,
+    "created": "2026-09-29T13:12:30+00:00"
+   },
+   {
+    "week": 3,
+    "type": "free_agent",
+    "status": "complete",
+    "team": "Claude Fable 5.1",
+    "adds": [],
+    "drops": [
+     "Chig Okonkwo"
+    ],
+    "bid": null,
+    "note": null,
+    "created": "2026-09-29T13:10:58+00:00"
+   },
+   {
+    "week": 3,
+    "type": "free_agent",
+    "status": "complete",
+    "team": "team omar",
+    "adds": [
+     "Darnell Washington"
+    ],
+    "drops": [
+     "Tyquan Thornton"
+    ],
+    "bid": null,
+    "note": null,
+    "created": "2026-09-27T15:27:51+00:00"
+   },
+   {
+    "week": 3,
+    "type": "free_agent",
+    "status": "complete",
+    "team": "team omar",
+    "adds": [],
+    "drops": [
+     "David Njoku"
+    ],
+    "bid": null,
+    "note": null,
+    "created": "2026-09-27T15:26:49+00:00"
+   },
+   {
+    "week": 3,
+    "type": "free_agent",
+    "status": "complete",
+    "team": "Team Huddy",
+    "adds": [
+     "Cooper Kupp"
+    ],
+    "drops": [
+     "Drew Lock"
+    ],
+    "bid": null,
+    "note": null,
+    "created": "2026-09-27T15:07:30+00:00"
+   },
+   {
+    "week": 3,
+    "type": "free_agent",
+    "status": "complete",
+    "team": "Guh-football",
+    "adds": [
+     "Chris Bell"
+    ],
+    "drops": [],
+    "bid": null,
+    "note": null,
+    "created": "2026-09-26T19:11:54+00:00"
+   },
+   {
+    "week": 3,
+    "type": "free_agent",
+    "status": "complete",
+    "team": "Let Them Ship Freight",
+    "adds": [
+     "Joshua Palmer"
+    ],
+    "drops": [],
+    "bid": null,
+    "note": null,
+    "created": "2026-09-26T03:40:09+00:00"
+   },
    {
     "week": 3,
     "type": "free_agent",
@@ -5416,7 +7079,7 @@
     "team": "Claude Mythos 5.2",
     "adds": [],
     "drops": [
-     "Tua Tagovailoa"
+     "6768"
     ],
     "bid": null,
     "note": null,
@@ -8701,8 +10364,8 @@
  },
  "model": {
   "bid_guide": "https://www.fantasylife.com/articles/guillotine-leagues/guillotine-league-fantasy-football-waiver-wire-guide-for-week-2",
-  "bid_lookahead_weeks": 15,
-  "my_future_bid_price_weeks_of_cash_per_point_per_week": 0.7,
+  "bid_lookahead_weeks": 14,
+  "my_future_bid_price_weeks_of_cash_per_point_per_week": 0.5,
   "opponent_saving_plans": {
    "value": {
     "probability": 0.3333333333333333,
@@ -8739,8 +10402,8 @@
   "race_sims": 2048,
   "weekly_sigma": 16.0,
   "team_season_sigma": 8.0,
-  "bid_noise_sigma": 1.138,
-  "off_cycle_share": 0.333,
+  "bid_noise_sigma": 1.2,
+  "off_cycle_share": 0.486,
   "cascade_rounds": 2,
   "claims_per_team": 3,
   "claim_candidates": 80,
