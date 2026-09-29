@@ -246,7 +246,94 @@
    "claims": [
     {
      "order": 1,
-     "bid": 46,
+     "bid": 65,
+     "player": {
+      "player_id": "7525",
+      "name": "DeVonta Smith",
+      "position": "WR",
+      "team": "PHI",
+      "injury_status": null,
+      "source": "blend",
+      "points_this_week": 12.35,
+      "ros_per_week": 11.01
+     },
+     "waiver_clears": null,
+     "drop": {
+      "player_id": "13311",
+      "name": "Chris Bell",
+      "position": "WR",
+      "team": "MIA",
+      "injury_status": null,
+      "source": "blend",
+      "points_this_week": 6.25,
+      "ros_per_week": 5.37
+     },
+     "to_reserve": [],
+     "p_reached": 1.0,
+     "p_win": 0.177,
+     "title_without": 8.4
+    },
+    {
+     "order": 2,
+     "bid": 54,
+     "player": {
+      "player_id": "2133",
+      "name": "Davante Adams",
+      "position": "WR",
+      "team": "LAR",
+      "injury_status": null,
+      "source": "blend",
+      "points_this_week": 11.46,
+      "ros_per_week": 10.41
+     },
+     "waiver_clears": null,
+     "drop": {
+      "player_id": "13311",
+      "name": "Chris Bell",
+      "position": "WR",
+      "team": "MIA",
+      "injury_status": null,
+      "source": "blend",
+      "points_this_week": 6.25,
+      "ros_per_week": 5.37
+     },
+     "to_reserve": [],
+     "p_reached": 0.823,
+     "p_win": 0.256,
+     "title_without": 8.0
+    },
+    {
+     "order": 3,
+     "bid": 43,
+     "player": {
+      "player_id": "11620",
+      "name": "Rome Odunze",
+      "position": "WR",
+      "team": "CHI",
+      "injury_status": null,
+      "source": "blend",
+      "points_this_week": 8.38,
+      "ros_per_week": 8.95
+     },
+     "waiver_clears": null,
+     "drop": {
+      "player_id": "13311",
+      "name": "Chris Bell",
+      "position": "WR",
+      "team": "MIA",
+      "injury_status": null,
+      "source": "blend",
+      "points_this_week": 6.25,
+      "ros_per_week": 5.37
+     },
+     "to_reserve": [],
+     "p_reached": 0.567,
+     "p_win": 0.5,
+     "title_without": 7.4
+    },
+    {
+     "order": 4,
+     "bid": 32,
      "player": {
       "player_id": "12507",
       "name": "Omarion Hampton",
@@ -270,99 +357,12 @@
      },
      "to_reserve": [],
      "p_reached": 1.0,
-     "p_win": 0.705,
-     "title_without": 6.6
-    },
-    {
-     "order": 2,
-     "bid": 33,
-     "player": {
-      "player_id": "12495",
-      "name": "Ollie Gordon",
-      "position": "RB",
-      "team": "MIA",
-      "injury_status": "Questionable",
-      "source": "blend",
-      "points_this_week": 8.0,
-      "ros_per_week": 8.82
-     },
-     "waiver_clears": null,
-     "drop": {
-      "player_id": "8111",
-      "name": "Cade Otton",
-      "position": "TE",
-      "team": "TB",
-      "injury_status": null,
-      "source": "blend",
-      "points_this_week": 8.37,
-      "ros_per_week": 8.77
-     },
-     "to_reserve": [],
-     "p_reached": 0.295,
-     "p_win": 0.26,
-     "title_without": 7.8
-    },
-    {
-     "order": 3,
-     "bid": 30,
-     "player": {
-      "player_id": "2133",
-      "name": "Davante Adams",
-      "position": "WR",
-      "team": "LAR",
-      "injury_status": null,
-      "source": "blend",
-      "points_this_week": 11.46,
-      "ros_per_week": 10.41
-     },
-     "waiver_clears": null,
-     "drop": {
-      "player_id": "8126",
-      "name": "Wan'Dale Robinson",
-      "position": "WR",
-      "team": "TEN",
-      "injury_status": null,
-      "source": "blend",
-      "points_this_week": 7.91,
-      "ros_per_week": 7.96
-     },
-     "to_reserve": [],
-     "p_reached": 1.0,
-     "p_win": 0.194,
-     "title_without": 7.6
-    },
-    {
-     "order": 4,
-     "bid": 28,
-     "player": {
-      "player_id": "11620",
-      "name": "Rome Odunze",
-      "position": "WR",
-      "team": "CHI",
-      "injury_status": null,
-      "source": "blend",
-      "points_this_week": 8.38,
-      "ros_per_week": 8.95
-     },
-     "waiver_clears": null,
-     "drop": {
-      "player_id": "13311",
-      "name": "Chris Bell",
-      "position": "WR",
-      "team": "MIA",
-      "injury_status": null,
-      "source": "blend",
-      "points_this_week": 6.25,
-      "ros_per_week": 5.37
-     },
-     "to_reserve": [],
-     "p_reached": 1.0,
-     "p_win": 0.833,
-     "title_without": 3.9
+     "p_win": 0.618,
+     "title_without": 6.0
     },
     {
      "order": 5,
-     "bid": 6,
+     "bid": 20,
      "player": {
       "player_id": "8142",
       "name": "Alec Pierce",
@@ -388,76 +388,150 @@
       "Alec Pierce"
      ],
      "p_reached": 1.0,
-     "p_win": 0.672,
-     "title_without": 6.3
+     "p_win": 0.875,
+     "title_without": 6.9
+    },
+    {
+     "order": 6,
+     "bid": 15,
+     "player": {
+      "player_id": "11620",
+      "name": "Rome Odunze",
+      "position": "WR",
+      "team": "CHI",
+      "injury_status": null,
+      "source": "blend",
+      "points_this_week": 8.38,
+      "ros_per_week": 8.95
+     },
+     "waiver_clears": null,
+     "drop": {
+      "player_id": "8126",
+      "name": "Wan'Dale Robinson",
+      "position": "WR",
+      "team": "TEN",
+      "injury_status": null,
+      "source": "blend",
+      "points_this_week": 7.91,
+      "ros_per_week": 7.96
+     },
+     "to_reserve": [],
+     "p_reached": 0.5,
+     "p_win": 0.277,
+     "title_without": 8.5
     }
    ],
-   "p_title": 0.3047,
-   "relative": 8.6,
+   "p_title": 0.3057,
+   "relative": 8.9,
    "relative_se": 0.6,
-   "expected_spend": 74,
-   "p_any_win": 0.997,
-   "replays": 57,
+   "expected_spend": 88,
+   "p_any_win": 0.998,
+   "replays": 89,
    "outcomes": [
     {
      "adds": [
+      "Rome Odunze",
       "Omarion Hampton",
+      "Alec Pierce"
+     ],
+     "drops": [
+      "Chris Bell",
+      "Cade Otton",
+      "Zach Charbonnet"
+     ],
+     "spend": 95,
+     "p": 0.255,
+     "title": 9.3
+    },
+    {
+     "adds": [
       "Rome Odunze",
       "Alec Pierce"
      ],
      "drops": [
-      "Cade Otton",
       "Chris Bell",
       "Zach Charbonnet"
      ],
-     "spend": 80,
-     "p": 0.325,
-     "title": 9.7
+     "spend": 63,
+     "p": 0.177,
+     "title": 6.8
     },
     {
      "adds": [
+      "Davante Adams",
       "Omarion Hampton",
+      "Alec Pierce",
       "Rome Odunze"
      ],
      "drops": [
-      "Cade Otton",
-      "Chris Bell"
-     ],
-     "spend": 74,
-     "p": 0.149,
-     "title": 6.7
-    },
-    {
-     "adds": [
-      "Ollie Gordon",
-      "Rome Odunze",
-      "Alec Pierce"
-     ],
-     "drops": [
-      "Cade Otton",
       "Chris Bell",
-      "Zach Charbonnet"
+      "Cade Otton",
+      "Zach Charbonnet",
+      "Wan'Dale Robinson"
      ],
-     "spend": 67,
-     "p": 0.114,
-     "title": 7.9
+     "spend": 121,
+     "p": 0.087,
+     "title": 9.2
     },
     {
      "adds": [
+      "DeVonta Smith",
       "Omarion Hampton",
+      "Alec Pierce",
+      "Rome Odunze"
+     ],
+     "drops": [
+      "Chris Bell",
+      "Cade Otton",
+      "Zach Charbonnet",
+      "Wan'Dale Robinson"
+     ],
+     "spend": 132,
+     "p": 0.068,
+     "title": 13.0
+    },
+    {
+     "adds": [
       "Davante Adams",
-      "Rome Odunze",
+      "Alec Pierce",
+      "Rome Odunze"
+     ],
+     "drops": [
+      "Chris Bell",
+      "Zach Charbonnet",
+      "Wan'Dale Robinson"
+     ],
+     "spend": 89,
+     "p": 0.059,
+     "title": 11.2
+    },
+    {
+     "adds": [
+      "Davante Adams",
+      "Omarion Hampton",
       "Alec Pierce"
      ],
      "drops": [
-      "Cade Otton",
-      "Wan'Dale Robinson",
       "Chris Bell",
+      "Cade Otton",
       "Zach Charbonnet"
      ],
-     "spend": 110,
-     "p": 0.078,
-     "title": 11.2
+     "spend": 106,
+     "p": 0.053,
+     "title": 12.3
+    },
+    {
+     "adds": [
+      "Rome Odunze",
+      "Omarion Hampton"
+     ],
+     "drops": [
+      "Chris Bell",
+      "Cade Otton"
+     ],
+     "spend": 75,
+     "p": 0.041,
+     "title": 3.3
     },
     {
      "adds": [
@@ -469,47 +543,8 @@
       "Zach Charbonnet"
      ],
      "spend": 52,
-     "p": 0.062,
-     "title": 7.1
-    },
-    {
-     "adds": [
-      "Ollie Gordon",
-      "Rome Odunze"
-     ],
-     "drops": [
-      "Cade Otton",
-      "Chris Bell"
-     ],
-     "spend": 61,
-     "p": 0.06,
-     "title": 5.0
-    },
-    {
-     "adds": [
-      "Omarion Hampton",
-      "Davante Adams",
-      "Rome Odunze"
-     ],
-     "drops": [
-      "Cade Otton",
-      "Wan'Dale Robinson",
-      "Chris Bell"
-     ],
-     "spend": 104,
-     "p": 0.035,
-     "title": 7.0
-    },
-    {
-     "adds": [
-      "Omarion Hampton"
-     ],
-     "drops": [
-      "Cade Otton"
-     ],
-     "spend": 46,
-     "p": 0.032,
-     "title": 0.6
+     "p": 0.038,
+     "title": 7.9
     }
    ]
   },

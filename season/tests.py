@@ -649,6 +649,24 @@ class WaiverTests(unittest.TestCase):
         self.assertEqual([c["p_reached"] for c in card["claims"]], [1., .5])
         self.assertEqual(card["p_any_win"], .75)
 
+    def test_card_takes_a_claims_drop_with_its_fallback(self):
+        # Both are worth having and 4 is the drop worth making: one claim takes 4 ahead of
+        # the other, which keeps 4 as its alternative and falls back to another drop.
+        for points in self.weekly:
+            points[8] = points[9] = 25.
+        inputs = self.inputs(self.weekly[:])
+        inputs.free_agents = [8, 9]
+        with patch("season.claims.run_replays",
+                   side_effect=self.card_values(lambda r: .004 * (8 in r) + .004 * (9 in r) - .003 * (4 in r))):
+            card = claims(self.card_state(), inputs, self.card_records())["card"]
+        first, alternative, fallback = card["claims"]
+        self.assertEqual((first["drop"]["name"], alternative["drop"]["name"]), ("4", "4"))
+        self.assertEqual(fallback["player"]["name"], alternative["player"]["name"])
+        self.assertNotEqual(fallback["drop"]["name"], "4")
+        self.assertEqual([c["p_reached"] for c in card["claims"]], [1., .5, .75], "The fallback is also reached where he was lost")
+        both = next(o for o in card["outcomes"] if len(o["adds"]) == 2)
+        self.assertEqual((both["p"], sorted(both["drops"])), (.25, ["4", fallback["drop"]["name"]]))
+
 
 class CardTests(unittest.TestCase):
     def setUp(self):

@@ -73,8 +73,8 @@ It refetches projections (DraftSharks weekly for the weeks still to play, Sleepe
 season), fetches the league state (including Sleeper weekly projections), and runs the
 season model. The NFL week comes from Sleeper. Each stage must succeed before the next
 starts; a failure exits nonzero without printing recommendations from an older run.
-The season model takes about ten minutes at 8 workers (pricing each player alone
-about five of them, the bidding card two to four); `--sims 256` runs it in about a
+The season model takes about eleven minutes at 8 workers (pricing each player alone
+about five of them, the bidding card four or five); `--sims 256` runs it in about a
 minute for a quick check, with correspondingly noisier odds.
 
 The terminal summary shows the remaining budget, any reserve body to activate and the
@@ -488,26 +488,38 @@ to win takes the spot) and a player claimed again with another drop is a fallbac
 when an earlier win used his drop; a free agent after the run is added now, ahead of
 every claim. A card is scored by walking it that way through every recorded season, each
 claim winning or losing at that season's clearing price, and valuing the roster and cash
-it leaves by that season's replay: a replayed roster is priced under the value chosen
-for the nearest grid budget, and rarer rosters, and the value of cash around a replayed
-point, come from
-the standing roster's grid plus each swap's single effect (a swap replayed at the full
-budget only borrows its player's replayed drop's budget profile); a roster reached in
-at least 2% of the seasons is replayed at the cash it leaves. The card grows
+it leaves by that season's replay: every roster a card reaches is replayed once, at the
+cash it most often leaves, priced under the value chosen for the nearest grid budget;
+the value of cash around that point, and a roster not yet replayed, come from the
+standing roster's grid plus each swap's single effect (a swap replayed at the full
+budget only borrows its player's replayed drop's budget profile). No card is judged on
+that additive estimate. On the few seasons a rare roster is reached, say a cheap win on
+one player beside a loss on another, it misses by about three times the differences
+between cards: valuing rosters reached in under 2% of the seasons additively, the
+week-4 card dropped Wan'Dale Robinson for Davante Adams where the replays prefer Chris
+Bell by 3% relative title odds in every context, at nine standard errors. The card grows
 greedily: every claim option (each candidate with each of his replayed drops, or a free
-add, any of them at any bid) is screened by that estimate with its own bid optimized,
-then the best estimates are tried in turn, each replayed with every bid re-optimized by
-coordinate ascent over the recorded clearing prices, and the first whose gain over the
-card so far exceeds two paired standard errors across the seasons joins; the card is
-done when none of the four best does. Claims the card does no
+add, any of them at any bid) is screened by the estimate with its own bid optimized,
+alone and, when its drop is one a claim on the card names, ahead of that claim together
+with the claim's fallback on another of his drops, so a better drop for one player need
+not cost another player (Adams for Bell, with Rome Odunze for Bell as before and for
+Robinson when Bell is gone); then the options with the best estimates are tried in
+turn, each of their extensions replayed with every bid re-optimized by coordinate ascent
+over the recorded clearing prices, and the first whose gain over the card so far exceeds
+two paired standard errors across the seasons joins; the card is done when none of the
+four best options' extensions does. Claims the card does no
 worse without are pruned, the final bids are settled over every clearing price, and an
 equal bid ahead of a claim that depends on it is raised a dollar so the order does not
-rest on Sleeper's tie rule. In the week-4 state the card holds five claims for an
-expected $74: Omarion Hampton for Cade Otton with Ollie Gordon for the same drop as
-the alternative when Hampton is lost, Davante Adams for Wan'Dale Robinson, Rome Odunze
-for Chris Bell, and Alec Pierce for the reserve spot Zach Charbonnet holds, and it
-replays to +8.6% (±0.6) relative title odds against +4.8% for the best single claim,
-at 57 replays beyond the single valuations. This is a greedy search over a screened
+rest on Sleeper's tie rule. In the week-4 state the card holds six claims for an
+expected $88: DeVonta Smith, Davante Adams and Rome Odunze each for Chris Bell, the
+first to win taking the spot, Omarion Hampton for Cade Otton, Alec Pierce for the
+reserve spot Zach Charbonnet holds, and Odunze again for Wan'Dale Robinson when Bell is
+gone, and it replays to +8.9% (±0.6) relative title odds against +3.0% for the best
+single claim, at 89 replays beyond the single valuations. On 2,048 fresh simulated
+seasons, with every roster reached replayed, a card built this way scored +8.3% relative
+title odds against +7.7% for the five-claim card the additive valuation built, two paired
+standard errors apart; the drop swap alone, Bell for Robinson with the Odunze fallback,
+is worth a tenth of that. This is a greedy search over a screened
 set, not every card, and the room is not replayed around my wins; only my side bids
 this way, since the room and my replayed future self keep one offer per candidate.
 That one-offer heuristic is blind to this week's cut risk: with the wire refilling a

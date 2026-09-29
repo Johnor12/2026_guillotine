@@ -212,7 +212,7 @@ def claims(state: SeasonState, inputs: RaceInputs, records: list[dict]) -> dict:
     def with_offer(offer) -> tuple[int, ...]:
         mine = list(roster)
         apply_offer(mine, offer)
-        return tuple(mine)
+        return tuple(sorted(mine))  # the card's Values keys rosters sorted
 
     # Every candidate with each of his drops at the full budget (his value as a free
     # pickup) keeps the drop that replays best; then the price grid only for the ones

@@ -11,14 +11,19 @@ added now, ahead of every claim.
 The card is scored per recorded opponent season (race.simulate without me): each claim
 wins or loses at that season's price, and the roster and cash the card leaves are valued
 by that season's replay (race.replay), the same records the single claims are priced on.
-A roster the card reaches in at least REPLAY_SHARE of the seasons is replayed at the
-cash it leaves; rarer ones, and the value of cash around a replayed point, come from the
-base plus each of the roster's swaps' single effect.
+Every roster a card reaches is replayed once, at the cash it leaves; the value of cash
+around that point, and a roster not yet replayed, come from the base plus each of the
+roster's swaps' single effect. That additive estimate is not good enough to decide on:
+on the few seasons a rare roster is reached (a cheap win beside a lost one) it misses by
+more than the differences between cards, so no card is judged on it.
 The card grows greedily: every claim option (a player and one of his drops) is screened
-by that additive estimate with its own bid optimized, then the best estimates in turn are
+by the additive estimate with its own bid optimized, alone and, when its drop is one a
+claim on the card names, ahead of that claim together with the claim's fallback on
+another of his drops (so a better drop for one player need not cost another player);
+then the options with the best estimates are tried in turn, each of their extensions
 replayed with every bid re-optimized by coordinate ascent over the clearing prices, and
 the first whose gain over the card so far exceeds CONFIDENCE paired standard errors
-joins; the card is done when none of the SCREENED best does.
+joins; the card is done when none of the SCREENED best options' extensions does.
 Claims that no longer help are pruned, and an equal bid ahead of a claim that depends on
 it is raised a dollar so the order does not rest on Sleeper's tie rule.
 """
@@ -33,8 +38,7 @@ import numpy as np
 
 from shared.league import RESERVE_SLOTS
 
-REPLAY_SHARE = 0.02  # rosters the card reaches in fewer seasons are valued additively
-SCREENED = 4  # extensions tried per step, best additive estimate first, until one joins
+SCREENED = 4  # options tried per step, best additive estimate first, until an extension joins
 CONFIDENCE = 2.0  # paired standard errors an extension must gain to join the card
 BID_LEVELS = 32  # clearing prices tried per claim while the card grows; the last pass tries every one
 
@@ -79,8 +83,9 @@ class Values:
     def learn(self, roster: tuple[int, ...], budget: int, values: np.ndarray) -> None:
         self.points.setdefault(roster, {})[budget] = values
 
-    def known(self, roster: tuple[int, ...], budget: int) -> bool:
-        return roster in self.grids or budget in self.points.get(roster, {})
+    def known(self, roster: tuple[int, ...]) -> bool:
+        """Replayed at some budget: the level is the replay's, only the shape of cash is estimated."""
+        return roster in self.grids or roster in self.points
 
     def single(self, swap: tuple[int, int | None], effect: np.ndarray) -> None:
         self.singles[swap] = effect
@@ -250,16 +255,40 @@ def paired(titles: np.ndarray, against: np.ndarray) -> tuple[float, float]:
 
 
 def _replay_reached(scorer: Scorer, cards: list[list[Claim]], replay) -> None:
-    """Replay every roster and cash these cards leave often enough that is still estimated."""
+    """Replay every roster these cards reach that has not been, at the cash it most often leaves."""
     values = scorer.values
-    wanted = set()
+    wanted: dict[tuple[int, ...], int] = {}
     for card in cards:
-        for roster, _, budget, idx in scorer.evaluate(card)[2]["rosters"].values():
-            if not values.known(roster, budget) and len(idx) >= REPLAY_SHARE * scorer.n:
-                wanted.add((roster, budget))
+        reached = scorer.evaluate(card)[2]["rosters"].values()
+        for roster, _, budget, idx in sorted(reached, key=lambda item: -len(item[3])):
+            if not values.known(roster):
+                wanted.setdefault(roster, budget)
     if wanted:
-        for (roster, budget), titles in replay(sorted(wanted)).items():
+        for (roster, budget), titles in replay(sorted(wanted.items())).items():
             values.learn(roster, budget, titles)
+
+
+def _extensions(card: list[Claim], option: Claim, options: list[Claim]):
+    """Cards adding the option, with the indexes of what they add: the option after the
+    card, and, for each claim on the card whose drop it takes, ahead of the card (so an
+    equal bid processes it first) with that claim's fallback on another of his drops
+    appended at the same bid."""
+    yield card + [option], [len(card)]
+    taken = {claim.swap for claim in card}
+    for claim in card:
+        if claim.drop is not None and claim.drop == option.drop:
+            for other in options:
+                if other.player == claim.player and other.swap != claim.swap and other.swap not in taken:
+                    yield [option] + card + [dataclasses.replace(other, bid=claim.bid)], [0, len(card) + 1]
+
+
+def _confirmed(scorer: Scorer, card: list[Claim], trial: list[Claim], replay) -> list[Claim] | None:
+    """The trial with its bids settled on replayed values, if it gains on the card with confidence."""
+    trial = scorer.optimize(trial)
+    _replay_reached(scorer, [trial], replay)
+    trial = scorer.optimize(trial)
+    gain, se = paired(scorer.evaluate(trial)[1], scorer.evaluate(card)[1])
+    return trial if gain > CONFIDENCE * se else None
 
 
 def _extend(scorer: Scorer, options: list[Claim], replay) -> list[Claim]:
@@ -267,20 +296,19 @@ def _extend(scorer: Scorer, options: list[Claim], replay) -> list[Claim]:
     while True:
         value = scorer.evaluate(card)[0]
         taken = {claim.swap for claim in card}
-        screened = []
+        screened = []  # each option's extensions, best estimate first, ranked by that best
         for k, option in enumerate(options):
             if option.swap in taken:
                 continue
-            trial = scorer.optimize(card + [option], which=[len(card)])
-            screened.append((scorer.evaluate(trial)[0], k, trial))
+            trials = [scorer.optimize(trial, which=added) for trial, added in _extensions(card, option, options)]
+            trials = sorted(((scorer.evaluate(trial)[0], trial) for trial in trials), key=lambda row: -row[0])
+            screened.append((trials[0][0], k, trials))
         screened.sort(key=lambda row: (-row[0], row[1]))
-        trials = [scorer.optimize(trial) for estimate, _, trial in screened[:SCREENED] if estimate > value]
-        for trial in trials:
-            _replay_reached(scorer, [trial], replay)
-            trial = scorer.optimize(trial)
-            gain, se = paired(scorer.evaluate(trial)[1], scorer.evaluate(card)[1])
-            if gain > CONFIDENCE * se:
-                card = trial
+        candidates = [trial for _, _, trials in screened[:SCREENED] for estimate, trial in trials if estimate > value]
+        for trial in candidates:
+            confirmed = _confirmed(scorer, card, trial, replay)
+            if confirmed is not None:
+                card = confirmed
                 break
         else:
             return card
