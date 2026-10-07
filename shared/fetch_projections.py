@@ -182,9 +182,10 @@ def fetch_week(week: int) -> list[dict]:
     parser = RowParser()
     parser.feed(body)
     rows = [r for r in parser.rows if r["position"] in POSITIONS]
-    # Bye weeks remove up to 6 teams' players; anything below ~3/4 of the ~430-player
-    # offense pool means a truncated or reshaped response.
-    if len(rows) < 300:
+    # The current week drops players already ruled out and runs ~325 rows with all 32
+    # teams playing; up to 6 bye teams take it lower still. Anything under 200 means a
+    # truncated or reshaped response.
+    if len(rows) < 200:
         raise SystemExit(
             f"error: week {week} returned only {len(rows)} QB/RB/WR/TE rows; "
             "truncated response or page layout change?"

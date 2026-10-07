@@ -3,7 +3,8 @@
 32 teams, 0.5 PPR guillotine with a +1.0/rec TE premium, 1 QB. The two lowest weekly
 scores are eliminated each of weeks 1-15 (their players hit waivers), then the last
 two teams play a week 16-17 total-points championship. Starters open at 1 QB / 1 RB /
-2 WR / 1 TE / 2 W-R-T and expand in-season (WEEKLY_SHAPES); the bench grows with them.
+2 WR / 1 TE / 2 W-R-T and expand in-season (WEEKLY_SHAPES); the bench grows on its own
+schedule (_bench).
 No D/ST or K slot, no per-position roster caps, two reserve spots outside the counts.
 
 These are constants, not configuration. The draft board loader and the season state
@@ -54,12 +55,11 @@ SLOT_CHAIN = {
 }
 
 
-# The bench grows with the starting lineup, one spot at each expansion (weeks 7, 9, 12,
-# 14), from 1 to 5: rosters run 8 spots in week 1 to 16 from week 14. The league states
-# the endpoints; the intermediate steps are an assumption checked against Sleeper's
+# The bench grows from 1 to 5 on the league's schedule (+1 in each of weeks 5, 6, 11,
+# 13), so rosters run 8 spots in weeks 1-4 to 16 from week 14. Checked against Sleeper's
 # roster_positions each week.
 def _bench(week: int) -> int:
-    return 1 + (week >= 7) + (week >= 9) + (week >= 12) + (week >= 14)
+    return 1 + (week >= 5) + (week >= 6) + (week >= 11) + (week >= 13)
 
 
 WEEK_ROSTER_SIZE = tuple(WEEK_STARTERS[w] + _bench(w + 1) for w in range(WEEKS))

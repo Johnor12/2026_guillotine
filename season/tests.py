@@ -3,6 +3,7 @@
     uv run -m unittest season.tests
 """
 import datetime as dt
+import math
 import random
 import statistics
 import unittest
@@ -100,18 +101,18 @@ class WaiverTests(unittest.TestCase):
         self.assertEqual(allowance, max(b for b, _ in plan))
 
     def test_drop_is_chosen_with_the_pickup(self):
-        # Week 7's ten-man roster. QB0 misses weeks 7-9 and QB1 covers them; RB8 covers
+        # Week 7's eleven-man roster. QB0 misses weeks 7-9 and QB1 covers them; RB8 covers
         # RB2's five zero weeks for a point a week, so alone he is the cheapest cut.
-        positions = [0, 0, 1, 1, 2, 2, 2, 3, 1, 3, 0]
-        weekly = [[20., 12., 15., 14., 12., 11., 10., 14., 1., 5., 15.] for _ in range(WEEKS)]
+        positions = [0, 0, 1, 1, 2, 2, 2, 3, 1, 3, 2, 0]
+        weekly = [[20., 12., 15., 14., 12., 11., 10., 14., 1., 5., 8., 15.] for _ in range(WEEKS)]
         for w in (6, 7, 8):
             weekly[w][0] = 0.
         for w in range(9, 14):
             weekly[w][2] = 0.
-        bidding = Bidding(positions, weekly, weekly, [0] * 11)
-        roster = tuple(range(10))
+        bidding = Bidding(positions, weekly, weekly, [0] * 12)
+        roster = tuple(range(11))
         self.assertEqual(bidding.context(roster, 6).drops[0], 8, "Alone, the point-a-week RB is the cheapest cut")
-        offer = bidding.offers(list(roster), [10], 1000, 6)[0]
+        offer = bidding.offers(list(roster), [11], 1000, 6)[0]
         self.assertEqual(offer.drop, 1, "With a better QB arriving, the backup QB is the drop")
 
     def test_one_week_fix_pays_for_the_drop(self):
@@ -199,7 +200,14 @@ class WaiverTests(unittest.TestCase):
         self.assertFalse(bidding.open_spot(roster, 0))
         drops = {o.drop for o in bidding.swaps(roster, 10, 1000, 0, 0.0, 10)}
         self.assertTrue(drops and drops.isdisjoint({8, 9}), "A drop from reserve frees him nothing")
-        self.assertTrue(bidding.open_spot(roster[:7] + [8, 9], 0), "Two on reserve, seven active: a spot is open")
+        roomy = roster[:7] + [8, 9]
+        self.assertTrue(bidding.open_spot(roomy, 0), "Two on reserve, seven active: a spot is open")
+        offers = bidding.swaps(roomy, 10, 1000, 0, 0.0, 3)
+        self.assertIsNone(offers[0].drop, "The open spot first")
+        self.assertEqual(len(offers), 3)
+        self.assertTrue({o.drop for o in offers[1:]}.isdisjoint({None, 8, 9}),
+                        "Then drops that free a regular spot, so another claim can take the open one")
+        self.assertEqual(bidding.offers(roomy, [10], 1000, 0)[0].drop, None, "The one-offer heuristic takes the spot")
 
     def test_draftsharks_rows_outside_the_pool_join_by_name(self):
         pool = {"players": [{"player_id": 1, "sleeper_id": "11"}]}
@@ -346,7 +354,7 @@ class WaiverTests(unittest.TestCase):
             for roster, budget, price in variants:
                 title = budget * 0.00001 + (0.008 if 9 in roster else 0.)
                 out.append({"p_title": title, "title_by_record": [title, title], "p_reach_final": title,
-                            "p_cut_now": 0., "p_alive_by_week": [1.] * 14, "budget_by_week": [budget] * 16,
+                            "p_cut_now": 0., "leverage": [0.] * 13, "p_alive_by_week": [1.] * 14, "budget_by_week": [budget] * 16,
                             "budget_after_claims": [budget] * 16})
             return out
 
@@ -372,7 +380,7 @@ class WaiverTests(unittest.TestCase):
 
         def values(inputs, records, variants):
             return [{"p_title": (t := 0.01 + (0.004 if 9 in r else 0.)), "title_by_record": [t, t], "p_reach_final": t,
-                     "p_cut_now": 0., "p_alive_by_week": [1.] * 14, "budget_by_week": [b] * 16,
+                     "p_cut_now": 0., "leverage": [0.] * 13, "p_alive_by_week": [1.] * 14, "budget_by_week": [b] * 16,
                      "budget_after_claims": [b] * 16} for r, b, _ in variants]
 
         with patch("season.claims.run_replays", side_effect=values):
@@ -553,7 +561,7 @@ class WaiverTests(unittest.TestCase):
 
         def values(inputs, records, variants):
             return [{"p_title": (t := .01 + (.004 if 9 in r and runner_up not in r else 0.)), "title_by_record": [t, t],
-                     "p_reach_final": t, "p_cut_now": 0., "p_alive_by_week": [1.] * 14,
+                     "p_reach_final": t, "p_cut_now": 0., "leverage": [0.] * 13, "p_alive_by_week": [1.] * 14,
                      "budget_by_week": [b] * 16, "budget_after_claims": [b] * 16} for r, b, _ in variants]
 
         with patch("season.claims.run_replays", side_effect=values):
@@ -675,7 +683,7 @@ class WaiverTests(unittest.TestCase):
             for roster, budget, _ in variants:
                 t = 0.01 + budget * 4e-5 + worth(roster)
                 out.append({"p_title": t, "title_by_record": [t] * len(records), "p_reach_final": t, "p_cut_now": 0.,
-                            "p_alive_by_week": [1.] * 14, "budget_by_week": [budget] * 16, "budget_after_claims": [budget] * 16})
+                            "leverage": [0.] * 13, "p_alive_by_week": [1.] * 14, "budget_by_week": [budget] * 16, "budget_after_claims": [budget] * 16})
             return out
         return values
 
@@ -692,6 +700,23 @@ class WaiverTests(unittest.TestCase):
         self.assertEqual([c["p_reached"] for c in card["claims"]], [1., 1.])
         both = next(o for o in card["outcomes"] if len(o["adds"]) == 2)
         self.assertEqual((both["p"], both["spend"]), (.25, 102))
+
+    def test_card_fills_the_open_spot_and_makes_a_drop(self):
+        # Seven bodies for eight spots. Both are worth having: one claim takes the open
+        # spot and the other drops the 5-point receiver, so both land, where claims for the
+        # spot alone would be alternatives and land one.
+        self.roster = list(range(7))
+        for points in self.weekly:
+            points[8] = points[9] = 25.
+        inputs = self.inputs(self.weekly[:])
+        inputs.free_agents = [8, 9]
+        with patch("season.claims.run_replays", side_effect=self.card_values(lambda r: .004 * (8 in r) + .004 * (9 in r))):
+            card = claims(self.card_state(), inputs, self.card_records())["card"]
+        self.assertEqual({c["player"]["name"] for c in card["claims"]}, {"8", "9"})
+        self.assertEqual({c["drop"]["name"] if c["drop"] else None for c in card["claims"]}, {None, "4"})
+        self.assertEqual([c["p_reached"] for c in card["claims"]], [1., 1.])
+        both = next(o for o in card["outcomes"] if len(o["adds"]) == 2)
+        self.assertEqual((both["p"], both["spend"], both["drops"]), (.25, 102, ["4"]))
 
     def test_card_makes_the_same_drop_an_alternative(self):
         # Either player is the whole gain: claim one, and the other on the same drop only
@@ -782,6 +807,19 @@ class CardTests(unittest.TestCase):
         self.assertAlmostEqual(self.values.at(roster, [(9, 4)], 50, idx)[0], .2 - .025, msg="Down the base's slope")
         self.assertAlmostEqual(self.values.at((0, 1, 2, 3, 5, 6, 7, 8), [(8, 4)], 50, idx)[0], .07, msg="Additive only")
 
+    def test_estimate_takes_this_weeks_overlap_back_out(self):
+        # 8 and 9 each add 8 lineup points alone this week and 10 together: two bodies for
+        # one hole. The pair's additive estimate is scaled by exp(leverage * -6).
+        week = {(0, 1, 2, 3, 5, 6, 7, 8): 18., (0, 1, 2, 3, 4, 6, 7, 9): 18., (0, 1, 2, 3, 6, 7, 8, 9): 20.}
+        values = Values(tuple(range(8)), [0, 50, 100], np.array([[0.] * 4, [.05] * 4, [.1] * 4]),
+                        week_points=lambda r: week.get(tuple(r), 10.), leverage=.05)
+        values.single((8, 4), np.full((3, 4), .02))
+        values.single((9, 5), np.full((3, 4), .03))
+        idx = np.arange(4)
+        self.assertAlmostEqual(values.at((0, 1, 2, 3, 5, 6, 7, 8), [(8, 4)], 100, idx)[0], .12, msg="Alone, no overlap")
+        pair = values.at((0, 1, 2, 3, 6, 7, 8, 9), [(8, 4), (9, 5)], 100, idx)[0]
+        self.assertAlmostEqual(pair, .15 * math.exp(-.3))
+
     def test_bid_levels_and_tie_breaking(self):
         self.assertEqual(self.scorer.levels(9, None), [0, 1, 6, 21, 96])
         self.assertEqual(self.scorer.levels(8, 2), [0, 31])
@@ -789,6 +827,8 @@ class CardTests(unittest.TestCase):
         self.assertEqual([c.bid for c in card], [22, 21, 20], "Each dependent tie resolved by a dollar")
         card = _break_ties(self.scorer, [Claim(9, 4, 20), Claim(8, 5, 20)])
         self.assertEqual([c.bid for c in card], [20, 20], "Independent claims may tie")
+        card = _break_ties(self.scorer, [Claim(9, None, 20), Claim(8, None, 20)])
+        self.assertEqual([c.bid for c in card], [21, 20], "Two claims for the open spot are alternatives")
 
 
 if __name__ == "__main__":

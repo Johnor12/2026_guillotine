@@ -13,25 +13,27 @@ title odds.
 Claims: every candidate's drop is chosen by replay among the few that waivers.Bidding
 ranks best (the heuristic prices a fixed roster, where a future lineup expansion is an
 empty seat, so its favorite can give up a starter today for depth the wire would supply
-anyway), and his bid alone is whatever maximizes replayed title odds anywhere in the
-budget. The standing roster is replayed at several budgets under every future bid price
-(race.PRICES, per point of a claim's season gain); that grid is the value of cash, and
-the price that replays best at each budget is what every variant at that budget is
-priced under, so saving or spending is whatever the seasons reward. After this week's run, only players
-dropped since are still on waivers and take a bid; everyone else is a free add. A
-variant that only fits with a body moved onto reserve names that move. A record
-contributes the acquired roster's title value if the bid wins, and standing pat
-otherwise, which keeps the dependence between prices and future opportunities. Odds
-are relative to standing pat. A player the variant holds comes off the recorded
-roster of the opponent who bought him (race.replay); what that opponent would have
-done with the cash instead is not replayed.
+anyway; an open spot is one of the few, beside the drops that free a regular spot, so
+the card can fill the spot and make a drop), and his bid alone is whatever maximizes
+replayed title odds anywhere in the budget. The standing roster is replayed at several
+budgets under every future bid price (race.PRICES, per point of a claim's season gain);
+that grid is the value of cash, and the price that replays best at each budget is what
+every variant at that budget is priced under, so saving or spending is whatever the
+seasons reward. After this week's run, only players dropped since are still on waivers
+and take a bid; everyone else is a free add. A variant that only fits with a body moved
+onto reserve names that move. A record contributes the acquired roster's title value if
+the bid wins, and standing pat otherwise, which keeps the dependence between prices and
+future opportunities. Odds are relative to standing pat. A player the variant holds
+comes off the recorded roster of the opponent who bought him (race.replay); what that
+opponent would have done with the cash instead is not replayed.
 
 Card: the recommendation is the whole set of claims to enter (card.py), built from
 those single valuations: each claim option (a candidate and one of his drops, or a free
-add) may join at any bid, claims naming the same drop are alternatives and a player may
-be claimed again with another drop as a fallback, and the card is scored per recorded
-season by walking it the way Sleeper processes claims. Only my side bids this way; the
-room and my replayed future self keep race.py's one offer per candidate.
+add) may join at any bid, claims naming the same drop or the open spot are alternatives
+and a player may be claimed again with another drop as a fallback, and the card is
+scored per recorded season by walking it the way Sleeper processes claims. Only my side
+bids this way; the room and my replayed future self keep race.py's one offer per
+candidate.
 """
 
 from __future__ import annotations
@@ -326,7 +328,8 @@ def claims(state: SeasonState, inputs: RaceInputs, records: list[dict]) -> dict:
     # The card: every swap that beats standing pat for free is a claim option (a free
     # add after the run, or a bid on a player still on waivers); the room's clearing
     # prices and the replayed grids score any card the way Sleeper processes it.
-    table = Values(roster, budgets, np.array([baseline[price_at[b]][k][1]["title_by_record"] for k, b in enumerate(budgets)]))
+    table = Values(roster, budgets, np.array([baseline[price_at[b]][k][1]["title_by_record"] for k, b in enumerate(budgets)]),
+                   week_points=lambda r: lineup(list(r), points, positions, w)[0], leverage=base["leverage"][0])
     base_full = table.grids[roster][-1]
     for j in candidates:
         best = (offers[j].player, offers[j].drop)

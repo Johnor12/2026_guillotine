@@ -276,7 +276,8 @@ def _lineups(points, pos, dedicated, flex):
 def _evaluate(candidates, points, pos, ros, w, weights, floors, floor_min, size, reserve_slots,
               eligible, drops, drop_eligible, loss, rest_floors, prune):
     """For each candidate: (gain per remaining week, drop, fits without a drop), plus his
-    net against every drop when `prune` is off (for ranking drops).
+    net against every drop when `prune` is off (for ranking drops), whether or not he
+    fits without one: beside an open spot a drop is still a claim of its own.
 
     The candidate lands in a regular spot: Sleeper never adds a body straight onto
     reserve, so only the bodies already held fill the reserve slots, and a drop from
@@ -308,7 +309,8 @@ def _evaluate(candidates, points, pos, ros, w, weights, floors, floor_min, size,
         if n + 1 - min(reserve_slots, eligible) <= size:
             fits[ci] = True
             gains[ci] = free_gain / span
-            continue
+            if prune:
+                continue  # the one-offer heuristic takes the open spot
         if most <= 0.0:
             continue
         best = -np.inf
@@ -330,7 +332,7 @@ def _evaluate(candidates, points, pos, ros, w, weights, floors, floor_min, size,
                     or (ros[drops[o]] == ros[drops[best_o]] and drops[o] < drops[best_o]))):
                 best = net
                 best_o = o
-        if best_o >= 0 and best > 0.0:
+        if not fits[ci] and best_o >= 0 and best > 0.0:
             gains[ci] = best / span
             chosen[ci] = drops[best_o]
     return gains, chosen, fits, nets
@@ -493,17 +495,22 @@ class Bidding:
 
     def swaps(self, roster, j: int, budget: int, w: int, risk: float, k: int) -> list[Offer]:
         """Up to `k` improving offers for `j`, one per drop, best gain first. An open spot
-        needs no drop."""
+        needs no drop and comes first, but the drops that free a regular spot stand beside
+        it: the card can then fill the spot with one claim and make a drop with another,
+        where the open spot alone makes every claim an alternative for it."""
         ctx = self.context(roster, w)
         span = WEEKS - w
         gains, _, fits, nets = self._core(ctx, [j], False)
-        if fits[0]:
-            return [self._offer(j, None, float(gains[0]), budget, w, risk)] if gains[0] > 0 else []
+        offers = [self._offer(j, None, float(gains[0]), budget, w, risk)] if fits[0] and gains[0] > 0 else []
+        # A drop from reserve frees nothing while the slots hold the eligible bodies: beside
+        # an open spot it is the no-drop claim again, and dominated.
+        frees = ~ctx.drop_eligible | (ctx.eligible > RESERVE_SLOTS)
         order = np.lexsort((ctx.drops, self.ros[w, ctx.drops], -nets[:, 0]))
-        return [
+        offers += [
             self._offer(j, int(ctx.drops[o]), float(nets[o, 0]) / span, budget, w, risk)
-            for o in order[:k] if nets[o, 0] > 0.0
-        ]
+            for o in order if frees[o] and nets[o, 0] > 0.0
+        ][:k - len(offers)]
+        return offers
 
 
 def submitted_bids(state):

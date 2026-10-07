@@ -6,10 +6,10 @@ fails when its player is already mine, its drop is gone, no regular spot is left
 him, or the cash is gone. A claimed body lands in a regular spot, never straight onto
 reserve: the reserve holds what I put there before the run, so a drop from reserve frees
 him nothing, and a body won earlier in the run keeps his regular spot until it is over.
-So claims naming the same drop are alternatives (the first to win takes the spot), and
-a player claimed several times with different drops has fallbacks for when an earlier
-win used his drop. A free agent after the run is added now, ahead of every claim, by
-hand, with the reserve reshuffled between adds.
+So claims naming the same drop, or the one open spot, are alternatives (the first to
+win takes the spot), and a player claimed several times with different drops has
+fallbacks for when an earlier win used his drop or his spot. A free agent after the run
+is added now, ahead of every claim, by hand, with the reserve reshuffled between adds.
 
 The card is scored per recorded opponent season (race.simulate without me): each claim
 wins or loses at that season's price, and the roster and cash the card leaves are valued
@@ -59,8 +59,9 @@ class Claim:
 
 
 def depends(earlier: Claim, later: Claim) -> bool:
-    """Whether `later`'s fate turns on `earlier` being processed first."""
-    return earlier.player == later.player or (earlier.drop is not None and earlier.drop == later.drop)
+    """Whether `later`'s fate turns on `earlier` being processed first: the same player,
+    the same drop, or both taking the open spot."""
+    return earlier.player == later.player or earlier.drop == later.drop
 
 
 class Values:
@@ -70,18 +71,25 @@ class Values:
     seasons); `points[roster][budget]` one replayed at that budget alone. A roster is
     estimated as the base plus each of its swaps' single effect (`singles`, on the grid;
     claims.py lends a swap replayed at the full budget only its player's replayed drop's
-    budget profile), and where it was replayed at one budget, that point corrects the
-    estimate's level: the value of cash is the estimate's shape, the roster's worth the
-    replay's.
+    budget profile), scaled by exp(`leverage` times the lineup points that sum double
+    counts this week: two receivers each priced alone against a bye hole fill it once
+    together, so `week_points`, this week's exact lineup, takes the overlap back out at
+    the replay's own title odds per point); where a roster was replayed at one budget,
+    that point corrects the estimate's level: the value of cash is the estimate's shape,
+    the roster's worth the replay's.
     """
 
-    def __init__(self, base: tuple[int, ...], budgets: list[int], base_grid: np.ndarray):
+    def __init__(self, base: tuple[int, ...], budgets: list[int], base_grid: np.ndarray,
+                 week_points=None, leverage: float = 0.0):
         self.base = base
         self.budgets = np.asarray(budgets, dtype=np.float64)  # ascending, the full budget last
         self.grids: dict[tuple[int, ...], np.ndarray] = {base: base_grid}
         self.points: dict[tuple[int, ...], dict[int, np.ndarray]] = {}
         self.singles: dict[tuple[int, int | None], np.ndarray] = {}
         self.estimates: dict[tuple[int, ...], np.ndarray] = {}
+        self.week_points = week_points  # roster -> this week's lineup points
+        self.leverage = leverage  # d log P(title) / d(this week's points)
+        self._week: dict[tuple[int, ...], float] = {}
 
     def learn(self, roster: tuple[int, ...], budget: int, values: np.ndarray) -> None:
         self.points.setdefault(roster, {})[budget] = values
@@ -100,6 +108,19 @@ class Values:
             roster.add(player)
         return tuple(sorted(roster))
 
+    def _week_points(self, roster: tuple[int, ...]) -> float:
+        got = self._week.get(roster)
+        if got is None:
+            got = self._week[roster] = self.week_points(roster)
+        return got
+
+    def overlap(self, roster: tuple[int, ...], swaps) -> float:
+        """This week's lineup points the swaps' single gains count that the roster
+        together does not have: its gain over the base less the sum of theirs alone."""
+        base = self._week_points(self.base)
+        alone = sum(self._week_points(self.roster_after([swap])) - base for swap in swaps)
+        return self._week_points(roster) - base - alone
+
     def grid(self, roster: tuple[int, ...], swaps) -> np.ndarray:
         got = self.grids.get(roster)
         if got is None:
@@ -108,6 +129,8 @@ class Values:
                 got = self.grids[self.base].copy()
                 for swap in swaps:
                     got += self.singles[swap]
+                if self.week_points is not None and len(swaps) > 1:
+                    got *= math.exp(self.leverage * self.overlap(roster, swaps))
                 self.estimates[roster] = got
         return got
 
@@ -293,13 +316,13 @@ def _replay_reached(scorer: Scorer, cards: list[list[Claim]], replay) -> None:
 
 def _extensions(card: list[Claim], option: Claim, options: list[Claim]):
     """Cards adding the option, with the indexes of what they add: the option after the
-    card, and, for each claim on the card whose drop it takes, ahead of the card (so an
-    equal bid processes it first) with that claim's fallback on another of his drops
-    appended at the same bid."""
+    card, and, for each claim on the card whose drop (or open spot) it takes, ahead of the
+    card (so an equal bid processes it first) with that claim's fallback on another of his
+    drops appended at the same bid."""
     yield card + [option], [len(card)]
     taken = {claim.swap for claim in card}
     for claim in card:
-        if claim.drop is not None and claim.drop == option.drop:
+        if claim.drop == option.drop:
             for other in options:
                 if other.player == claim.player and other.swap != claim.swap and other.swap not in taken:
                     yield [option] + card + [dataclasses.replace(other, bid=claim.bid)], [0, len(card) + 1]

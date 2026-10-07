@@ -31,7 +31,7 @@ serves that directory. Provider snapshots live with the code that reads them
   total-points championship
 - Opening starters: 1 QB, 1 RB, 2 WR, 1 TE, 2 W/R/T flex; no D/ST or kicker slot;
   lineups expand in-season (+1 WR wk 7, +1 RB wk 9, +1 flex wk 12, +1 superflex
-  wk 14, bench grows from 1 to 5, assumed one spot at each expansion)
+  wk 14); the bench grows from 1 to 5 (+1 in each of weeks 5, 6, 11, 13)
 - $1000 FAAB, claims processed once a week, unclaimed players free afterwards
 - 2 reserve spots holding Out/IR/PUP players (reserve is not drafted into), no
   per-position roster caps
@@ -360,7 +360,10 @@ that the replays choose, and the bid is shaded against the recorded market, with
 separate saving plan.
 
 This week's claims are decided by replay, not by that heuristic. Each candidate's
-three best drops by the heuristic are replayed and the best by title odds is kept: the
+three best drops by the heuristic are replayed and the best by title odds is kept (when
+a regular spot is open, no drop is one of the three and the drops that free a regular
+spot stand beside it, so the card below can fill the spot with one claim and make a
+drop with another instead of entering every claim as an alternative for the spot): the
 heuristic is a season total of expected lineup points, blind to the survival odds a
 swing this week moves, so under the earlier fixed-roster accounting it would have
 dropped Michael Penix, the week's starting QB, in the week-3 state for a receiver the
@@ -506,16 +509,23 @@ Those single valuations feed the bidding card (`season/card.py`), which is the
 recommendation. Sleeper processes the room's claims highest bid first, a team's equal
 bids in the order it lists them, and checks each against the roster as its earlier wins
 left it: a claim fails when its player is already mine, its drop is gone, no spot is
-open, or the cash is spent. So claims naming the same drop are alternatives (the first
-to win takes the spot) and a player claimed again with another drop is a fallback for
-when an earlier win used his drop; a free agent after the run is added now, ahead of
-every claim. A card is scored by walking it that way through every recorded season, each
+open, or the cash is spent. So claims naming the same drop, or the one open spot, are
+alternatives (the first to win takes the spot) and a player claimed again with another
+drop is a fallback for when an earlier win used his drop or his spot; a free agent after
+the run is added now, ahead of every claim. A card is scored by walking it that way through every recorded season, each
 claim winning or losing at that season's clearing price, and valuing the roster and cash
 it leaves by that season's replay: every roster a card reaches is replayed once, at the
 cash it most often leaves, priced under the value chosen for the nearest grid budget;
 the value of cash around that point, and a roster not yet replayed, come from the
 standing roster's grid plus each swap's single effect (a swap replayed at the full
-budget only borrows its player's replayed drop's budget profile). No card is judged on
+budget only borrows its player's replayed drop's budget profile), scaled by this week's
+title leverage (d log P(title) per lineup point, from the standing roster's replay)
+times the lineup points those single effects double count, since this week's lineup is
+exact and cheap: two receivers each priced alone against a bye hole fill it once
+together. Without that, in the week-5 state (Xavier Worthy and Kenneth Walker on bye),
+every second receiver estimated at +5-7% relative title odds and replayed at about zero,
+those phantoms filled the screening below and ended the search, and Bhayshul Tuten for
+Jaylen Wright, worth +2.3% at nine standard errors, was never tried. No card is judged on
 that additive estimate. On the few seasons a rare roster is reached, say a cheap win on
 one player beside a loss on another, it misses by about three times the differences
 between cards: valuing rosters reached in under 2% of the seasons additively, the
